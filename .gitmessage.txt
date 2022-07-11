@@ -1,0 +1,24 @@
+;;;;;;;;;;;;;;;;
+; Type can be
+;   feat    : new feature
+;   fix     : bug fix
+;   refactor: refactoring production code
+;   style   : formatting, missing semi colons, etc; no code change
+;   docs    : changes to documentation
+;   test    : adding or refactoring tests
+;             no productin code change
+;   chore   : updating grunt tasks etc
+;             no production code change
+;;;;;;;;;;;;;;;;
+
+; <Type> : Title
+<> : 
+
+
+; Body
+
+
+; Footer
+; Issue Number
+; Ex) Close #7
+

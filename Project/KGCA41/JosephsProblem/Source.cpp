@@ -116,12 +116,12 @@ void CircularLinkedList::Erase(int index)
 }
 
 //from : start 0
-//to : start 0
+//to : start 1
 void CircularLinkedList::Erase(int from, int to)
 {
-	if (to < 0)
+	if (to < 1)
 	{
-		to = 0;
+		to = 1;
 	}
 	while (from < 0)
 	{

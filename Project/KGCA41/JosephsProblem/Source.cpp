@@ -115,21 +115,20 @@ void CircularLinkedList::Erase(int index)
 	Erase(pNode);
 }
 
-//from : start 0
-//to : start 1
-void CircularLinkedList::Erase(int from, int to)
+//startIndex : start 0
+//count : start 1
+void CircularLinkedList::Erase(int startIndex, int count)
 {
-	if (to < 1)
+	if (count < 1)
 	{
-		to = 1;
+		count = 1;
 	}
-	while (from < 0)
+	while (startIndex < 0)
 	{
-		from += _nodeCount;
+		startIndex += _nodeCount;
 	}
 
-	Node* pNode = GetNode(from, to);
-	Erase(pNode);
+	Erase(getIndex(startIndex, count));
 }
 
 void CircularLinkedList::Erase(Node* pNode)
@@ -171,17 +170,26 @@ int CircularLinkedList::GetListSize()
 
 Node* CircularLinkedList::GetNode(int index)
 {
+	while (index < 0)
+	{
+		index += _nodeCount;
+	}
 	index = index % _nodeCount;
 
 	Node* pNode = _pHead;
-	for (int i = 1; i < index; ++i)
+	for (int i = 1; i <= index; ++i)
 	{
 		pNode = pNode->GetNextNode();
 	}
 	return pNode;
 }
 
-Node* CircularLinkedList::GetNode(int from, int to)
+Node* CircularLinkedList::GetNode(int startIndex, int count)
 {
-	return GetNode(from + to);
+	return GetNode(getIndex(startIndex, count));
+}
+
+int CircularLinkedList::getIndex(int startIndex, int count)
+{
+	return startIndex + count - 1;
 }

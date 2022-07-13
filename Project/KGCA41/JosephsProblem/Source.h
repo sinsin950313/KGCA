@@ -28,7 +28,12 @@ private:
 
 private:
 	void Erase(Node* pNode);
-	Node* GetNode(int from, int to);
+	//startIndex : start 0
+	//count : start 1
+	Node* GetNode(int startIndex, int count);
+	//startIndex : start 0
+	//count : start 1
+	int getIndex(int startIndex, int count);
 
 public:
 	CircularLinkedList(int nodeCount);
@@ -36,6 +41,8 @@ public:
 	int GetListSize();
 	void PushBack(int val);
 	void Erase(int index);
-	void Erase(int from, int to);
+	//startIndex : start 0
+	//count : start 1
+	void Erase(int startIndex, int count);
 	Node* GetNode(int index);
 };

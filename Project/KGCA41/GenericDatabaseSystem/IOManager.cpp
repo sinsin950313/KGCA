@@ -32,17 +32,25 @@ void IOManager::Read(FILE* fp, Buffer& buffer)
 	}
 
 	Buffer tmpBuffer;
-	int totalSize = 0;
-	while (fgets(tmp, BUFFER_SIZE, fp) != nullptr)
+	while (fgets(tmp, BUFFER_SIZE, fp) != NULL)
 	{
-		int size = 0;
-		while (tmp[size] != '\n')
+		int i = 0;
+		while (i < BUFFER_SIZE)
 		{
-			++size;
+			if (tmp[i] == '\n')
+			{
+				tmp[i] = 0;
+				break;
+			}
+			++i;
 		}
-		++size;
 
 		tmpBuffer.Push(tmp);
+
+		if (i < BUFFER_SIZE - 1 && tmp[i] == 0)
+		{
+			break;
+		}
 	}
 
 	buffer = std::move(tmpBuffer);

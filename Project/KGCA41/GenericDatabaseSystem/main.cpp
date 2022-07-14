@@ -30,10 +30,19 @@ using namespace std;
 #include "FileManager.h"
 #include "IOManager.h"
 
+#include "CustomLinkedList.h"
+
 using namespace std;
 
 int main()
 {
+	Custom::LinkedList<int> ll;
+	ll.PushBack(1);
+	ll.PushBack(2);
+	ll.PushFront(2);
+	ll.EraseBack();
+	ll.EraseFront();
+
 	Buffer test;
 	test.SetBuffer(4);
 	test.Copy("abc");

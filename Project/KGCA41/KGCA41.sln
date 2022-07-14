@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "4. GameBasicProgramming Pro
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GenericDatabaseSystem", "GenericDatabaseSystem\GenericDatabaseSystem.vcxproj", "{C28A685E-8BB9-40BE-9B59-CF8F4895CA04}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomLinkedList", "CustomLinkedList\CustomLinkedList.vcxproj", "{9812F42C-0901-43A5-87B6-906BCB9C19B3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -69,6 +71,14 @@ Global
 		{C28A685E-8BB9-40BE-9B59-CF8F4895CA04}.Release|x64.Build.0 = Release|x64
 		{C28A685E-8BB9-40BE-9B59-CF8F4895CA04}.Release|x86.ActiveCfg = Release|Win32
 		{C28A685E-8BB9-40BE-9B59-CF8F4895CA04}.Release|x86.Build.0 = Release|Win32
+		{9812F42C-0901-43A5-87B6-906BCB9C19B3}.Debug|x64.ActiveCfg = Debug|x64
+		{9812F42C-0901-43A5-87B6-906BCB9C19B3}.Debug|x64.Build.0 = Debug|x64
+		{9812F42C-0901-43A5-87B6-906BCB9C19B3}.Debug|x86.ActiveCfg = Debug|Win32
+		{9812F42C-0901-43A5-87B6-906BCB9C19B3}.Debug|x86.Build.0 = Debug|Win32
+		{9812F42C-0901-43A5-87B6-906BCB9C19B3}.Release|x64.ActiveCfg = Release|x64
+		{9812F42C-0901-43A5-87B6-906BCB9C19B3}.Release|x64.Build.0 = Release|x64
+		{9812F42C-0901-43A5-87B6-906BCB9C19B3}.Release|x86.ActiveCfg = Release|Win32
+		{9812F42C-0901-43A5-87B6-906BCB9C19B3}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +89,7 @@ Global
 		{BC3BD462-306C-406A-81A3-B1A6B5C6CC10} = {F18C1B02-5ED1-4D90-9C4B-08770F26C260}
 		{BB4FCEF2-73D1-47FC-9379-AF1E1815DF85} = {900F76E2-14F2-4D02-ABEE-AE90258A7EA0}
 		{C28A685E-8BB9-40BE-9B59-CF8F4895CA04} = {A691CAAF-BFA9-4F1B-AB53-E14191419062}
+		{9812F42C-0901-43A5-87B6-906BCB9C19B3} = {900F76E2-14F2-4D02-ABEE-AE90258A7EA0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8417923F-3B4B-4B1F-A746-4AC7EECFE3E6}

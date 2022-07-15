@@ -1,109 +1,111 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "Buffer.h"
-#include <malloc.h>//free, malloc
-#include <stdlib.h>//exit
-#include <cstdio>//fprintf, stderr
-#include <string>//strcpy
+#include <malloc.h>	//free, malloc
+#include <stdlib.h>	//exit
+#include <cstdio>	//fprintf, stderr
+#include <string>	//strcpy
 
 void Buffer::RequireMemory(int size, const char* eMessage)
 {
-	_array = static_cast<BYTE*>(malloc(sizeof(BYTE) * size));
-	if (_array == NULL)
+	if (_buffer != nullptr)
+	{
+		free(_buffer);
+	}
+
+	_buffer = static_cast<BYTE*>(malloc(sizeof(BYTE) * size));
+	if (_buffer == NULL)
 	{
 		fprintf(stderr, eMessage);
 		exit(1);
 	}
-	_size = size;
+
+	_currSize = 0;
+	_maxSize = size;
 }
 
 Buffer::Buffer()
 {
-	SetBuffer(DEFAULT);
+	RequireMemory(DEFAULT, "Buffer create failed");
 }
 
-Buffer::Buffer(int size)
+Buffer::Buffer(const BYTE* pArr, int size)
 {
-	SetBuffer(size);
-}
-
-void Buffer::SetBuffer(int size)
-{
-	if (_array != nullptr)
-	{
-		free(_array);
-	}
-
-	RequireMemory(size, "Buffer allocation failed");
-
-	memset(_array, 0, _size);
-}
-
-int Buffer::GetSize(const BYTE* pArr)
-{
-	int ret = 0;
-	while (pArr[ret] != 0)
-	{
-		++ret;
-	}
-	return ret + 1;
+	RequireMemory(size, "Buffer create failed");
+	Copy(pArr, size);
 }
 
 bool Buffer::IsEmpty()
 {
-	int size = GetSize(_array);
-	return size == 1;
+	return _currSize == 0;
 }
 
-void Buffer::Copy(const BYTE* pArr)
+void Buffer::Copy(const BYTE* pArr, int size)
 {
-	//효율적인 버퍼를 만드는 것이 목적이 아니므로 일단은 메모리 재할당 방향으로 사용
-	SetBuffer(GetSize(pArr));
-	strcpy(_array, pArr);
+	if (_maxSize < size)
+	{
+		RequireMemory(size, "Copy failed");
+	}
+	Clear();
+	memcpy(_buffer, pArr, size);
+	_currSize = size;
 }
 
 const BYTE* Buffer::GetString()
 {
-	return _array;
+	if (_buffer[_maxSize - 1] != 0)
+	{
+		BYTE* tmp = _buffer;
+		_buffer = nullptr;
+		RequireMemory(_maxSize + 1, "Make string failed");
+		memset(_buffer, 0, _maxSize);
+		Copy(tmp, _maxSize - 1);
+		free(tmp);
+	}
+	return _buffer;
 }
 
-void Buffer::Push(const BYTE* pArr)
+const BYTE* Buffer::GetBuffer()
 {
-	int eof = GetSize(_array);
-	if (0 < eof)
-	{
-		--eof;
+	return _buffer;
+}
 
-		if (eof + GetSize(pArr) <= _size)
-		{
-			strcpy(_array + eof, pArr);
-		}
-		else
-		{
-			char* tmp = _array;
-			RequireMemory(eof + GetSize(pArr), "Require Memory for Push fail");
-			strcpy(_array, tmp);
-			free(tmp);
-
-			Push(pArr);
-		}
-	}
-	else
+void Buffer::Push(const BYTE* pArr, int size)
+{
+	if (_maxSize < _currSize + size)
 	{
-		Copy(pArr);
+		BYTE* tmp = _buffer;
+		int tmpSize = _currSize;
+		_buffer = nullptr;
+		RequireMemory(_currSize + size, "Fail to Push memory to Buffer");
+		Copy(tmp, tmpSize);
+		free(tmp);
 	}
+	memcpy(_buffer + _currSize, pArr, size);
+	_currSize += size;
+}
+
+void Buffer::Clear()
+{
+	memset(_buffer, 0, _maxSize);
+	_currSize = 0;
+}
+
+int Buffer::GetSize()
+{
+	return _currSize;
 }
 
 Buffer& Buffer::operator=(Buffer&& buffer) noexcept
 {
-	_size = buffer._size;
-	BYTE* tmp = _array;
-	_array = buffer._array;
-	buffer._array = tmp;
+	_maxSize = buffer._maxSize;
+	BYTE* tmp = _buffer;
+	_buffer = buffer._buffer;
+	buffer._buffer = tmp;
 	return *this;
 }
 
 Buffer::~Buffer()
 {
-	free(_array);
+	free(_buffer);
 }

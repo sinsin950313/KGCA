@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Buffer.h"
-#include <cstdio>
+#include <cstdio>	//FILE
+
+class Buffer;
 
 class FileManager
 {

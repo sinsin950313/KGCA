@@ -43,19 +43,28 @@ int main()
 	ll.EraseBack();
 	ll.EraseFront();
 
-	Buffer test;
-	test.SetBuffer(4);
-	test.Copy("abc");
-	cout << test.GetString() << endl;
-	test.Push("abc");
-	cout << test.GetString() << endl;
+	Buffer test("start", 5);
+	cout << test.GetString() << " : " << test.GetSize() << endl;
+	test.Push("Push", 4);
+	cout << test.GetString() << " : " << test.GetSize() << endl;
+	test.Copy("Copy", 4);
+	cout << test.GetString() << " : " << test.GetSize() << endl;
+	test.Clear();
 
-	FileManager fm(nullptr);
-	char path[] = "abc";
-	FileManager fm1(path);
-
-	IOManager::GetInstance().Read(stdin, test);
+	IOManager::GetInstance().Read(test);
 	cout << test.GetString() << endl;
+	FILE* fp = fopen("Test.txt", "w+");
+	IOManager::GetInstance().Write(test, fp);
+	fclose(fp);
+	test.Clear();
+	fp = fopen("Test.txt", "r");
+	IOManager::GetInstance().Read(test, fp);
+	cout << test.GetString() << endl;
+	fclose(fp);
+
+	//FileManager fm(nullptr);
+	//char path[] = "abc";
+	//FileManager fm1(path);
 }
 
 #endif

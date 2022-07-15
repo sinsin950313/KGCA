@@ -1,19 +1,19 @@
 #pragma once
 
-#include <cstdio>//FILE
-#include "Buffer.h"
+#include <cstdio>	//FILE
+
+class Buffer;
 
 class IOManager
 {
 private:
-	IOManager();
+	IOManager() = default;
 	static IOManager* _instance;
-
-private:
-	bool _quit = false;
 
 public:
 	static IOManager& GetInstance();
-	void Read(FILE* fp, Buffer& buffer);
-	bool IsQuit();
+	//Read for stdin
+	void Read(Buffer& buffer);
+	void Read(Buffer& buffer, FILE* fp);
+	void Write(Buffer& buffer, FILE* fp);
 };

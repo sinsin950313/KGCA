@@ -1,8 +1,9 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "FileManager.h"
-#include "IOManager.h"
-#include <fstream>//exit
+#include "IOManager.h"	//IOManager
+#include <fstream>		//exit
+#include "Buffer.h"		//Buffer
 
 void FileManager::FileOpen(Buffer& buffer, const char* mode)
 {
@@ -16,23 +17,23 @@ void FileManager::FileOpen(Buffer& buffer, const char* mode)
 
 FileManager::FileManager(char* path)
 {
-	Buffer buffer;
-	if (path != nullptr)
-	{
-		int size = 0;
-		while (path[size] != '\n')
-		{
-			++size;
-		}
-		buffer.Copy(path);
-	}
-	else
-	{
-		printf("읽을 파일명 : ");
-		IOManager::GetInstance().Read(stdin, buffer);
-	}
+	//Buffer buffer;
+	//if (path != nullptr)
+	//{
+	//	int size = 0;
+	//	while (path[size] != '\n')
+	//	{
+	//		++size;
+	//	}
+	//	buffer.Copy(path);
+	//}
+	//else
+	//{
+	//	printf("읽을 파일명 : ");
+	//	IOManager::GetInstance().Read(stdin, buffer);
+	//}
 
-	FileOpen(buffer, "r+");
+	//FileOpen(buffer, "r+");
 }
 
 FileManager::~FileManager()

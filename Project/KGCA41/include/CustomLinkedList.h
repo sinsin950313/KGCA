@@ -21,10 +21,14 @@ namespace Custom
 			Node();
 			Node(const Node& node) = delete;
 			Node(Node&& node);
+			Node(const T& data) = delete;
+			Node(T&& data);
 			~Node();
+
+		public:
 			void SetData(const T& data);
 			void SetData(T&& data);
-			const T* GetData();
+			T* Get();
 			Node* GetNext();
 			Node* GetPrev();
 
@@ -40,6 +44,8 @@ namespace Custom
 	public:
 		LinkedList();
 		~LinkedList();
+
+	public:
 		void PushBack(const T& data);
 		void PushBack(T&& data);
 		void PushFront(const T& data);
@@ -47,6 +53,8 @@ namespace Custom
 		void EraseBack();
 		void EraseFront();
 		bool IsEmpty();
+		T* GetFront();
+		T* GetBack();
 	};
 }
 
@@ -64,6 +72,12 @@ Custom::LinkedList<T>::Node::Node(Node&& node)
 	_data = node._data;
 	_pPrev = node._pPrev;
 	_pNext = node._pNext;
+}
+
+template<typename T>
+Custom::LinkedList<T>::Node::Node(T&& data)
+{
+	_data = data;
 }
 
 template<typename T>
@@ -86,7 +100,7 @@ void Custom::LinkedList<T>::Node::SetData(T&& data)
 }
 
 template<typename T>
-const T* Custom::LinkedList<T>::Node::GetData()
+T* Custom::LinkedList<T>::Node::Get()
 {
 	return _data;
 }
@@ -198,4 +212,16 @@ template<typename T>
 bool Custom::LinkedList<T>::IsEmpty()
 {
 	return _pHead->GetNext() == _pTail;
+}
+
+template<typename T>
+inline T* Custom::LinkedList<T>::GetFront()
+{
+	return IsEmpty() ? nullptr : _pTail->GetPrev().Get();
+}
+
+template<typename T>
+inline T* Custom::LinkedList<T>::GetBack()
+{
+	return IsEmpty() ? nullptr : _pHead->GetNext().Get();
 }

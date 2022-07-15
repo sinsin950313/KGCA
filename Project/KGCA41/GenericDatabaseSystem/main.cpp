@@ -62,9 +62,9 @@ int main()
 	cout << test.GetString() << endl;
 	fclose(fp);
 
-	//FileManager fm(nullptr);
-	//char path[] = "abc";
-	//FileManager fm1(path);
+	FileManager fm(nullptr);
+	char path[] = "abc";
+	FileManager fm1(path);
 }
 
 #endif

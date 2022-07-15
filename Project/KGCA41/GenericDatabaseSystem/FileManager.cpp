@@ -5,35 +5,39 @@
 #include <fstream>		//exit
 #include "Buffer.h"		//Buffer
 
-void FileManager::FileOpen(Buffer& buffer, const char* mode)
+void FileManager::FileOpen(Buffer& buffer)
 {
-	_fp = fopen(buffer.GetString(), mode);
+	_fp = fopen(buffer.GetString(), "r+");
 	if (_fp == NULL)
 	{
-		fprintf(stderr, "File %s open failed", buffer.GetString());
-		exit(1);
+		_fp = fopen(buffer.GetString(), "w+");
+		if (_fp == NULL)
+		{
+			fprintf(stderr, "File %s open failed", buffer.GetString());
+			exit(1);
+		}
 	}
 }
 
 FileManager::FileManager(char* path)
 {
-	//Buffer buffer;
-	//if (path != nullptr)
-	//{
-	//	int size = 0;
-	//	while (path[size] != '\n')
-	//	{
-	//		++size;
-	//	}
-	//	buffer.Copy(path);
-	//}
-	//else
-	//{
-	//	printf("읽을 파일명 : ");
-	//	IOManager::GetInstance().Read(stdin, buffer);
-	//}
+	Buffer buffer;
+	if (path != nullptr)
+	{
+		int size = 0;
+		while (path[size] != '\n')
+		{
+			++size;
+		}
+		buffer.Copy(path, size);
+	}
+	else
+	{
+		printf("읽을 파일명 : ");
+		IOManager::GetInstance().Read(buffer);
+	}
 
-	//FileOpen(buffer, "r+");
+	FileOpen(buffer);
 }
 
 FileManager::~FileManager()

@@ -10,7 +10,7 @@ private:
 	FILE* _fp = nullptr;
 
 private:
-	void FileOpen(Buffer& buffer, const char* mode);
+	void FileOpen(Buffer& buffer);
 
 public:
 	FileManager(char* path);

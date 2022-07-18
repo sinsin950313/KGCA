@@ -146,14 +146,21 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Buffer.cpp" />
+    <ClCompile Include="Data.cpp" />
+    <ClCompile Include="DataFactory.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="IOManager.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Schema.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Buffer.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="Data.h" />
+    <ClInclude Include="DataFactory.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="IOManager.h" />
+    <ClInclude Include="Schema.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CustomLinkedList\CustomLinkedList.vcxproj">

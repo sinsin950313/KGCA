@@ -45,6 +45,7 @@ FileManager::~FileManager()
 	fclose(_fp);
 }
 
-void FileManager::Run()
+const FILE* FileManager::Get()
 {
+	return _fp;
 }

@@ -15,5 +15,5 @@ private:
 public:
 	FileManager(const char* path);
 	~FileManager();
-	void Run();
+	const FILE* Get();
 };

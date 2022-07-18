@@ -23,19 +23,15 @@ void IOManager::Write(Buffer& buffer, FILE* fp)
 
 void IOManager::Read(Buffer& buffer, FILE* fp)
 {
-	char checkChar;
 	char c;
-	if (fp == stdin)
-	{
-		checkChar = '\n';
-	}
-	else
-	{
-		checkChar = EOF;
-	}
 
-	while ((c = fgetc(fp)) != checkChar)
+	while (1)
 	{
+		c = fgetc(fp);
+		if (c == '\n' || c == EOF)
+		{
+			break;
+		}
 		buffer.Push(&c, 1);
 	}
 }

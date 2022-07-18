@@ -19,13 +19,13 @@ void FileManager::FileOpen(Buffer& buffer)
 	}
 }
 
-FileManager::FileManager(char* path)
+FileManager::FileManager(const char* path)
 {
 	Buffer buffer;
 	if (path != nullptr)
 	{
 		int size = 0;
-		while (path[size] != '\n')
+		while (path[size] != '0')
 		{
 			++size;
 		}

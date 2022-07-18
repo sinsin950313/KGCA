@@ -13,7 +13,7 @@ private:
 	void FileOpen(Buffer& buffer);
 
 public:
-	FileManager(char* path);
+	FileManager(const char* path);
 	~FileManager();
 	void Run();
 };

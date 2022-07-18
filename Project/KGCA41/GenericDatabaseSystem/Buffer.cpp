@@ -27,6 +27,7 @@ void Buffer::RequireMemory(int size, const char* eMessage)
 Buffer::Buffer()
 {
 	RequireMemory(DEFAULT, "Buffer create failed");
+	Clear();
 }
 
 Buffer::Buffer(const BYTE* pArr, int size)

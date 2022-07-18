@@ -43,6 +43,9 @@ int main()
 	ll.EraseBack();
 	ll.EraseFront();
 
+	Buffer empty;
+	empty.Push("Empty", 5);;
+	cout << empty.GetString() << " : " << empty.GetSize() << endl;
 	Buffer test("start", 5);
 	cout << test.GetString() << " : " << test.GetSize() << endl;
 	test.Push("Push", 4);
@@ -65,6 +68,9 @@ int main()
 	FileManager fm(nullptr);
 	char path[] = "abc";
 	FileManager fm1(path);
+	test.Clear();
+	IOManager::GetInstance().Read(test);
+	FileManager fm2(test.GetString());
 }
 
 #endif

@@ -21,19 +21,20 @@ void IOManager::Write(Buffer& buffer, FILE* fp)
 	fwrite(buffer.GetString(), 1, buffer.GetSize(), fp);
 }
 
-void IOManager::Read(Buffer& buffer)
-{
-	char c;
-	while ((c = fgetc(stdin)) != '\n')
-	{
-		buffer.Push(&c, 1);
-	}
-}
-
 void IOManager::Read(Buffer& buffer, FILE* fp)
 {
+	char checkChar;
 	char c;
-	while ((c = fgetc(fp)) != EOF)
+	if (fp == stdin)
+	{
+		checkChar = '\n';
+	}
+	else
+	{
+		checkChar = EOF;
+	}
+
+	while ((c = fgetc(fp)) != checkChar)
 	{
 		buffer.Push(&c, 1);
 	}

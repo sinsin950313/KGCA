@@ -131,7 +131,8 @@
     </Link>
     <PostBuildEvent>
       <Command>copy "*.h" "..\\include"
-copy "..\\Output\\CustomLinkedList.lib" "..\\lib"</Command>
+
+copy "..\\Output\\CustomLinkedList.lib" "..\\lib\\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

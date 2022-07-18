@@ -1,26 +1,36 @@
-#define TEST_MODULE
+//#define TEST_MODULE
 
 #ifndef TEST_MODULE
 
 #include "IOManager.h"
 #include "FileManager.h"
+#include "Buffer.h"
+#include "System.h"
 
 using namespace std;
 
-//int main(int argc, char* argv[])
-//{
-//	char* path = nullptr;
-//	if(argc != 1)
-//	{
-//		path = argv[1];
-//	}
-//
-//	FileManager fm(path);
-//	while (IOManager::GetInstance().IsQuit())
-//	{
-//		fm.Run();
-//	}
-//}
+int main(int argc, char* argv[])
+{
+	char* path = nullptr;
+	if(argc != 1)
+	{
+		path = argv[1];
+	}
+
+	FileManager::GetInstance().Open(path);
+	System sys;
+
+	Buffer buffer;
+	while (1)
+	{
+		IOManager::GetInstance().Read(buffer, stdin, 1);
+		char order = *buffer.GetString();
+
+		sys.Transaction(order);
+
+		buffer.Clear();
+	}
+}
 
 #else
 #define _CRT_SECURE_NO_WARNINGS

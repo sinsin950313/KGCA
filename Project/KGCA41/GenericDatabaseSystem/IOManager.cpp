@@ -21,7 +21,7 @@ void IOManager::Write(Buffer& buffer, FILE* fp)
 	fwrite(buffer.GetString(), 1, buffer.GetSize(), fp);
 }
 
-void IOManager::Read(Buffer& buffer, FILE* fp)
+void IOManager::Read(Buffer& buffer, FILE* fp, int count)
 {
 	char c;
 
@@ -32,6 +32,16 @@ void IOManager::Read(Buffer& buffer, FILE* fp)
 		{
 			break;
 		}
+
 		buffer.Push(&c, 1);
+
+		if (count)
+		{
+			--count;
+			if (count == 0)
+			{
+				break;
+			}
+		}
 	}
 }

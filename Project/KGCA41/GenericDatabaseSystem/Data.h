@@ -1,21 +1,24 @@
 #pragma once
 
 #include "Common.h"
-
-class Buffer;
-class Schema;
+#include "Buffer.h"
+#include "Schema.h"
 
 class Data
 {
 private:
-	Buffer* _buffer;
+	Buffer _buffer;
+	//Origin schema. Schema is changable during program running.
+	Schema _schema;
 
 private:
 	Data(Buffer& buffer);
-	friend class DataFactory;
 
 public:
 	void Edit(Schema& schema);
-	void print(PrintType printType, Schema& schema);
+	void Print(PrintType printType, Schema& schema);
 	Buffer Serialize();
+
+private:
+	friend class DataFactory;
 };

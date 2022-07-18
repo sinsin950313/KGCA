@@ -13,6 +13,6 @@ private:
 public:
 	static IOManager& GetInstance();
 	//Read for stdin
-	void Read(Buffer& buffer, FILE* fp = stdin);
+	void Read(Buffer& buffer, FILE* fp = stdin, int count = 0);
 	void Write(Buffer& buffer, FILE* fp);
 };

@@ -4,224 +4,201 @@
 
 using namespace std;
 
+//template<typename T>
+//class Custom::LinkedList<T>;
+
 namespace Custom
 {
+	template<typename T>
+	class Node
+	{
+	private:
+		Node* _pNext;
+		Node* _pPrev;
+		T* _data;
+
+	public:
+		Node()
+		{
+			_data = new T;
+			_pPrev = nullptr;
+			_pNext = nullptr;
+		}
+		Node(const Node& node) = delete;
+		Node(Node&& node)
+		{
+			_data = node._data;
+			_pPrev = node._pPrev;
+			_pNext = node._pNext;
+		}
+		Node(const T& data) = delete;
+		Node(T&& data)
+		{
+			_data = data;
+		}
+		~Node()
+		{
+			delete _data;
+		}
+
+	public:
+		void SetData(const T& data)
+		{
+			*_data = data;
+		}
+		void SetData(T&& data)
+		{
+			delete _data;
+			_data = data;
+		}
+		T* Get()
+		{
+			return _data;
+		}
+		Node* GetNext()
+		{
+			return _pNext;
+		}
+		Node* GetPrev()
+		{
+			return _pPrev;
+		}
+
+		template<typename>
+		friend class LinkedList;
+	};
+
+	template<typename T>
+	class Iterator
+	{
+	private:
+		Node<T>* _ptr;
+
+	public:
+		Iterator(Node<T>* ptr)
+		{
+			_ptr = ptr;
+		}
+		Iterator(Iterator&& iter)
+		{
+			_ptr = iter._ptr;
+		}
+		Iterator& operator++(void)
+		{
+			_ptr = _ptr->GetNext();
+			return *this;
+		}
+		Iterator& operator--(void)
+		{
+			_ptr = _ptr->GetPrev();
+			return *this;
+		}
+		T& Get()
+		{
+			return *_ptr;
+		}
+	};
+
 	template<typename T>
 	class LinkedList
 	{
 	private:
-		class Node
+		Node<T>* _pHead;
+		Node<T>* _pTail;
+		void Link(Node<T>* prev, Node<T>* curr, Node<T>* next)
 		{
-		private:
-			Node* _pNext;
-			Node* _pPrev;
-			T* _data;
-			
-		public:
-			Node();
-			Node(const Node& node) = delete;
-			Node(Node&& node);
-			Node(const T& data) = delete;
-			Node(T&& data);
-			~Node();
+			prev->_pNext = curr;
+			curr->_pNext = next;
 
-		public:
-			void SetData(const T& data);
-			void SetData(T&& data);
-			T* Get();
-			Node* GetNext();
-			Node* GetPrev();
+			next->_pPrev = curr;
+			curr->_pPrev = prev;
+		}
+		void unLink(Node<T>* prev, Node<T>* curr, Node<T>* next)
+		{
+			prev->_pNext = next;
+			next->_pPrev = prev;
 
-			friend class LinkedList<T>;
-		};
-
-	private:
-		Node* _pHead;
-		Node* _pTail;
-		void Link(Node* prev, Node* curr, Node* next);
-		void unLink(Node* prev, Node* curr, Node* next);
+			delete curr;
+		}
 
 	public:
-		LinkedList();
-		~LinkedList();
+		LinkedList()
+		{
+			_pHead = new Node<T>;
+			_pTail = new Node<T>;
+			_pHead->_pNext = _pTail;
+			_pTail->_pPrev = _pHead;
+		}
+		~LinkedList()
+		{
+			delete _pHead;
+			delete _pTail;
+		}
 
 	public:
-		void PushBack(const T& data);
-		void PushBack(T&& data);
-		void PushFront(const T& data);
-		void PushFront(T&& data);
-		void EraseBack();
-		void EraseFront();
-		bool IsEmpty();
-		T* GetFront();
-		T* GetBack();
+		void PushBack(const T& data)
+		{
+			Node<T>* newNode = new Node<T>;
+			newNode->SetData(data);
+			Link(_pTail->GetPrve(), newNode, _pTail);
+		}
+		void PushBack(T&& data)
+		{
+			Node<T>* newNode = new Node<T>;
+			newNode->SetData(data);
+			Link(_pTail->GetPrev(), newNode, _pTail);
+		}
+		void PushFront(const T& data)
+		{
+			Node<T>* newNode = new Node<T>;
+			newNode->SetData(data);
+			Link(_pHead, newNode, _pHead->GetNext());
+		}
+		void PushFront(T&& data)
+		{
+			Node<T>* newNode = new Node<T>;
+			newNode->SetData(data);
+			Link(_pHead, newNode, _pHead->GetNext());
+		}
+		void EraseBack()
+		{
+			if (IsEmpty())
+			{
+				cout << "Linked List Empty" << endl;
+				return;
+			}
+			Node<T>* pNode = _pTail->GetPrev();
+			unLink(pNode->GetPrev(), pNode, _pTail);
+		}
+		void EraseFront()
+		{
+			if (IsEmpty())
+			{
+				cout << "Linked List Empty" << endl;
+				return;
+			}
+			Node<T>* pNode = _pHead->GetNext();
+			unLink(_pHead, pNode, pNode->GetNext());
+		}
+		bool IsEmpty()
+		{
+			return _pHead->GetNext() == _pTail;
+		}
+		T* GetFront()
+		{
+			return IsEmpty() ? nullptr : _pTail->GetPrev().Get();
+		}
+		T* GetBack()
+		{
+			return IsEmpty() ? nullptr : _pHead->GetNext().Get();
+		}
+		Iterator<T> Begin()
+		{
+			return Iterator<Node<T>>(_pHead->GetNext());
+		}
+		Iterator<T> End()
+		{
+			return Iterator<Node<T>>(_pTail->GetPrev());
+		}
 	};
-}
-
-template<typename T>
-Custom::LinkedList<T>::Node::Node()
-{
-	_data = new T;
-	_pPrev = nullptr;
-	_pNext = nullptr;
-}
-
-template<typename T>
-Custom::LinkedList<T>::Node::Node(Node&& node)
-{
-	_data = node._data;
-	_pPrev = node._pPrev;
-	_pNext = node._pNext;
-}
-
-template<typename T>
-Custom::LinkedList<T>::Node::Node(T&& data)
-{
-	_data = data;
-}
-
-template<typename T>
-Custom::LinkedList<T>::Node::~Node()
-{
-	delete _data;
-}
-
-template<typename T>
-void Custom::LinkedList<T>::Node::SetData(const T& data)
-{
-	*_data = data;
-}
-
-template<typename T>
-void Custom::LinkedList<T>::Node::SetData(T&& data)
-{
-	delete _data;
-	_data = data;
-}
-
-template<typename T>
-T* Custom::LinkedList<T>::Node::Get()
-{
-	return _data;
-}
-
-template<typename T>
-typename Custom::LinkedList<T>::Node* Custom::LinkedList<T>::Node::GetNext()
-{
-	return _pNext;
-}
-
-template<typename T>
-typename Custom::LinkedList<T>::Node* Custom::LinkedList<T>::Node::GetPrev()
-{
-	return _pPrev;
-}
-
-template<typename T>
-void Custom::LinkedList<T>::Link(Node* prev, Node* curr, Node* next)
-{
-	prev->_pNext = curr;
-	curr->_pNext = next;
-
-	next->_pPrev = curr;
-	curr->_pPrev = prev;
-}
-
-template<typename T>
-void Custom::LinkedList<T>::unLink(Node* prev, Node* curr, Node* next)
-{
-	prev->_pNext = next;
-	next->_pPrev = prev;
-
-	delete curr;
-}
-
-template<typename T>
-Custom::LinkedList<T>::LinkedList()
-{
-	_pHead = new Node;
-	_pTail = new Node;
-	_pHead->_pNext = _pTail;
-	_pTail->_pPrev = _pHead;
-}
-
-template<typename T>
-Custom::LinkedList<T>::~LinkedList()
-{
-	delete _pHead;
-	delete _pTail;
-}
-
-template<typename T>
-void Custom::LinkedList<T>::PushBack(const T& data)
-{
-	Node* newNode = new Node;
-	newNode->SetData(data);
-	Link(_pTail->GetPrve(), newNode, _pTail);
-}
-
-template<typename T>
-void Custom::LinkedList<T>::PushBack(T&& data)
-{
-	Node* newNode = new Node;
-	newNode->SetData(data);
-	Link(_pTail->GetPrev(), newNode, _pTail);
-}
-
-template<typename T>
-void Custom::LinkedList<T>::PushFront(const T& data)
-{
-	Node* newNode = new Node;
-	newNode->SetData(data);
-	Link(_pHead, newNode, _pHead->GetNext());
-}
-
-template<typename T>
-void Custom::LinkedList<T>::PushFront(T&& data)
-{
-	Node* newNode = new Node;
-	newNode->SetData(data);
-	Link(_pHead, newNode, _pHead->GetNext());
-}
-
-template<typename T>
-void Custom::LinkedList<T>::EraseBack()
-{
-	if (IsEmpty())
-	{
-		cout << "Linked List Empty" << endl;
-		return;
-	}
-	Node* pNode = _pTail->GetPrev();
-	unLink(pNode->GetPrev(), pNode, _pTail);
-}
-
-template<typename T>
-void Custom::LinkedList<T>::EraseFront()
-{
-	if (IsEmpty())
-	{
-		cout << "Linked List Empty" << endl;
-		return;
-	}
-	Node* pNode = _pHead->GetNext();
-	unLink(_pHead, pNode, pNode->GetNext());
-}
-
-template<typename T>
-bool Custom::LinkedList<T>::IsEmpty()
-{
-	return _pHead->GetNext() == _pTail;
-}
-
-template<typename T>
-inline T* Custom::LinkedList<T>::GetFront()
-{
-	return IsEmpty() ? nullptr : _pTail->GetPrev().Get();
-}
-
-template<typename T>
-inline T* Custom::LinkedList<T>::GetBack()
-{
-	return IsEmpty() ? nullptr : _pHead->GetNext().Get();
 }

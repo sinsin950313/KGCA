@@ -47,59 +47,76 @@ using namespace std;
 
 int main()
 {
-	//Buffer empty;
-	//empty.Push("Empty", 5);;
-	//cout << empty.GetString() << " : " << empty.GetSize() << endl;
+	Buffer empty;
+	empty.Push("Empty", 5);;
+	cout << empty.GetString() << " : " << empty.GetSize() << endl;
 	Buffer test("start", 5);
-	//cout << test.GetString() << " : " << test.GetSize() << endl;
-	//test.Push("Push", 4);
-	//cout << test.GetString() << " : " << test.GetSize() << endl;
-	//test.Copy("Copy", 4);
-	//cout << test.GetString() << " : " << test.GetSize() << endl;
-	//test.Clear();
+	cout << test.GetString() << " : " << test.GetSize() << endl;
+	test.Push("Push", 4);
+	cout << test.GetString() << " : " << test.GetSize() << endl;
+	test.Copy("Copy", 4);
+	cout << test.GetString() << " : " << test.GetSize() << endl;
+	test.Clear();
 
-	//IOManager::GetInstance().Read(test);
-	//cout << test.GetString() << endl;
-	//FILE* fp = fopen("Test.txt", "w+");
-	//IOManager::GetInstance().Write(test, fp);
-	//fclose(fp);
-	//test.Clear();
-	//fp = fopen("Test.txt", "r");
-	//IOManager::GetInstance().Read(test, fp);
-	//cout << test.GetString() << endl;
-	//fclose(fp);
+	Buffer ioTest;
+	IOManager::GetInstance().Read(ioTest);
+	cout << ioTest.GetString() << endl;
+	FILE* fp = fopen("Test.txt", "w+");
+	IOManager::GetInstance().Write(ioTest, fp);
+	fclose(fp);
+	ioTest.Clear();
+	fp = fopen("Test.txt", "r");
+	IOManager::GetInstance().Read(ioTest, fp);
+	cout << ioTest.GetString() << endl;
+	fclose(fp);
 
-	//FileManager::GetInstance().Open(nullptr);
-	//FileManager::GetInstance().Close();
-	//FileManager::GetInstance().Open("abc.txt");
-	//test.Clear();
-	//test.Push("abc", 3);
-	//FileManager::GetInstance().Write(test);
-	//FileManager::GetInstance().Close();
-	//FileManager::GetInstance().Open("abc.txt");
-	//test.Clear();
-	//FileManager::GetInstance().Read(test);
-	//cout << test.GetString() << endl;
+	Buffer fmTest;
+	FileManager::GetInstance().Open(nullptr);
+	FileManager::GetInstance().Close();
+	FileManager::GetInstance().Open("abc.txt");
+	fmTest.Clear();
+	fmTest.Push("abc", 3);
+	FileManager::GetInstance().Write(fmTest);
+	FileManager::GetInstance().Close();
+	FileManager::GetInstance().Open("abc.txt");
+	fmTest.Clear();
+	FileManager::GetInstance().Read(fmTest);
+	cout << fmTest.GetString() << endl;
 
 	Schema schema;
-	schema.Add('s', "kor");
-	schema.Add('s', "math");
-	schema.Add('s', "eng");
+	char schemaArr[20] = { 0, };
+	strcpy(schemaArr, "kor");
+	schema.Add('s', schemaArr);
+	strcpy(schemaArr, "math");
+	schema.Add('s', schemaArr);
+	strcpy(schemaArr, "eng");
+	schema.Add('s', schemaArr);
 	for (auto iter = schema.CreateIterator(); iter != schema.End(); ++iter)
 	{
 		cout << iter.Get().GetType() << ", " << iter.Get().GetName() << endl;
 	}
-	auto iter = schema.CreateIterator();
-	schema.Erase(iter);
-	for (auto iter = schema.CreateIterator(); iter != schema.End(); ++iter)
+	auto schemaIter = schema.CreateIterator();
+	schema.Erase(schemaIter);
+	for (auto schemaIter = schema.CreateIterator(); schemaIter != schema.End(); ++schemaIter)
 	{
-		if (iter.Get().IsAlive())
+		if (schemaIter.Get().IsAlive())
 		{
-			cout << iter.Get().GetType() << ", " << iter.Get().GetName() << endl;
+			cout << schemaIter.Get().GetType() << ", " << schemaIter.Get().GetName() << endl;
 		}
 	}
-	Buffer buffer = schema.GetSchema();
-	cout << buffer.GetString();
+	Buffer schemaTest = schema.GetSchema();
+	const char* schemaStr = schemaTest.GetString();
+	for (int i = 0; i < schemaTest.GetSize(); ++i)
+	{
+		if (schemaStr[i] == 0)
+		{
+			cout << '0';
+		}
+		else
+		{
+			cout << schemaStr[i];
+		}
+	}
 }
 
 #endif

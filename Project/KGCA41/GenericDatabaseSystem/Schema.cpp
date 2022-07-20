@@ -26,20 +26,20 @@ SchemaNode::SchemaNode(Buffer& copy, int state)
 	int size = copy.GetSize();
 
 	_type = str[0];
-	strncpy_s(_name, str + 1, GetNameLength());
+	memcpy(_name, str + 1, GetNameLength());
 	_state = state;
 }
 
 SchemaNode::SchemaNode(const SchemaNode& copy)
 {
 	_type = copy._type;
-	strncpy_s(_name, copy._name, GetNameLength());
+	memcpy(_name, copy._name, GetNameLength());
 }
 
 SchemaNode::SchemaNode(SchemaNode&& move)
 {
 	_type = move._type;
-	strncpy_s(_name, move._name, GetNameLength());
+	memcpy(_name, move._name, GetNameLength());
 }
 
 Schema::Schema(Buffer& buffer)

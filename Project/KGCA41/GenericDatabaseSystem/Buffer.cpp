@@ -23,6 +23,14 @@ void Buffer::RequireMemory(int size, const char* eMessage)
 	_currSize = 0;
 	_maxSize = size;
 }
+//
+//void Buffer::MemoryCopy(char* dest, const char* source, int count)
+//{
+//	for (int i = 0; i < count; ++i)
+//	{
+//		dest[i] = source[i];
+//	}
+//}
 
 Buffer::Buffer()
 {
@@ -109,6 +117,7 @@ Buffer& Buffer::operator=(Buffer&& buffer) noexcept
 Buffer::Buffer(Buffer&& move)
 {
 	_buffer = move._buffer;
+	move._buffer = nullptr;
 	_maxSize = move._maxSize;
 	_currSize = move._currSize;
 }

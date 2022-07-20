@@ -30,6 +30,7 @@ namespace Custom
 		Node(Node&& node)
 		{
 			_data = node._data;
+			node._data = nullptr;
 			_pPrev = node._pPrev;
 			_pNext = node._pNext;
 		}
@@ -92,6 +93,7 @@ namespace Custom
 		Iterator(Iterator&& iter)
 		{
 			_ptr = iter._ptr;
+			iter._ptr = nullptr;
 		}
 		Iterator& operator++(void)
 		{
@@ -114,6 +116,7 @@ namespace Custom
 		void operator=(Iterator&& iter)
 		{
 			_ptr = iter._ptr;
+			iter._ptr = nullptr;
 		}
 		bool operator==(Iterator<T> cmp)
 		{

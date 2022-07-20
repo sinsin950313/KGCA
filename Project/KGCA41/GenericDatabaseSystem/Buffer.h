@@ -13,6 +13,7 @@ private:
 
 private:
 	void RequireMemory(int size, const char* eMessage);
+	//void MemoryCopy(char* dest, const char* source, int count);
 
 public:
 	Buffer();

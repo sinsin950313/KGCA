@@ -4,9 +4,14 @@
 #include "IOManager.h"	//IOManager
 #include <fstream>		//exit
 #include "Buffer.h"		//Buffer
+#include "Common.h"
 
-void FileManager::FileOpen(Buffer& buffer)
+FileManager* FileManager::_instance = nullptr;
+
+void FileManager::Open(Buffer& buffer)
 {
+	Close();
+
 	_fp = fopen(buffer.GetString(), "r+");
 	if (_fp == NULL)
 	{
@@ -19,7 +24,7 @@ void FileManager::FileOpen(Buffer& buffer)
 	}
 }
 
-FileManager::FileManager(const char* path)
+void FileManager::Open(const char* path)
 {
 	Buffer buffer;
 	if (path != nullptr)
@@ -37,12 +42,42 @@ FileManager::FileManager(const char* path)
 		IOManager::GetInstance().Read(buffer);
 	}
 
-	FileOpen(buffer);
+	Open(buffer);
+}
+
+void FileManager::Close()
+{
+	if (_fp != nullptr)
+	{
+		fclose(_fp);
+		_fp = nullptr;
+	}
+}
+
+FileManager& FileManager::GetInstance()
+{
+	if (_instance == nullptr)
+	{
+		_instance = new FileManager;
+	}
+	return *_instance;
 }
 
 FileManager::~FileManager()
 {
-	fclose(_fp);
+	delete _instance;
+	Close();
+}
+
+bool FileManager::Read(Buffer& buffer)
+{
+	IOManager::GetInstance().Read(buffer, _fp);
+	return feof(_fp);
+}
+
+void FileManager::Write(Buffer& buffer)
+{
+	IOManager::GetInstance().Write(buffer, _fp);
 }
 
 const FILE* FileManager::Get()

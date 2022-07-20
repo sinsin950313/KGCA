@@ -16,6 +16,11 @@ IOManager& IOManager::GetInstance()
 	return *_instance;
 }
 
+IOManager::~IOManager()
+{
+	delete _instance;
+}
+
 void IOManager::Write(Buffer& buffer, FILE* fp)
 {
 	fwrite(buffer.GetString(), 1, buffer.GetSize(), fp);

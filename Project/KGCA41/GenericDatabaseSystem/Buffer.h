@@ -1,7 +1,8 @@
 #pragma once
 
+#include "Common.h"
+
 #define	DEFAULT 256
-#define BYTE char
 
 class Buffer
 {
@@ -16,8 +17,8 @@ private:
 public:
 	Buffer();
 	Buffer(const BYTE* pArr, int size);
-	Buffer(const Buffer& buffer) = delete;
-	Buffer(Buffer&& buffer) = delete;
+	Buffer(const Buffer& copy) = delete;
+	Buffer(Buffer&& move);
 	~Buffer();
 
 public:
@@ -25,6 +26,7 @@ public:
 	void Copy(const BYTE* pArr, int size);
 	const char* GetString();
 	const BYTE* GetBuffer();
+	//size : if string, size only characters
 	void Push(const BYTE* pArr, int size);
 	void Clear();
 	int GetSize();

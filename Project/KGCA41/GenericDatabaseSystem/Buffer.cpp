@@ -106,6 +106,13 @@ Buffer& Buffer::operator=(Buffer&& buffer) noexcept
 	return *this;
 }
 
+Buffer::Buffer(Buffer&& move)
+{
+	_buffer = move._buffer;
+	_maxSize = move._maxSize;
+	_currSize = move._currSize;
+}
+
 Buffer::~Buffer()
 {
 	free(_buffer);

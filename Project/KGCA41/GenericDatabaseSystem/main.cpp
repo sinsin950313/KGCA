@@ -1,4 +1,4 @@
-//#define TEST_MODULE
+#define TEST_MODULE
 
 #ifndef TEST_MODULE
 
@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 		path = argv[1];
 	}
 
-	FileManager::GetInstance().Open(path);
+	FileManager::GetInstance().FileOpen(path);
 	System sys;
 
 	Buffer buffer;
@@ -41,46 +41,65 @@ int main(int argc, char* argv[])
 #include "IOManager.h"
 
 #include "CustomLinkedList.h"
+#include "Schema.h"
 
 using namespace std;
 
 int main()
 {
-	Custom::LinkedList<int> ll;
-	ll.PushBack(1);
-	ll.PushBack(2);
-	ll.PushFront(2);
-	ll.EraseBack();
-	ll.EraseFront();
-
-	Buffer empty;
-	empty.Push("Empty", 5);;
-	cout << empty.GetString() << " : " << empty.GetSize() << endl;
+	//Buffer empty;
+	//empty.Push("Empty", 5);;
+	//cout << empty.GetString() << " : " << empty.GetSize() << endl;
 	Buffer test("start", 5);
-	cout << test.GetString() << " : " << test.GetSize() << endl;
-	test.Push("Push", 4);
-	cout << test.GetString() << " : " << test.GetSize() << endl;
-	test.Copy("Copy", 4);
-	cout << test.GetString() << " : " << test.GetSize() << endl;
-	test.Clear();
+	//cout << test.GetString() << " : " << test.GetSize() << endl;
+	//test.Push("Push", 4);
+	//cout << test.GetString() << " : " << test.GetSize() << endl;
+	//test.Copy("Copy", 4);
+	//cout << test.GetString() << " : " << test.GetSize() << endl;
+	//test.Clear();
 
-	IOManager::GetInstance().Read(test);
-	cout << test.GetString() << endl;
-	FILE* fp = fopen("Test.txt", "w+");
-	IOManager::GetInstance().Write(test, fp);
-	fclose(fp);
-	test.Clear();
-	fp = fopen("Test.txt", "r");
-	IOManager::GetInstance().Read(test, fp);
-	cout << test.GetString() << endl;
-	fclose(fp);
+	//IOManager::GetInstance().Read(test);
+	//cout << test.GetString() << endl;
+	//FILE* fp = fopen("Test.txt", "w+");
+	//IOManager::GetInstance().Write(test, fp);
+	//fclose(fp);
+	//test.Clear();
+	//fp = fopen("Test.txt", "r");
+	//IOManager::GetInstance().Read(test, fp);
+	//cout << test.GetString() << endl;
+	//fclose(fp);
 
-	FileManager fm(nullptr);
-	char path[] = "abc";
-	FileManager fm1(path);
-	test.Clear();
-	IOManager::GetInstance().Read(test);
-	FileManager fm2(test.GetString());
+	//FileManager::GetInstance().Open(nullptr);
+	//FileManager::GetInstance().Close();
+	//FileManager::GetInstance().Open("abc.txt");
+	//test.Clear();
+	//test.Push("abc", 3);
+	//FileManager::GetInstance().Write(test);
+	//FileManager::GetInstance().Close();
+	//FileManager::GetInstance().Open("abc.txt");
+	//test.Clear();
+	//FileManager::GetInstance().Read(test);
+	//cout << test.GetString() << endl;
+
+	Schema schema;
+	schema.Add('s', "kor");
+	schema.Add('s', "math");
+	schema.Add('s', "eng");
+	for (auto iter = schema.CreateIterator(); iter != schema.End(); ++iter)
+	{
+		cout << iter.Get().GetType() << ", " << iter.Get().GetName() << endl;
+	}
+	auto iter = schema.CreateIterator();
+	schema.Erase(iter);
+	for (auto iter = schema.CreateIterator(); iter != schema.End(); ++iter)
+	{
+		if (iter.Get().IsAlive())
+		{
+			cout << iter.Get().GetType() << ", " << iter.Get().GetName() << endl;
+		}
+	}
+	Buffer buffer = schema.GetSchema();
+	cout << buffer.GetString();
 }
 
 #endif

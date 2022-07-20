@@ -11,14 +11,16 @@ private:
 	static FileManager* _instance;
 
 private:
-	void FileOpen(Buffer& buffer);
-	FileManager();
+	void Open(Buffer& buffer);
+	FileManager() = default;
 
 public:
 	static FileManager& GetInstance();
 	void Open(const char* path);
+	void Close();
 	~FileManager();
-	void Read(Buffer& buffer);
+	//return file reading finish
+	bool Read(Buffer& buffer);
 	void Write(Buffer& buffer);
 	const FILE* Get();
 };

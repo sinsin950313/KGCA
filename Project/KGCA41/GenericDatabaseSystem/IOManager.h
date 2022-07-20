@@ -11,8 +11,8 @@ private:
 	static IOManager* _instance;
 
 public:
+	~IOManager();
 	static IOManager& GetInstance();
-	//Read for stdin
 	void Read(Buffer& buffer, FILE* fp = stdin, int count = 0);
 	void Write(Buffer& buffer, FILE* fp);
 };

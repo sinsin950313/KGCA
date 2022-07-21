@@ -77,51 +77,82 @@ void System::Load()
 	Buffer schemaBuffer;
 	FileManager::GetInstance().Read(schemaBuffer);
 	_schema.Set(schemaBuffer);
+	for (auto iter = _schema.CreateIterator(); iter != _schema.End(); ++iter)
+	{
+		++_schemaCount;
+	}
 
 	Buffer buffer;
 	while (FileManager::GetInstance().Read(buffer))
 	{
-		//_datas.PushBack(DataFactory::GetInstance().CreateData(&_schema, buffer));
-		CreateData(buffer);
+		_datas.PushBack(DataFactory::GetInstance().CreateData(&_schema, buffer));
 		buffer.Clear();
+		++_dataCount;
 	}
 }
 
 void System::Up()
 {
+	cout << "Up" << endl;
 	--_dataIndex;
 	_dataIndex = max(0, _dataIndex);
 }
 
 void System::Down()
 {
+	cout << "Down" << endl;
 	++_dataIndex;
 	_dataIndex = min(_dataCount, _dataIndex);
 }
 
 void System::Left()
 {
+	cout << "Left" << endl;
 	--_schemaIndex;
 	_schemaIndex = max(0, _schemaIndex);
 }
 
 void System::Right()
 {
+	cout << "Right" << endl;
 	++_schemaIndex;
 	_schemaIndex = min(_schemaCount, _schemaIndex);
 }
 
 void System::CreateData()
 {
-	cout << "Create Data" << endl;
+	Buffer tmp;
+	static char instruction[] = "Fill Data";
+	tmp.Push(instruction, sizeof(instruction));
+	IOManager::GetInstance().Write(tmp, stdout);
 
-	_datas.PushBack(DataFactory::GetInstance().CreateData(&_schema, ));
-	++_dataIndex;
+	if (_schemaCount != 0)
+	{
+		_datas.PushBack(DataFactory::GetInstance().CreateData(&_schema));
+		++_dataIndex;
+	}
 }
 
 void System::CreateField()
 {
-	cout << "Create Schema" << endl;
+	Buffer typeTmp;
+	static char typeInstruction[] = "Choose Schema Type - String : s, Interger : i, Float : f";
+	typeTmp.Push(typeInstruction, sizeof(typeInstruction));
+	IOManager::GetInstance().Write(typeTmp, stdout);
+	Buffer typeBuffer;
+	IOManager::GetInstance().Read(typeBuffer, stdin, 1);
+
+	// need to fflush?
+	Buffer nameTmp;
+	static char nameInstruction[] = "Write Schema Name : ";
+	nameTmp.Push(nameInstruction, sizeof(nameInstruction));
+	IOManager::GetInstance().Write(nameTmp, stdout);
+	Buffer nameBuffer;
+	IOManager::GetInstance().Read(nameBuffer, stdin);
+
+	char type = *typeBuffer.GetBuffer();
+	const char* name = nameBuffer.GetString();
+	_schema.Add(Schema::ToType(type), name);
 
 	++_schemaIndex;
 }
@@ -133,12 +164,37 @@ void System::Read()
 
 void System::Update()
 {
-	cout << "Update" << endl;
+	auto schemaIter = _schema.CreateIterator();
+	for (int i = 0; i < _schemaCount; ++i)
+	{
+		++schemaIter;
+	}
+	Buffer name = schemaIter.Get().GetName();
+
+	auto dataIter = _datas.Begin();
+	for (int i = 0; i < _dataCount; ++i)
+	{
+		++dataIter;
+	}
+	char instruction[] = "Write data";
+	Buffer instructionBuffer;
+	instructionBuffer.Push(instruction, sizeof(instruction));
+	IOManager::GetInstance().Write(instructionBuffer, stdout);
+
+	Buffer data;
+	IOManager::GetInstance().Read(data);
+
+	dataIter.Get()->Update(name, data);
 }
 
 void System::DeleteData()
 {
-	cout << "Delete Data" << endl;
+	auto iter = _datas.Begin();
+	for (int i = 0; i < _dataCount; ++i)
+	{
+		++iter;
+	}
+	_datas.Erase(iter);
 
 	--_dataIndex;
 	_dataIndex = max(0, _dataIndex);
@@ -146,10 +202,12 @@ void System::DeleteData()
 
 void System::DeleteField()
 {
-	cout << "Delete Schema" << endl;
-
-	--_schemaIndex;
-	_schemaIndex = max(0, _schemaIndex);
+	auto iter = _schema.CreateIterator();
+	for (int i = 0; i < _schemaCount; ++i)
+	{
+		++iter;
+	}
+	_schema.Erase(iter);
 }
 
 void System::Save()

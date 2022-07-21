@@ -54,9 +54,9 @@ public:
 	void Erase(Iterator<SchemaNode>& iterator);
 	Buffer GetSchema();
 
-private:
-	char ToChar(SchemaDataType type);
-	SchemaDataType ToType(char type);
+public:
+	static char ToChar(SchemaDataType type);
+	static SchemaDataType ToType(char type);
 
 public:
 	static const char* GetDefaultValue(SchemaDataType type);

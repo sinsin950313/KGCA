@@ -23,14 +23,6 @@ void Buffer::RequireMemory(int size, const char* eMessage)
 	_currSize = 0;
 	_maxSize = size;
 }
-//
-//void Buffer::MemoryCopy(char* dest, const char* source, int count)
-//{
-//	for (int i = 0; i < count; ++i)
-//	{
-//		dest[i] = source[i];
-//	}
-//}
 
 Buffer::Buffer()
 {
@@ -42,6 +34,16 @@ Buffer::Buffer(const BYTE* pArr, int size)
 {
 	RequireMemory(size, "Buffer create failed");
 	Copy(pArr, size);
+}
+
+Buffer::Buffer(const Buffer& copy)
+{
+	RequireMemory(copy._maxSize, "Buffer create failed");
+	Clear();
+
+	memcpy(_buffer, copy._buffer, copy._currSize);
+	_maxSize = copy._maxSize;
+	_currSize = copy._currSize;
 }
 
 bool Buffer::IsEmpty()
@@ -74,7 +76,7 @@ const BYTE* Buffer::GetString()
 	return _buffer;
 }
 
-const BYTE* Buffer::GetBuffer()
+const BYTE* Buffer::GetBuffer() const
 {
 	return _buffer;
 }
@@ -100,7 +102,7 @@ void Buffer::Clear()
 	_currSize = 0;
 }
 
-int Buffer::GetSize()
+int Buffer::GetSize() const
 {
 	return _currSize;
 }

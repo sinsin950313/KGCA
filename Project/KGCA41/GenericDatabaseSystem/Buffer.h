@@ -18,7 +18,7 @@ private:
 public:
 	Buffer();
 	Buffer(const BYTE* pArr, int size);
-	Buffer(const Buffer& copy) = delete;
+	Buffer(const Buffer& copy);
 	Buffer(Buffer&& move);
 	~Buffer();
 
@@ -26,11 +26,11 @@ public:
 	bool IsEmpty();
 	void Copy(const BYTE* pArr, int size);
 	const char* GetString();
-	const BYTE* GetBuffer();
-	//size : if string, size only characters
+	const BYTE* GetBuffer() const;
+	/// <param name="size">If pArr is string, size only count characters</param>
 	void Push(const BYTE* pArr, int size);
 	void Clear();
-	int GetSize();
+	int GetSize() const;
 
 public:
 	Buffer& operator=(Buffer&& buffer) noexcept;

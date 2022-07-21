@@ -2,17 +2,18 @@
 
 #include "CustomLinkedList.h"
 #include "Data.h"
-
-class Schema;
+#include "Schema.h"
 
 class System
 {
 private:
-	Schema* _schema;
+	Schema _schema;
 	LinkedList<Data> _datas;
 
 private:
-	//Parse Schema and Datas
+	/// <summary>
+	/// Parse Schema and Datas
+	/// </summary>
 	void Parse(FILE* fp);
 	void Create();
 	void Read();

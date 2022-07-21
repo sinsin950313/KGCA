@@ -39,9 +39,8 @@ int main(int argc, char* argv[])
 #include "Buffer.h"
 #include "FileManager.h"
 #include "IOManager.h"
-
-#include "CustomLinkedList.h"
 #include "Schema.h"
+#include "Data.h"
 
 using namespace std;
 
@@ -93,7 +92,7 @@ int main()
 	schema.Add('s', schemaArr);
 	for (auto iter = schema.CreateIterator(); iter != schema.End(); ++iter)
 	{
-		cout << iter.Get().GetType() << ", " << iter.Get().GetName() << endl;
+		cout << (int)(iter.Get().GetType()) << ", " << iter.Get().GetName() << endl;
 	}
 	auto schemaIter = schema.CreateIterator();
 	schema.Erase(schemaIter);
@@ -101,7 +100,7 @@ int main()
 	{
 		if (schemaIter.Get().IsAlive())
 		{
-			cout << schemaIter.Get().GetType() << ", " << schemaIter.Get().GetName() << endl;
+			cout << (int)(schemaIter.Get().GetType()) << ", " << schemaIter.Get().GetName() << endl;
 		}
 	}
 	Buffer schemaTest = schema.GetSchema();
@@ -117,6 +116,45 @@ int main()
 			cout << schemaStr[i];
 		}
 	}
+
+	Schema TestSchema;
+	TestSchema.Add(SchemaDataType::FLOAT, "Float Data");
+	TestSchema.Add(SchemaDataType::INT, "Int Data");
+	Data* data = DataFactory::GetInstance().CreateData(&TestSchema);
+	data->Read();
+	cout << endl;
+	Buffer SerialBuffer = data->Serialize();
+	cout << SerialBuffer.GetString() << endl;
+	TestSchema.Add(SchemaDataType::STRING, "String Data");
+	data->Read();
+	cout << endl;
+	Buffer fieldName;
+	fieldName.Push("String Data", 11);
+	Buffer dataBuffer;
+	dataBuffer.Push("Editted", 7);
+	data->Update(fieldName, dataBuffer);
+	data->Read();
+	cout << endl;
+	fieldName.Clear();
+	fieldName.Push("Float Data", 10);
+	dataBuffer.Clear();
+	dataBuffer.Push("3.141592", 8);
+	data->Update(fieldName, dataBuffer);
+	fieldName.Clear();
+	fieldName.Push("Int Data", 8);
+	dataBuffer.Clear();
+	dataBuffer.Push("3141592", 7);
+	data->Update(fieldName, dataBuffer);
+	Buffer SerializeBuffer = data->Serialize();
+	Data* data1 = DataFactory::GetInstance().CreateData(&TestSchema, SerializeBuffer);
+	data1->Read();
+	cout << endl;
+	auto schemaIter = TestSchema.CreateIterator();
+	TestSchema.Erase(schemaIter);
+	data1->Read();
+	cout << endl;
+	Buffer erasedSerailized = data1->Serialize();
+	cout << erasedSerailized.GetString() << endl;
 }
 
 #endif

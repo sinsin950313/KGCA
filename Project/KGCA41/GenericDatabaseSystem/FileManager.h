@@ -19,7 +19,7 @@ public:
 	void Open(const char* path);
 	void Close();
 	~FileManager();
-	//return file reading finish
+	/// <returns>Check file reading finish</returns>
 	bool Read(Buffer& buffer);
 	void Write(Buffer& buffer);
 	const FILE* Get();

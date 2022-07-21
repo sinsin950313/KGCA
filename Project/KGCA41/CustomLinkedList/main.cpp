@@ -9,16 +9,40 @@ int main()
 	ll.PushFront(4);
 	ll.PushFront(5);
 
+	auto llIter = ll.Begin();
+	while (llIter != ll.End())
+	{
+		cout << llIter.Get() << ", ";
+		++llIter;
+	}
+	cout << endl;
+
 	Custom::LinkedList<int> copy(ll);
-	copy.EraseBack();
-	copy.EraseFront();
+
+	auto copyIter = copy.Begin();
+	while (copyIter != copy.End())
+	{
+		cout << copyIter.Get() << ", ";
+		++copyIter;
+	}
+	cout << endl;
 
 	ll.Clear();
 
-	auto iter = copy.Begin();
-	while (iter != copy.End())
+	auto llClearIter = ll.Begin();
+	while (llClearIter != ll.End())
 	{
-		cout << iter.Get() << ", ";
-		++iter;
+		cout << llClearIter.Get() << ", ";
+		++llClearIter;
+	}
+	cout << endl;
+
+	copy.EraseBack();
+	copy.EraseFront();
+	auto copyEraseIter = copy.Begin();
+	while (copyEraseIter != copy.End())
+	{
+		cout << copyEraseIter.Get() << ", ";
+		++copyEraseIter;
 	}
 }

@@ -2,4 +2,6 @@
 
 #define BYTE char
 
-enum class PrintType { TEMPLATE, CSV, JSON };
+enum class PrintType { CONSOLE, CSV, JSON };
+
+enum class SchemaDataType { DEFAULT_TYPE, INT, FLOAT, STRING };

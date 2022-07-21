@@ -66,11 +66,11 @@ namespace Custom
 		{
 			return *_data;
 		}
-		Node* GetNext()
+		Node* GetNext() const
 		{
 			return _pNext;
 		}
-		Node* GetPrev()
+		Node* GetPrev() const
 		{
 			return _pPrev;
 		}
@@ -246,11 +246,11 @@ namespace Custom
 		{
 			return IsEmpty() ? nullptr : _pHead->GetNext().Get();
 		}
-		Iterator<T> Begin()
+		Iterator<T> Begin() const
 		{
 			return Iterator<T>(_pHead->GetNext());
 		}
-		Iterator<T> End()
+		Iterator<T> End() const
 		{
 			return Iterator<T>(_pTail);
 		}

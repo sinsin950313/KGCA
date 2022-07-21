@@ -7,7 +7,7 @@
 class Buffer
 {
 private:
-	BYTE* _buffer = nullptr;
+	CUSTOM_BYTE* _buffer = nullptr;
 	int _maxSize = 0;
 	int _currSize = 0;
 
@@ -17,18 +17,18 @@ private:
 
 public:
 	Buffer();
-	Buffer(const BYTE* pArr, int size);
+	Buffer(const CUSTOM_BYTE* pArr, int size);
 	Buffer(const Buffer& copy);
 	Buffer(Buffer&& move);
 	~Buffer();
 
 public:
 	bool IsEmpty();
-	void Copy(const BYTE* pArr, int size);
+	void Copy(const CUSTOM_BYTE* pArr, int size);
 	const char* GetString();
-	const BYTE* GetBuffer() const;
+	const CUSTOM_BYTE* GetBuffer() const;
 	/// <param name="size">If pArr is string, size only count characters</param>
-	void Push(const BYTE* pArr, int size);
+	void Push(const CUSTOM_BYTE* pArr, int size);
 	void Clear();
 	int GetSize() const;
 

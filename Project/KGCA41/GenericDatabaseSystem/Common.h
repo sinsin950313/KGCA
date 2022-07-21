@@ -1,6 +1,6 @@
 #pragma once
 
-#define BYTE char
+#define CUSTOM_BYTE char
 
 enum class PrintType { CONSOLE, CSV, JSON };
 

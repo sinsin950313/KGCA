@@ -47,6 +47,7 @@ public:
 	Schema() = default;
 	Schema(Buffer& buffer);
 	Schema(const Schema& copy);
+	void Set(Buffer& copy);
 	Iterator<SchemaNode> CreateIterator() const;
 	Iterator<SchemaNode> End() const;
 	void Add(SchemaDataType type, const char* name);

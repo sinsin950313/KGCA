@@ -72,7 +72,7 @@ FileManager::~FileManager()
 bool FileManager::Read(Buffer& buffer)
 {
 	IOManager::GetInstance().Read(buffer, _fp);
-	return feof(_fp);
+	return feof(_fp) == 0;
 }
 
 void FileManager::Write(Buffer& buffer)
@@ -80,7 +80,7 @@ void FileManager::Write(Buffer& buffer)
 	IOManager::GetInstance().Write(buffer, _fp);
 }
 
-const FILE* FileManager::Get()
+FILE* FileManager::Get()
 {
 	return _fp;
 }

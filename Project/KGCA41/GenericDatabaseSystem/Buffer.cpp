@@ -13,7 +13,7 @@ void Buffer::RequireMemory(int size, const char* eMessage)
 		free(_buffer);
 	}
 
-	_buffer = static_cast<BYTE*>(malloc(sizeof(BYTE) * size));
+	_buffer = static_cast<CUSTOM_BYTE*>(malloc(sizeof(CUSTOM_BYTE) * size));
 	if (_buffer == NULL)
 	{
 		fprintf(stderr, eMessage);
@@ -30,7 +30,7 @@ Buffer::Buffer()
 	Clear();
 }
 
-Buffer::Buffer(const BYTE* pArr, int size)
+Buffer::Buffer(const CUSTOM_BYTE* pArr, int size)
 {
 	RequireMemory(size, "Buffer create failed");
 	Copy(pArr, size);
@@ -51,7 +51,7 @@ bool Buffer::IsEmpty()
 	return _currSize == 0;
 }
 
-void Buffer::Copy(const BYTE* pArr, int size)
+void Buffer::Copy(const CUSTOM_BYTE* pArr, int size)
 {
 	if (_maxSize < size)
 	{
@@ -62,11 +62,11 @@ void Buffer::Copy(const BYTE* pArr, int size)
 	_currSize = size;
 }
 
-const BYTE* Buffer::GetString()
+const CUSTOM_BYTE* Buffer::GetString()
 {
 	if (_buffer[_maxSize - 1] != 0)
 	{
-		BYTE* tmp = _buffer;
+		CUSTOM_BYTE* tmp = _buffer;
 		_buffer = nullptr;
 		RequireMemory(_maxSize + 1, "Make string failed");
 		memset(_buffer, 0, _maxSize);
@@ -76,16 +76,16 @@ const BYTE* Buffer::GetString()
 	return _buffer;
 }
 
-const BYTE* Buffer::GetBuffer() const
+const CUSTOM_BYTE* Buffer::GetBuffer() const
 {
 	return _buffer;
 }
 
-void Buffer::Push(const BYTE* pArr, int size)
+void Buffer::Push(const CUSTOM_BYTE* pArr, int size)
 {
 	if (_maxSize < _currSize + size)
 	{
-		BYTE* tmp = _buffer;
+		CUSTOM_BYTE* tmp = _buffer;
 		int tmpSize = _currSize;
 		_buffer = nullptr;
 		RequireMemory(_currSize + size, "Fail to Push memory to Buffer");
@@ -110,7 +110,7 @@ int Buffer::GetSize() const
 Buffer& Buffer::operator=(Buffer&& buffer) noexcept
 {
 	_maxSize = buffer._maxSize;
-	BYTE* tmp = _buffer;
+	CUSTOM_BYTE* tmp = _buffer;
 	_buffer = buffer._buffer;
 	buffer._buffer = tmp;
 	return *this;

@@ -71,6 +71,23 @@ Schema::Schema(const Schema& copy)
 	_nodes = copy._nodes;
 }
 
+void Schema::Set(Buffer& copy)
+{
+	const char* str = copy.GetBuffer();
+
+	int i = 0;
+	while (i < copy.GetSize())
+	{
+		++i;				//"["
+		char type = str[i];	//type
+		i += 2;				//", "
+		char name[NameLength];
+		memcpy(name, str + i, GetNameLength());
+		++i;				//"]"
+		_nodes.PushBack(SchemaNode(ToType(type), name, KEEPED));
+	}
+}
+
 Iterator<SchemaNode> Schema::CreateIterator() const
 {
 	return _nodes.Begin();

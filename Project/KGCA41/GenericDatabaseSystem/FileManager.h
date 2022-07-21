@@ -22,5 +22,5 @@ public:
 	/// <returns>Check file reading finish</returns>
 	bool Read(Buffer& buffer);
 	void Write(Buffer& buffer);
-	const FILE* Get();
+	FILE* Get();
 };

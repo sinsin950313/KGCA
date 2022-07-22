@@ -126,6 +126,11 @@ namespace Custom
 		{
 			return cmp._ptr != _ptr;
 		}
+
+	private:
+		template<typename>
+		friend class LinkedList;
+		Node<T>* GetNode() { return _ptr; }
 	};
 
 	template<typename T>
@@ -213,6 +218,13 @@ namespace Custom
 			Node<T>* newNode = new Node<T>;
 			newNode->SetData(data);
 			Link(_pHead, newNode, _pHead->GetNext());
+		}
+		void Erase(Iterator<T>& iter)
+		{
+			Node<T>* prev = iter.GetNode()->GetPrev();
+			Node<T>* next = iter.GetNode()->GetNext();
+			Link(prev, next, next->GetNext());
+			delete iter.GetNode();
 		}
 		void EraseBack()
 		{

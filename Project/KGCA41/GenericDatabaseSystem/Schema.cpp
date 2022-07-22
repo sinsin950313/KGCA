@@ -78,12 +78,14 @@ void Schema::Set(Buffer& copy)
 	int i = 0;
 	while (i < copy.GetSize())
 	{
-		++i;				//"["
-		char type = str[i];	//type
-		i += 2;				//", "
+		++i;					//"["
+		char type = str[i];
+		++i;					//type
+		i += 2;					//", "
 		char name[NameLength];
 		memcpy(name, str + i, GetNameLength());
-		++i;				//"]"
+		i += GetNameLength();	//name
+		++i;					//"]"
 		_nodes.PushBack(SchemaNode(ToType(type), name, KEEPED));
 	}
 }

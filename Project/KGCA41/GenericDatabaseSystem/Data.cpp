@@ -60,14 +60,9 @@ Buffer Data::Serialize(const Schema* schema, const Custom::LinkedList<Buffer>& p
 	return ret;
 }
 
-void Data::Read()
+const Custom::LinkedList<Buffer>& Data::GetDatas()
 {
-	Buffer buffer = Serialize();
-
-	const char tmp[] = " - Data Read function : Need to formatting.";
-	buffer.Push(tmp, sizeof(tmp));
-
-	IOManager::GetInstance().Write(buffer, stdout);
+	return _datas;
 }
 
 void Data::Update(Buffer fieldName, Buffer data)

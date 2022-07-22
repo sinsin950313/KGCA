@@ -9,7 +9,7 @@ using namespace Custom;
 
 //C string 20 characters
 static const int NameLength = 21;
-static int GetNameLength();
+int GetNameLength();
 
 static const int DELETED = -1;
 static const int KEEPED = 0;

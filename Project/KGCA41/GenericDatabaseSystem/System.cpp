@@ -3,11 +3,12 @@
 #include <conio.h>
 #include "IOManager.h"
 #include "FileManager.h"
+#include <iomanip>
 
 System::System(const char* path)
 {
 	FileManager::GetInstance().Open(path);
-	Load();
+	Read();
 }
 
 void System::Run()
@@ -72,7 +73,7 @@ void System::Transaction(char order)
 	}
 }
 
-void System::Load()
+void System::Read()
 {
 	Buffer schemaBuffer;
 	FileManager::GetInstance().Read(schemaBuffer);
@@ -91,50 +92,51 @@ void System::Load()
 	}
 }
 
+void System::MoveCarret()
+{
+	COORD cur;
+	cur.X = (1 + _schemaIndex) * GetNameLength();
+	cur.Y = 3 + _dataIndex;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
+}
+
 void System::Up()
 {
-	cout << "Up" << endl;
 	--_dataIndex;
 	_dataIndex = max(0, _dataIndex);
 }
 
 void System::Down()
 {
-	cout << "Down" << endl;
 	++_dataIndex;
-	_dataIndex = min(_dataCount, _dataIndex);
+	_dataIndex = min(_dataCount - 1, _dataIndex);
 }
 
 void System::Left()
 {
-	cout << "Left" << endl;
 	--_schemaIndex;
 	_schemaIndex = max(0, _schemaIndex);
 }
 
 void System::Right()
 {
-	cout << "Right" << endl;
 	++_schemaIndex;
-	_schemaIndex = min(_schemaCount, _schemaIndex);
+	_schemaIndex = min(_schemaCount - 1, _schemaIndex);
 }
 
 void System::CreateData()
 {
-	Buffer tmp;
-	static char instruction[] = "Fill Data";
-	tmp.Push(instruction, sizeof(instruction));
-	IOManager::GetInstance().Write(tmp, stdout);
-
+	system("cls");
 	if (_schemaCount != 0)
 	{
 		_datas.PushBack(DataFactory::GetInstance().CreateData(&_schema));
-		++_dataIndex;
+		++_dataCount;
 	}
 }
 
 void System::CreateField()
 {
+	system("cls");
 	Buffer typeTmp;
 	static char typeInstruction[] = "Choose Schema Type - String : s, Interger : i, Float : f";
 	typeTmp.Push(typeInstruction, sizeof(typeInstruction));
@@ -142,34 +144,33 @@ void System::CreateField()
 	Buffer typeBuffer;
 	IOManager::GetInstance().Read(typeBuffer, stdin, 1);
 
-	// need to fflush?
 	Buffer nameTmp;
 	static char nameInstruction[] = "Write Schema Name : ";
 	nameTmp.Push(nameInstruction, sizeof(nameInstruction));
 	IOManager::GetInstance().Write(nameTmp, stdout);
 	Buffer nameBuffer;
+	char c;
+	while ((c = fgetc(stdin)) == '\n');
+	nameBuffer.Push(&c, 1);
 	IOManager::GetInstance().Read(nameBuffer, stdin);
 
 	char type = *typeBuffer.GetBuffer();
 	const char* name = nameBuffer.GetString();
 	_schema.Add(Schema::ToType(type), name);
 
-	++_schemaIndex;
-}
-
-void System::Read()
-{
-	cout << "Read" << endl;
+	++_schemaCount;
 }
 
 void System::Update()
 {
+	//need to check
 	auto schemaIter = _schema.CreateIterator();
 	for (int i = 0; i < _schemaCount; ++i)
 	{
 		++schemaIter;
 	}
-	Buffer name = schemaIter.Get().GetName();
+	Buffer name;
+	name.Push(schemaIter.Get().GetName(), GetNameLength());
 
 	auto dataIter = _datas.Begin();
 	for (int i = 0; i < _dataCount; ++i)
@@ -189,6 +190,7 @@ void System::Update()
 
 void System::DeleteData()
 {
+	//need to check
 	auto iter = _datas.Begin();
 	for (int i = 0; i < _dataCount; ++i)
 	{
@@ -202,6 +204,7 @@ void System::DeleteData()
 
 void System::DeleteField()
 {
+	//need to check
 	auto iter = _schema.CreateIterator();
 	for (int i = 0; i < _schemaCount; ++i)
 	{
@@ -212,12 +215,84 @@ void System::DeleteField()
 
 void System::Save()
 {
-	cout << "Save" << endl;
+	Buffer schemaBuffer = _schema.GetSchema();
+	char newline = '\n';
+	schemaBuffer.Push(&newline, 1);
+	FileManager::GetInstance().Write(schemaBuffer);
+
+	for (auto iter = _datas.Begin(); iter != _datas.End(); ++iter)
+	{
+		Buffer dataBuffer = iter.Get()->Serialize();
+		dataBuffer.Push(&newline, 1);
+		FileManager::GetInstance().Write(dataBuffer);
+	}
+}
+
+void System::PrintSchema()
+{
+	if (_schemaCount)
+	{
+		cout << "*";	//frame
+		for (int i = 0; i < _schemaCount; ++i)
+		{
+			cout << "*";	//space
+			for (int i = 0; i < GetNameLength(); ++i)
+			{
+				cout << "*";	//field
+			}
+			cout << "*";	//space
+			cout << "*";	//frame
+		}
+		cout << endl;
+
+		cout << "*";
+		for (auto iter = _schema.CreateIterator(); iter != _schema.End(); ++iter)
+		{
+			cout << " " << setw(GetNameLength()) << iter.Get().GetName() << " *";
+		}
+		cout << endl;
+
+		cout << "*";	//frame
+		for (int i = 0; i < _schemaCount; ++i)
+		{
+			cout << "*";	//space
+			for (int i = 0; i < GetNameLength(); ++i)
+			{
+				cout << "*";	//field
+			}
+			cout << "*";	//space
+			cout << "*";	//frame
+		}
+		cout << endl;
+	}
+}
+
+void System::PrintData()
+{
+	if (_dataCount)
+	{
+		for (auto iter = _datas.Begin(); iter != _datas.End(); ++iter)
+		{
+			cout << "*";
+			auto dataLinkedList = iter.Get()->GetDatas();
+			for (auto dataIter = dataLinkedList.Begin(); dataIter != dataLinkedList.End(); ++dataIter)
+			{
+				cout << " " << setw(GetNameLength()) << dataIter.Get().GetString() << " *";
+			}
+			cout << endl;
+		}
+	}
 }
 
 void System::Print()
 {
-	// print Data template
+	COORD cur;
+	cur.X = 0;
+	cur.Y = 0;
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
+
+	PrintSchema();
+	PrintData();
 	InstructionManual();
 }
 
@@ -243,12 +318,11 @@ void System::InstructionManual()
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
 	cout << str2;
 
-	cur.X = 0;
-	cur.Y = 0;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
+	MoveCarret();
 }
 
 void System::Quit()
 {
+	system("cls");
 	exit(0);
 }

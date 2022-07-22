@@ -20,14 +20,17 @@ public:
 	void Run();
 
 private:
+	void PrintSchema();
+	void PrintData();
 	void Print();
 	void Transaction(char order);
 	/// <summary>
 	/// Parse Schema and Datas
 	/// </summary>
-	void Load();
+	void Read();
 
 private:
+	void MoveCarret();
 	void Up();
 	void Down();
 	void Left();
@@ -36,7 +39,6 @@ private:
 private:
 	void CreateData();
 	void CreateField();
-	void Read();
 	void Update();
 	void DeleteData();
 	void DeleteField();

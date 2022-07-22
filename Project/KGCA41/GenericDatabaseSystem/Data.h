@@ -25,7 +25,7 @@ private:
 	static Buffer Serialize(const Schema* schema, const Custom::LinkedList<Buffer>& parallelDatas);
 
 public:
-	void Read();
+	const Custom::LinkedList<Buffer>& GetDatas();
 	void Update(Buffer fieldName, Buffer data);
 	Buffer Serialize();
 

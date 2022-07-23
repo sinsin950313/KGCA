@@ -95,7 +95,7 @@ void System::Read()
 void System::MoveCarret()
 {
 	COORD cur;
-	cur.X = (1 + _schemaIndex) * GetNameLength();
+	cur.X = 1 + (1 + _schemaIndex) * GetNameLength() + (_schemaIndex * 2) + _schemaIndex;
 	cur.Y = 3 + _dataIndex;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
 }
@@ -159,6 +159,11 @@ void System::CreateField()
 	_schema.Add(Schema::ToType(type), name);
 
 	++_schemaCount;
+
+	for (auto iter = _datas.Begin(); iter != _datas.End(); ++iter)
+	{
+		iter.Get()->NewSchema(type);
+	}
 }
 
 void System::Update()
@@ -215,6 +220,8 @@ void System::DeleteField()
 
 void System::Save()
 {
+	FileManager::GetInstance().Reopen();
+
 	Buffer schemaBuffer = _schema.GetSchema();
 	char newline = '\n';
 	schemaBuffer.Push(&newline, 1);

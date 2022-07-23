@@ -28,6 +28,7 @@ public:
 	const Custom::LinkedList<Buffer>& GetDatas();
 	void Update(Buffer fieldName, Buffer data);
 	Buffer Serialize();
+	void NewSchema(char type);
 
 private:
 	friend class DataFactory;

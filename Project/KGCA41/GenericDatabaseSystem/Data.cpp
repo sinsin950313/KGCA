@@ -87,6 +87,13 @@ Buffer Data::Serialize()
 	return Serialize(_schema, _datas);
 }
 
+void Data::NewSchema(char type)
+{
+	Buffer buffer;
+	buffer.Push(Schema::GetDefaultValue(Schema::ToType(type)), Schema::GetDefaultSize(Schema::ToType(type)));
+	_datas.PushBack(buffer);
+}
+
 DataFactory* DataFactory::_instance = nullptr;
 
 DataFactory::~DataFactory()

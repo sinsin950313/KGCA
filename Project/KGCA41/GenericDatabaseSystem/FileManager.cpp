@@ -26,7 +26,6 @@ void FileManager::Open(Buffer& buffer)
 
 void FileManager::Open(const char* path)
 {
-	Buffer buffer;
 	if (path != nullptr)
 	{
 		int size = 0;
@@ -34,15 +33,15 @@ void FileManager::Open(const char* path)
 		{
 			++size;
 		}
-		buffer.Copy(path, size);
+		_path.Copy(path, size);
 	}
 	else
 	{
 		printf("읽을 파일명 : ");
-		IOManager::GetInstance().Read(buffer);
+		IOManager::GetInstance().Read(_path);
 	}
 
-	Open(buffer);
+	Open(_path);
 }
 
 void FileManager::Close()
@@ -63,6 +62,11 @@ FileManager& FileManager::GetInstance()
 	return *_instance;
 }
 
+void FileManager::Reopen()
+{
+	_fp = freopen(_path.GetString(), "w+", _fp);
+}
+
 FileManager::~FileManager()
 {
 	delete _instance;
@@ -77,6 +81,7 @@ bool FileManager::Read(Buffer& buffer)
 
 void FileManager::Write(Buffer& buffer)
 {
+	_fp = freopen(_path.GetString(), "a+", _fp);
 	IOManager::GetInstance().Write(buffer, _fp);
 }
 

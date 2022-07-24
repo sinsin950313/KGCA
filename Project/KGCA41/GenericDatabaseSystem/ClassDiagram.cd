@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Buffer">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AARAAAAgAAAAAACCAAQABAAAAgAAAAQAAAAgAABQSAA=</HashCode>
+      <FileName>Buffer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Data">
+    <Position X="2.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAIABABAAAAAAAAAAAAAIAACAAABAAAAABAAAAAAA=</HashCode>
+      <FileName>Data.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataFactory">
+    <Position X="4" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABEAAAAAAAAAAAAAAAAABAABAAAAAAAAAAQAAAAAAA=</HashCode>
+      <FileName>Data.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="FileManager">
+    <Position X="2.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACEAAAAAAACIABAAAAAAAAgBACAAAAAAQAAAAGABAA=</HashCode>
+      <FileName>FileManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="IOManager">
+    <Position X="4" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAAAgAAAAAAAAAAgBAAAAAAAAAAAAAEAgAA=</HashCode>
+      <FileName>IOManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SchemaNode">
+    <Position X="7.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AQAAIAAAAAAAABQAAAAACAAACAAAAAEAAAAAAAAABAA=</HashCode>
+      <FileName>Schema.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Schema">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAABAAAAAABAECBAAAAAAECABAAAACAAAAAAAAAAA=</HashCode>
+      <FileName>Schema.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="System">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AESgAIJABIAAAAgABAAAAgAgAAAAAEAACACQEABEEQI=</HashCode>
+      <FileName>System.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Custom::Node&lt;T&gt;">
+    <Position X="9.25" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABBAAAAABAAAAAACEAAAEAAAIAAAAAAAEAAEA=</HashCode>
+      <FileName>C:\Users\sinsi\Desktop\KGCA\Project\KGCA41\include\CustomLinkedList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Custom::LinkedList&lt;T&gt;">
+    <Position X="7.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAZAAIAAABAIAAAAgAABBAAAAAEAEAAAAAAgRABABAA=</HashCode>
+      <FileName>C:\Users\sinsi\Desktop\KGCA\Project\KGCA41\include\CustomLinkedList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Custom::Iterator&lt;T&gt;">
+    <Position X="5.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAAAAAAAJAQAEAAQAAEAAAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>C:\Users\sinsi\Desktop\KGCA\Project\KGCA41\include\CustomLinkedList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="PrintType">
+    <Position X="11" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAACAAAAAAgAAAAAAAAAAEAA=</HashCode>
+      <FileName>Common.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SchemaDataType">
+    <Position X="5.75" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAABAAAAAAIAAgAAAAAAAAAAgA=</HashCode>
+      <FileName>Common.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>

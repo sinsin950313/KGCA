@@ -22,12 +22,12 @@ private:
 	/// </summary>
 	/// <param name="serialData">Variable serialData should be all alive.</param>
 	void Parallelize(const Buffer& serialData);
-	static Buffer Serialize(const Schema* schema, const Custom::LinkedList<Buffer>& parallelDatas);
+	static Buffer Serialize(const Schema* schema, const Custom::LinkedList<Buffer>& parallelDatas, bool print);
 
 public:
 	const Custom::LinkedList<Buffer>& GetDatas();
 	void Update(Buffer fieldName, Buffer data);
-	Buffer Serialize();
+	Buffer Serialize(bool print);
 	void NewSchema(char type);
 
 private:

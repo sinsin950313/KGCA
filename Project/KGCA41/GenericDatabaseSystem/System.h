@@ -8,6 +8,7 @@ class System
 {
 private:
 	Schema _schema;
+	int _deletedSchema = 0;
 	int _schemaCount = 0;
 	int _schemaIndex = 0;
 

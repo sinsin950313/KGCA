@@ -40,6 +40,8 @@ void FileManager::Open(const char* path)
 		printf("읽을 파일명 : ");
 		IOManager::GetInstance().Read(_path);
 	}
+	//.CustomGenericDataBase
+	_path.Push(".cgdb", 5);
 
 	Open(_path);
 }

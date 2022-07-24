@@ -121,7 +121,7 @@ void System::Left()
 void System::Right()
 {
 	++_schemaIndex;
-	_schemaIndex = min(_schemaCount - 1, _schemaIndex);
+	_schemaIndex = min(_schemaCount - 1 - _deletedSchema, _schemaIndex);
 }
 
 void System::CreateData()
@@ -168,54 +168,110 @@ void System::CreateField()
 
 void System::Update()
 {
-	//need to check
-	auto schemaIter = _schema.CreateIterator();
-	for (int i = 0; i < _schemaCount; ++i)
+	if (_dataCount)
 	{
-		++schemaIter;
+		auto schemaIter = _schema.CreateIterator();
+		int tmpIndexCounter = 0;
+		while (tmpIndexCounter < _schemaIndex)
+		{
+			if (schemaIter.Get().IsAlive())
+			{
+				++tmpIndexCounter;
+			}
+			++schemaIter;
+		}
+		while (!schemaIter.Get().IsAlive())
+		{
+			++schemaIter;
+		}
+		Buffer name;
+		name.Push(schemaIter.Get().GetName(), GetNameLength());
+
+		auto dataIter = _datas.Begin();
+		for (int i = 0; i < _dataIndex; ++i)
+		{
+			++dataIter;
+		}
+
+		system("cls");
+		PrintSchema();
+		if (_dataCount)
+		{
+			int tmpDataIndex = 0;
+			for (auto iter = _datas.Begin(); iter != _datas.End(); ++iter)
+			{
+				int tmpSchemaIndex = 0;
+				cout << "*";
+				auto dataLinkedList = iter.Get()->GetDatas();
+				auto tmpSchemaIter = _schema.CreateIterator();
+				for (auto dataIter = dataLinkedList.Begin(); dataIter != dataLinkedList.End(); ++dataIter)
+				{
+					if (tmpSchemaIter.Get().IsAlive())
+					{
+						if (tmpSchemaIndex == _schemaIndex && tmpDataIndex == _dataIndex)
+						{
+							cout << " " << setw(GetNameLength()) << "Edit Here" << " *";
+						}
+						else
+						{
+							cout << " " << setw(GetNameLength()) << dataIter.Get().GetString() << " *";
+						}
+						++tmpSchemaIndex;
+					}
+					++tmpSchemaIter;
+				}
+				cout << endl;
+				++tmpDataIndex;
+			}
+		}
+
+		Buffer data;
+		IOManager::GetInstance().Read(data);
+
+		dataIter.Get()->Update(name, data);
 	}
-	Buffer name;
-	name.Push(schemaIter.Get().GetName(), GetNameLength());
-
-	auto dataIter = _datas.Begin();
-	for (int i = 0; i < _dataCount; ++i)
-	{
-		++dataIter;
-	}
-	char instruction[] = "Write data";
-	Buffer instructionBuffer;
-	instructionBuffer.Push(instruction, sizeof(instruction));
-	IOManager::GetInstance().Write(instructionBuffer, stdout);
-
-	Buffer data;
-	IOManager::GetInstance().Read(data);
-
-	dataIter.Get()->Update(name, data);
 }
 
 void System::DeleteData()
 {
-	//need to check
-	auto iter = _datas.Begin();
-	for (int i = 0; i < _dataCount; ++i)
+	if (_dataCount)
 	{
-		++iter;
-	}
-	_datas.Erase(iter);
+		auto iter = _datas.Begin();
+		for (int i = 0; i < _dataIndex; ++i)
+		{
+			++iter;
+		}
+		_datas.Erase(iter);
 
-	--_dataIndex;
-	_dataIndex = max(0, _dataIndex);
+		--_dataCount;
+		_dataCount = max(0, _dataCount);
+	}
 }
 
 void System::DeleteField()
 {
-	//need to check
-	auto iter = _schema.CreateIterator();
-	for (int i = 0; i < _schemaCount; ++i)
+	if (_schemaCount)
 	{
-		++iter;
+		auto schemaIter = _schema.CreateIterator();
+		int tmpIndexCounter = 0;
+		while (tmpIndexCounter < _schemaIndex)
+		{
+			if (schemaIter.Get().IsAlive())
+			{
+				++tmpIndexCounter;
+			}
+			++schemaIter;
+		}
+		while (!schemaIter.Get().IsAlive())
+		{
+			++schemaIter;
+		}
+		_schema.Erase(schemaIter);
+
+		++_deletedSchema;
+		_deletedSchema = min(_schemaCount, _deletedSchema);
+	_schemaIndex = min(_schemaCount - 1 - _deletedSchema, _schemaIndex);
 	}
-	_schema.Erase(iter);
 }
 
 void System::Save()
@@ -229,7 +285,7 @@ void System::Save()
 
 	for (auto iter = _datas.Begin(); iter != _datas.End(); ++iter)
 	{
-		Buffer dataBuffer = iter.Get()->Serialize();
+		Buffer dataBuffer = iter.Get()->Serialize(true);
 		dataBuffer.Push(&newline, 1);
 		FileManager::GetInstance().Write(dataBuffer);
 	}
@@ -237,54 +293,81 @@ void System::Save()
 
 void System::PrintSchema()
 {
-	if (_schemaCount)
+	auto schemaIter = _schema.CreateIterator();
+	if (_schemaCount - _deletedSchema)
 	{
 		cout << "*";	//frame
 		for (int i = 0; i < _schemaCount; ++i)
 		{
-			cout << "*";	//space
-			for (int i = 0; i < GetNameLength(); ++i)
+			if (schemaIter.Get().IsAlive())
 			{
-				cout << "*";	//field
+				cout << "*";	//space
+				for (int i = 0; i < GetNameLength(); ++i)
+				{
+					cout << "*";	//field
+				}
+				cout << "*";	//space
+				cout << "*";	//frame
 			}
-			cout << "*";	//space
-			cout << "*";	//frame
+			++schemaIter;
 		}
 		cout << endl;
 
 		cout << "*";
 		for (auto iter = _schema.CreateIterator(); iter != _schema.End(); ++iter)
 		{
-			cout << " " << setw(GetNameLength()) << iter.Get().GetName() << " *";
+			if (iter.Get().IsAlive())
+			{
+				cout << " " << setw(GetNameLength()) << iter.Get().GetName() << " *";
+			}
 		}
 		cout << endl;
 
+		schemaIter = _schema.CreateIterator();
 		cout << "*";	//frame
 		for (int i = 0; i < _schemaCount; ++i)
 		{
-			cout << "*";	//space
-			for (int i = 0; i < GetNameLength(); ++i)
+			if (schemaIter.Get().IsAlive())
 			{
-				cout << "*";	//field
+				cout << "*";	//space
+				for (int i = 0; i < GetNameLength(); ++i)
+				{
+					cout << "*";	//field
+				}
+				cout << "*";	//space
+				cout << "*";	//frame
 			}
-			cout << "*";	//space
-			cout << "*";	//frame
+			++schemaIter;
 		}
 		cout << endl;
+	}
+	else
+	{
+		system("cls");
+		Buffer instruction;
+		char instructionStr[] = "Create Schema First";
+		instruction.Push(instructionStr, sizeof(instructionStr));
+		IOManager::GetInstance().Write(instruction, stdout);
 	}
 }
 
 void System::PrintData()
 {
-	if (_dataCount)
+	if (_schemaCount - _deletedSchema)
 	{
 		for (auto iter = _datas.Begin(); iter != _datas.End(); ++iter)
 		{
 			cout << "*";
+
+			auto schemaIter = _schema.CreateIterator();
 			auto dataLinkedList = iter.Get()->GetDatas();
 			for (auto dataIter = dataLinkedList.Begin(); dataIter != dataLinkedList.End(); ++dataIter)
 			{
-				cout << " " << setw(GetNameLength()) << dataIter.Get().GetString() << " *";
+				if (schemaIter.Get().IsAlive())
+				{
+					cout << " " << setw(GetNameLength()) << dataIter.Get().GetString() << " *";
+				}
+				++schemaIter;
 			}
 			cout << endl;
 		}
@@ -298,6 +381,7 @@ void System::Print()
 	cur.Y = 0;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), cur);
 
+	system("cls");
 	PrintSchema();
 	PrintData();
 	InstructionManual();

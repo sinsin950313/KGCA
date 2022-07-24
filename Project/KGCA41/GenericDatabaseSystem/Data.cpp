@@ -24,7 +24,7 @@ void Data::Parallelize(const Buffer& serialData)
 	}
 }
 
-Buffer Data::Serialize(const Schema* schema, const Custom::LinkedList<Buffer>& parallelDatas)
+Buffer Data::Serialize(const Schema* schema, const Custom::LinkedList<Buffer>& parallelDatas, bool print)
 {
 	auto schemaIter = schema->CreateIterator();
 	auto dataIter = parallelDatas.Begin();
@@ -32,7 +32,22 @@ Buffer Data::Serialize(const Schema* schema, const Custom::LinkedList<Buffer>& p
 	Buffer ret;
 	while (1)
 	{
-		if (schemaIter.Get().IsAlive())
+		if (print)
+		{
+			if (schemaIter.Get().IsAlive())
+			{
+				if (dataIter != parallelDatas.End())
+				{
+					ret.Push(dataIter.Get().GetBuffer(), dataIter.Get().GetSize());
+				}
+				else
+				{
+					ret.Push(Schema::GetDefaultValue(schemaIter.Get().GetType()), Schema::GetDefaultSize(schemaIter.Get().GetType()));
+				}
+				ret.Push(" ", 1);
+			}
+		}
+		else
 		{
 			if (dataIter != parallelDatas.End())
 			{
@@ -82,9 +97,9 @@ void Data::Update(Buffer fieldName, Buffer data)
 	}
 }
 
-Buffer Data::Serialize()
+Buffer Data::Serialize(bool print)
 {
-	return Serialize(_schema, _datas);
+	return Serialize(_schema, _datas, print);
 }
 
 void Data::NewSchema(char type)
@@ -115,12 +130,15 @@ Data* DataFactory::CreateData(const Schema* schema)
 	Custom::LinkedList<Buffer> defaultDatas;
 	for (auto iter = schema->CreateIterator(); iter != schema->End(); ++iter)
 	{
-		Buffer buffer;
-		buffer.Push(Schema::GetDefaultValue(iter.Get().GetType()), Schema::GetDefaultSize(iter.Get().GetType()));
-		defaultDatas.PushBack(buffer);
+		//if (iter.Get().IsAlive())
+		//{
+			Buffer buffer;
+			buffer.Push(Schema::GetDefaultValue(iter.Get().GetType()), Schema::GetDefaultSize(iter.Get().GetType()));
+			defaultDatas.PushBack(buffer);
+		//}
 	}
 
-	Buffer serializedDatas = Data::Serialize(schema, defaultDatas);
+	Buffer serializedDatas = Data::Serialize(schema, defaultDatas, false);
 
 	return CreateData(schema, serializedDatas);
 }

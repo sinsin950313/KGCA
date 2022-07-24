@@ -223,8 +223,7 @@ namespace Custom
 		{
 			Node<T>* prev = iter.GetNode()->GetPrev();
 			Node<T>* next = iter.GetNode()->GetNext();
-			Link(prev, next, next->GetNext());
-			delete iter.GetNode();
+			unLink(prev, iter.GetNode(), next);
 		}
 		void EraseBack()
 		{

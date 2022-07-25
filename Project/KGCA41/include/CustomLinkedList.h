@@ -4,9 +4,6 @@
 
 using namespace std;
 
-//template<typename T>
-//class Custom::LinkedList<T>;
-
 namespace Custom
 {
 	template<typename T>
@@ -24,17 +21,30 @@ namespace Custom
 			_pPrev = nullptr;
 			_pNext = nullptr;
 		}
-		Node(const Node& node) = delete;
+		Node(const Node& node)
+		{
+			_data = new T(node._data);
+			_pPrev = nullptr;
+			_pNext = nullptr;
+		}
 		Node(Node&& node)
 		{
 			_data = node._data;
+			node._data = nullptr;
 			_pPrev = node._pPrev;
 			_pNext = node._pNext;
 		}
-		Node(const T& data) = delete;
+		Node(const T& data)
+		{
+			_data = new T(data);
+			_pPrev = nullptr;
+			_pNext = nullptr;
+		}
 		Node(T&& data)
 		{
 			_data = data;
+			_pPrev = nullptr;
+			_pNext = nullptr;
 		}
 		~Node()
 		{
@@ -44,22 +54,23 @@ namespace Custom
 	public:
 		void SetData(const T& data)
 		{
-			*_data = data;
+			delete _data;
+			_data = new T(data);
 		}
 		void SetData(T&& data)
 		{
 			delete _data;
 			_data = data;
 		}
-		T* Get()
+		T& Get()
 		{
-			return _data;
+			return *_data;
 		}
-		Node* GetNext()
+		Node* GetNext() const
 		{
 			return _pNext;
 		}
-		Node* GetPrev()
+		Node* GetPrev() const
 		{
 			return _pPrev;
 		}
@@ -82,6 +93,7 @@ namespace Custom
 		Iterator(Iterator&& iter)
 		{
 			_ptr = iter._ptr;
+			iter._ptr = nullptr;
 		}
 		Iterator& operator++(void)
 		{
@@ -95,8 +107,30 @@ namespace Custom
 		}
 		T& Get()
 		{
-			return *_ptr;
+			return _ptr->Get();
 		}
+		void operator=(const Iterator& iter)
+		{
+			_ptr = iter._ptr;
+		}
+		void operator=(Iterator&& iter)
+		{
+			_ptr = iter._ptr;
+			iter._ptr = nullptr;
+		}
+		bool operator==(Iterator<T> cmp)
+		{
+			return cmp._ptr == _ptr;
+		}
+		bool operator!=(Iterator<T> cmp)
+		{
+			return cmp._ptr != _ptr;
+		}
+
+	private:
+		template<typename>
+		friend class LinkedList;
+		Node<T>* GetNode() { return _ptr; }
 	};
 
 	template<typename T>
@@ -105,6 +139,8 @@ namespace Custom
 	private:
 		Node<T>* _pHead;
 		Node<T>* _pTail;
+
+	private:
 		void Link(Node<T>* prev, Node<T>* curr, Node<T>* next)
 		{
 			prev->_pNext = curr;
@@ -129,10 +165,33 @@ namespace Custom
 			_pHead->_pNext = _pTail;
 			_pTail->_pPrev = _pHead;
 		}
+		LinkedList(const LinkedList<T>& copy)
+		{
+			_pHead = new Node<T>;
+			_pTail = new Node<T>;
+			_pHead->_pNext = _pTail;
+			_pTail->_pPrev = _pHead;
+
+			operator=(copy);
+		}
 		~LinkedList()
 		{
+			Clear();
 			delete _pHead;
 			delete _pTail;
+		}
+
+	public:
+		void operator=(const LinkedList<T>& copy)
+		{
+			Clear();
+
+			Node<T>* copyCurr = copy._pHead->GetNext();
+			do
+			{
+				PushBack(copyCurr->Get());
+				copyCurr = copyCurr->GetNext();
+			} while (copyCurr != copy._pTail);
 		}
 
 	public:
@@ -140,7 +199,7 @@ namespace Custom
 		{
 			Node<T>* newNode = new Node<T>;
 			newNode->SetData(data);
-			Link(_pTail->GetPrve(), newNode, _pTail);
+			Link(_pTail->GetPrev(), newNode, _pTail);
 		}
 		void PushBack(T&& data)
 		{
@@ -159,6 +218,12 @@ namespace Custom
 			Node<T>* newNode = new Node<T>;
 			newNode->SetData(data);
 			Link(_pHead, newNode, _pHead->GetNext());
+		}
+		void Erase(Iterator<T>& iter)
+		{
+			Node<T>* prev = iter.GetNode()->GetPrev();
+			Node<T>* next = iter.GetNode()->GetNext();
+			unLink(prev, iter.GetNode(), next);
 		}
 		void EraseBack()
 		{
@@ -192,13 +257,20 @@ namespace Custom
 		{
 			return IsEmpty() ? nullptr : _pHead->GetNext().Get();
 		}
-		Iterator<T> Begin()
+		Iterator<T> Begin() const
 		{
-			return Iterator<Node<T>>(_pHead->GetNext());
+			return Iterator<T>(_pHead->GetNext());
 		}
-		Iterator<T> End()
+		Iterator<T> End() const
 		{
-			return Iterator<Node<T>>(_pTail->GetPrev());
+			return Iterator<T>(_pTail);
+		}
+		void Clear()
+		{
+			while (!IsEmpty())
+			{
+				EraseFront();
+			}
 		}
 	};
 }

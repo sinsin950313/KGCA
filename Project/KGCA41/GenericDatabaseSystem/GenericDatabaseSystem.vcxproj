@@ -84,6 +84,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(ProjectDir)\..\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -148,7 +151,6 @@
   <ItemGroup>
     <ClCompile Include="Buffer.cpp" />
     <ClCompile Include="Data.cpp" />
-    <ClCompile Include="DataFactory.cpp" />
     <ClCompile Include="FileManager.cpp" />
     <ClCompile Include="IOManager.cpp" />
     <ClCompile Include="main.cpp" />
@@ -159,7 +161,6 @@
     <ClInclude Include="Buffer.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="Data.h" />
-    <ClInclude Include="DataFactory.h" />
     <ClInclude Include="FileManager.h" />
     <ClInclude Include="IOManager.h" />
     <ClInclude Include="Schema.h" />
@@ -169,6 +170,9 @@
     <ProjectReference Include="..\CustomLinkedList\CustomLinkedList.vcxproj">
       <Project>{9812f42c-0901-43a5-87b6-906bcb9c19b3}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

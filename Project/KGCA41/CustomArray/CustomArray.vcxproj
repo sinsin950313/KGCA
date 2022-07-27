@@ -122,9 +122,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy "*.h" "..\\include"
+      <Command>copy "*.h" "$(ProjectDir)\..\include"
 
-copy "..\\x64\\Debug\\CustomArray.lib" "..\\lib\\"</Command>
+
+copy "$(ProjectDir)\..\x64\Debug\CustomArray.lib" "$(ProjectDir)\..\lib"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

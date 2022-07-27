@@ -1,4 +1,4 @@
-#include "QuickSort.h"
+#include "MergeSort.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -9,17 +9,17 @@ const int LENGTH = 100;
 
 int main()
 {
-	cout << "Quick Sort" << endl;
-	QuickSort quick(LENGTH);
-	//srand(static_cast<unsigned int>(time(NULL)));
+	cout << "Merge Sort" << endl;
+	MergeSort merge(LENGTH);
+	srand(static_cast<unsigned int>(time(NULL)));
 	for (int i = 0; i < LENGTH; ++i)
 	{
-		quick.Push(rand() % 101);
+		merge.Push(rand() % 101);
 	}
 
-	quick.Sort();
+	merge.Sort();
 
-	const int* pArr = quick.Get();
+	const int* pArr = merge.Get();
 	for (int i = 0; i < LENGTH; ++i)
 	{
 		cout << pArr[i] << ", ";

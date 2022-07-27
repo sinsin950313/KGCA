@@ -10,18 +10,25 @@ void ShellSort::Sort()
 	int gap = _size;
 	while ((gap = GetGap(gap)))
 	{
-		for (int i = 0; i < gap; ++i)
+		for (int repeat = 0; repeat < gap; ++repeat)
 		{
-			int tmp = _arr[i];
-			int index = i + gap;
-			for (index; index < _size; index = index + gap)
+			for (int i = gap + repeat; i < _size; i += gap)
 			{
-				if (tmp < _arr[index])
+				int tmp = _arr[i];
+				int compIndex = i - gap;
+				for (compIndex; 0 <= compIndex; compIndex -= gap)
 				{
-					_arr[index - gap] = _arr[index];
+					if (tmp < _arr[compIndex])
+					{
+						_arr[compIndex + gap] = _arr[compIndex];
+					}
+					else
+					{
+						break;
+					}
 				}
+				_arr[compIndex + gap] = tmp;
 			}
-			_arr[index] = tmp;
 		}
 	}
 }

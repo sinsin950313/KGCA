@@ -1,4 +1,4 @@
-#include "ShellSort.h"
+#include "QuickSort.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -9,17 +9,17 @@ const int LENGTH = 100;
 
 int main()
 {
-	cout << "Shell Sort" << endl;
-	ShellSort shell(LENGTH);
+	cout << "Quick Sort" << endl;
+	QuickSort quick(LENGTH);
 	srand(static_cast<unsigned int>(time(NULL)));
 	for (int i = 0; i < LENGTH; ++i)
 	{
-		shell.Push(rand() % 101);
+		quick.Push(rand() % 101);
 	}
 
-	shell.Sort();
+	quick.Sort();
 
-	const int* pArr = shell.Get();
+	const int* pArr = quick.Get();
 	for (int i = 0; i < LENGTH; ++i)
 	{
 		cout << pArr[i] << ", ";

@@ -1,4 +1,4 @@
-#include "ShellSort.h"
+#include "HeapSort.h"
 #include <cstdlib>
 #include <ctime>
 #include <iostream>
@@ -9,17 +9,17 @@ const int LENGTH = 100;
 
 int main()
 {
-	cout << "Shell Sort" << endl;
-	ShellSort shell(LENGTH);
+	cout << "Heap Sort" << endl;
+	HeapSort heap(LENGTH);
 	srand(static_cast<unsigned int>(time(NULL)));
 	for (int i = 0; i < LENGTH; ++i)
 	{
-		shell.Push(rand() % 101);
+		heap.Push(rand() % 101);
 	}
 
-	shell.Sort();
+	heap.Sort();
 
-	const int* pArr = shell.Get();
+	const int* pArr = heap.Get();
 	for (int i = 0; i < LENGTH; ++i)
 	{
 		cout << pArr[i] << ", ";

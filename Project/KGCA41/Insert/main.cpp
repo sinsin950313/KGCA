@@ -9,6 +9,7 @@ const int LENGTH = 100;
 
 int main()
 {
+	cout << "Insert Sort" << endl;
 	InsertSort insert(LENGTH);
 	srand(static_cast<unsigned int>(time(NULL)));
 	for (int i = 0; i < LENGTH; ++i)

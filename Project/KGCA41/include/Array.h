@@ -12,7 +12,7 @@ namespace Custom
 	public:
 		Array(int length);
 		~Array();
-		void Push(int val);
+		virtual void Push(int val);
 		const int* Get();
 	};
 }

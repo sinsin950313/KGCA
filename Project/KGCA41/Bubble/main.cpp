@@ -9,6 +9,7 @@ const int LENGTH = 100;
 
 int main()
 {
+	cout << "Bubble Sort" << endl;
 	BubbleSort bubble(LENGTH);
 	srand(static_cast<unsigned int>(time(NULL)));
 	for (int i = 0; i < LENGTH; ++i)

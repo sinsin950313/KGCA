@@ -78,7 +78,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
     <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\..\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>

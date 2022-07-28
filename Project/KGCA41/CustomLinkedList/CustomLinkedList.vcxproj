@@ -85,8 +85,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>..\Output</OutDir>
-    <IntDir>..\Output\Debug</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -132,8 +130,9 @@
     </Link>
     <PostBuildEvent>
       <Command>copy "*.h" "$(ProjectDir)\..\include"
+md "$(ProjectDir)\..\lib\"
 
-copy "$(ProjectDir)\..\Output\CustomLinkedList.lib" "$(ProjectDir)\..\lib"</Command>
+copy "$(ProjectDir)\..\x64\Debug\CustomLinkedList.lib" "$(ProjectDir)\..\lib\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

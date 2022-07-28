@@ -249,13 +249,13 @@ namespace Custom
 		{
 			return _pHead->GetNext() == _pTail;
 		}
-		T* GetFront()
+		T GetFront()
 		{
-			return IsEmpty() ? nullptr : _pTail->GetPrev().Get();
+			return IsEmpty() ? nullptr : _pTail->GetPrev()->Get();
 		}
-		T* GetBack()
+		T GetBack()
 		{
-			return IsEmpty() ? nullptr : _pHead->GetNext().Get();
+			return IsEmpty() ? nullptr : _pHead->GetNext()->Get();
 		}
 		Iterator<T> Begin() const
 		{

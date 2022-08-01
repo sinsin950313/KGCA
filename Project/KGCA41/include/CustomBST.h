@@ -74,7 +74,7 @@ public:
 		{
 			Node* pNode = q.front();
 			q.pop();
-			
+
 			if (pNode->GetLeft() != nullptr)
 			{
 				q.push(pNode->GetLeft());
@@ -155,7 +155,7 @@ public:
 		Node* pLeft = node->GetLeft();
 		Node* pRight = node->GetRight();
 
-		if((pLeft != nullptr && !pLeft->IsDeleted()) && (pRight != nullptr && !pRight->IsDeleted()))
+		if ((pLeft != nullptr && !pLeft->IsDeleted()) && (pRight != nullptr && !pRight->IsDeleted()))
 		{
 			Node* pGrandChild = nullptr;
 			if (pLeft->GetRight() != nullptr && !pLeft->GetRight()->IsDeleted())
@@ -181,7 +181,7 @@ public:
 			node->SetData(pLeft->GetData());
 			Erase(node->GetLeft());
 		}
-		else if(pRight != nullptr && !pRight->IsDeleted())
+		else if (pRight != nullptr && !pRight->IsDeleted())
 		{
 			node->SetData(pRight->GetData());
 			Erase(node->GetRight());
@@ -221,7 +221,25 @@ public:
 	}
 
 protected:
-	void SetLeft(Node* pNode, Node* left) { pNode->SetLeft(left); }
-	void SetRight(Node* pNode, Node* right) { pNode->SetRight(right); }
-	void SetParent(Node* pNode, Node* parent) { pNode->SetParent(parent); }
+	void SetLeft(Node* pNode, Node* left)
+	{
+		if (pNode != nullptr)
+		{
+			pNode->SetLeft(left);
+		}
+	}
+	void SetRight(Node* pNode, Node* right)
+	{
+		if (pNode != nullptr)
+		{
+			pNode->SetRight(right);
+		}
+	}
+	void SetParent(Node* pNode, Node* parent)
+	{
+		if (pNode != nullptr)
+		{
+			pNode->SetParent(parent);
+		}
+	}
 };

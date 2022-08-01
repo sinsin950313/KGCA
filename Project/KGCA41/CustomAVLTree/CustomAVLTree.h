@@ -11,7 +11,7 @@ private:
 	}
 	int GetHeight(Node* node)
 	{
-		return node != nullptr ? node->GetHeight() : 0;
+		return (node != nullptr && !node->IsDeleted()) ? node->GetHeight() : 0;
 	}
 	void Balancing(Node* w)
 	{
@@ -36,45 +36,61 @@ private:
 		{
 			if (y->GetRight() == z)
 			{
-				SetLeft(x, LeftRotate(y, z));
+				Node* newTopNode = LeftRotate(y, z);
+				SetLeft(x, newTopNode);
+				SetParent(newTopNode, x);
+
 				Node* tmp = y;
 				y = z;
 				z = tmp;
 			}
-			Node* tmp = RightRotate(x, y);
-			if (x->GetParent() != nullptr)
+
+			Node* grand = x->GetParent();
+			Node* newTopNode = RightRotate(x, y);
+
+			if (grand != nullptr)
 			{
-				if (x->GetParent()->GetRight() == x)
+				if (grand->GetRight() == x)
 				{
-					SetRight(x->GetParent(), y);
+					SetRight(grand, newTopNode);
 				}
 				else
 				{
-					SetLeft(x->GetParent(), y);
+					SetLeft(grand, newTopNode);
 				}
 			}
+
+			SetParent(newTopNode, grand);
 		}
 		else
 		{
 			if (y->GetLeft() == z)
 			{
-				SetRight(x, RightRotate(y, z));
+				Node* newTopNode = RightRotate(y, z);
+				SetRight(x, newTopNode);
+				SetParent(newTopNode, x);
+
 				Node* tmp = y;
 				y = z;
 				z = tmp;
 			}
-			Node* tmp = LeftRotate(x, y);
-			if (x->GetParent() != nullptr)
+
+			Node* grand = x->GetParent();
+			Node* newTopNode = LeftRotate(x, y);
+
+			if (grand != nullptr)
 			{
-				if (x->GetParent()->GetRight() == x)
+				if (grand->GetRight() == x)
 				{
-					SetRight(x->GetParent(), y);
+					SetRight(grand, newTopNode);
 				}
 				else
 				{
-					SetLeft(x->GetParent(), y);
+					SetLeft(grand, newTopNode);
 				}
 			}
+
+			SetParent(newTopNode, grand);
 		}
 
 		if (x == _root)
@@ -87,18 +103,18 @@ private:
 	{
 		Node* tmp = child->GetLeft();
 		SetLeft(child, parent);
-		//SetParent(child, parent->GetParent());
-		//SetParent(parent, child);
+		SetParent(parent, child);
 		SetRight(parent, tmp);
+		SetParent(tmp, parent);
 		return child;
 	}
 	Node* RightRotate(Node* parent, Node* child)
 	{
 		Node* tmp = child->GetRight();
 		SetRight(child, parent);
-		//SetParent(child, parent->GetParent());
-		//SetParent(parent, child);
+		SetParent(parent, child);
 		SetLeft(parent, tmp);
+		SetParent(tmp, parent);
 		return child;
 	}
 

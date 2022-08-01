@@ -8,6 +8,7 @@ using namespace std;
 class Node
 {
 private:
+	Node* _parent = nullptr;
 	Node* _left = nullptr;
 	Node* _right = nullptr;
 	int _data;
@@ -17,9 +18,11 @@ public:
 	~Node() { cout << _data << " is destroyed" << endl; }
 	Node* GetLeft() { return _left; }
 	Node* GetRight() { return _right; }
+	Node* GetParent() { return _parent; }
 	int GetData() { return _data; }
 
 private:
+	void SetParent(Node* node) { _parent = node; }
 	void SetLeft(Node* node) { _left = node; }
 	void SetRight(Node* node) { _right = node; }
 
@@ -106,8 +109,10 @@ public:
 				{
 					if (pNode->GetRight() == nullptr)
 					{
-						pNode->SetRight(new Node(val));
-					break;
+						Node* newNode = new Node(val);
+						pNode->SetRight(newNode);
+						newNode->SetParent(pNode);
+						break;
 					}
 					else
 					{
@@ -118,8 +123,10 @@ public:
 				{
 					if (pNode->GetLeft() == nullptr)
 					{
-						pNode->SetLeft(new Node(val));
-					break;
+						Node* newNode = new Node(val);
+						pNode->SetLeft(newNode);
+						newNode->SetParent(pNode);
+						break;
 					}
 					else
 					{
@@ -216,4 +223,5 @@ public:
 protected:
 	void SetLeft(Node* pNode, Node* left) { pNode->SetLeft(left); }
 	void SetRight(Node* pNode, Node* right) { pNode->SetRight(right); }
+	void SetParent(Node* pNode, Node* parent) { pNode->SetParent(parent); }
 };

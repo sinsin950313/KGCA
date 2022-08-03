@@ -15,7 +15,7 @@ private:
 
 public:
 	Node(int data) : _data(data) { _deleted = false; }
-	~Node() { cout << _data << " is destroyed" << endl; }
+	virtual ~Node() { cout << _data << " is destroyed" << endl; }
 	Node* GetLeft() { return _left; }
 	Node* GetRight() { return _right; }
 	Node* GetParent() { return _parent; }
@@ -61,6 +61,7 @@ class BST
 {
 protected:
 	Node* _root = nullptr;
+	virtual Node* GetNewNode(int val) { return new Node(val); }
 
 public:
 	BST() = default;
@@ -92,7 +93,7 @@ public:
 	{
 		if (_root == nullptr)
 		{
-			_root = new Node(val);
+			_root = GetNewNode(val);
 		}
 		else
 		{
@@ -109,7 +110,7 @@ public:
 				{
 					if (pNode->GetRight() == nullptr)
 					{
-						Node* newNode = new Node(val);
+						Node* newNode = GetNewNode(val);
 						pNode->SetRight(newNode);
 						newNode->SetParent(pNode);
 						break;
@@ -123,7 +124,7 @@ public:
 				{
 					if (pNode->GetLeft() == nullptr)
 					{
-						Node* newNode = new Node(val);
+						Node* newNode = GetNewNode(val);
 						pNode->SetLeft(newNode);
 						newNode->SetParent(pNode);
 						break;
@@ -221,7 +222,7 @@ public:
 	}
 
 protected:
-	void SetLeft(Node* pNode, Node* left) { pNode->SetLeft(left); }
-	void SetRight(Node* pNode, Node* right) { pNode->SetRight(right); }
-	void SetParent(Node* pNode, Node* parent) { pNode->SetParent(parent); }
+	void SetLeft(Node* pNode, Node* left) { if(pNode != nullptr) pNode->SetLeft(left); }
+	void SetRight(Node* pNode, Node* right) { if(pNode != nullptr) pNode->SetRight(right); }
+	void SetParent(Node* pNode, Node* parent) { if(pNode != nullptr) pNode->SetParent(parent); }
 };

@@ -17,4 +17,15 @@ int main()
 	//rb.Erase(rb.Find(5));
 	//rb.Erase(rb.Find(6));
 	//rb.Erase(rb.Find(7));
+
+	RBTree rbr;
+	rbr.insert(9);
+	rbr.insert(8);
+	rbr.insert(7);
+	rbr.insert(6);
+	rbr.insert(5);
+	rbr.insert(4);
+	rbr.insert(3);
+	rbr.insert(2);
+	rbr.insert(1);
 }

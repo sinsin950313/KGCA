@@ -41,29 +41,37 @@ private:
 				else if (child == child->GetParent()->GetRight())
 				{
 					Node* parent = child->GetParent();
-					child = static_cast<RBNode*>(child->GetParent());
-					Node* newTopNode = LeftRotate(child->GetParent(), child);
-					SetRight(parent, newTopNode);
-				}
-				if (child->GetParent() != nullptr)
-				{
-					static_cast<RBNode*>(child->GetParent())->SetColor(RBColor::BLACK);
-					if (child->GetParent()->GetParent() != nullptr)
-					{
-						grand = static_cast<RBNode*>(child->GetParent()->GetParent());
-						grand->SetColor(RBColor::RED);
+					Node* newTopNode = LeftRotate(parent, child);
+					SetLeft(grand, newTopNode);
 
-						Node* gGrand = grand->GetParent();
-						Node* newTopNode = RightRotate(grand, child->GetParent());
-						SetLeft(grand, newTopNode);
-						if (gGrand != nullptr)
+					Node* tmp = parent;
+					parent = child;
+					child = static_cast<RBNode*>(tmp);
+				}
+				else
+				{
+					Node* parent = child->GetParent();
+					Node* gGrand = grand->GetParent();
+					Node* newTopNode = RightRotate(grand, parent);
+
+					SetParent(newTopNode, gGrand);
+					static_cast<RBNode*>(newTopNode)->SetColor(RBColor::BLACK);
+					grand->SetColor(RBColor::RED);
+
+					if(gGrand == nullptr)
+					{
+						_root = newTopNode;
+						SetParent(_root, nullptr);
+					}
+					else
+					{
+						if (grand == gGrand->GetLeft())
 						{
-							SetParent(newTopNode, gGrand);
+							SetLeft(gGrand, newTopNode);
 						}
 						else
 						{
-							_root = newTopNode;
-							SetParent(_root, nullptr);
+							SetRight(gGrand, newTopNode);
 						}
 					}
 				}
@@ -82,29 +90,37 @@ private:
 				else if (child == child->GetParent()->GetLeft())
 				{
 					Node* parent = child->GetParent();
-					child = static_cast<RBNode*>(child->GetParent());
-					Node* newTopNode = RightRotate(child->GetParent(), child);
-					SetLeft(parent, newTopNode);
-				}
-				if (child->GetParent() != nullptr)
-				{
-					static_cast<RBNode*>(child->GetParent())->SetColor(RBColor::BLACK);
-					if (child->GetParent()->GetParent() != nullptr)
-					{
-						grand = static_cast<RBNode*>(child->GetParent()->GetParent());
-						grand->SetColor(RBColor::RED);
+					Node* newTopNode = RightRotate(parent, child);
+					SetRight(grand, newTopNode);
 
-						Node* gGrand = grand->GetParent();
-						Node* newTopNode = LeftRotate(grand, child->GetParent());
-						SetRight(gGrand, newTopNode);
-						if (gGrand != nullptr)
+					Node* tmp = parent;
+					parent = child;
+					child = static_cast<RBNode*>(tmp);
+				}
+				else
+				{
+					Node* parent = child->GetParent();
+					Node* gGrand = grand->GetParent();
+					Node* newTopNode = LeftRotate(grand, parent);
+
+					SetParent(newTopNode, gGrand);
+					static_cast<RBNode*>(newTopNode)->SetColor(RBColor::BLACK);
+					grand->SetColor(RBColor::RED);
+
+					if(gGrand == nullptr)
+					{
+						_root = newTopNode;
+						SetParent(_root, nullptr);
+					}
+					else
+					{
+						if (grand == gGrand->GetLeft())
 						{
-							SetParent(newTopNode, gGrand);
+							SetLeft(gGrand, newTopNode);
 						}
 						else
 						{
-							_root = newTopNode;
-							SetParent(_root, nullptr);
+							SetRight(gGrand, newTopNode);
 						}
 					}
 				}
@@ -140,11 +156,6 @@ public:
 		RBNode* node = static_cast<RBNode*>(Find(val));
 		node->SetColor(RBColor::RED);
 		Balancing(node);
-
-		if (node == _root)
-		{
-			node->SetColor(RBColor::BLACK);
-		}
 	}
 	void Erase(Node* node) override
 	{

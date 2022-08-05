@@ -51,6 +51,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomRedBlackTree", "Custo
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomHashTable", "CustomHashTable\CustomHashTable.vcxproj", "{4FA45B20-A9F8-499B-B428-BD620364B862}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "QuadTree", "QuadTree\QuadTree.vcxproj", "{AD8D7D49-E8AF-47EF-924B-42F4ED77AD7C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -211,6 +213,14 @@ Global
 		{4FA45B20-A9F8-499B-B428-BD620364B862}.Release|x64.Build.0 = Release|x64
 		{4FA45B20-A9F8-499B-B428-BD620364B862}.Release|x86.ActiveCfg = Release|Win32
 		{4FA45B20-A9F8-499B-B428-BD620364B862}.Release|x86.Build.0 = Release|Win32
+		{AD8D7D49-E8AF-47EF-924B-42F4ED77AD7C}.Debug|x64.ActiveCfg = Debug|x64
+		{AD8D7D49-E8AF-47EF-924B-42F4ED77AD7C}.Debug|x64.Build.0 = Debug|x64
+		{AD8D7D49-E8AF-47EF-924B-42F4ED77AD7C}.Debug|x86.ActiveCfg = Debug|Win32
+		{AD8D7D49-E8AF-47EF-924B-42F4ED77AD7C}.Debug|x86.Build.0 = Debug|Win32
+		{AD8D7D49-E8AF-47EF-924B-42F4ED77AD7C}.Release|x64.ActiveCfg = Release|x64
+		{AD8D7D49-E8AF-47EF-924B-42F4ED77AD7C}.Release|x64.Build.0 = Release|x64
+		{AD8D7D49-E8AF-47EF-924B-42F4ED77AD7C}.Release|x86.ActiveCfg = Release|Win32
+		{AD8D7D49-E8AF-47EF-924B-42F4ED77AD7C}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -235,6 +245,7 @@ Global
 		{42E83540-3390-43F0-BDF1-B05FB36C6FBF} = {900F76E2-14F2-4D02-ABEE-AE90258A7EA0}
 		{9F627D17-1B57-49A9-9515-6A371A8C4176} = {900F76E2-14F2-4D02-ABEE-AE90258A7EA0}
 		{4FA45B20-A9F8-499B-B428-BD620364B862} = {900F76E2-14F2-4D02-ABEE-AE90258A7EA0}
+		{AD8D7D49-E8AF-47EF-924B-42F4ED77AD7C} = {900F76E2-14F2-4D02-ABEE-AE90258A7EA0}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8417923F-3B4B-4B1F-A746-4AC7EECFE3E6}

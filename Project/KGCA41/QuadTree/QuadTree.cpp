@@ -1,17 +1,17 @@
 #include "QuadTree.h"
 
-Node::Node(int xStart, int yStart, int width, int height, int depth, int maxDepth)
-	: _xStart(xStart), _yStart(yStart), _width(width), _height(height), _depth(depth)
+QuadTree::Node::Node(int left, int top, int width, int height, int depth, int maxDepth)
+	: _rect(left, top, width, height), _depth(depth)
 {
 	if (depth + 1 < maxDepth)
 	{
 		width = width >> 1;
 		height = height >> 1;
 
-		_child[0] = new Node(xStart, yStart, width, height, depth + 1, maxDepth);
-		_child[1] = new Node(xStart + width, yStart, width, height, depth + 1, maxDepth);
-		_child[2] = new Node(xStart, yStart + height, width, height, depth + 1, maxDepth);
-		_child[3] = new Node(xStart + width, yStart + height, width, height, depth + 1, maxDepth);
+		_child[0] = new Node(left, top, width, height, depth + 1, maxDepth);
+		_child[1] = new Node(left + width, top, width, height, depth + 1, maxDepth);
+		_child[2] = new Node(left, top + height, width, height, depth + 1, maxDepth);
+		_child[3] = new Node(left + width, top + height, width, height, depth + 1, maxDepth);
 	}
 	else
 	{
@@ -22,7 +22,7 @@ Node::Node(int xStart, int yStart, int width, int height, int depth, int maxDept
 	}
 }
 
-Node::~Node()
+QuadTree::Node::~Node()
 {
 	for (int i = 0; i < 4; ++i)
 	{
@@ -30,15 +30,16 @@ Node::~Node()
 	}
 }
 
-bool Node::IsIn(Object* object)
+bool QuadTree::Node::IsIn(Object* object)
 {
-	if (GetXStart() <= object->GetXStart())
+	const Rect* volume = static_cast<const Rect*>(object->GetVolume());
+	if (GetLeft() <= volume->GetLeft())
 	{
-		if (object->GetXEnd() <= GetXEnd())
+		if (volume->GetRight() <= GetRight())
 		{
-			if (GetYStart() <= object->GetYStart())
+			if (GetTop() <= volume->GetTop())
 			{
-				if (object->GetYEnd() <= GetYEnd())
+				if (volume->GetBottom() <= GetBottom())
 				{
 					return true;
 				}
@@ -48,7 +49,7 @@ bool Node::IsIn(Object* object)
 	return false;
 }
 
-void Node::AddObject(Object* object)
+void QuadTree::Node::AddObject(Object* object)
 {
 	if (IsIn(object))
 	{
@@ -64,29 +65,40 @@ void Node::AddObject(Object* object)
 
 		if (!success)
 		{
-			_objects.push_back(object);
+			_containingObjects.push_back(object);
 		}
 	}
 }
 
-Object::Object(int width, int height)
+std::vector<Object*> QuadTree::Node::GetCollidedObjects(Object* obj)
 {
-	_xStart = rand() % width;
-	_width = 2.0f + rand() % 10;
-	if (width < _xStart + _width)
+	const Rect* objectVolume = obj->GetVolume();
+	std::vector<Object*> ret;
+	for (auto iter = _containingObjects.begin(); iter != _containingObjects.end(); ++iter)
 	{
-		_xStart = width - _width;
+		if (Collision::IsCollide(_rect, *objectVolume))
+		{
+			ret.push_back(*iter);
+		}
 	}
 
-	_yStart = rand() % height;
-	_height = 2.0f + rand() % 10;
-	if (height < _yStart + _height)
+	for (int i = 0; i < 4; ++i)
 	{
-		_yStart = height - _height;
+		if (Collision::IsCollide(*_child[i]->GetVolume(), *objectVolume))
+		{
+			auto collisionObjects = _child[i]->GetCollidedObjects(obj);
+			ret.insert(ret.end(), collisionObjects.begin(), collisionObjects.end());
+		}
 	}
+	return ret;
 }
 
 void QuadTree::AddObject(Object* object)
 {
 	_root->AddObject(object);
+}
+
+std::vector<Object*> QuadTree::GetCollidedObjects(Object* obj)
+{
+	return _root->GetCollidedObjects(obj);
 }

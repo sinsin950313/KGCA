@@ -13,7 +13,7 @@ int main()
 	std::vector<Object*> objects;
 	for (int i = 0; i < objectCount; ++i)
 	{
-		Object* object = new Object(mapWidth, mapHeight);
+		Object* object = new Object(/*mapWidth, mapHeight*/);
 		objects.push_back(object);
 		qt.AddObject(object);
 	}

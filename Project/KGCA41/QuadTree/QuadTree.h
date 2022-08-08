@@ -1,8 +1,10 @@
 #pragma once
 
 #include <vector>
-#include "Object.h"
+#include "Rect.h"
 #include "VolumeInterface.h"
+
+class Object;
 
 class QuadTree
 {
@@ -16,15 +18,15 @@ private:
 		std::vector<Object*> _containingObjects;
 
 	private:
-		int GetLeft() { return _rect.GetLeft(); }
-		int GetTop() { return _rect.GetTop(); }
-		int GetRight() { return _rect.GetRight(); }
-		int GetBottom() { return _rect.GetBottom(); }
-		int GetWidth() { return _rect.GetWidth(); }
-		int GetHeight() { return _rect.GetHeight(); }
+		float GetLeft() { return _rect.GetLeft(); }
+		float GetTop() { return _rect.GetTop(); }
+		float GetRight() { return _rect.GetRight(); }
+		float GetBottom() { return _rect.GetBottom(); }
+		float GetWidth() { return _rect.GetWidth(); }
+		float GetHeight() { return _rect.GetHeight(); }
 
 	public:
-		Node(int left, int top, int width, int height, int depth, int maxDepth);
+		Node(float left, float top, float width, float height, float depth, int maxDepth);
 		~Node();
 		//Consider totally in stuation, not overlap
 		bool IsIn(Object* object);
@@ -40,7 +42,7 @@ private:
 	int _maxDepth;
 
 public:
-	QuadTree(int width, int height, int maxDepth) : _maxDepth(maxDepth) { _root = new Node(0, 0, width, height, 0, maxDepth); }
+	QuadTree(float width, float height, int maxDepth) : _maxDepth(maxDepth) { _root = new Node(0, 0, width, height, 0, maxDepth); }
 	~QuadTree() { delete _root; }
 	void AddObject(Object* object);
 	std::vector<Object*> GetCollidedObjects(Object* obj);

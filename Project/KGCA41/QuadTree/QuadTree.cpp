@@ -1,12 +1,13 @@
 #include "QuadTree.h"
+#include "Object.h"
+#include "Collision.h"
 
-QuadTree::Node::Node(int left, int top, int width, int height, int depth, int maxDepth)
-	: _rect(left, top, width, height), _depth(depth)
+QuadTree::Node::Node(float left, float top, float width, float height, float depth, int maxDepth) : _rect(left, top, width, height), _depth(depth)
 {
 	if (depth + 1 < maxDepth)
 	{
-		width = width >> 1;
-		height = height >> 1;
+		width = width / 2;
+		height = height / 2;
 
 		_child[0] = new Node(left, top, width, height, depth + 1, maxDepth);
 		_child[1] = new Node(left + width, top, width, height, depth + 1, maxDepth);

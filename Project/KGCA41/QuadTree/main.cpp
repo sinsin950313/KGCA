@@ -1,5 +1,6 @@
 ﻿#include "QuadTree.h"
 #include <vector>
+#include "Object.h"
 
 int main()
 {

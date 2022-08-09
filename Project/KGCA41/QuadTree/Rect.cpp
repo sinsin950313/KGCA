@@ -2,7 +2,7 @@
 #include <math.h>
 #include <algorithm>
 
-bool Rect::operator==(const Rect& rect)
+bool Rect::operator==(const Rect& rect) const
 {
 	auto IsSame = [](float a, float b)->bool { return fabs(a - b) < 0.001f; };
 	if (IsSame(_left, rect._left))
@@ -29,6 +29,17 @@ Rect Rect::operator&(const Rect& rect) const
 	float bottom = std::min(GetBottom(), rect.GetBottom());
 
 	return Rect(left, top, right - left, bottom - top);
+}
+
+bool Rect::operator&&(const Rect& rect) const
+{
+	float maxWidth = GetWidth() + rect.GetWidth();
+	float maxHeight = GetHeight() + rect.GetHeight();
+
+	float unionWidth = std::max(GetRight(), rect.GetRight()) - std::min(GetLeft(), rect.GetLeft());
+	float unionHeight = std::max(GetBottom(), rect.GetBottom()) - std::min(GetTop(), rect.GetTop());
+
+	return unionWidth <= maxWidth && unionHeight <= maxHeight;
 }
 
 void Rect::Resize(float left, float top, float width, float height)

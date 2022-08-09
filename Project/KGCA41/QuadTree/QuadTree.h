@@ -31,6 +31,7 @@ private:
 		//Consider totally in stuation, not overlap
 		bool IsIn(Object* object);
 		void AddObject(Object* object);
+		void AddObjectForce(Object* object);
 		std::vector<Object*> GetCollidedObjects(Object* obj);
 
 	public:

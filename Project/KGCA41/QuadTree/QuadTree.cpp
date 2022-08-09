@@ -71,13 +71,18 @@ void QuadTree::Node::AddObject(Object* object)
 	}
 }
 
+void QuadTree::Node::AddObjectForce(Object* object)
+{
+	_containingObjects.push_back(object);
+}
+
 std::vector<Object*> QuadTree::Node::GetCollidedObjects(Object* obj)
 {
 	const Rect* objectVolume = obj->GetVolume();
 	std::vector<Object*> ret;
 	for (auto iter = _containingObjects.begin(); iter != _containingObjects.end(); ++iter)
 	{
-		if (Collision::IsCollide(_rect, *objectVolume))
+		if (Collision::IsCollide(*(*iter)->GetVolume(), *objectVolume))
 		{
 			ret.push_back(*iter);
 		}
@@ -85,10 +90,13 @@ std::vector<Object*> QuadTree::Node::GetCollidedObjects(Object* obj)
 
 	for (int i = 0; i < 4; ++i)
 	{
-		if (Collision::IsCollide(*_child[i]->GetVolume(), *objectVolume))
+		if (_child[i] != nullptr)
 		{
-			auto collisionObjects = _child[i]->GetCollidedObjects(obj);
-			ret.insert(ret.end(), collisionObjects.begin(), collisionObjects.end());
+			if (Collision::IsCollide(*_child[i]->GetVolume(), *objectVolume))
+			{
+				auto collisionObjects = _child[i]->GetCollidedObjects(obj);
+				ret.insert(ret.end(), collisionObjects.begin(), collisionObjects.end());
+			}
 		}
 	}
 	return ret;
@@ -96,7 +104,14 @@ std::vector<Object*> QuadTree::Node::GetCollidedObjects(Object* obj)
 
 void QuadTree::AddObject(Object* object)
 {
-	_root->AddObject(object);
+	if (_root->IsIn(object))
+	{
+		_root->AddObject(object);
+	}
+	else
+	{
+		_root->AddObjectForce(object);
+	}
 }
 
 std::vector<Object*> QuadTree::GetCollidedObjects(Object* obj)

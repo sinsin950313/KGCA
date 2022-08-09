@@ -25,8 +25,9 @@ public:
 	float GetHeight() const { return _height; }
 
 public:
-	bool operator==(const Rect& rect);
+	bool operator==(const Rect& rect) const;
 	Rect operator&(const Rect& rect) const;
+	bool operator&&(const Rect& rect) const;
 
 public:
 	void Resize(float left, float top, float width, float height);

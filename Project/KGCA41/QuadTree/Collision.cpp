@@ -1,29 +1,24 @@
 #include "Collision.h"
-#include "Rect.h"
-#include "Object.h"
+#include "Rectangle.h"
+#include "Circle.h"
 
-bool Collision::IsCollide(const Rect& r1, const Rect& r2)
+bool Collision::IsCollide(const Rectangle& r1, const Rectangle& r2)
 {
 	return r1 && r2;
 }
 
-bool Collision::IsOverlap(const Rect& r1, const Rect& r2)
+bool Collision::IsOverlap(const Rectangle& r1, const Rectangle& r2)
 {
-	Rect tmp = GetCollision(r1, r2);
+	Rectangle tmp = GetCollision(r1, r2);
 	return tmp == r1 || tmp == r2;
 }
 
-Rect Collision::GetCollision(const Rect& r1, const Rect& r2)
+Rectangle Collision::GetCollision(const Rectangle& r1, const Rectangle& r2)
 {
 	return r1 & r2;
 }
 
-bool Collision::IsCollide(const Object& obj1, const Object& obj2)
+bool Collision::IsCollide(const Circle& cir1, const Circle& cir2)
 {
-	return obj1.IsCollide(obj2);
-}
-
-Rect Collision::GetCollision(const Object& obj1, const Object& obj2)
-{
-	return obj1.GetCollision(obj2);
+	return cir1 && cir2;
 }

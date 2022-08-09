@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Rect.h"
+#include "Rectangle.h"
 #include "VolumeInterface.h"
 
 class Object;
@@ -13,7 +13,7 @@ private:
 	{
 	private:
 		Node* _child[4];
-		Rect _rect;
+		Rectangle _rect;
 		int _depth;
 		std::vector<Object*> _containingObjects;
 
@@ -35,7 +35,7 @@ private:
 		std::vector<Object*> GetCollidedObjects(Object* obj);
 
 	public:
-		const Rect* GetVolume() override { return &_rect; }
+		const Rectangle* GetVolume() override { return &_rect; }
 	};
 
 private:

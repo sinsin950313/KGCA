@@ -33,7 +33,8 @@ QuadTree::Node::~Node()
 
 bool QuadTree::Node::IsIn(Object* object)
 {
-	const Rect* volume = static_cast<const Rect*>(object->GetVolume());
+	//how about Collision::IsOverlap()
+	const Rectangle* volume = static_cast<const Rectangle*>(object->GetVolume());
 	if (GetLeft() <= volume->GetLeft())
 	{
 		if (volume->GetRight() <= GetRight())
@@ -78,7 +79,7 @@ void QuadTree::Node::AddObjectForce(Object* object)
 
 std::vector<Object*> QuadTree::Node::GetCollidedObjects(Object* obj)
 {
-	const Rect* objectVolume = obj->GetVolume();
+	const Rectangle* objectVolume = obj->GetVolume();
 	std::vector<Object*> ret;
 	for (auto iter = _containingObjects.begin(); iter != _containingObjects.end(); ++iter)
 	{

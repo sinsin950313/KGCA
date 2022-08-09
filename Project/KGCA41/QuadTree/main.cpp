@@ -32,7 +32,7 @@ int main()
 	std::vector<Object*> collidedObjects = qt.GetCollidedObjects(player);
 	for (auto iter = collidedObjects.begin(); iter != collidedObjects.end(); ++iter)
 	{
-		const Rect* tmp = (*iter)->GetVolume();
+		const Rectangle* tmp = (*iter)->GetVolume();
 		cout << tmp->GetLeft() << ", " << tmp->GetTop() << ", " << tmp->GetRight() << ", " << tmp->GetBottom() << endl;
 	}
 

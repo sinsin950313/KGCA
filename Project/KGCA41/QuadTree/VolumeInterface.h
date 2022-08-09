@@ -1,9 +1,9 @@
 #pragma once
 
-class Rect;
+class Rectangle;
 
 class VolumeInterface
 {
 public:
-	virtual const Rect* GetVolume() = 0;
+	virtual const Rectangle* GetVolume() = 0;
 };

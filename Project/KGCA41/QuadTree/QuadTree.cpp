@@ -2,7 +2,7 @@
 #include "Object.h"
 #include "Collision.h"
 
-QuadTree::Node::Node(float left, float top, float width, float height, float depth, int maxDepth) : _rect(left, top, width, height), _depth(depth)
+QuadTree::Node::Node(float left, float top, float width, float height, float depth, int maxDepth) : _rect(left + (width/2), top + (height/2), width, height), _depth(depth)
 {
 	if (depth + 1 < maxDepth)
 	{
@@ -101,6 +101,13 @@ std::vector<Object*> QuadTree::Node::GetCollidedObjects(Object* obj)
 		}
 	}
 	return ret;
+}
+
+QuadTree::QuadTree(float width, float height, int maxDepth) : _maxDepth(maxDepth)
+{
+	float halfWidth = width / 2;
+	float halfHeight = height / 2;
+	_root = new Node(-halfWidth, -halfHeight, width, height, 0, maxDepth);
 }
 
 void QuadTree::AddObject(Object* object)

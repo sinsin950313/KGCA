@@ -2,21 +2,21 @@
 #include <math.h>
 #include <algorithm>
 
-Rectangle::Rectangle(float left, float top, float width, float height)
+Rectangle::Rectangle(float centerX, float centerY, float width, float height) : Volume(centerX, centerY, width, height)
 {
-	Resize(left, top, width, height);
+	Resize(centerX, centerY, width, height);
 }
 
 bool Rectangle::operator==(const Rectangle& rect) const
 {
 	auto IsSame = [](float a, float b)->bool { return fabs(a - b) < 0.001f; };
-	if (IsSame(_left, rect._left))
+	if (IsSame(GetLeft(), rect.GetLeft()))
 	{
-		if (IsSame(_top, rect._top))
+		if (IsSame(GetTop(), rect.GetTop()))
 		{
-			if (IsSame(_right, rect._right))
+			if (IsSame(GetRight(), rect.GetRight()))
 			{
-				if (IsSame(_bottom, rect._bottom))
+				if (IsSame(GetBottom(), rect.GetBottom()))
 				{
 					return true;
 				}
@@ -38,42 +38,33 @@ Rectangle Rectangle::operator&(const Rectangle& rect) const
 
 bool Rectangle::operator&&(const Rectangle& rect) const
 {
-	if (_roughBoundary && rect._roughBoundary)
-	{
-		float maxWidth = GetWidth() + rect.GetWidth();
-		float maxHeight = GetHeight() + rect.GetHeight();
-
-		float unionWidth = std::max(GetRight(), rect.GetRight()) - std::min(GetLeft(), rect.GetLeft());
-		float unionHeight = std::max(GetBottom(), rect.GetBottom()) - std::min(GetTop(), rect.GetTop());
-
-		return unionWidth <= maxWidth && unionHeight <= maxHeight;
-	}
-	return false;
+	return IsCollide(rect);
 }
 
-void Rectangle::Resize(float left, float top, float width, float height)
+void Rectangle::Resize(float centerX, float centerY, float width, float height)
 {
-		_left = left;
-		_top = top;
-		_width = width;
-		_height = height;
-		_right = _left + _width;
-		_bottom = _top + _height;
+	float halfWidth = width / 2;
+	float halfHeight = height / 2;
 
-		//if (mapWidth < _left + _width)
-		//{
-		//	_left = width - _width;
-		//}
-		//if (mapHeight < _top + _height)
-		//{
-		//	_top = height - _height;
-		//}
+	_lt.Repoisition(centerX - halfWidth, centerY - halfHeight);
+	_rb.Repoisition(centerX + halfWidth, centerY + halfHeight);
+	_width = width;
+	_height = height;
+}
 
-		float centerX = left + (width / 2);
-		float centerY = top + (height / 2);
+std::vector<Point*> Rectangle::GetDetailVolumeVertexes()
+{
+	AddVertexes(new Point(_lt));
+	AddVertexes(new Point(_lt.GetX(), _rb.GetY()));
+	AddVertexes(new Point(_rb.GetX(), _lt.GetY()));
+	AddVertexes(new Point(_rb));
 
-		float a = width / 2;
-		float b = width / 2;
-		float radius = sqrt(a * a + b * b);
-		_roughBoundary.Resize(centerX, centerY, radius);
+	return GetVertexes();
+}
+
+bool Rectangle::IsIn(const Point& p) const
+{
+	float x = p.GetX();
+	float y = p.GetY();
+	return _lt.GetX() <= x && x <= _rb.GetX() && y <= _lt.GetY() && y <= _rb.GetY();
 }

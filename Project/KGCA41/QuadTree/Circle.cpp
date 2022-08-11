@@ -14,10 +14,15 @@ bool Circle::operator==(const Circle& circle) const
 	return IsSame(GetCenterX(), circle.GetCenterX()) && IsSame(GetCenterY(), circle.GetCenterY()) && IsSame(GetRadius(), circle.GetRadius());
 }
 
-std::vector<Point*> Circle::GetDetailVolumeVertexes()
+CircleVertexFactory::CircleVertexFactory(float centerX, float centerY, float radius) : _center(centerX, centerY), _radius(radius)
+{
+}
+
+std::vector<Point*> CircleVertexFactory::operator()()
 {
 	float round = 2 * M_PI * GetRadius();
 	float radian = 0.0f;
+	std::vector<Point*> ret;
 	if (round <= 8)
 	{
 		for (int i = 0; i < 8; ++i)
@@ -27,7 +32,7 @@ std::vector<Point*> Circle::GetDetailVolumeVertexes()
 			float x = GetCenterX() + cosf(radian);
 			float y = GetCenterY() + sinf(radian);
 
-			AddVertexes(new Point(x, y));
+			ret.push_back(new Point(x, y));
 		}
 	}
 	else
@@ -40,9 +45,9 @@ std::vector<Point*> Circle::GetDetailVolumeVertexes()
 			float x = GetCenterX() + cosf(radian);
 			float y = GetCenterY() + sinf(radian);
 
-			AddVertexes(new Point(x, y));
+			ret.push_back(new Point(x, y));
 		}
 	}
 
-	return GetVertexes();
+	return ret;
 }

@@ -2,6 +2,17 @@
 
 #include "Volume.h"
 
+class RectangleVertexFactory : public VolumeVertexFactory
+{
+private:
+	Point _lt;
+	Point _rb;
+
+public:
+	RectangleVertexFactory(float left, float top, float right, float bottom);
+	virtual std::vector<Point*> operator()() override;
+};
+
 class Rectangle : public Volume
 {
 	Point _lt;
@@ -30,6 +41,5 @@ public:
 	void Resize(float centerX, float centerY, float width, float height);
 
 public:
-	virtual std::vector<Point*> GetDetailVolumeVertexes();
 	virtual bool IsIn(const Point& p) const override;
 };

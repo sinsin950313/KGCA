@@ -2,6 +2,22 @@
 
 #include "Volume.h"
 
+class CircleVertexFactory : public VolumeVertexFactory
+{
+private:
+	Point _center;
+	float _radius;
+
+private:
+	float GetCenterX() { return _center.GetX(); }
+	float GetCenterY() { return _center.GetY(); }
+	float GetRadius() { return _radius; }
+
+public:
+	CircleVertexFactory(float centerX, float centerY, float radius);
+	virtual std::vector<Point*> operator()() override;
+};
+
 class Circle : public Volume
 {
 public:
@@ -12,7 +28,4 @@ public:
 public:
 	bool operator&&(const Circle& circle) const;
 	bool operator==(const Circle& circle) const;
-
-public:
-	virtual std::vector<Point*> GetDetailVolumeVertexes();
 };

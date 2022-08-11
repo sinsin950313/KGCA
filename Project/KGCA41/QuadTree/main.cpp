@@ -13,7 +13,7 @@ int main()
 
 	QuadTree qt(mapWidth, mapHeight, maxDepth);
 	
-	int objectCount = 10;
+	int objectCount = 100;
 	std::vector<Object*> objects;
 	for (int i = 0; i < objectCount; ++i)
 	{
@@ -26,7 +26,7 @@ int main()
 		qt.AddObject(object);
 	}
 
-	Object* player = new Object(0, 0, 100, 100);
+	Object* player = new Object(0, 0, 10, 10);
 	std::vector<Object*> collidedObjects = qt.GetCollidedObjects(player);
 	for (auto iter = collidedObjects.begin(); iter != collidedObjects.end(); ++iter)
 	{

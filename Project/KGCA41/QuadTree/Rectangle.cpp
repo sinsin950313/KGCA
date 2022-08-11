@@ -2,7 +2,8 @@
 #include <math.h>
 #include <algorithm>
 
-Rectangle::Rectangle(float centerX, float centerY, float width, float height) : Volume(centerX, centerY, width, height)
+Rectangle::Rectangle(float centerX, float centerY, float width, float height)
+	: Volume(centerX, centerY, 0, RectangleVertexFactory(centerX - (width / 2), centerY - (height / 2), centerX + (width / 2), centerY + (height / 2)))
 {
 	Resize(centerX, centerY, width, height);
 }
@@ -52,19 +53,26 @@ void Rectangle::Resize(float centerX, float centerY, float width, float height)
 	_height = height;
 }
 
-std::vector<Point*> Rectangle::GetDetailVolumeVertexes()
-{
-	AddVertexes(new Point(_lt));
-	AddVertexes(new Point(_lt.GetX(), _rb.GetY()));
-	AddVertexes(new Point(_rb.GetX(), _lt.GetY()));
-	AddVertexes(new Point(_rb));
-
-	return GetVertexes();
-}
-
 bool Rectangle::IsIn(const Point& p) const
 {
 	float x = p.GetX();
 	float y = p.GetY();
-	return _lt.GetX() <= x && x <= _rb.GetX() && y <= _lt.GetY() && y <= _rb.GetY();
+	return _lt.GetX() <= x && x <= _rb.GetX() && _lt.GetY() <= y && y <= _rb.GetY();
+}
+
+RectangleVertexFactory::RectangleVertexFactory(float left, float top, float right, float bottom)
+	: _lt(left, top), _rb(right, bottom)
+{
+}
+
+std::vector<Point*> RectangleVertexFactory::operator()()
+{
+	std::vector<Point*> ret;
+
+	ret.push_back(new Point(_lt));
+	ret.push_back(new Point(_lt.GetX(), _rb.GetY()));
+	ret.push_back(new Point(_rb.GetX(), _lt.GetY()));
+	ret.push_back(new Point(_rb));
+
+	return ret;
 }

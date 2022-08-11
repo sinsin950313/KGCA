@@ -9,8 +9,8 @@ private:
 	Rectangle _rect;
 
 public:
-	Object(float left, float top, float width, float height) : _rect(left, top, width, height) { }
+	Object(float centerX, float centerY, float width, float height) : _rect(centerX, centerY, width, height) { }
 	const Rectangle* GetVolume() { return &_rect; }
-	void Reposition(float left, float top);
+	void Reposition(float centerX, float centerY);
 	void Resize(float width, float height);
 };

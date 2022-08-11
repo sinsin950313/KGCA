@@ -3,6 +3,26 @@
 #include <vector>
 #include "Point.h"
 
+/// <summary>
+/// <para>
+/// Factory pattern for Volume's vertexes.
+/// </para>
+///
+/// <para>
+/// Volume need custom vertexes but virtual function can't used in constructor.
+/// So, divide from Volume class.
+/// </para>
+/// 
+/// <para>
+/// If any classes that inherit from Volume, it need to realize VolumeVectextFactor, too.
+/// </para>
+/// </summary>
+class VolumeVertexFactory
+{
+public:
+	virtual std::vector<Point*> operator()() = 0;
+};
+
 class Volume
 {
 private:
@@ -29,14 +49,9 @@ private:
 	std::vector<Point*> _vertexes;
 
 public:
-	Volume(float centerX, float centerY, float radius) : _roughVolume(centerX, centerY, radius) { }
-	Volume(float centerX, float centerY, float width, float height);
+	Volume(float centerX, float centerY, float radius, VolumeVertexFactory& factory) : _roughVolume(centerX, centerY, radius) { _vertexes = factory(); }
+	Volume(float centerX, float centerY, float radius, VolumeVertexFactory&& factory) : _roughVolume(centerX, centerY, radius) { _vertexes = factory(); }
 	virtual ~Volume();
-
-protected:
-	void AddVertexes(Point* p);
-	virtual std::vector<Point*> GetDetailVolumeVertexes() = 0;
-	std::vector<Point*>& GetVolumeVertexes();
 
 public:
 	void Resize(float radius);
@@ -49,5 +64,7 @@ public:
 public:
 	const std::vector<Point*>& GetVertexes() const { return _vertexes; }
 	const Point& GetCenter() const { return _roughVolume.GetCenter(); }
+
+protected:
 	float GetRadius() const { return _roughVolume.GetRadius(); }
 };

@@ -1,32 +1,11 @@
 #include "Volume.h"
 
-#define SQUARE(x) (x) * (x)
-
-Volume::Volume(float centerX, float centerY, float width, float height) : _roughVolume(centerX, centerY, sqrt(SQUARE(width / 2) + SQUARE(height / 2)))
-{
-
-}
-
 Volume::~Volume()
 {
 	for (auto iter = _vertexes.begin(); iter != _vertexes.end(); ++iter)
 	{
 		delete (*iter);
 	}
-}
-
-std::vector<Point*>& Volume::GetVolumeVertexes()
-{
-	if (_vertexes.empty())
-	{
-		_vertexes = GetDetailVolumeVertexes();
-	}
-	return _vertexes;
-}
-
-void Volume::AddVertexes(Point* p)
-{
-	_vertexes.push_back(p);
 }
 
 void Volume::Resize(float radius)

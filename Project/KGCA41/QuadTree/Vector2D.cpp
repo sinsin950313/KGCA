@@ -1,6 +1,6 @@
 #include "Vector2D.h"
 
-float Vector2D::Dot(const Vector2D& vec)
+CustomFloat Vector2D::Dot(const Vector2D& vec)
 {
 	return GetX() * vec.GetX() + GetY() * vec.GetY();
 }
@@ -23,7 +23,7 @@ void Vector2D::Normalize()
 
 Vector2D Vector2D::Identity()
 {
-	float lengthInvert = 1 / Length();
+	CustomFloat lengthInvert = 1 / Length();
 	Vector2D ret(GetX() * lengthInvert, GetY() * lengthInvert);
 	return ret;
 }

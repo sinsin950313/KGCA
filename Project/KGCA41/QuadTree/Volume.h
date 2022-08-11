@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "Point.h"
+#include "CustomMath.h"
 
 /// <summary>
 /// <para>
@@ -29,19 +30,19 @@ private:
 	class RoughVolume
 	{
 		Point _center;
-		float _radius;
+		CustomFloat _radius;
 
 	public:
-		RoughVolume(float x, float y, float r) : _center(x, y), _radius(r) { }
+		RoughVolume(CustomFloat x, CustomFloat y, CustomFloat r) : _center(x, y), _radius(r) { }
 
 	public:
 		bool IsIn(const Point& p) const;
-		void Resize(float radius) { _radius = radius; }
-		void Reposition(float x, float y) { _center.Repoisition(x, y); }
+		void Resize(CustomFloat radius) { _radius = radius; }
+		void Reposition(CustomFloat x, CustomFloat y) { _center.Repoisition(x, y); }
 
 	public:
 		const Point& GetCenter() const { return _center; }
-		float GetRadius() const { return _radius; }
+		CustomFloat GetRadius() const { return _radius; }
 	};
 
 private:
@@ -49,13 +50,13 @@ private:
 	std::vector<Point*> _vertexes;
 
 public:
-	Volume(float centerX, float centerY, float radius, VolumeVertexFactory& factory) : _roughVolume(centerX, centerY, radius) { _vertexes = factory(); }
-	Volume(float centerX, float centerY, float radius, VolumeVertexFactory&& factory) : _roughVolume(centerX, centerY, radius) { _vertexes = factory(); }
+	Volume(CustomFloat centerX, CustomFloat centerY, CustomFloat radius, VolumeVertexFactory& factory) : _roughVolume(centerX, centerY, radius) { _vertexes = factory(); }
+	Volume(CustomFloat centerX, CustomFloat centerY, CustomFloat radius, VolumeVertexFactory&& factory) : _roughVolume(centerX, centerY, radius) { _vertexes = factory(); }
 	virtual ~Volume();
 
 public:
-	void Resize(float radius);
-	void Reposition(float centerX, float centerY);
+	void Resize(CustomFloat radius);
+	void Reposition(CustomFloat centerX, CustomFloat centerY);
 	bool IsCollide(const Volume& volume) const;
 
 public:
@@ -66,5 +67,5 @@ public:
 	const Point& GetCenter() const { return _roughVolume.GetCenter(); }
 
 protected:
-	float GetRadius() const { return _roughVolume.GetRadius(); }
+	CustomFloat GetRadius() const { return _roughVolume.GetRadius(); }
 };

@@ -3,6 +3,7 @@
 #include <vector>
 #include "Rectangle.h"
 #include "VolumeInterface.h"
+#include "CustomMath.h"
 
 class Object;
 
@@ -18,15 +19,15 @@ private:
 		std::vector<Object*> _containingObjects;
 
 	private:
-		float GetLeft() { return _rect.GetLeft(); }
-		float GetTop() { return _rect.GetTop(); }
-		float GetRight() { return _rect.GetRight(); }
-		float GetBottom() { return _rect.GetBottom(); }
-		float GetWidth() { return _rect.GetWidth(); }
-		float GetHeight() { return _rect.GetHeight(); }
+		CustomFloat GetLeft() { return _rect.GetLeft(); }
+		CustomFloat GetTop() { return _rect.GetTop(); }
+		CustomFloat GetRight() { return _rect.GetRight(); }
+		CustomFloat GetBottom() { return _rect.GetBottom(); }
+		CustomFloat GetWidth() { return _rect.GetWidth(); }
+		CustomFloat GetHeight() { return _rect.GetHeight(); }
 
 	public:
-		Node(float left, float top, float width, float height, float depth, int maxDepth);
+		Node(CustomFloat left, CustomFloat top, CustomFloat width, CustomFloat height, CustomFloat depth, int maxDepth);
 		~Node();
 		//Consider totally in stuation, not overlap
 		bool IsIn(Object* object);
@@ -43,7 +44,7 @@ private:
 	int _maxDepth;
 
 public:
-	QuadTree(float width, float height, int maxDepth);
+	QuadTree(CustomFloat width, CustomFloat height, int maxDepth);
 	~QuadTree() { delete _root; }
 	void AddObject(Object* object);
 	std::vector<Object*> GetCollidedObjects(Object* obj);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Volume.h"
+#include "CustomMath.h"
 
 class RectangleVertexFactory : public VolumeVertexFactory
 {
@@ -9,7 +10,7 @@ private:
 	Point _rb;
 
 public:
-	RectangleVertexFactory(float left, float top, float right, float bottom);
+	RectangleVertexFactory(CustomFloat left, CustomFloat top, CustomFloat right, CustomFloat bottom);
 	virtual std::vector<Point*> operator()() override;
 };
 
@@ -17,20 +18,20 @@ class Rectangle : public Volume
 {
 	Point _lt;
 	Point _rb;
-	float _width;
-	float _height;
+	CustomFloat _width;
+	CustomFloat _height;
 
 public:
 	Rectangle() = default;
-	Rectangle(float centerX, float centerY, float width, float height);
+	Rectangle(CustomFloat centerX, CustomFloat centerY, CustomFloat width, CustomFloat height);
 
 public:
-	float GetLeft() const { return _lt.GetX(); }
-	float GetTop() const { return _lt.GetY(); }
-	float GetRight() const { return _rb.GetX(); }
-	float GetBottom() const { return _rb.GetY(); }
-	float GetWidth() const { return _width; }
-	float GetHeight() const { return _height; }
+	CustomFloat GetLeft() const { return _lt.GetX(); }
+	CustomFloat GetTop() const { return _lt.GetY(); }
+	CustomFloat GetRight() const { return _rb.GetX(); }
+	CustomFloat GetBottom() const { return _rb.GetY(); }
+	CustomFloat GetWidth() const { return _width; }
+	CustomFloat GetHeight() const { return _height; }
 
 public:
 	bool operator==(const Rectangle& rect) const;
@@ -38,7 +39,7 @@ public:
 	bool operator&&(const Rectangle& rect) const;
 
 public:
-	void Resize(float centerX, float centerY, float width, float height);
+	void Resize(CustomFloat centerX, CustomFloat centerY, CustomFloat width, CustomFloat height);
 
 public:
 	virtual bool IsIn(const Point& p) const override;

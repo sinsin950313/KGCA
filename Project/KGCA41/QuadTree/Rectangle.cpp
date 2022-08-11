@@ -2,7 +2,7 @@
 #include <math.h>
 #include <algorithm>
 
-Rectangle::Rectangle(float centerX, float centerY, float width, float height)
+Rectangle::Rectangle(CustomFloat centerX, CustomFloat centerY, CustomFloat width, CustomFloat height)
 	: Volume(centerX, centerY, 0, RectangleVertexFactory(centerX - (width / 2), centerY - (height / 2), centerX + (width / 2), centerY + (height / 2)))
 {
 	Resize(centerX, centerY, width, height);
@@ -10,7 +10,7 @@ Rectangle::Rectangle(float centerX, float centerY, float width, float height)
 
 bool Rectangle::operator==(const Rectangle& rect) const
 {
-	auto IsSame = [](float a, float b)->bool { return fabs(a - b) < 0.001f; };
+	auto IsSame = [](CustomFloat a, CustomFloat b)->bool { return fabs(a - b) < 0.001f; };
 	if (IsSame(GetLeft(), rect.GetLeft()))
 	{
 		if (IsSame(GetTop(), rect.GetTop()))
@@ -29,10 +29,10 @@ bool Rectangle::operator==(const Rectangle& rect) const
 
 Rectangle Rectangle::operator&(const Rectangle& rect) const
 {
-	float left = std::max(GetLeft(), rect.GetLeft());
-	float right = std::min(GetRight(), rect.GetRight());
-	float top = std::max(GetTop(), rect.GetTop());
-	float bottom = std::min(GetBottom(), rect.GetBottom());
+	CustomFloat left = std::max(GetLeft(), rect.GetLeft());
+	CustomFloat right = std::min(GetRight(), rect.GetRight());
+	CustomFloat top = std::max(GetTop(), rect.GetTop());
+	CustomFloat bottom = std::min(GetBottom(), rect.GetBottom());
 
 	return Rectangle(left, top, right - left, bottom - top);
 }
@@ -42,10 +42,10 @@ bool Rectangle::operator&&(const Rectangle& rect) const
 	return IsCollide(rect);
 }
 
-void Rectangle::Resize(float centerX, float centerY, float width, float height)
+void Rectangle::Resize(CustomFloat centerX, CustomFloat centerY, CustomFloat width, CustomFloat height)
 {
-	float halfWidth = width / 2;
-	float halfHeight = height / 2;
+	CustomFloat halfWidth = width / 2;
+	CustomFloat halfHeight = height / 2;
 
 	_lt.Repoisition(centerX - halfWidth, centerY - halfHeight);
 	_rb.Repoisition(centerX + halfWidth, centerY + halfHeight);
@@ -55,12 +55,12 @@ void Rectangle::Resize(float centerX, float centerY, float width, float height)
 
 bool Rectangle::IsIn(const Point& p) const
 {
-	float x = p.GetX();
-	float y = p.GetY();
+	CustomFloat x = p.GetX();
+	CustomFloat y = p.GetY();
 	return _lt.GetX() <= x && x <= _rb.GetX() && _lt.GetY() <= y && y <= _rb.GetY();
 }
 
-RectangleVertexFactory::RectangleVertexFactory(float left, float top, float right, float bottom)
+RectangleVertexFactory::RectangleVertexFactory(CustomFloat left, CustomFloat top, CustomFloat right, CustomFloat bottom)
 	: _lt(left, top), _rb(right, bottom)
 {
 }

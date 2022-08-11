@@ -8,12 +8,12 @@ Volume::~Volume()
 	}
 }
 
-void Volume::Resize(float radius)
+void Volume::Resize(CustomFloat radius)
 {
 	_roughVolume.Resize(radius);
 }
 
-void Volume::Reposition(float centerX, float centerY)
+void Volume::Reposition(CustomFloat centerX, CustomFloat centerY)
 {
 	_roughVolume.Reposition(centerX, centerY);
 }

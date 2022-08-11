@@ -2,6 +2,7 @@
 #include <vector>
 #include "Object.h"
 #include <iostream>
+#include "CustomMath.h"
 
 using namespace std;
 
@@ -17,10 +18,10 @@ int main()
 	std::vector<Object*> objects;
 	for (int i = 0; i < objectCount; ++i)
 	{
-		float centerX = rand() % mapWidth - (mapWidth / 2);
-		float centerY = rand() % mapHeight - (mapHeight / 2);
-		float width = rand() % 10;
-		float height = rand() % 10;
+		CustomFloat centerX = rand() % mapWidth - (mapWidth / 2);
+		CustomFloat centerY = rand() % mapHeight - (mapHeight / 2);
+		CustomFloat width = rand() % 10;
+		CustomFloat height = rand() % 10;
 		Object* object = new Object(centerX, centerY, width, height);
 		objects.push_back(object);
 		qt.AddObject(object);

@@ -10,18 +10,18 @@ bool Circle::operator&&(const Circle& circle) const
 
 bool Circle::operator==(const Circle& circle) const
 {
-	auto IsSame = [](float a, float b)->bool { return fabs(a - b) < 0.001f; };
+	auto IsSame = [](CustomFloat a, CustomFloat b)->bool { return fabs(a - b) < 0.001f; };
 	return IsSame(GetCenterX(), circle.GetCenterX()) && IsSame(GetCenterY(), circle.GetCenterY()) && IsSame(GetRadius(), circle.GetRadius());
 }
 
-CircleVertexFactory::CircleVertexFactory(float centerX, float centerY, float radius) : _center(centerX, centerY), _radius(radius)
+CircleVertexFactory::CircleVertexFactory(CustomFloat centerX, CustomFloat centerY, CustomFloat radius) : _center(centerX, centerY), _radius(radius)
 {
 }
 
 std::vector<Point*> CircleVertexFactory::operator()()
 {
-	float round = 2 * M_PI * GetRadius();
-	float radian = 0.0f;
+	CustomFloat round = 2 * M_PI * GetRadius();
+	CustomFloat radian = 0.0f;
 	std::vector<Point*> ret;
 	if (round <= 8)
 	{
@@ -29,21 +29,21 @@ std::vector<Point*> CircleVertexFactory::operator()()
 		{
 			radian += M_PI / 4;
 
-			float x = GetCenterX() + cosf(radian);
-			float y = GetCenterY() + sinf(radian);
+			CustomFloat x = GetCenterX() + cosf(radian);
+			CustomFloat y = GetCenterY() + sinf(radian);
 
 			ret.push_back(new Point(x, y));
 		}
 	}
 	else
 	{
-		const float delta = 1.0f / GetRadius();
+		const CustomFloat delta = 1.0f / GetRadius();
 		while (radian + delta <= round)
 		{
 			radian += delta;
 
-			float x = GetCenterX() + cosf(radian);
-			float y = GetCenterY() + sinf(radian);
+			CustomFloat x = GetCenterX() + cosf(radian);
+			CustomFloat y = GetCenterY() + sinf(radian);
 
 			ret.push_back(new Point(x, y));
 		}

@@ -4,7 +4,7 @@
 
 bool Collision::IsCollide(const Rectangle& r1, const Rectangle& r2)
 {
-	return r1 && r2;
+	return (r1 && r2) || (r2 && r1);
 }
 
 bool Collision::IsOverlap(const Rectangle& r1, const Rectangle& r2)

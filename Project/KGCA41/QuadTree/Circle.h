@@ -1,25 +1,31 @@
 #pragma once
 
-class Circle
+#include "Volume.h"
+
+class CircleVertexFactory : public VolumeVertexFactory
 {
 private:
-	float _centerX;
-	float _centerY;
+	Point _center;
 	float _radius;
 
-public:
-	Circle() = default;
-	Circle(float centerX, float centerY, float radius) { Resize(centerX, centerY, radius); }
+private:
+	float GetCenterX() { return _center.GetX(); }
+	float GetCenterY() { return _center.GetY(); }
+	float GetRadius() { return _radius; }
 
 public:
-	float GetCenterX() const { return _centerX; }
-	float GetCenterY() const { return _centerY; }
-	float GetRadius() const { return _radius; }
+	CircleVertexFactory(float centerX, float centerY, float radius);
+	virtual std::vector<Point*> operator()() override;
+};
+
+class Circle : public Volume
+{
+public:
+	float GetCenterX() const { return Volume::GetCenter().GetX(); }
+	float GetCenterY() const { return Volume::GetCenter().GetY(); }
+	float GetRadius() const { return Volume::GetRadius(); }
 
 public:
 	bool operator&&(const Circle& circle) const;
-	bool operator==(const Circle& circle) const { return GetCenterX() == circle.GetCenterX() && GetCenterY() == circle.GetCenterY() && GetRadius() == circle.GetRadius(); }
-
-public:
-	void Resize(float centerX, float centerY, float radius);
+	bool operator==(const Circle& circle) const;
 };

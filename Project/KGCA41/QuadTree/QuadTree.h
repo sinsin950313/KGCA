@@ -43,7 +43,7 @@ private:
 	int _maxDepth;
 
 public:
-	QuadTree(float width, float height, int maxDepth) : _maxDepth(maxDepth) { _root = new Node(0, 0, width, height, 0, maxDepth); }
+	QuadTree(float width, float height, int maxDepth);
 	~QuadTree() { delete _root; }
 	void AddObject(Object* object);
 	std::vector<Object*> GetCollidedObjects(Object* obj);

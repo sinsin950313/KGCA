@@ -17,18 +17,16 @@ int main()
 	std::vector<Object*> objects;
 	for (int i = 0; i < objectCount; ++i)
 	{
-		float left = rand() % mapWidth;
-		float top = rand() % mapHeight;
+		float centerX = rand() % mapWidth - (mapWidth / 2);
+		float centerY = rand() % mapHeight - (mapHeight / 2);
 		float width = rand() % 10;
 		float height = rand() % 10;
-		Object* object = new Object(left, top, width, height);
+		Object* object = new Object(centerX, centerY, width, height);
 		objects.push_back(object);
 		qt.AddObject(object);
 	}
 
-	Object* player = new Object();
-	player->Resize(20, 20);
-	player->Reposition(50, 50);
+	Object* player = new Object(0, 0, 10, 10);
 	std::vector<Object*> collidedObjects = qt.GetCollidedObjects(player);
 	for (auto iter = collidedObjects.begin(); iter != collidedObjects.end(); ++iter)
 	{

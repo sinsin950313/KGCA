@@ -1,27 +1,34 @@
 #pragma once
 
-#include "Circle.h"
+#include "Volume.h"
 
-class Rectangle
+class RectangleVertexFactory : public VolumeVertexFactory
 {
-	float _left;
-	float _top;
-	float _right;
-	float _bottom;
+private:
+	Point _lt;
+	Point _rb;
+
+public:
+	RectangleVertexFactory(float left, float top, float right, float bottom);
+	virtual std::vector<Point*> operator()() override;
+};
+
+class Rectangle : public Volume
+{
+	Point _lt;
+	Point _rb;
 	float _width;
 	float _height;
 
-	Circle _roughBoundary;
-
 public:
 	Rectangle() = default;
-	Rectangle(float left, float top, float width, float height);
+	Rectangle(float centerX, float centerY, float width, float height);
 
 public:
-	float GetLeft() const { return _left; }
-	float GetTop() const { return _top; }
-	float GetRight() const { return _right; }
-	float GetBottom() const { return _bottom; }
+	float GetLeft() const { return _lt.GetX(); }
+	float GetTop() const { return _lt.GetY(); }
+	float GetRight() const { return _rb.GetX(); }
+	float GetBottom() const { return _rb.GetY(); }
 	float GetWidth() const { return _width; }
 	float GetHeight() const { return _height; }
 
@@ -31,5 +38,8 @@ public:
 	bool operator&&(const Rectangle& rect) const;
 
 public:
-	void Resize(float left, float top, float width, float height);
+	void Resize(float centerX, float centerY, float width, float height);
+
+public:
+	virtual bool IsIn(const Point& p) const override;
 };

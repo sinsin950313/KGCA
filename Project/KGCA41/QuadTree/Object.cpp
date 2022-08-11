@@ -1,9 +1,9 @@
 #include "Object.h"
 #include "Rectangle.h"
 
-void Object::Reposition(float left, float top)
+void Object::Reposition(float centerX, float centerY)
 {
-	_rect.Resize(left, top, _rect.GetWidth(), _rect.GetHeight());
+	_rect.Resize(centerX, centerY, _rect.GetWidth(), _rect.GetHeight());
 }
 
 void Object::Resize(float width, float height)

@@ -40,8 +40,8 @@ void Core::Simulate(float deltaTime)
 
 	for (auto iter = _objects.begin(); iter != _objects.end(); ++iter)
 	{
-		Point pos = (*iter)->GetVolume()->GetCenter() + (*iter)->GetRigidBody()->GetVelocity() * deltaTime;
 		(*iter)->GetRigidBody()->Calculate(deltaTime);
+		Point pos = (*iter)->GetVolume()->GetCenter() + (*iter)->GetRigidBody()->GetVelocity() * deltaTime;
 		(*iter)->Reposition(pos.GetX(), pos.GetY());
 	}
 

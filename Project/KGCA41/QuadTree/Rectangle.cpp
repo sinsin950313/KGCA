@@ -5,7 +5,8 @@
 Rectangle::Rectangle(float centerX, float centerY, float width, float height)
 	: Volume(centerX, centerY, 0, RectangleVertexFactory(centerX - (width / 2), centerY - (height / 2), centerX + (width / 2), centerY + (height / 2)))
 {
-	Resize(centerX, centerY, width, height);
+	Resize(width, height);
+	Reposition(centerX, centerY);
 }
 
 bool Rectangle::operator==(const Rectangle& rect) const
@@ -42,22 +43,31 @@ bool Rectangle::operator&&(const Rectangle& rect) const
 	return IsCollide(rect);
 }
 
-void Rectangle::Resize(float centerX, float centerY, float width, float height)
+void Rectangle::Resize(float width, float height)
 {
-	float halfWidth = width / 2;
-	float halfHeight = height / 2;
+	Volume::Resize(sqrt(width * width + height * height) / 2);
 
-	_lt.Repoisition(centerX - halfWidth, centerY - halfHeight);
-	_rb.Repoisition(centerX + halfWidth, centerY + halfHeight);
 	_width = width;
 	_height = height;
 }
 
+void Rectangle::Reposition(float centerX, float centerY)
+{
+	Volume::Reposition(centerX, centerY);
+
+	_lt.Repoisition(centerX - GetWidth() / 2, centerY - GetHeight() / 2);
+	_rb.Repoisition(centerX + GetWidth() / 2, centerY + GetHeight() / 2);
+}
+
 bool Rectangle::IsIn(const Point& p) const
 {
-	float x = p.GetX();
-	float y = p.GetY();
-	return _lt.GetX() <= x && x <= _rb.GetX() && _lt.GetY() <= y && y <= _rb.GetY();
+	if (Volume::IsIn(p))
+	{
+		float x = p.GetX();
+		float y = p.GetY();
+		return _lt.GetX() <= x && x <= _rb.GetX() && _lt.GetY() <= y && y <= _rb.GetY();
+	}
+	return false;
 }
 
 RectangleVertexFactory::RectangleVertexFactory(float left, float top, float right, float bottom)

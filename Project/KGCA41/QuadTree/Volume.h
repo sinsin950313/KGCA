@@ -55,7 +55,7 @@ public:
 
 public:
 	void Resize(float radius);
-	void Reposition(float centerX, float centerY);
+	virtual void Reposition(float centerX, float centerY);
 	bool IsCollide(const Volume& volume) const;
 
 public:

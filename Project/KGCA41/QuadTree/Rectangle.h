@@ -22,7 +22,7 @@ class Rectangle : public Volume
 
 public:
 	Rectangle() = default;
-	Rectangle(float centerX, float centerY, float width, float height);
+	Rectangle(float centerX, float centerY, float _width, float _height);
 
 public:
 	float GetLeft() const { return _lt.GetX(); }
@@ -38,7 +38,8 @@ public:
 	bool operator&&(const Rectangle& rect) const;
 
 public:
-	void Resize(float centerX, float centerY, float width, float height);
+	void Resize(float width, float height);
+	void Reposition(float centerX, float centerY) override;
 
 public:
 	virtual bool IsIn(const Point& p) const override;

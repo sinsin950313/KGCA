@@ -39,10 +39,13 @@
     <ClCompile Include="Point.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CustomMath.cpp">
+    <ClCompile Include="Vector2D.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Vector2D.cpp">
+    <ClCompile Include="Core.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Rigidbody.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -71,10 +74,13 @@
     <ClInclude Include="Point.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CustomMath.h">
+    <ClInclude Include="Vector2D.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Vector2D.h">
+    <ClInclude Include="Core.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Rigidbody.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -26,7 +26,7 @@ private:
 		float GetHeight() { return _rect.GetHeight(); }
 
 	public:
-		Node(float left, float top, float width, float height, float depth, int maxDepth);
+		Node(float left, float top, float _width, float _height, float depth, int maxDepth);
 		~Node();
 		//Consider totally in stuation, not overlap
 		bool IsIn(Object* object);
@@ -43,7 +43,7 @@ private:
 	int _maxDepth;
 
 public:
-	QuadTree(float width, float height, int maxDepth);
+	QuadTree(float _width, float _height, int maxDepth);
 	~QuadTree() { delete _root; }
 	void AddObject(Object* object);
 	std::vector<Object*> GetCollidedObjects(Object* obj);

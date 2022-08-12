@@ -2,17 +2,17 @@
 #include "Object.h"
 #include "Collision.h"
 
-QuadTree::Node::Node(float left, float top, float width, float height, float depth, int maxDepth) : _rect(left + (width/2), top + (height/2), width, height), _depth(depth)
+QuadTree::Node::Node(float left, float top, float _width, float _height, float depth, int maxDepth) : _rect(left + (_width/2), top + (_height/2), _width, _height), _depth(depth)
 {
 	if (depth + 1 < maxDepth)
 	{
-		width = width / 2;
-		height = height / 2;
+		_width = _width / 2;
+		_height = _height / 2;
 
-		_child[0] = new Node(left, top, width, height, depth + 1, maxDepth);
-		_child[1] = new Node(left + width, top, width, height, depth + 1, maxDepth);
-		_child[2] = new Node(left, top + height, width, height, depth + 1, maxDepth);
-		_child[3] = new Node(left + width, top + height, width, height, depth + 1, maxDepth);
+		_child[0] = new Node(left, top, _width, _height, depth + 1, maxDepth);
+		_child[1] = new Node(left + _width, top, _width, _height, depth + 1, maxDepth);
+		_child[2] = new Node(left, top + _height, _width, _height, depth + 1, maxDepth);
+		_child[3] = new Node(left + _width, top + _height, _width, _height, depth + 1, maxDepth);
 	}
 	else
 	{
@@ -103,11 +103,11 @@ std::vector<Object*> QuadTree::Node::GetCollidedObjects(Object* obj)
 	return ret;
 }
 
-QuadTree::QuadTree(float width, float height, int maxDepth) : _maxDepth(maxDepth)
+QuadTree::QuadTree(float _width, float _height, int maxDepth) : _maxDepth(maxDepth)
 {
-	float halfWidth = width / 2;
-	float halfHeight = height / 2;
-	_root = new Node(-halfWidth, -halfHeight, width, height, 0, maxDepth);
+	float halfWidth = _width / 2;
+	float halfHeight = _height / 2;
+	_root = new Node(-halfWidth, -halfHeight, _width, _height, 0, maxDepth);
 }
 
 void QuadTree::AddObject(Object* object)

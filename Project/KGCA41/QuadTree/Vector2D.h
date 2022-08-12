@@ -16,11 +16,17 @@ public:
 	Vector2D Cross(const Vector2D& vec) = delete;
 
 public:
-	Vector2D operator+(const Vector2D& vec);
-	Vector2D operator-(const Vector2D& vec);
+	Vector2D operator+(const Vector2D& vec) const;
+	void operator+=(const Vector2D& vec);
+	Vector2D operator-(const Vector2D& vec) const;
+	Vector2D operator*(float scalar) const;
+	Vector2D operator/(float scalar) const;
 
 public:
 	void Repoint(float x, float y) { Repoisition(x, y); }
 	void Normalize();
 	Vector2D Identity();
+	void Clear() { Repoint(0, 0); }
 };
+
+Point operator+(const Point& p, const Vector2D vec);

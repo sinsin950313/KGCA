@@ -3,10 +3,15 @@
 
 void Object::Reposition(float centerX, float centerY)
 {
-	_rect.Resize(centerX, centerY, _rect.GetWidth(), _rect.GetHeight());
+	_rect.Reposition(centerX, centerY);
 }
 
-void Object::Resize(float width, float height)
+void Object::Resize(float _width, float _height)
 {
-	_rect.Resize(_rect.GetLeft(), _rect.GetTop(), width, height);
+	_rect.Resize(_width, _height);
+}
+
+Rigidbody* Object::GetRigidBody()
+{
+	return &_rigidBody;
 }

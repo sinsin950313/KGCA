@@ -42,5 +42,6 @@ public:
 	void Reposition(float centerX, float centerY) override;
 
 public:
-	virtual bool IsIn(const Vector2D& coordinate, const Vector2D& v) const override;
+	bool IsIn(const Vector2D& coordinate, const Vector2D& v) const override;
+	void Print() const override;
 };

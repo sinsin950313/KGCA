@@ -80,7 +80,7 @@ void QuadTree::Node::AddObjectForce(Object* object)
 
 std::vector<Object*> QuadTree::Node::GetCollidedObjects(Object* obj)
 {
-	const Rectangle* objectVolume = obj->GetVolume();
+	const Volume* objectVolume = obj->GetVolume();
 	std::vector<Object*> ret;
 	for (auto iter = _containingObjects.begin(); iter != _containingObjects.end(); ++iter)
 	{

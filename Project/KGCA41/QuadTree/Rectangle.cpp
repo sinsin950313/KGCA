@@ -1,6 +1,7 @@
 #include "Rectangle.h"
 #include <math.h>
 #include <algorithm>
+#include <iostream>
 
 Rectangle::Rectangle(float centerX, float centerY, float width, float height)
 	: Volume(centerX, centerY, sqrt(width* width + height * height) / 2, RectangleVertexFactory(-width / 2, -height / 2, width / 2, height / 2))
@@ -72,6 +73,11 @@ bool Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) const
 		return _lt.GetX() <= x && x <= _rb.GetX() && _lt.GetY() <= y && y <= _rb.GetY();
 	}
 	return false;
+}
+
+void Rectangle::Print() const
+{
+	std::cout << GetLeft() << ", " << GetTop() << ", " << GetRight() << ", " << GetBottom() << std::endl << std::endl;
 }
 
 RectangleVertexFactory::RectangleVertexFactory(float left, float top, float right, float bottom)

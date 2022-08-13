@@ -1,10 +1,11 @@
 #include "Collision.h"
+#include "Volume.h"
 #include "Rectangle.h"
 #include "Circle.h"
 
-bool Collision::IsCollide(const Rectangle& r1, const Rectangle& r2)
+bool Collision::IsCollide(const Volume& r1, const Volume& r2)
 {
-	return (r1 && r2) || (r2 && r1);
+	return (r1.IsCollide(r2)) || (r2.IsCollide(r1));
 }
 
 bool Collision::IsOverlap(const Rectangle& r1, const Rectangle& r2)

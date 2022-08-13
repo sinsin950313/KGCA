@@ -70,6 +70,7 @@ public:
 
 public:
 	virtual bool IsIn(const Vector2D& coordinate, const Vector2D& v) const;
+	virtual void Print() const = 0;
 
 public:
 	const std::vector<Vector2D*>& GetVertexes() const { return _vertexes; }

@@ -35,7 +35,7 @@ private:
 		std::vector<Object*> GetCollidedObjects(Object* obj);
 
 	public:
-		const Rectangle* GetVolume() override { return &_rect; }
+		const Volume* GetVolume() override { return &_rect; }
 	};
 
 private:

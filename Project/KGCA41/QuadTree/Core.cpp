@@ -50,13 +50,13 @@ void Core::Simulate(float deltaTime)
 
 void Core::Render()
 {
-	const Rectangle* playerVolume = _player->GetVolume();
-	std::cout << playerVolume->GetLeft() << ", " << playerVolume->GetTop() << ", " << playerVolume->GetRight() << ", " << playerVolume->GetBottom() << std::endl << std::endl;
+	const Volume* playerVolume = _player->GetVolume();
+	playerVolume->Print();
 	
 	for (auto iter = _collidedObjects.begin(); iter != _collidedObjects.end(); ++iter)
 	{
-		const Rectangle* tmp = (*iter)->GetVolume();
-		std::cout << tmp->GetLeft() << ", " << tmp->GetTop() << ", " << tmp->GetRight() << ", " << tmp->GetBottom() << std::endl;
+		const Volume* tmp = (*iter)->GetVolume();
+		tmp->Print();
 	}
 }
 

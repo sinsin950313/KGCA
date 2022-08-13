@@ -2,7 +2,8 @@
 #include "Object.h"
 #include "Collision.h"
 
-QuadTree::Node::Node(float left, float top, float _width, float _height, float depth, int maxDepth) : _rect(left + (_width/2), top + (_height/2), _width, _height), _depth(depth)
+QuadTree::Node::Node(float left, float top, float _width, float _height, float depth, int maxDepth)
+	: _rect(left + (_width/2), top + (_height/2), _width, _height), _depth(depth)
 {
 	if (depth + 1 < maxDepth)
 	{

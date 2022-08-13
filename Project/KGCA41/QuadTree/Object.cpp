@@ -6,9 +6,9 @@ void Object::Reposition(float centerX, float centerY)
 	_rect.Reposition(centerX, centerY);
 }
 
-void Object::Resize(float _width, float _height)
+void Object::Resize(float width, float height)
 {
-	_rect.Resize(_width, _height);
+	_rect.Resize(width, height);
 }
 
 Rigidbody* Object::GetRigidBody()

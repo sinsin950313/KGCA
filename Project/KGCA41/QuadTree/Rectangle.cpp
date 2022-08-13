@@ -3,7 +3,8 @@
 #include <algorithm>
 
 Rectangle::Rectangle(float centerX, float centerY, float width, float height)
-	: Volume(centerX, centerY, 0, RectangleVertexFactory(centerX - (width / 2), centerY - (height / 2), centerX + (width / 2), centerY + (height / 2)))
+	: Volume(centerX, centerY, sqrt(width* width + height * height) / 2, RectangleVertexFactory(-width / 2, -height / 2, width / 2, height / 2))
+	, _width(width), _height(height)
 {
 	Resize(width, height);
 	Reposition(centerX, centerY);
@@ -49,22 +50,25 @@ void Rectangle::Resize(float width, float height)
 
 	_width = width;
 	_height = height;
+
+	_lt.Repoint(-GetWidth() / 2, -GetHeight() / 2);
+	_rb.Repoint(GetWidth() / 2, GetHeight() / 2);
 }
 
 void Rectangle::Reposition(float centerX, float centerY)
 {
 	Volume::Reposition(centerX, centerY);
-
-	_lt.Repoisition(centerX - GetWidth() / 2, centerY - GetHeight() / 2);
-	_rb.Repoisition(centerX + GetWidth() / 2, centerY + GetHeight() / 2);
 }
 
-bool Rectangle::IsIn(const Point& p) const
+bool Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) const
 {
-	if (Volume::IsIn(p))
+	if (Volume::IsIn(coordinate, v))
 	{
-		float x = p.GetX();
-		float y = p.GetY();
+		Vector2D absoulte = v + coordinate;
+		Vector2D relative = absoulte - GetCenter();
+
+		float x = relative.GetX();
+		float y = relative.GetY();
 		return _lt.GetX() <= x && x <= _rb.GetX() && _lt.GetY() <= y && y <= _rb.GetY();
 	}
 	return false;
@@ -75,14 +79,14 @@ RectangleVertexFactory::RectangleVertexFactory(float left, float top, float righ
 {
 }
 
-std::vector<Point*> RectangleVertexFactory::operator()()
+std::vector<Vector2D*> RectangleVertexFactory::operator()()
 {
-	std::vector<Point*> ret;
+	std::vector<Vector2D*> ret;
 
-	ret.push_back(new Point(_lt));
-	ret.push_back(new Point(_lt.GetX(), _rb.GetY()));
-	ret.push_back(new Point(_rb.GetX(), _lt.GetY()));
-	ret.push_back(new Point(_rb));
+	ret.push_back(new Vector2D(_lt));
+	ret.push_back(new Vector2D(_lt.GetX(), _rb.GetY()));
+	ret.push_back(new Vector2D(_rb.GetX(), _lt.GetY()));
+	ret.push_back(new Vector2D(_rb));
 
 	return ret;
 }

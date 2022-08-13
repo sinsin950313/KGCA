@@ -11,9 +11,9 @@ private:
 	Rigidbody _rigidBody;
 
 public:
-	Object(float centerX, float centerY, float _width, float _height) : _rect(centerX, centerY, _width, _height), _rigidBody() { }
+	Object(float centerX, float centerY, float width, float height) : _rect(centerX, centerY, width, height), _rigidBody() { }
 	const Rectangle* GetVolume() { return &_rect; }
 	void Reposition(float centerX, float centerY);
-	void Resize(float _width, float _height);
+	void Resize(float width, float height);
 	Rigidbody* GetRigidBody();
 };

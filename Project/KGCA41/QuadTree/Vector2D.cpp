@@ -7,7 +7,7 @@ float Vector2D::Dot(const Vector2D& vec)
 
 Vector2D Vector2D::operator+(const Vector2D& vec) const
 {
-	return Vector2D(GetX() + vec.GetX(), GetY() + GetY());
+	return Vector2D(GetX() + vec.GetX(), GetY() + vec.GetY());
 }
 
 void Vector2D::operator+=(const Vector2D& vec)
@@ -17,7 +17,7 @@ void Vector2D::operator+=(const Vector2D& vec)
 
 Vector2D Vector2D::operator-(const Vector2D& vec) const
 {
-	return Vector2D(GetX() - vec.GetX(), GetY() - GetY());
+	return Vector2D(GetX() - vec.GetX(), GetY() - vec.GetY());
 }
 
 Vector2D Vector2D::operator*(float scalar) const
@@ -41,9 +41,4 @@ Vector2D Vector2D::Identity()
 	float lengthInvert = 1 / Length();
 	Vector2D ret(GetX() * lengthInvert, GetY() * lengthInvert);
 	return ret;
-}
-
-Point operator+(const Point& p, const Vector2D vec)
-{
-	return Point(p.GetX() + vec.GetX(), p.GetY() + vec.GetY());
 }

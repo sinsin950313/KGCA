@@ -5,18 +5,18 @@
 class RectangleVertexFactory : public VolumeVertexFactory
 {
 private:
-	Point _lt;
-	Point _rb;
+	Vector2D _lt;
+	Vector2D _rb;
 
 public:
 	RectangleVertexFactory(float left, float top, float right, float bottom);
-	virtual std::vector<Point*> operator()() override;
+	virtual std::vector<Vector2D*> operator()() override;
 };
 
 class Rectangle : public Volume
 {
-	Point _lt;
-	Point _rb;
+	Vector2D _lt;
+	Vector2D _rb;
 	float _width;
 	float _height;
 
@@ -25,10 +25,10 @@ public:
 	Rectangle(float centerX, float centerY, float _width, float _height);
 
 public:
-	float GetLeft() const { return _lt.GetX(); }
-	float GetTop() const { return _lt.GetY(); }
-	float GetRight() const { return _rb.GetX(); }
-	float GetBottom() const { return _rb.GetY(); }
+	float GetLeft() const { return _lt.GetX() + GetCenter().GetX(); }
+	float GetTop() const { return _lt.GetY() + GetCenter().GetY(); }
+	float GetRight() const { return _rb.GetX() + GetCenter().GetX(); }
+	float GetBottom() const { return _rb.GetY() + GetCenter().GetY(); }
 	float GetWidth() const { return _width; }
 	float GetHeight() const { return _height; }
 
@@ -42,5 +42,5 @@ public:
 	void Reposition(float centerX, float centerY) override;
 
 public:
-	virtual bool IsIn(const Point& p) const override;
+	virtual bool IsIn(const Vector2D& coordinate, const Vector2D& v) const override;
 };

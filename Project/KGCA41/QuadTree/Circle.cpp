@@ -18,11 +18,11 @@ CircleVertexFactory::CircleVertexFactory(float centerX, float centerY, float rad
 {
 }
 
-std::vector<Point*> CircleVertexFactory::operator()()
+std::vector<Vector2D*> CircleVertexFactory::operator()()
 {
 	float round = 2 * M_PI * GetRadius();
 	float radian = 0.0f;
-	std::vector<Point*> ret;
+	std::vector<Vector2D*> ret;
 	if (round <= 8)
 	{
 		for (int i = 0; i < 8; ++i)
@@ -32,7 +32,7 @@ std::vector<Point*> CircleVertexFactory::operator()()
 			float x = GetCenterX() + cosf(radian);
 			float y = GetCenterY() + sinf(radian);
 
-			ret.push_back(new Point(x, y));
+			ret.push_back(new Vector2D(x, y));
 		}
 	}
 	else
@@ -45,7 +45,7 @@ std::vector<Point*> CircleVertexFactory::operator()()
 			float x = GetCenterX() + cosf(radian);
 			float y = GetCenterY() + sinf(radian);
 
-			ret.push_back(new Point(x, y));
+			ret.push_back(new Vector2D(x, y));
 		}
 	}
 

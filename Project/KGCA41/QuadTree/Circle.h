@@ -5,7 +5,7 @@
 class CircleVertexFactory : public VolumeVertexFactory
 {
 private:
-	Point _center;
+	Vector2D _center;
 	float _radius;
 
 private:
@@ -15,7 +15,7 @@ private:
 
 public:
 	CircleVertexFactory(float centerX, float centerY, float radius);
-	virtual std::vector<Point*> operator()() override;
+	virtual std::vector<Vector2D*> operator()() override;
 };
 
 class Circle : public Volume

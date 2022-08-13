@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "Point.h"
+#include "Vector2D.h"
 
 /// <summary>
 /// <para>
@@ -20,7 +20,7 @@
 class VolumeVertexFactory
 {
 public:
-	virtual std::vector<Point*> operator()() = 0;
+	virtual std::vector<Vector2D*> operator()() = 0;
 };
 
 class Volume
@@ -28,25 +28,30 @@ class Volume
 private:
 	class RoughVolume
 	{
-		Point _center;
+		Vector2D _center;
 		float _radius;
 
 	public:
 		RoughVolume(float x, float y, float r) : _center(x, y), _radius(r) { }
 
 	public:
-		bool IsIn(const Point& p) const;
+		/// <summary>
+		/// Check local coordinate distance
+		/// </summary>
+		/// <param name="v">This should be this object's local coordinate</param>
+		/// <returns></returns>
+		bool IsIn(const Vector2D& v) const;
 		void Resize(float radius) { _radius = radius; }
-		void Reposition(float x, float y) { _center.Repoisition(x, y); }
+		void Reposition(float x, float y) { _center.Repoint(x, y); }
 
 	public:
-		const Point& GetCenter() const { return _center; }
+		const Vector2D& GetCenter() const { return _center; }
 		float GetRadius() const { return _radius; }
 	};
 
 private:
 	RoughVolume _roughVolume;
-	std::vector<Point*> _vertexes;
+	std::vector<Vector2D*> _vertexes;
 
 public:
 	Volume(float centerX, float centerY, float radius, VolumeVertexFactory& factory) : _roughVolume(centerX, centerY, radius) { _vertexes = factory(); }
@@ -56,14 +61,19 @@ public:
 public:
 	void Resize(float radius);
 	virtual void Reposition(float centerX, float centerY);
+	/// <summary>
+	/// Check Collide from same coordinate
+	/// </summary>
+	/// <param name="volume">This object and volume should be same coordinate</param>
+	/// <returns></returns>
 	bool IsCollide(const Volume& volume) const;
 
 public:
-	virtual bool IsIn(const Point& p) const;
+	virtual bool IsIn(const Vector2D& coordinate, const Vector2D& v) const;
 
 public:
-	const std::vector<Point*>& GetVertexes() const { return _vertexes; }
-	const Point& GetCenter() const { return _roughVolume.GetCenter(); }
+	const std::vector<Vector2D*>& GetVertexes() const { return _vertexes; }
+	const Vector2D& GetCenter() const { return _roughVolume.GetCenter(); }
 
 protected:
 	float GetRadius() const { return _roughVolume.GetRadius(); }

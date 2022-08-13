@@ -20,11 +20,11 @@ void Core::Init()
 	int objectCount = 100;
 	for (int i = 0; i < objectCount; ++i)
 	{
-		float centerX = rand() % _width - (_width / 2);
-		float centerY = rand() % _height - (_height / 2);
-		float _width = rand() % 10;
-		float _height = rand() % 10;
-		Object* object = new Object(centerX, centerY, _width, _height);
+		float centerX = (rand() % _width) - (_width / 2);
+		float centerY = (rand() % _height) - (_height / 2);
+		float width = rand() % 10 + 1.0f;
+		float height = rand() % 10 + 1.0f;
+		Object* object = new Object(centerX, centerY, width, height);
 		_objects.push_back(object);
 		qt.AddObject(object);
 	}
@@ -35,13 +35,13 @@ void Core::Init()
 void Core::Simulate(float deltaTime)
 {
 	_player->GetRigidBody()->Calculate(deltaTime);
-	Point pos = _player->GetVolume()->GetCenter() + (_player->GetRigidBody()->GetVelocity() * deltaTime);
+	Vector2D pos = _player->GetVolume()->GetCenter() + (_player->GetRigidBody()->GetVelocity() * deltaTime);
 	_player->Reposition(pos.GetX(), pos.GetY());
 
 	for (auto iter = _objects.begin(); iter != _objects.end(); ++iter)
 	{
 		(*iter)->GetRigidBody()->Calculate(deltaTime);
-		Point pos = (*iter)->GetVolume()->GetCenter() + (*iter)->GetRigidBody()->GetVelocity() * deltaTime;
+		Vector2D pos = (*iter)->GetVolume()->GetCenter() + (*iter)->GetRigidBody()->GetVelocity() * deltaTime;
 		(*iter)->Reposition(pos.GetX(), pos.GetY());
 	}
 
@@ -52,6 +52,7 @@ void Core::Render()
 {
 	const Rectangle* playerVolume = _player->GetVolume();
 	std::cout << playerVolume->GetLeft() << ", " << playerVolume->GetTop() << ", " << playerVolume->GetRight() << ", " << playerVolume->GetBottom() << std::endl << std::endl;
+	
 	for (auto iter = _collidedObjects.begin(); iter != _collidedObjects.end(); ++iter)
 	{
 		const Rectangle* tmp = (*iter)->GetVolume();
@@ -64,5 +65,5 @@ void Core::Run()
 	Simulate(0.1f);
 	Render();
 
-	_player->GetRigidBody()->AddForce(Vector2D(10, 0));
+	_player->GetRigidBody()->AddForce(Vector2D(10, 10));
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "QuadTree.h"
+//#include "QuadTree.h"
 
 class Object;
 
@@ -11,7 +11,7 @@ private:
 	const int _width = 100;
 	const int _height = 100;
 	const int _maxDepth = 3;
-	QuadTree qt;
+	//QuadTree qt;
 	std::vector<Object*> _objects;
 	Object* _player;
 	std::vector<Object*> _collidedObjects;

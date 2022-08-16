@@ -139,28 +139,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Circle.cpp" />
-    <ClCompile Include="Collision.cpp" />
-    <ClCompile Include="Core.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Object.cpp" />
-    <ClCompile Include="QuadTree.cpp" />
-    <ClCompile Include="Rectangle.cpp" />
-    <ClCompile Include="Rigidbody.cpp" />
-    <ClCompile Include="Vector2D.cpp" />
-    <ClCompile Include="Volume.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Circle.h" />
-    <ClInclude Include="Collision.h" />
-    <ClInclude Include="Core.h" />
-    <ClInclude Include="Object.h" />
-    <ClInclude Include="QuadTree.h" />
-    <ClInclude Include="Rectangle.h" />
-    <ClInclude Include="Rigidbody.h" />
-    <ClInclude Include="Vector2D.h" />
-    <ClInclude Include="Volume.h" />
-    <ClInclude Include="VolumeInterface.h" />
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

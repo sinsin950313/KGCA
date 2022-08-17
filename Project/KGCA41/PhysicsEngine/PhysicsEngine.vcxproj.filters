@@ -21,9 +21,6 @@
     <ClCompile Include="Core.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Vector2D.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
@@ -33,9 +30,6 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Core.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector2D.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

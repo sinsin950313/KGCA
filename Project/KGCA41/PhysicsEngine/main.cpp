@@ -19,4 +19,6 @@ int main()
 	vec.Normalize();
 	Vector2D identity = vec.Identity();
 	vec.Clear();
+
+	Vector2D varVec(2, 1.0f, 2.0f);
 }

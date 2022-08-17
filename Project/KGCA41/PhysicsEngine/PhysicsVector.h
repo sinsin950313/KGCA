@@ -17,6 +17,8 @@ private:
 
 public:
 	PhysicsVector() { _coordinate = new float[_dimension]; Clear(); }
+	PhysicsVector(const PhysicsVector& copy);
+	PhysicsVector(PhysicsVector&& move);
 	virtual ~PhysicsVector() { delete _coordinate; }
 
 private:
@@ -37,6 +39,8 @@ public:
 	PhysicsVector operator-(const PhysicsVector& vec) const;
 	PhysicsVector operator*(float scalar) const;
 	PhysicsVector operator/(float scalar) const;
+	void operator=(const PhysicsVector& copy);
+	void operator=(PhysicsVector&& move);
 
 public:
 	void Normalize();
@@ -50,6 +54,23 @@ public:
 
 using Vector2D = PhysicsVector<2>;
 using Vector3D = PhysicsVector<3>;
+
+template<int dimension>
+inline PhysicsVector<dimension>::PhysicsVector(const PhysicsVector& copy)
+{
+	_coordinate = new float[_dimension];
+	for (int i = 0; i < _dimension; ++i)
+	{
+		_coordinate[i] = copy._coordinate[i];
+	}
+}
+
+template<int dimension>
+inline PhysicsVector<dimension>::PhysicsVector(PhysicsVector&& move)
+{
+	_coordinate = move._coordinate;
+	move._coordinate = nullptr;
+}
 
 template<int dimension>
 inline void PhysicsVector<dimension>::DimensionCheck(const PhysicsVector& vec) const
@@ -106,24 +127,24 @@ template<int dimension>
 inline PhysicsVector<dimension> PhysicsVector<dimension>::operator+(const PhysicsVector& vec) const
 {
 	PhysicsVector<dimension> ret;
-	auto lambda = [&ret, this](int dim, float val) -> void { ret[dim] = _coordinate[dim] + val; };
-	RepeatAction(lambda, vec);
+	auto lambda = [&ret, this](int dim, float val) -> void { *ret[dim] = _coordinate[dim] + val; };
+	RepeatAction(vec, lambda);
 	return ret;
 }
 
 template<int dimension>
 inline void PhysicsVector<dimension>::operator+=(const PhysicsVector& vec)
 {
-	auto lambda = [this](int dim, float val) -> void { _coordinate[dim] += vec[dim]; };
-	RepeatAction(lambda, vec);
+	auto lambda = [this](int dim, float val) -> void { _coordinate[dim] += val; };
+	RepeatAction(vec, lambda);
 }
 
 template<int dimension>
 inline PhysicsVector<dimension> PhysicsVector<dimension>::operator-(const PhysicsVector& vec) const
 {
 	PhysicsVector ret;
-	auto lambda = [&ret, this](int dim, float val) -> void { ret[dim] = _coordinate[dim] - val; };
-	RepeatAction(lambda, vec);
+	auto lambda = [&ret, this](int dim, float val) -> void { *ret[dim] = _coordinate[dim] - val; };
+	RepeatAction(vec, lambda);
 	return ret;
 }
 
@@ -131,7 +152,7 @@ template<int dimension>
 inline PhysicsVector<dimension> PhysicsVector<dimension>::operator*(float scalar) const
 {
 	PhysicsVector ret;
-	auto lambda = [&ret, this, scalar](int dim) -> void { ret[dim] = _coordinate[dim] * scalar; };
+	auto lambda = [&ret, this, scalar](int dim) -> void { *ret[dim] = _coordinate[dim] * scalar; };
 	RepeatAction(lambda);
 	return ret;
 }
@@ -141,9 +162,25 @@ inline PhysicsVector<dimension> PhysicsVector<dimension>::operator/(float scalar
 {
 	PhysicsVector ret;
 	float invertScalar = 1 / scalar;
-	auto lambda = [&ret, this, invertScalar](int dim) -> void { ret[dim] = _coordinate[dim] * invertScalar; };
+	auto lambda = [&ret, this, invertScalar](int dim) -> void { *ret[dim] = _coordinate[dim] * invertScalar; };
 	RepeatAction(lambda);
 	return ret;
+}
+
+template<int dimension>
+inline void PhysicsVector<dimension>::operator=(const PhysicsVector& copy)
+{
+	DimensionCheck(copy);
+	auto lambda = [this](int dim, float val)-> void { _coordinate[dim] = val; };
+	RepeatAction(copy, lambda);
+}
+
+template<int dimension>
+inline void PhysicsVector<dimension>::operator=(PhysicsVector&& move)
+{
+	DimensionCheck(move);
+	_coordinate = move._coordinate;
+	move._coordinate = nullptr;
 }
 
 template<int dimension>
@@ -159,7 +196,8 @@ inline PhysicsVector<dimension> PhysicsVector<dimension>::Identity()
 {
 	PhysicsVector ret;
 	float inverseLength = 1.0f / Length();
-	auto lambda = [&ret, this, inverseLength](int dim) -> void { ret[dim] = _coordinate[dim] * inverseLength; };
+	auto lambda = [&ret, this, inverseLength](int dim) -> void { *ret[dim] = _coordinate[dim] * inverseLength; };
+	RepeatAction(lambda);
 	return ret;
 }
 

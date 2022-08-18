@@ -57,11 +57,6 @@ void Rectangle::Resize(float width, float height)
 	_rb = Vector2D(2, GetWidth() / 2, GetHeight() / 2);
 }
 
-void Rectangle::Reposition(Vector2D& pos)
-{
-	Volume::Reposition(pos);
-}
-
 bool Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) const
 {
 	if (Volume::IsIn(coordinate, v))

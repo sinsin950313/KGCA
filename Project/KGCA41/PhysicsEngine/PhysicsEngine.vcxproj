@@ -21,11 +21,9 @@
   <ItemGroup>
     <ClCompile Include="Core.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PhysicsVector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Core.h" />
-    <ClInclude Include="PhysicsVector.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

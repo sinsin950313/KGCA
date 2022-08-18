@@ -4,16 +4,18 @@
 #include "Rectangle.h"
 #include "Rigidbody.h"
 
+template<int dimension>
 class Object : public VolumeInterface
 {
 private:
-	Rectangle _rect;
-	Rigidbody _rigidBody;
+	Volume _volume;
+	Rigidbody<dimension> _rigidBody;
 
 public:
-	Object(float centerX, float centerY, float width, float height) : _rect(centerX, centerY, width, height), _rigidBody() { }
-	const Volume* GetVolume() override { return &_rect; }
-	void Reposition(float centerX, float centerY);
-	void Resize(float width, float height);
-	Rigidbody* GetRigidBody();
+	Object(Volume volume, Rigidbody<dimension> rigidbody) : _volume(volume), _rigidBody(rigidbody) { }
+	Volume* GetVolume() override { return &_volume; }
+	Rigidbody* GetRigidBody() { return &_rigidBody; }
 };
+
+using Object2D = Object<2>;
+using Object3D = Object<3>;

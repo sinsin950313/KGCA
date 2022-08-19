@@ -32,8 +32,8 @@
     <ClInclude Include="Rigidbody.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PhysicsMath\PhysicsMath.vcxproj">
-      <Project>{895d4eb2-1e4b-4094-8528-dcc7799f306c}</Project>
+    <ProjectReference Include="..\Volume\Volume.vcxproj">
+      <Project>{6327cb72-15ae-4ec7-ab62-6432ce309e6d}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">

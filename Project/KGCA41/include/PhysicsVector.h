@@ -38,7 +38,7 @@ public:
 	/// </summary>
 	/// <param name="count"></param>
 	/// <param name=""></param>
-	PhysicsVector(int count, ...);
+	explicit PhysicsVector(int count, ...);
 	PhysicsVector(Vector2DData&& data);
 	PhysicsVector(Vector3DData&& data);
 	PhysicsVector(const PhysicsVector& copy);

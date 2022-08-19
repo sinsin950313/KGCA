@@ -1,9 +1,10 @@
 #pragma once
 
-class Volume;
+#include "Volume.h"
 
+template<int dimension>
 class VolumeInterface
 {
 public:
-	virtual const Volume* GetVolume() = 0;
+	virtual const Volume<dimension>* GetVolume() = 0;
 };

@@ -53,8 +53,8 @@ void Rectangle::Resize(float width, float height)
 	_width = width;
 	_height = height;
 
-	_lt = Vector2D(2, -GetWidth() / 2, -GetHeight() / 2);
-	_rb = Vector2D(2, GetWidth() / 2, GetHeight() / 2);
+	_lt = Vector2D(2, -GetWidth() / 2, GetHeight() / 2);
+	_rb = Vector2D(2, GetWidth() / 2, -GetHeight() / 2);
 }
 
 bool Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) const
@@ -66,7 +66,7 @@ bool Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) const
 
 		float x = relative.Get(0);
 		float y = relative.Get(1);
-		return _lt.Get(0) <= x && x <= _rb.Get(0) && _lt.Get(1) <= y && y <= _rb.Get(1);
+		return _lt.Get(0) <= x && x <= _rb.Get(0) && _rb.Get(1) <= y && y <= _lt.Get(1);
 	}
 	return false;
 }

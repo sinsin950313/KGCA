@@ -86,51 +86,51 @@ std::vector<Volume<3>*> OctTreeDivider::Divide(const Volume<3>& volume)
     // 0----3
 	std::vector<Volume<3>*> ret;
 	{
-		float x = center.Get(0) - newWidth;
-		float y = center.Get(1) - newHeight;
-		float z = center.Get(2) - newDepth;
+		float x = center.Get(0) - newWidth / 2;
+		float y = center.Get(1) - newHeight / 2;
+		float z = center.Get(2) - newDepth / 2;
 		ret.push_back(new Box(Vector3D(Vector3DData{x, y, z}), newWidth, newHeight, newDepth));
 	}
 	{
-		float x = center.Get(0) - newWidth;
-		float y = center.Get(1) - newHeight;
-		float z = center.Get(2) + newDepth;
+		float x = center.Get(0) - newWidth / 2;
+		float y = center.Get(1) - newHeight / 2;
+		float z = center.Get(2) + newDepth / 2;
 		ret.push_back(new Box(Vector3D(Vector3DData{x, y, z}), newWidth, newHeight, newDepth));
 	}
 	{
-		float x = center.Get(0) + newWidth;
-		float y = center.Get(1) - newHeight;
-		float z = center.Get(2) + newDepth;
+		float x = center.Get(0) + newWidth / 2;
+		float y = center.Get(1) - newHeight / 2;
+		float z = center.Get(2) + newDepth / 2;
 		ret.push_back(new Box(Vector3D(Vector3DData{x, y, z}), newWidth, newHeight, newDepth));
 	}
 	{
-		float x = center.Get(0) + newWidth;
-		float y = center.Get(1) - newHeight;
-		float z = center.Get(2) - newDepth;
+		float x = center.Get(0) + newWidth / 2;
+		float y = center.Get(1) - newHeight / 2;
+		float z = center.Get(2) - newDepth / 2;
 		ret.push_back(new Box(Vector3D(Vector3DData{x, y, z}), newWidth, newHeight, newDepth));
 	}
 	{
-		float x = center.Get(0) - newWidth;
-		float y = center.Get(1) + newHeight;
-		float z = center.Get(2) - newDepth;
+		float x = center.Get(0) - newWidth / 2;
+		float y = center.Get(1) + newHeight / 2;
+		float z = center.Get(2) - newDepth / 2;
 		ret.push_back(new Box(Vector3D(Vector3DData{x, y, z}), newWidth, newHeight, newDepth));
 	}
 	{
-		float x = center.Get(0) - newWidth;
-		float y = center.Get(1) + newHeight;
-		float z = center.Get(2) + newDepth;
+		float x = center.Get(0) - newWidth / 2;
+		float y = center.Get(1) + newHeight / 2;
+		float z = center.Get(2) + newDepth / 2;
 		ret.push_back(new Box(Vector3D(Vector3DData{x, y, z}), newWidth, newHeight, newDepth));
 	}
 	{
-		float x = center.Get(0) + newWidth;
-		float y = center.Get(1) + newHeight;
-		float z = center.Get(2) + newDepth;
+		float x = center.Get(0) + newWidth / 2;
+		float y = center.Get(1) + newHeight / 2;
+		float z = center.Get(2) + newDepth / 2;
 		ret.push_back(new Box(Vector3D(Vector3DData{x, y, z}), newWidth, newHeight, newDepth));
 	}
 	{
-		float x = center.Get(0) + newWidth;
-		float y = center.Get(1) + newHeight;
-		float z = center.Get(2) - newDepth;
+		float x = center.Get(0) + newWidth / 2;
+		float y = center.Get(1) + newHeight / 2;
+		float z = center.Get(2) - newDepth / 2;
 		ret.push_back(new Box(Vector3D(Vector3DData{x, y, z}), newWidth, newHeight, newDepth));
 	}
 	return ret;

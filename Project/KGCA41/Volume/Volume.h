@@ -66,6 +66,10 @@ public:
 	virtual ~Volume();
 
 public:
+	/// <summary>
+	/// need to rewrite
+	/// </summary>
+	/// <param name="radius"></param>
 	void Resize(float radius);
 	void Reposition(PhysicsVector<dim>& pos);
 	/// <summary>

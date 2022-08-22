@@ -5,13 +5,12 @@
 class BoxVertexFactory : public VolumeVertexFactory<3>
 {
 private:
-	Vector3D _center;
 	float _width;
 	float _height;
 	float _depth;
 
 public:
-	BoxVertexFactory(Vector3D center, float width, float height, float depth);
+	BoxVertexFactory(float width, float height, float depth);
 	virtual std::vector<Vector3D*> operator()();
 };
 

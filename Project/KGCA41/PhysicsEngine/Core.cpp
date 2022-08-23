@@ -1,25 +1,7 @@
 #include "Core.h"
-//#include <iostream>
-//#include "Object.h"
-//
-//Core::Core() : qt(_width, _height, _maxDepth)
+
+//Object<2>* Random2DObjectGenerator::Generate()
 //{
-//}
-//
-//Core::~Core()
-//{
-//	for (auto iter = _objects.begin(); iter != _objects.end(); ++iter)
-//	{
-//		delete (*iter);
-//	}
-//	delete _player;
-//}
-//
-//void Core::Init()
-//{
-//	int objectCount = 100;
-//	for (int i = 0; i < objectCount; ++i)
-//	{
 //		float centerX = (rand() % _width) - (_width / 2);
 //		float centerY = (rand() % _height) - (_height / 2);
 //		float width = rand() % 10 + 1.0f;
@@ -27,43 +9,20 @@
 //		Object* object = new Object(centerX, centerY, width, height);
 //		_objects.push_back(object);
 //		qt.AddObject(object);
-//	}
-//
-//	_player = new Object(0, 0, 10, 10);
+//	return nullptr;
 //}
 //
-//void Core::Simulate(float deltaTime)
+//Object<3>* Random3DObjectGenerator::Generate()
 //{
-//	_player->GetRigidBody()->Calculate(deltaTime);
-//	Vector2D pos = _player->GetVolume()->GetCenter() + (_player->GetRigidBody()->GetVelocity() * deltaTime);
-//	_player->Reposition(pos.GetX(), pos.GetY());
+//	return nullptr;
+//}
 //
-//	for (auto iter = _objects.begin(); iter != _objects.end(); ++iter)
+//template<int dimension>
+//inline void Core<dimension>::Init()
+//{
+//	int objectCount = 100;
+//	for (int i = 0; i < objectCount; ++i)
 //	{
-//		(*iter)->GetRigidBody()->Calculate(deltaTime);
-//		Vector2D pos = (*iter)->GetVolume()->GetCenter() + (*iter)->GetRigidBody()->GetVelocity() * deltaTime;
-//		(*iter)->Reposition(pos.GetX(), pos.GetY());
+//		_objects.push_back(_objectgenerator.Generate());
 //	}
-//
-//	_collidedObjects = qt.GetCollidedObjects(_player);
-//}
-//
-//void Core::Render()
-//{
-//	const Volume* playerVolume = _player->GetVolume();
-//	playerVolume->Print();
-//	
-//	for (auto iter = _collidedObjects.begin(); iter != _collidedObjects.end(); ++iter)
-//	{
-//		const Volume* tmp = (*iter)->GetVolume();
-//		tmp->Print();
-//	}
-//}
-//
-//void Core::Run()
-//{
-//	Simulate(0.1f);
-//	Render();
-//
-//	_player->GetRigidBody()->AddForce(Vector2D(10, 10));
 //}

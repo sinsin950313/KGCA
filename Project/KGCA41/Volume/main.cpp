@@ -5,15 +5,15 @@
 
 int main()
 {
-	Rectangle standard(0, 0, 20, 20);
+	Custom::Rectangle standard(0, 0, 20, 20);
 	standard.Print();
 
 	std::cout << std::boolalpha;
-	Rectangle collide(0, 10, 10, 10);
+	Custom::Rectangle collide(0, 10, 10, 10);
 	collide.Print();
 	std::cout << standard.IsCollide(collide) << std::endl;
 
-	Rectangle unCollide(0, 20, 10, 10);
+	Custom::Rectangle unCollide(0, 20, 10, 10);
 	std::cout << standard.IsCollide(unCollide) << std::endl;
 	//Rectangle rectIn(0, 0, 10, 10);
 	std::cout << std::noboolalpha;
@@ -23,7 +23,7 @@ int main()
 	standard.Reposition(newPos);
 	standard.Print();
 
-	Rectangle comp(30, 30, 30, 30);
+	Custom::Rectangle comp(30, 30, 30, 30);
 	std::cout << std::boolalpha << (standard == comp) << std::noboolalpha << std::endl;
 
 	Box standardBox(Vector3D(Vector3DData{0, 0, 0}), 10, 10, 10);

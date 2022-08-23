@@ -72,7 +72,7 @@ class QuadTree : public CollisionTree<2>
 {
 public:
 	QuadTree(float width, float height, int maxLayer)
-		: CollisionTree(4, maxLayer, new Rectangle(0, 0, width, height), QuadTreeDivider())
+		: CollisionTree(4, maxLayer, new Custom::Rectangle(0, 0, width, height), QuadTreeDivider())
 	{
 
 	}

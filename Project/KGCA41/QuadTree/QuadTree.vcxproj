@@ -78,6 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
+    <ReferencePath>$(ProjectDir)\..\lib;$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -143,6 +145,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CollisionSystem\CollisionSystem.vcxproj">
+      <Project>{abd08d09-42bb-4071-8072-eb54043f6a1b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\PhysicsMath\PhysicsMath.vcxproj">
+      <Project>{895d4eb2-1e4b-4094-8528-dcc7799f306c}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\Volume\Volume.vcxproj">
+      <Project>{6327cb72-15ae-4ec7-ab62-6432ce309e6d}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

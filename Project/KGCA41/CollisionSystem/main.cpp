@@ -47,7 +47,7 @@ int main()
 #endif
 
 #ifdef QUADTREE
-		Object<dimension>* object = new Object<dimension>(new Rectangle(centerX, centerY, tmpWidth, tmpHeight), Rigidbody2D());
+		Object<dimension>* object = new Object<dimension>(new Custom::Rectangle(centerX, centerY, tmpWidth, tmpHeight), Rigidbody2D());
 #else
 		Object<dimension>* object = new Object<dimension>(new Box(Vector3D(Vector3DData{centerX, centerY, centerZ}), tmpWidth, tmpHeight, tmpDepth), Rigidbody3D());
 #endif
@@ -56,7 +56,7 @@ int main()
 	}
 
 #ifdef QUADTREE
-	player = new Object<dimension>(new Rectangle(0, 0, 30, 30), Rigidbody2D());
+	player = new Object<dimension>(new Custom::Rectangle(0, 0, 30, 30), Rigidbody2D());
 #else
 	player = new Object<dimension>(new Box(Vector3D(Vector3DData{ 0, 0, 0 }), 30, 30, 30), Rigidbody3D());
 #endif

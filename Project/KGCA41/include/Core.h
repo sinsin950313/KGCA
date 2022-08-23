@@ -7,161 +7,87 @@
 template<int dimension>
 class Core
 {
-private:
-	//template<int dimension>
-	//class ObjectGenerator
-	//{
-	//public:
-	//	Object<2>* Create(int centerX, int centerY, int width, int height);
-	//	Object<3>* Create(int centerX, int centerY, int centerZ, int width, int height, int depth);
-	//	Object<2>* Create(int width, int height);
-	//	Object<3>* Create(int width, int height, int depth);
-	//};
-
-private:
-	const int _width = 100;
-	const int _height = 100;
-	const int _depth = 100;
-	const int _maxLayer = 3;
+protected:
 	CollisionTree<dimension>* _ct = nullptr;
-	std::vector<Object<dimension>*> _objects;
-	Object<dimension>* _player;
-	std::vector<Object<dimension>*> _collidedObjects;
+private:
+	std::vector<Object<dimension>*> _staticObjects;
+	//std::vector<Object<dimension>*> _dynamicObjects;
 
 public:
-	Core();
+	Core(CollisionTree<dimension>* ct);
 	~Core();
 
-private:
-	void Simulate(float deltaTime);
-	void Render();
+public:
+	void AddStaticObject(Object<dimension>* object);
+	//void AddDynamicObject(Object<dimension>* object);
 
 public:
-	void Init();
-	void Run();
+	virtual void Init() = 0;
 
 public:
-	void UseQuadTree();
-	void UseOctTree();
+	virtual void Run();
+
+protected:
+	virtual void Simulate(float deltaTime);
+
+protected:
+	Object<dimension>* _player = nullptr;
+	std::vector<Object<dimension>*> _collidedObjects;
+	virtual void Render() = 0;
 };
 
 template<int dimension>
-Core<dimension>::Core()
+Core<dimension>::Core(CollisionTree<dimension>* ct) : _ct(ct)
 {
+
 }
 
 template<int dimension>
 Core<dimension>::~Core()
 {
-	for (auto iter = _objects.begin(); iter != _objects.end(); ++iter)
+	delete _ct;
+	for (auto iter = _staticObjects.begin(); iter != _staticObjects.end(); ++iter)
 	{
 		delete (*iter);
 	}
-	delete _player;
-}
-
-template<int dimension>
-void Core<dimension>::Init()
-{
-	int objectCount = 100;
-	for (int i = 0; i < objectCount; ++i)
-	{
-		float centerX = (rand() % _width) - (_width / 2);
-		float centerY = (rand() % _height) - (_height / 2);
-		float width = rand() % 10 + 1.0f;
-		float height = rand() % 10 + 1.0f;
-		//void* object = nullptr;
-		//if (dimension == 2)
-		//{
-		//	object = ObjectGenerator<2>().Create(_width, _height);
-		//}
-		//if (dimension == 3)
-		//{
-		//	object = ObjectGenerator<3>().Create(_width, _height, _depth);
-		//}
-		//_objects.push_back(static_cast<Object<dimension>*>(object));
-		//_ct->AddObject(static_cast<Object<dimension>*>(object));
-	}
-
-	//void* player = nullptr;
-	//if (dimension == 2)
+	//for (auto iter = _dynamicObjects.begin(); iter != _dynamicObjects.end(); ++iter)
 	//{
-	//	player = ObjectGenerator<2>().Create(0, 0, 10, 10);
+	//	delete (*iter);
 	//}
-	//if (dimension == 3)
-	//{
-	//	player = ObjectGenerator<3>().Create(0, 0, 0, 10, 10, 10);
-	//}
-	//_player = static_cast<Object<dimension>*>(player);
 }
 
 template<int dimension>
-void Core<dimension>::Simulate(float deltaTime)
+inline void Core<dimension>::AddStaticObject(Object<dimension>* object)
 {
-	_player->GetRigidBody()->Calculate(deltaTime);
-	PhysicsVector<dimension> pos = _player->GetVolume()->GetCenter() + (_player->GetRigidBody()->GetVelocity() * deltaTime);
-	_player->GetVolume()->Reposition(pos);
-
-	for (auto iter = _objects.begin(); iter != _objects.end(); ++iter)
-	{
-		(*iter)->GetRigidBody()->Calculate(deltaTime);
-		PhysicsVector<dimension> pos = (*iter)->GetVolume()->GetCenter() + (*iter)->GetRigidBody()->GetVelocity() * deltaTime;
-		(*iter)->GetVolume()->Reposition(pos);
-	}
-
-	_collidedObjects = _ct->GetCollidedObjects(_player);
+	_staticObjects.push_back(object);
+	_ct->AddObject(object);
 }
-
-template<int dimension>
-void Core<dimension>::Render()
-{
-	const Volume<dimension>* playerVolume = _player->GetVolume();
-	playerVolume->Print();
-	
-	for (auto iter = _collidedObjects.begin(); iter != _collidedObjects.end(); ++iter)
-	{
-		const Volume<dimension>* tmp = (*iter)->GetVolume();
-		tmp->Print();
-	}
-}
+//
+//template<int dimension>
+//inline void Core<dimension>::AddDynamicObject(Object<dimension>* object)
+//{
+//	_objects.push_back(object);
+//	qt.AddObject(object);
+//}
 
 template<int dimension>
 void Core<dimension>::Run()
 {
 	Simulate(0.1f);
 	Render();
-
-	_player->GetRigidBody()->AddForce(PhysicsVector<dimension>(10, 10));
 }
 
 template<int dimension>
-inline void Core<dimension>::UseQuadTree()
+void Core<dimension>::Simulate(float deltaTime)
 {
-	_ct = new QuadTree(100, 100, 3);
-}
+	//auto dynamicObjects = _dynamicObjects;
+	//_dynamicObjects.clear();
 
-template<int dimension>
-inline void Core<dimension>::UseOctTree()
-{
-	_ct = new OctTree(100, 100, 100, 3);
+	//for (auto iter = dynamicObjects.begin(); iter != dynamicObjects.end(); ++iter)
+	//{
+	//	(*iter)->GetRigidBody()->Calculate(deltaTime);
+	//	PhysicsVector<dimension> pos = (*iter)->GetVolume()->GetCenter() + (*iter)->GetRigidBody()->GetVelocity() * deltaTime;
+	//	(*iter)->GetVolume()->Reposition(pos);
+	//	_dynamicObjects.push_back(*iter);
+	//}
 }
-//
-//inline Object<2>* Core<2>::ObjectGenerator<2>::Create(int centerX, int centerY, int width, int height)
-//{
-//	return nullptr;
-//}
-//
-//inline Object<3>* Core<3>::ObjectGenerator<2>::Create(int centerX, int centerY, int centerZ, int width, int height, int depth)
-//{
-//	return nullptr;
-//}
-//
-//inline Object<2>* Core<2>::ObjectGenerator<2>::Create(int width, int height)
-//{
-//	return nullptr;
-//}
-//
-//inline Object<3>* Core<3>::ObjectGenerator<3>::Create(int width, int height, int depth)
-//{
-//	return nullptr;
-//}

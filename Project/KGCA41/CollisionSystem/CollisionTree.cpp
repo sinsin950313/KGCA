@@ -29,22 +29,22 @@ std::vector<Volume<2>*> QuadTreeDivider::Divide(const Volume<2>& volume)
 	std::vector<Volume<2>*> ret;
 	{
 		float centerX = center.Get(0) - newWidth / 2;
-		float centerY = center.Get(1) + newHeight;
+		float centerY = center.Get(1) + newHeight / 2;
 		ret.push_back(new Custom::Rectangle(centerX, centerY, newWidth, newHeight));
 	}
 	{
 		float centerX = center.Get(0) + newWidth / 2;
-		float centerY = center.Get(1) + newHeight;
+		float centerY = center.Get(1) + newHeight / 2;
 		ret.push_back(new Custom::Rectangle(centerX, centerY, newWidth, newHeight));
 	}
 	{
 		float centerX = center.Get(0) - newWidth / 2;
-		float centerY = center.Get(1) - newHeight;
+		float centerY = center.Get(1) - newHeight / 2;
 		ret.push_back(new Custom::Rectangle(centerX, centerY, newWidth, newHeight));
 	}
 	{
 		float centerX = center.Get(0) + newWidth / 2;
-		float centerY = center.Get(1) - newHeight;
+		float centerY = center.Get(1) - newHeight / 2;
 		ret.push_back(new Custom::Rectangle(centerX, centerY, newWidth, newHeight));
 	}
 

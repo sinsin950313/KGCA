@@ -69,6 +69,7 @@ void Box::Print() const
 {
     auto vertexes = GetVertexes();
     auto center = GetCenter();
+    int i = 0;
     for(auto vertex = vertexes.begin(); vertex != vertexes.end(); ++vertex)
     {
         std::cout << "( ";
@@ -76,7 +77,12 @@ void Box::Print() const
         {
             std::cout << (*vertex)->Get(i) + center.Get(i) << " ";
         }
-        std::cout << ")";
+        std::cout << ") ";
+        ++i;
+        if (i == 4)
+        {
+            std::cout << std::endl;
+        }
     }
-    std::cout << std::endl;
+    std::cout << std::endl << std::endl;
 }

@@ -73,7 +73,9 @@ bool Custom::Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) cons
 
 void Custom::Rectangle::Print() const
 {
-	std::cout << GetLeft() << ", " << GetTop() << ", " << GetRight() << ", " << GetBottom() << ", " << GetWidth() << ", " << GetHeight() << std::endl << std::endl;
+	std::cout << "Left-Top " << "(" << GetLeft() << ", " << GetTop() << ")" 
+		<< ", " << "Right-Bottom " << "(" << GetRight() << ", " << GetBottom() << ")" 
+		<< ", " << "Width-Height " << GetWidth() << ", " << GetHeight() << std::endl << std::endl;
 }
 
 Custom::RectangleVertexFactory::RectangleVertexFactory(float left, float top, float right, float bottom)

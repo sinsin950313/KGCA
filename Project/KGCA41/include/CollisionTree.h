@@ -120,7 +120,7 @@ inline CollisionTree<dimension>::Node::Node(int divideCount, float layer, int ma
 template<int dimension>
 inline CollisionTree<dimension>::Node::~Node()
 {
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < _divideCount; ++i)
 	{
 		delete _child[i];
 	}
@@ -139,7 +139,7 @@ void CollisionTree<dimension>::Node::AddObject(Object<dimension>* object)
 	if (IsIn(object))
 	{
 		bool success = false;
-		for (int i = 0; i < 4; ++i)
+		for (int i = 0; i < _divideCount; ++i)
 		{
 			if (_child[i] != nullptr && _child[i]->IsIn(object))
 			{
@@ -174,7 +174,7 @@ std::vector<Object<dimension>*> CollisionTree<dimension>::Node::GetCollidedObjec
 		}
 	}
 
-	for (int i = 0; i < 4; ++i)
+	for (int i = 0; i < _divideCount; ++i)
 	{
 		if (_child[i] != nullptr)
 		{

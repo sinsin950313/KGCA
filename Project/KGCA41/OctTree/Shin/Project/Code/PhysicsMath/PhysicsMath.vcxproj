@@ -21,8 +21,8 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{1fd8a304-cf23-4343-a00a-c001b4d2c684}</ProjectGuid>
-    <RootNamespace>OctTree</RootNamespace>
+    <ProjectGuid>{895d4eb2-1e4b-4094-8528-dcc7799f306c}</ProjectGuid>
+    <RootNamespace>PhysicsMath</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -78,10 +78,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
-    <ReferencePath>$(ProjectDir)\..\lib;$(ReferencePath)</ReferencePath>
-    <OutDir>$(ProjectDir)\..\Output\OctTree</OutDir>
-    <IntDir>$(ProjectDir)\..\Output\OctTree</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -125,6 +121,12 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "*.h" "$(ProjectDir)\..\include"
+md "$(ProjectDir)\..\lib\"
+
+copy "$(ProjectDir)\..\x64\Debug\*.lib" "$(ProjectDir)\..\lib\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -144,20 +146,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="PhysicsVector.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CollisionSystem\CollisionSystem.vcxproj">
-      <Project>{abd08d09-42bb-4071-8072-eb54043f6a1b}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\PhysicsMath\PhysicsMath.vcxproj">
-      <Project>{895d4eb2-1e4b-4094-8528-dcc7799f306c}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\Volume\Volume.vcxproj">
-      <Project>{6327cb72-15ae-4ec7-ab62-6432ce309e6d}</Project>
-    </ProjectReference>
+    <ClInclude Include="PhysicsVector.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="ClassDiagram1.cd" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -7,11 +7,11 @@ class AVL : public BST
 private:
 	int GetBalanceFactor(Node* node)
 	{
-		return node != nullptr ? GetHeight(node->GetLeft()) - GetHeight(node->GetRight()) : 0;
+		return node != nullptr ? GetClientHeight(node->GetLeft()) - GetClientHeight(node->GetRight()) : 0;
 	}
-	int GetHeight(Node* node)
+	int GetClientHeight(Node* node)
 	{
-		return (node != nullptr && !node->IsDeleted()) ? node->GetHeight() : 0;
+		return (node != nullptr && !node->IsDeleted()) ? node->GetClientHeight() : 0;
 	}
 	void Balancing(Node* w)
 	{
@@ -29,8 +29,8 @@ private:
 			return;
 		}
 
-		Node* y = GetHeight(x->GetLeft()) < GetHeight(x->GetRight()) ? x->GetRight() : x->GetLeft();
-		Node* z = GetHeight(y->GetLeft()) < GetHeight(y->GetRight()) ? y->GetRight() : y->GetLeft();
+		Node* y = GetClientHeight(x->GetLeft()) < GetClientHeight(x->GetRight()) ? x->GetRight() : x->GetLeft();
+		Node* z = GetClientHeight(y->GetLeft()) < GetClientHeight(y->GetRight()) ? y->GetRight() : y->GetLeft();
 
 		if (x->GetLeft() == y)
 		{

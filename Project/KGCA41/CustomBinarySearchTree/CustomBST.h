@@ -36,19 +36,19 @@ public:
 	bool IsDeleted() { return _deleted; }
 
 public:
-	int GetHeight()
+	int GetClientHeight()
 	{
 		if ((_left != nullptr && !_left->IsDeleted()) && (_right != nullptr && !_right->IsDeleted()))
 		{
-			return max(_left->GetHeight(), _right->GetHeight()) + 1;
+			return max(_left->GetClientHeight(), _right->GetClientHeight()) + 1;
 		}
 		else if (_left != nullptr && !_left->IsDeleted())
 		{
-			return _left->GetHeight() + 1;
+			return _left->GetClientHeight() + 1;
 		}
 		else if (_right != nullptr && !_right->IsDeleted())
 		{
-			return _right->GetHeight() + 1;
+			return _right->GetClientHeight() + 1;
 		}
 		else
 		{

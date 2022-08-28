@@ -31,8 +31,8 @@ namespace Custom
 		float GetTop() const { return _lt.Get(1) + GetCenter().Get(1); }
 		float GetRight() const { return _rb.Get(0) + GetCenter().Get(0); }
 		float GetBottom() const { return _rb.Get(1) + GetCenter().Get(1); }
-		float GetWidth() const { return _width; }
-		float GetHeight() const { return _height; }
+		float GetClientWidth() const { return _width; }
+		float GetClientHeight() const { return _height; }
 
 	public:
 		bool operator==(const Rectangle& rect) const;

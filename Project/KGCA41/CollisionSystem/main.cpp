@@ -49,7 +49,7 @@ int main()
 		Object<dimension>* topObject = new Object<dimension>(new Box(Vector3D(Vector3DData{centerX, centerY, centerZ}), tmpWidth, tmpHeight, tmpDepth), Rigidbody3D());
 #endif
 		objects.push_back(topObject);
-		ct->AddObject(topObject);
+		ct->AddStaticObject(topObject);
 	}
 	{
 		float centerX = 25;
@@ -68,7 +68,7 @@ int main()
 		Object<dimension>* midObject = new Object<dimension>(new Box(Vector3D(Vector3DData{centerX, centerY, centerZ}), tmpWidth, tmpHeight, tmpDepth), Rigidbody3D());
 #endif
 		objects.push_back(midObject);
-		ct->AddObject(midObject);
+		ct->AddStaticObject(midObject);
 	}
 	{
 		float centerX = 12;
@@ -87,7 +87,7 @@ int main()
 		Object<dimension>* inObject = new Object<dimension>(new Box(Vector3D(Vector3DData{centerX, centerY, centerZ}), tmpWidth, tmpHeight, tmpDepth), Rigidbody3D());
 #endif
 		objects.push_back(inObject);
-		ct->AddObject(inObject);
+		ct->AddStaticObject(inObject);
 	}
 	{
 		float centerX = -12;
@@ -106,7 +106,7 @@ int main()
 		Object<dimension>* outObject = new Object<dimension>(new Box(Vector3D(Vector3DData{centerX, centerY, centerZ}), tmpWidth, tmpHeight, tmpDepth), Rigidbody3D());
 #endif
 		objects.push_back(outObject);
-		ct->AddObject(outObject);
+		ct->AddStaticObject(outObject);
 	}
 
 //	int objectCount = 100;

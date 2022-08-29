@@ -34,23 +34,28 @@ private:
 		const int _divideCount;
 		Node** _child;
 		Volume<dimension>* _space;
-		std::vector<Object<dimension>*> _containingObjects;
+		std::vector<Object<dimension>*> _staticObjects;
+		std::vector<Object<dimension>*> _dynamicObjects;
 
 	public:
 		Node(int divideCount, float layer, int maxLayer, Volume<dimension>* volume, SpaceDivider<dimension>&& divider);
 		~Node();
 		//Consider totally in stuation, not overlap
 		bool IsIn(Object<dimension>* object);
-		void AddObject(Object<dimension>* object);
-		void AddObjectForce(Object<dimension>* object);
+		void AddStaticObject(Object<dimension>* object);
+		void AddDynamicObject(Object<dimension>* object);
+		void AddStaticObjectForce(Object<dimension>* object);
+		void AddDynamicObjectForce(Object<dimension>* object);
 		std::vector<Object<dimension>*> GetCollidedObjects(Object<dimension>* obj);
 
 	public:
 		const Volume<dimension>* GetVolume() override { return _space; }
+		void ClearDynamicObjects();
 	};
 
 private:
 	Node* _root;
+	std::vector<Object<dimension>*> _dynamicObjectList;
 
 public:
 	CollisionTree(int divideCount, int maxLayer, Volume<dimension>* volume, SpaceDivider<dimension>&& divider)
@@ -58,8 +63,18 @@ public:
 		_root = new Node(divideCount, 0, maxLayer, volume, std::forward<SpaceDivider<dimension>&&>(divider));
 	}
 	virtual ~CollisionTree() { delete _root; }
-	void AddObject(Object<dimension>* object);
+	void AddStaticObject(Object<dimension>* object);
+	void AddDynamicObject(Object<dimension>* object);
+	void UpdateDynamicObject(Object<dimension>* object);
 	std::vector<Object<dimension>*> GetCollidedObjects(Object<dimension>* obj);
+	void Frame()
+	{
+		_root->ClearDynamicObjects();
+		for (auto iter = _dynamicObjectList.begin(); iter != _dynamicObjectList.end(); ++iter)
+		{
+			UpdateDynamicObject(*iter);
+		}
+	}
 };
 
 class QuadTreeDivider : public SpaceDivider<2>
@@ -134,7 +149,7 @@ inline bool CollisionTree<dimension>::Node::IsIn(Object<dimension>* object)
 }
 
 template<int dimension>
-void CollisionTree<dimension>::Node::AddObject(Object<dimension>* object)
+void CollisionTree<dimension>::Node::AddStaticObject(Object<dimension>* object)
 {
 	if (IsIn(object))
 	{
@@ -143,22 +158,50 @@ void CollisionTree<dimension>::Node::AddObject(Object<dimension>* object)
 		{
 			if (_child[i] != nullptr && _child[i]->IsIn(object))
 			{
-				_child[i]->AddObject(object);
+				_child[i]->AddStaticObject(object);
 				success = true;
 			}
 		}
 
 		if (!success)
 		{
-			_containingObjects.push_back(object);
+			_staticObjects.push_back(object);
 		}
 	}
 }
 
 template<int dimension>
-void CollisionTree<dimension>::Node::AddObjectForce(Object<dimension>* object)
+inline void CollisionTree<dimension>::Node::AddDynamicObject(Object<dimension>* object)
 {
-	_containingObjects.push_back(object);
+	if (IsIn(object))
+	{
+		bool success = false;
+		for (int i = 0; i < _divideCount; ++i)
+		{
+			if (_child[i] != nullptr && _child[i]->IsIn(object))
+			{
+				_child[i]->AddDynamicObject(object);
+				success = true;
+			}
+		}
+
+		if (!success)
+		{
+			_dynamicObjects.push_back(object);
+		}
+	}
+}
+
+template<int dimension>
+void CollisionTree<dimension>::Node::AddStaticObjectForce(Object<dimension>* object)
+{
+	_staticObjects.push_back(object);
+}
+
+template<int dimension>
+inline void CollisionTree<dimension>::Node::AddDynamicObjectForce(Object<dimension>* object)
+{
+	_dynamicObjects.push_back(object);
 }
 
 template<int dimension>
@@ -166,7 +209,14 @@ std::vector<Object<dimension>*> CollisionTree<dimension>::Node::GetCollidedObjec
 {
 	const Volume<dimension>* objectVolume = obj->GetVolume();
 	std::vector<Object<dimension>*> ret;
-	for (auto iter = _containingObjects.begin(); iter != _containingObjects.end(); ++iter)
+	for (auto iter = _staticObjects.begin(); iter != _staticObjects.end(); ++iter)
+	{
+		if (Collision::IsCollide<dimension>(*(*iter)->GetVolume(), *objectVolume))
+		{
+			ret.push_back(*iter);
+		}
+	}
+	for (auto iter = _dynamicObjects.begin(); iter != _dynamicObjects.end(); ++iter)
 	{
 		if (Collision::IsCollide<dimension>(*(*iter)->GetVolume(), *objectVolume))
 		{
@@ -189,15 +239,55 @@ std::vector<Object<dimension>*> CollisionTree<dimension>::Node::GetCollidedObjec
 }
 
 template<int dimension>
-inline void CollisionTree<dimension>::AddObject(Object<dimension>* object)
+inline void CollisionTree<dimension>::Node::ClearDynamicObjects()
+{
+	_dynamicObjects.clear();
+	for (int i = 0; i < _divideCount; ++i)
+	{
+		if (_child[i] != nullptr)
+		{
+			_child[i]->ClearDynamicObjects();
+		}
+	}
+}
+
+template<int dimension>
+inline void CollisionTree<dimension>::AddStaticObject(Object<dimension>* object)
 {
 	if (_root->IsIn(object))
 	{
-		_root->AddObject(object);
+		_root->AddStaticObject(object);
 	}
 	else
 	{
-		_root->AddObjectForce(object);
+		_root->AddStaticObjectForce(object);
+	}
+}
+
+template<int dimension>
+inline void CollisionTree<dimension>::AddDynamicObject(Object<dimension>* object)
+{
+	if (_root->IsIn(object))
+	{
+		_root->AddDynamicObject(object);
+	}
+	else
+	{
+		_root->AddDynamicObjectForce(object);
+	}
+	_dynamicObjectList.push_back(object);
+}
+
+template<int dimension>
+inline void CollisionTree<dimension>::UpdateDynamicObject(Object<dimension>* object)
+{
+	if (_root->IsIn(object))
+	{
+		_root->AddDynamicObject(object);
+	}
+	else
+	{
+		_root->AddDynamicObjectForce(object);
 	}
 }
 

@@ -73,13 +73,18 @@ bool TDXWindow::Frame()
 
 bool TDXWindow::Render()
 {
-	static float timer = 0.0f;
-	timer += 0.0001f;
-	_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
-	float color[4] = { cosf(timer), sinf(timer), 1 - cosf(timer), 1.0f };
-	_deviceContext->ClearRenderTargetView(_renderTargetView, color);
-	_swapChain->Present(0, 0);
-
+	if (!PreRender())
+	{
+		return false;
+	}
+	if (!MainRender())
+	{
+		return false;
+	}
+	if (!PostRender())
+	{
+		return false;
+	}
 	return true;
 }
 
@@ -91,5 +96,26 @@ bool TDXWindow::Release()
 	if(_swapChain) _swapChain->Release();
 	if(_renderTargetView) _renderTargetView->Release();
 
+	return true;
+}
+
+bool TDXWindow::PreRender()
+{
+	static float timer = 0.0f;
+	timer += 0.0001f;
+	_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
+	float color[4] = { cosf(timer), sinf(timer), 1 - cosf(timer), 1.0f };
+	_deviceContext->ClearRenderTargetView(_renderTargetView, color);
+	return true;
+}
+
+bool TDXWindow::MainRender()
+{
+	return true;
+}
+
+bool TDXWindow::PostRender()
+{
+	_swapChain->Present(0, 0);
 	return true;
 }

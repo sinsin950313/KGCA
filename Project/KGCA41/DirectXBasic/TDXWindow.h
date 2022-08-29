@@ -24,4 +24,13 @@ public:
 	bool Frame() override;
 	bool Render() override;
 	bool Release() override;
+
+protected:
+	virtual bool PreRender();
+	virtual bool MainRender();
+	virtual bool PostRender();
+
+protected:
+	ID3D11Device* GetDevice() { return _device; }
+	ID3D11DeviceContext* GetDeviceContext() { return _deviceContext; }
 };

@@ -104,7 +104,7 @@ bool TDXWindow::PreRender()
 	static float timer = 0.0f;
 	timer += 0.0001f;
 	_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
-	float color[4] = { cosf(timer), sinf(timer), 1 - cosf(timer), 1.0f };
+	float color[4] = { 1, 1, 1, 1.0f };
 	_deviceContext->ClearRenderTargetView(_renderTargetView, color);
 	return true;
 }

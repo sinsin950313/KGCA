@@ -161,6 +161,12 @@ copy "$(ProjectDir)\..\Output\*.lib" "$(ProjectDir)\..\lib\"</Command>
     <ProjectReference Include="..\BasicWindow\BasicWindow.vcxproj">
       <Project>{016e354c-9484-4f36-ac84-4296eb9f14d3}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\CollisionSystem\CollisionSystem.vcxproj">
+      <Project>{abd08d09-42bb-4071-8072-eb54043f6a1b}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\KGCACommonClass\KGCACommonClass.vcxproj">
+      <Project>{3fd9da9f-35c6-4c3b-a463-d5e66b6c02d9}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

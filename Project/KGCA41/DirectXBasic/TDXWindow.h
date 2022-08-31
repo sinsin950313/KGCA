@@ -30,7 +30,7 @@ protected:
 	virtual bool MainRender();
 	virtual bool PostRender();
 
-protected:
+public:
 	ID3D11Device* GetDevice() { return _device; }
 	ID3D11DeviceContext* GetDeviceContext() { return _deviceContext; }
 };

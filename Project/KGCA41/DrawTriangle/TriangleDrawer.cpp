@@ -9,14 +9,14 @@ bool TriangleDrawer::Init()
 
     SimpleVertex vertices[] =
     {
-        -1.0f, +1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        +1.0f, +1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+        +0.0f, +0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        +0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f
     };
 
     D3D11_BUFFER_DESC bufferDesc;
     ZeroMemory(&bufferDesc, sizeof(D3D11_BUFFER_DESC));
-    bufferDesc.ByteWidth = sizeof(D3D11_BUFFER_DESC) * 3;
+    bufferDesc.ByteWidth = sizeof(SimpleVertex) * 3;
     bufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
     bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 

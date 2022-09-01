@@ -85,6 +85,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DrawQuadTree", "DrawQuadTre
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DirectXDrawTexture", "DirectXDrawTexture\DirectXDrawTexture.vcxproj", "{4B08BDC3-FB42-4D34-B58F-4C53DD6179A0}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ResourceManager", "ResourceManager\ResourceManager.vcxproj", "{AA35D7B4-DA12-423D-8450-AC6FFB9919BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -357,6 +359,14 @@ Global
 		{4B08BDC3-FB42-4D34-B58F-4C53DD6179A0}.Release|x64.Build.0 = Release|x64
 		{4B08BDC3-FB42-4D34-B58F-4C53DD6179A0}.Release|x86.ActiveCfg = Release|Win32
 		{4B08BDC3-FB42-4D34-B58F-4C53DD6179A0}.Release|x86.Build.0 = Release|Win32
+		{AA35D7B4-DA12-423D-8450-AC6FFB9919BA}.Debug|x64.ActiveCfg = Debug|x64
+		{AA35D7B4-DA12-423D-8450-AC6FFB9919BA}.Debug|x64.Build.0 = Debug|x64
+		{AA35D7B4-DA12-423D-8450-AC6FFB9919BA}.Debug|x86.ActiveCfg = Debug|Win32
+		{AA35D7B4-DA12-423D-8450-AC6FFB9919BA}.Debug|x86.Build.0 = Debug|Win32
+		{AA35D7B4-DA12-423D-8450-AC6FFB9919BA}.Release|x64.ActiveCfg = Release|x64
+		{AA35D7B4-DA12-423D-8450-AC6FFB9919BA}.Release|x64.Build.0 = Release|x64
+		{AA35D7B4-DA12-423D-8450-AC6FFB9919BA}.Release|x86.ActiveCfg = Release|Win32
+		{AA35D7B4-DA12-423D-8450-AC6FFB9919BA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -395,6 +405,7 @@ Global
 		{5D7B452E-D8C7-47FA-9336-788DD20E25C1} = {EEE56096-E925-423A-93DB-D35C27F3B7B8}
 		{F9415E09-95F0-4503-B883-07434704E8FE} = {EEE56096-E925-423A-93DB-D35C27F3B7B8}
 		{4B08BDC3-FB42-4D34-B58F-4C53DD6179A0} = {EEE56096-E925-423A-93DB-D35C27F3B7B8}
+		{AA35D7B4-DA12-423D-8450-AC6FFB9919BA} = {EEE56096-E925-423A-93DB-D35C27F3B7B8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8417923F-3B4B-4B1F-A746-4AC7EECFE3E6}

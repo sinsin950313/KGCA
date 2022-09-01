@@ -3,18 +3,18 @@
 #include "Core.h"
 #include "d3dcompiler.h"
 
-//void Core::Run()
-//{
-//	//Init();
-//	//while (1)
-//	//{
-//		Frame();
-//		Render();
-//
-//		Sleep(100);
-//	//}
-//	//Release();
-//}
+void Core::Run()
+{
+	Init();
+	while (1)
+	{
+		Frame();
+		Render();
+
+		Sleep(100);
+	}
+	Release();
+}
 
 HRESULT Core::CreateVertexBuffer(Object2D* object)
 {

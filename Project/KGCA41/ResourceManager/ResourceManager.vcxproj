@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -125,6 +125,14 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "*.h" "$(ProjectDir)\..\include"
+
+md "$(ProjectDir)\..\lib\"
+
+
+copy "$(ProjectDir)\..\Output\*.lib" "$(ProjectDir)\..\lib\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -145,11 +153,15 @@
   <ItemGroup>
     <ClCompile Include="RMTestWindow.cpp" />
     <ClCompile Include="Sample.cpp" />
+    <ClCompile Include="TShader.cpp" />
+    <ClCompile Include="TShaderManager.cpp" />
     <ClCompile Include="TTexture.cpp" />
     <ClCompile Include="TTextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RMTestWindow.h" />
+    <ClInclude Include="TShader.h" />
+    <ClInclude Include="TShaderManager.h" />
     <ClInclude Include="TTexture.h" />
     <ClInclude Include="TTextureManager.h" />
   </ItemGroup>

@@ -5,25 +5,27 @@
 #include <d3d11.h>
 #include "WICTextureLoader.h"
 
-//TTextureManager* TTextureManager::_instance = nullptr;
+TTextureManager* TTextureManager::_instance = nullptr;
+
+TTextureManager::TTextureManager()
+{
+}
 
 TTextureManager::~TTextureManager()
 {
     Release();
 
-    //delete _instance;
+    delete _instance;
 }
 
-//TTextureManager& TTextureManager::GetInstance()
-//{
-//    //if (_instance == nullptr)
-//    //{
-//    //    _instance = new TTextureManager();
-//    //}
-//    static TTextureManager tm;
-//    return tm;
-//    //return *_instance;
-//}
+TTextureManager& TTextureManager::GetInstance()
+{
+    if (_instance == nullptr)
+    {
+        _instance = new TTextureManager();
+    }
+    return *_instance;
+}
 
 TTexture* TTextureManager::Load(std::wstring path)
 {
@@ -66,5 +68,6 @@ bool TTextureManager::Release()
         delete iter.second;
     }
     _textureData.clear();
+
     return true;
 }

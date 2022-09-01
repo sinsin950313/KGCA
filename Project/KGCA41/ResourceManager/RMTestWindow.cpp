@@ -2,16 +2,17 @@
 #pragma comment (lib, "DirectXTK.lib")
 
 #include "RMTestWindow.h"
-#include "d3dcompiler.h"
-#include "WICTextureLoader.h"
 #include "TTextureManager.h"
 #include "TTexture.h"
+#include "TShaderManager.h"
+#include "TShader.h"
 
 bool RMTestWindow::Init()
 {
     TDXWindow::Init();
 
     TTextureManager::GetInstance().Set(GetDevice(), GetDeviceContext());
+    TShaderManager::GetInstance().Set(GetDevice());
 
     HRESULT hr;
 
@@ -37,46 +38,9 @@ bool RMTestWindow::Init()
         return false;
     }
 
-    //hr = DirectX::CreateWICTextureFromFile(GetDevice(), GetDeviceContext(), L"../../Resource/KGCABK.bmp", &_textureResource, &_textureShaderResourceView);
-    //if (FAILED(hr))
-    //{
-    //    return false;
-    //}
     _texture = TTextureManager::GetInstance().Load(L"../../Resource/KGCABK.bmp");
-
-    ID3DBlob* errorCode;
-
-    hr = D3DCompileFromFile(L"VertexShader.hlsl", NULL, NULL, "main", "vs_5_0", 0, 0, &_vsCode, &errorCode);
-    if (FAILED(hr))
-    {
-        if (errorCode != nullptr)
-        {
-            OutputDebugStringA((char*)errorCode->GetBufferPointer());
-            errorCode->Release();
-        }
-        return false;
-    }
-    hr = GetDevice()->CreateVertexShader(_vsCode->GetBufferPointer(), _vsCode->GetBufferSize(), NULL, &_vs);
-    if (FAILED(hr))
-    {
-        return false;
-    }
-
-    hr = D3DCompileFromFile(L"PixelShader.hlsl", NULL, NULL, "main", "ps_5_0", 0, 0, &_psCode, &errorCode);
-    if (FAILED(hr))
-    {
-        if (errorCode != nullptr)
-        {
-            OutputDebugStringA((char*)errorCode->GetBufferPointer());
-            errorCode->Release();
-        }
-        return false;
-    }
-    hr = GetDevice()->CreatePixelShader(_psCode->GetBufferPointer(), _psCode->GetBufferSize(), NULL, &_ps);
-    if (FAILED(hr))
-    {
-        return false;
-    }
+    _vertexShader = TShaderManager::GetInstance().LoadVertexShader(L"VertexShader.hlsl", "main", "vs_5_0");
+    _pixelShader = TShaderManager::GetInstance().LoadPixelShader(L"PixelShader.hlsl", "main", "ps_5_0");
 
     D3D11_INPUT_ELEMENT_DESC ied[] =
     {
@@ -85,7 +49,7 @@ bool RMTestWindow::Init()
         { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 28, D3D11_INPUT_PER_VERTEX_DATA, 0},
     };
     UINT iedCount = sizeof(ied) / sizeof(ied[0]);
-    hr = GetDevice()->CreateInputLayout(ied, iedCount, _vsCode->GetBufferPointer(), _vsCode->GetBufferSize(), &_vertexLayout);
+    hr = GetDevice()->CreateInputLayout(ied, iedCount, _vertexShader->GetCode()->GetBufferPointer(), _vertexShader->GetCode()->GetBufferSize(), &_vertexLayout);
     if (FAILED(hr))
     {
         return false;
@@ -111,10 +75,9 @@ bool RMTestWindow::Release()
     TDXWindow::Release();
 
     if (_vertexBuffer) _vertexBuffer->Release();
-    if (_vs) _vs->Release();
-    if (_ps) _ps->Release();
-    if (_vsCode) _vsCode->Release();
-    if (_psCode) _psCode->Release();
+    //if (_texture) _texture->Release();
+    //if (_vertexShader) _vertexShader->Release();
+    //if (_pixelShader) _pixelShader->Release();
     if (_vertexLayout) _vertexLayout->Release();
 
     return true;
@@ -135,8 +98,8 @@ bool RMTestWindow::MainRender()
 
     GetDeviceContext()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
     GetDeviceContext()->IASetInputLayout(_vertexLayout);
-    GetDeviceContext()->VSSetShader(_vs, NULL, 0);
-    GetDeviceContext()->PSSetShader(_ps, NULL, 0);
+    GetDeviceContext()->VSSetShader((ID3D11VertexShader*)_vertexShader->GetShader(), NULL, 0);
+    GetDeviceContext()->PSSetShader((ID3D11PixelShader*)_pixelShader->GetShader(), NULL, 0);
     GetDeviceContext()->PSSetShaderResources(0, 1, _texture->GetShaderResourceView());
     GetDeviceContext()->Draw(_vertice.size(), 0);
 

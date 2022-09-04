@@ -16,6 +16,11 @@ void TTextManager::Set(IDXGISwapChain* swapChain)
 	_swapChain = swapChain;
 }
 
+void TTextManager::AddText(TText* text)
+{
+	_textList.push_back(text);
+}
+
 bool TTextManager::Init()
 {
 	HRESULT hr;
@@ -50,18 +55,12 @@ bool TTextManager::Init()
 		return false;
 	}
 
-	hr = _renderTarget->CreateSolidColorBrush({0, 0, 0, 1}, &_brush);
+	hr = _renderTarget->CreateSolidColorBrush({1, 0, 0, 1}, &_brush);
 	if (FAILED(hr))
 	{
 		return false;
 	}
 	hr = _writeFactory->CreateTextFormat(L"°íµñ", NULL, DWRITE_FONT_WEIGHT_NORMAL, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 30, L"ko-kr", &_textFormat);
-	if (FAILED(hr))
-	{
-		return false;
-	}
-
-	hr = _writeFactory->CreateTextLayout(L"Test", sizeof(L"Test"), _textFormat, 100, 50, &_textLayout);
 	if (FAILED(hr))
 	{
 		return false;
@@ -79,9 +78,11 @@ bool TTextManager::Render()
 {
 	_renderTarget->BeginDraw();
 
-	D2D1_RECT_F rt = { 0, 0, 100, 50 };
-	_brush->SetColor({ 0, 0, 0, 1 });
-	_renderTarget->DrawText(L"Test", 5, _textFormat, rt, _brush);
+	for (auto pText : _textList)
+	{
+		D2D_RECT_F rt{ pText->GetPosition().left, pText->GetPosition().top, pText->GetPosition().right, pText->GetPosition().bottom };
+		_renderTarget->DrawText(pText->GetString().c_str(), pText->GetString().size(), _textFormat, rt, _brush);
+	}
 
 	_renderTarget->EndDraw();
 
@@ -95,7 +96,6 @@ bool TTextManager::Release()
 	if (_renderTarget) _renderTarget->Release();
 	if (_brush) _brush->Release();
 	if (_textFormat) _textFormat->Release();
-	if (_textLayout) _textLayout->Release();
 
 	return true;
 }

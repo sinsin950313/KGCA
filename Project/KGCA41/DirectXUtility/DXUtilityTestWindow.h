@@ -8,6 +8,7 @@ class DXUtilityTestWindow : public TDXWindow
 {
 public:
 	DXUtilityTestWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : TDXWindow(name, hInstance, nCmdShow) { }
+	TText* _test;
 
 public:
 	bool Init() override;

@@ -68,6 +68,8 @@ bool TDXWindow::Init()
 	viewPort.MaxDepth = 1.0f;
 	_deviceContext->RSSetViewports(1, &viewPort);
 
+	_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
+
 	return true;
 }
 
@@ -106,9 +108,6 @@ bool TDXWindow::Release()
 
 bool TDXWindow::PreRender()
 {
-	static float timer = 0.0f;
-	timer += 0.0001f;
-	_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
 	float color[4] = { 1, 1, 1, 1.0f };
 	_deviceContext->ClearRenderTargetView(_renderTargetView, color);
 	return true;

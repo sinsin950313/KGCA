@@ -1,4 +1,5 @@
 #include "DXUtilityTestWindow.h"
+#include "TText.h"
 
 bool DXUtilityTestWindow::Init()
 {
@@ -6,6 +7,9 @@ bool DXUtilityTestWindow::Init()
 
     TCore::GetInstance().Set(GetWindowHandle(), GetSwapChain());
     TCore::GetInstance().Init();
+
+    _test = new TText(L"abc", RECT{ 0, 0, 100, 100 });
+    TTextManager::GetInstance().AddText(_test);
 
     return true;
 }
@@ -15,6 +19,7 @@ bool DXUtilityTestWindow::Frame()
     TDXWindow::Frame();
 
     TCore::GetInstance().Frame();
+    _test->SetString(std::to_wstring(TCore::GetInstance().GetTimer().GetElapseTime()));
 
     return true;
 }

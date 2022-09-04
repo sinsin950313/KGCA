@@ -8,6 +8,8 @@
 #include <dwrite.h>
 
 #include <string>
+#include <vector>
+#include "TText.h"
 
 class TTextManager : public Common
 {
@@ -20,12 +22,12 @@ private:
 
 	ID2D1SolidColorBrush* _brush;
 	IDWriteTextFormat* _textFormat;
-	std::wstring _str;
-	IDWriteTextLayout* _textLayout;
+	std::vector<TText*> _textList;
 
 public:
 	static TTextManager& GetInstance();
 	void Set(IDXGISwapChain* swapChain);
+	void AddText(TText* text);
 
 private:
 	TTextManager() { }

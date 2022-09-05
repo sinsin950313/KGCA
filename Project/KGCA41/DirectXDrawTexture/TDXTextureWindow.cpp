@@ -94,13 +94,6 @@ bool TDXTextureWindow::Frame()
     return true;
 }
 
-bool TDXTextureWindow::Render()
-{
-    TDXWindow::Render();
-
-    return true;
-}
-
 bool TDXTextureWindow::Release()
 {
     TDXWindow::Release();

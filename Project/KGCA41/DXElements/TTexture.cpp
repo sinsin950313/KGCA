@@ -17,7 +17,11 @@ bool TTexture::Render()
 
 bool TTexture::Release()
 {
-    _textureResource->Release();
-    _textureResourceView->Release();
+    //_textureResource->Release();
+    //_textureResourceView->Release();
+
+    _textureResource = nullptr;
+    _textureResourceView = nullptr;
+
     return true;
 }

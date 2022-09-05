@@ -105,7 +105,9 @@ bool TDXWindow::Init()
 
 bool TDXWindow::Frame()
 {
-	//_textList.clear();
+	_textList.clear();
+	_objectList.clear();
+
 	return true;
 }
 
@@ -129,6 +131,7 @@ bool TDXWindow::Render()
 bool TDXWindow::Release()
 {
 	if(_dxgiFactory) _dxgiFactory->Release();
+
 	if(_device) _device->Release();
 	if(_deviceContext) _deviceContext->Release();
 	if(_swapChain) _swapChain->Release();
@@ -145,31 +148,40 @@ bool TDXWindow::PreRender()
 {
 	float color[4] = { 1, 1, 1, 1.0f };
 	_deviceContext->ClearRenderTargetView(_renderTargetView, color);
+
 	return true;
 }
 
 bool TDXWindow::MainRender()
 {
+	DrawObjects();
+
+	_renderTarget2D->BeginDraw();
+	DrawTexts();
+	_renderTarget2D->EndDraw();
+
 	return true;
 }
 
 bool TDXWindow::PostRender()
 {
-	_renderTarget2D->BeginDraw();
-
-	for (auto pText : _textList)
-	{
-		D2D_RECT_F rt{ pText->GetPosition().left, pText->GetPosition().top, pText->GetPosition().right, pText->GetPosition().bottom };
-		_renderTarget2D->DrawText(pText->GetString().c_str(), pText->GetString().size(), pText->GetFormat(), rt, pText->GetBrush());
-	}
-
-	_renderTarget2D->EndDraw();
-
 	_swapChain->Present(0, 0);
+
 	return true;
 }
 
-void TDXWindow::AddText(TText* text)
+void TDXWindow::DrawTexts()
 {
-	_textList.push_back(text);
+	for (auto text : _textList)
+	{
+		text->Draw(_renderTarget2D);
+	}
+}
+
+void TDXWindow::DrawObjects()
+{
+	for (auto object : _objectList)
+	{
+		object->Draw(_deviceContext);
+	}
 }

@@ -38,7 +38,6 @@ public:
 public:
 	bool Init() override;
 	bool Frame() override;
-	bool Render() override;
 	bool Release() override;
 
 protected:

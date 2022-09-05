@@ -11,6 +11,8 @@
 #include <dwrite.h>
 #include "TText.h"
 #include <vector>
+#include "TDXDrawableInterface.h"
+#include "TDXTextableInterface.h"
 
 class TDXWindow : public TBasicWindow
 {
@@ -33,7 +35,7 @@ public:
 public:
 	bool Init() override;
 	bool Frame() override;
-	bool Render() override;
+	bool Render() override final;
 	bool Release() override;
 
 protected:
@@ -42,9 +44,10 @@ protected:
 	virtual bool PostRender();
 
 private:
-	std::vector<TText*> _textList;
-public:
-	void AddText(TText* text);
+	std::vector<TDXDrawableInterface*> _objectList;
+	void DrawObjects();
+	std::vector<TDXTextableInterface*> _textList;
+	void DrawTexts();
 
 public:
 	ID3D11Device* GetDevice() { return _device; }

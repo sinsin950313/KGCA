@@ -18,7 +18,11 @@ bool TShader::Render()
 
 bool TShader::Release()
 {
-    _shader->Release();
-    _code->Release();
+    //_shader->Release();
+    //_code->Release();
+
+    _shader = nullptr;
+    _code = nullptr;
+
     return true;
 }

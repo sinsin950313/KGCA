@@ -66,7 +66,7 @@ bool TTextManager::Frame()
 	{
 		if (text.second)
 		{
-			_window.AddText(text.second);
+			_window->AddText(text.first);
 		}
 	}
 

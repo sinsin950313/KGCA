@@ -26,6 +26,7 @@ public:
 	void Set(HWND hWnd);
 	static TInputManager& GetInstance();
 	EKeyState GetKeyState(DWORD key);
+	POINT GetMousePosition() { return _mousePosition; }
 
 public:
 	bool Init() override;

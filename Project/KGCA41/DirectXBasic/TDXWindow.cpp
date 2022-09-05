@@ -70,11 +70,42 @@ bool TDXWindow::Init()
 
 	_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
 
+	hResult = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &_factory2D);
+	if (FAILED(hResult))
+	{
+		return false;
+	}
+
+	D2D1_RENDER_TARGET_PROPERTIES props;
+	ZeroMemory(&props, sizeof(D2D1_RENDER_TARGET_PROPERTIES));
+	props.type = D2D1_RENDER_TARGET_TYPE_DEFAULT;
+	props.pixelFormat = D2D1::PixelFormat(DXGI_FORMAT_UNKNOWN, D2D1_ALPHA_MODE_PREMULTIPLIED);
+	props.dpiX = 96;
+	props.dpiY = 96;
+	props.usage = D2D1_RENDER_TARGET_USAGE_NONE;
+	props.minLevel = D2D1_FEATURE_LEVEL_DEFAULT;
+
+	IDXGISurface1* dxgiSurface;
+	_swapChain->GetBuffer(0, __uuidof(IDXGISurface1), (void**)&dxgiSurface);
+	hResult = _factory2D->CreateDxgiSurfaceRenderTarget(dxgiSurface, &props, &_renderTarget2D);
+	if (FAILED(hResult))
+	{
+		return false;
+	}
+	dxgiSurface->Release();
+
+	hResult = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)&_writeFactory);
+	if (FAILED(hResult))
+	{
+		return false;
+	}
+
 	return true;
 }
 
 bool TDXWindow::Frame()
 {
+	//_textList.clear();
 	return true;
 }
 
@@ -103,6 +134,10 @@ bool TDXWindow::Release()
 	if(_swapChain) _swapChain->Release();
 	if(_renderTargetView) _renderTargetView->Release();
 
+	if (_factory2D) _factory2D->Release();
+	if (_writeFactory) _writeFactory->Release();
+	if (_renderTarget2D) _renderTarget2D->Release();
+
 	return true;
 }
 
@@ -120,6 +155,21 @@ bool TDXWindow::MainRender()
 
 bool TDXWindow::PostRender()
 {
+	_renderTarget2D->BeginDraw();
+
+	for (auto pText : _textList)
+	{
+		D2D_RECT_F rt{ pText->GetPosition().left, pText->GetPosition().top, pText->GetPosition().right, pText->GetPosition().bottom };
+		_renderTarget2D->DrawText(pText->GetString().c_str(), pText->GetString().size(), pText->GetFormat(), rt, pText->GetBrush());
+	}
+
+	_renderTarget2D->EndDraw();
+
 	_swapChain->Present(0, 0);
 	return true;
+}
+
+void TDXWindow::AddText(TText* text)
+{
+	_textList.push_back(text);
 }

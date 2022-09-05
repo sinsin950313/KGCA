@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -153,16 +153,14 @@ copy "$(ProjectDir)\..\Output\*.lib" "$(ProjectDir)\..\lib\"</Command>
   <ItemGroup>
     <ClCompile Include="RMTestWindow.cpp" />
     <ClCompile Include="Sample.cpp" />
-    <ClCompile Include="TShader.cpp" />
     <ClCompile Include="TShaderManager.cpp" />
-    <ClCompile Include="TTexture.cpp" />
+    <ClCompile Include="TTextManager.cpp" />
     <ClCompile Include="TTextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="RMTestWindow.h" />
-    <ClInclude Include="TShader.h" />
     <ClInclude Include="TShaderManager.h" />
-    <ClInclude Include="TTexture.h" />
+    <ClInclude Include="TTextManager.h" />
     <ClInclude Include="TTextureManager.h" />
   </ItemGroup>
   <ItemGroup>

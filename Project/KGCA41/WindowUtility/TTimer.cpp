@@ -2,7 +2,7 @@
 
 bool TTimer::Init()
 {
-	_startTime = _currentTime = timeGetTime();
+	Start();
 	return true;
 }
 

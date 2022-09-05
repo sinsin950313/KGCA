@@ -1,5 +1,4 @@
 #include "TInputManager.h"
-#include <string>
 
 TInputManager* TInputManager::_instance = nullptr;
 

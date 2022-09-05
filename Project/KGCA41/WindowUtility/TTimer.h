@@ -13,6 +13,7 @@ private:
 	DWORD _currentTime;
 
 public:
+	void Start() { _startTime = _currentTime = timeGetTime(); }
 	DWORD GetElapseTime() { return _currentTime - _startTime; }
 
 public:

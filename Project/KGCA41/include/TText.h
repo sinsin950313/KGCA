@@ -1,12 +1,13 @@
 #pragma once
 
 #include "CommonClass.h"
+#include "TDXTextableInterface.h"
 #include <d2d1.h>
 #include <string>
 #include <d2d1.h>
 #include <dwrite.h>
 
-class TText : public Common
+class TText : public Common, public TDXTextableInterface
 {
 private:
 	ID2D1SolidColorBrush* _brush;
@@ -15,15 +16,18 @@ private:
 	std::wstring _str;
 
 public:
-	TText(std::wstring str, RECT position, IDWriteTextFormat* format, ID2D1SolidColorBrush* brush) : _str(str), _pos(position), _textFormat(format), _brush(brush) { }
+	TText(std::wstring str, RECT position, IDWriteTextFormat* format = nullptr, ID2D1SolidColorBrush* brush = nullptr);
 
 public:
 	bool Init() override;
 	bool Frame() override;
 	bool Render() override;
 	bool Release() override;
+	void Draw(ID2D1RenderTarget* renderTarget);
 
 public:
+	void SetTextFormat(IDWriteTextFormat* format) { _textFormat = format; }
+	void SetBrush(ID2D1SolidColorBrush* brush) { _brush = brush; }
 	void SetString(std::wstring str) { _str = str; }
 	void SetPosition(RECT pos) { _pos = pos; }
 	std::wstring GetString() { return _str; }

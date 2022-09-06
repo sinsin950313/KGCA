@@ -28,7 +28,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="VertexShader.hlsl" />
-    <FxCompile Include="PixelShader.hlsl" />
+    <FxCompile Include="DefaultVertexShader.hlsl" />
+    <FxCompile Include="DefaultPixelShader.hlsl" />
   </ItemGroup>
 </Project>

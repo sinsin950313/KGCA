@@ -1,6 +1,13 @@
 #include "TDXWindow.h"
 #include <math.h>
 
+TDXWindow* g_dxWindow = nullptr;
+ 
+TDXWindow::TDXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : TBasicWindow(name, hInstance, nCmdShow)
+{
+	g_dxWindow = this;
+}
+
 bool TDXWindow::Init()
 {
 	TBasicWindow::Init();
@@ -176,6 +183,16 @@ void TDXWindow::DrawTexts()
 	{
 		text->Draw(_renderTarget2D);
 	}
+}
+
+void TDXWindow::AddDrawable(TDXDrawableInterface* drawable)
+{
+	_objectList.push_back(drawable);
+}
+
+void TDXWindow::AddTextable(TDXTextableInterface* textable)
+{
+	_textList.push_back(textable);
 }
 
 void TDXWindow::DrawObjects()

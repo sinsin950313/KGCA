@@ -46,7 +46,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -82,9 +82,12 @@
     <ReferencePath>$(ProjectDir)\..\lib;$(ReferencePath)</ReferencePath>
     <OutDir>$(ProjectDir)\..\Output</OutDir>
     <IntDir>$(ProjectDir)\..\Output</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)\..\Output</OutDir>
+    <IntDir>$(ProjectDir)\..\Output</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -120,19 +123,27 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\include;$(ProjectDir)\..\include\DXTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
+    <PostBuildEvent />
+    <Lib>
+      <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
     <PostBuildEvent>
-      <Command>copy "*.h" "$(ProjectDir)\..\include"
+      <Command>
+md "$(ProjectDir)\..\include\"
+copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\include\"
 
 md "$(ProjectDir)\..\lib\"
 
 
-copy "$(ProjectDir)\..\Output\*.lib" "$(ProjectDir)\..\lib\"</Command>
+copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -143,6 +154,7 @@ copy "$(ProjectDir)\..\Output\*.lib" "$(ProjectDir)\..\lib\"</Command>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\include;$(ProjectDir)\..\include\DXTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -150,6 +162,19 @@ copy "$(ProjectDir)\..\Output\*.lib" "$(ProjectDir)\..\lib\"</Command>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
+    <PostBuildEvent>
+      <Command>
+md "$(ProjectDir)\..\include\"
+copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\include\"
+
+md "$(ProjectDir)\..\lib\"
+
+
+copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="TDXDrawableInterface.h" />
@@ -159,17 +184,6 @@ copy "$(ProjectDir)\..\Output\*.lib" "$(ProjectDir)\..\lib\"</Command>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="TDXWindow.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\BasicWindow\BasicWindow.vcxproj">
-      <Project>{016e354c-9484-4f36-ac84-4296eb9f14d3}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\CollisionSystem\CollisionSystem.vcxproj">
-      <Project>{abd08d09-42bb-4071-8072-eb54043f6a1b}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\KGCACommonClass\KGCACommonClass.vcxproj">
-      <Project>{3fd9da9f-35c6-4c3b-a463-d5e66b6c02d9}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

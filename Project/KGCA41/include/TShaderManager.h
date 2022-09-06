@@ -20,14 +20,10 @@ private:
 public:
 	~TShaderManager();
 
-private:
-	ID3D11Device* _device;
-
 public:
 	static TShaderManager& GetInstance();
 
 public:
-	void Set(ID3D11Device* device) { _device = device; }
 	TShader* LoadVertexShader(std::wstring path, std::string entryPoint, std::string target);
 	TShader* LoadPixelShader(std::wstring path, std::string entryPoint, std::string target);
 

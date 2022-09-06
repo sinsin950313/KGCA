@@ -14,20 +14,13 @@ class TTextManager : public Common
 private:
 	static TTextManager* _instance;
 
-	TDXWindow* _window;
-
 	std::map<std::wstring, ID2D1SolidColorBrush*> _brushes;
 	std::map<std::wstring, IDWriteTextFormat*> _textFormats;
-	std::map<TText*, bool> _textList;
 
 public:
 	static TTextManager& GetInstance();
-	void Set(TDXWindow* window) { _window = window; }
-	void AddBrush(std::wstring name, D2D1_COLOR_F color);
-	void AddTextFormat(std::wstring name, std::wstring locale, UINT size);
-	void AddTextVisible(TText* text);
-	void SetTextInvisible(TText* text);
-	void SetTextVisible(TText* text);
+	ID2D1SolidColorBrush* LoadBrush(std::wstring colorName, D2D1_COLOR_F color);
+	IDWriteTextFormat* LoadTextFormat(std::wstring name, std::wstring locale, UINT size);
 
 private:
 	TTextManager() { }

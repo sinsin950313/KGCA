@@ -1,8 +1,8 @@
-#include "RMTestWindow.h"
+#include "GETestWindow.h"
 
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
-	RMTestWindow win(L"Test", hInstance, nCmdShow);
+	GETestWindow win(L"Test", hInstance, nCmdShow);
 	win.Init();
 	win.Run();
 	win.Release();

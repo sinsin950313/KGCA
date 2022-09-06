@@ -17,10 +17,6 @@ private:
 	static TTextureManager* _instance;
 	TTextureManager();
 
-private:
-	ID3D11Device* _device = nullptr;
-	ID3D11DeviceContext* _deviceContext = nullptr;
-
 public:
 	~TTextureManager();
 
@@ -28,7 +24,6 @@ public:
 	static TTextureManager& GetInstance();
 
 public:
-	void Set(ID3D11Device* device, ID3D11DeviceContext* deviceContext) { _device = device, _deviceContext = deviceContext; }
 	TTexture* Load(std::wstring path);
 	
 public:

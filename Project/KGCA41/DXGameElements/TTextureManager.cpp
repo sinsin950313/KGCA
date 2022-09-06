@@ -4,8 +4,10 @@
 #include "TTexture.h"
 #include <d3d11.h>
 #include "WICTextureLoader.h"
+#include "TDXWindow.h"
 
 TTextureManager* TTextureManager::_instance = nullptr;
+extern TDXWindow* g_dxWindow;
 
 TTextureManager::TTextureManager()
 {
@@ -33,7 +35,7 @@ TTexture* TTextureManager::Load(std::wstring path)
     {
         ID3D11Resource* textureResource = nullptr;
         ID3D11ShaderResourceView* textureResourceView = nullptr;
-        HRESULT hr = DirectX::CreateWICTextureFromFile(_device, _deviceContext, path.c_str(), &textureResource, &textureResourceView);
+        HRESULT hr = DirectX::CreateWICTextureFromFile(g_dxWindow->GetDevice(), g_dxWindow->GetDeviceContext(), path.c_str(), &textureResource, &textureResourceView);
         if (FAILED(hr))
         {
             return nullptr;

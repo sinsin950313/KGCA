@@ -81,6 +81,8 @@
     <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
     <ReferencePath>$(ProjectDir)\..\lib;$(LibraryPath);$(ReferencePath)</ReferencePath>
+    <OutDir>$(ProjectDir)\..\Output</OutDir>
+    <IntDir>$(ProjectDir)\..\Output</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

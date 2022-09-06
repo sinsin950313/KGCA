@@ -9,7 +9,6 @@
 #include <d3d11.h>
 #include <d2d1.h>
 #include <dwrite.h>
-#include "TText.h"
 #include <vector>
 #include "TDXDrawableInterface.h"
 #include "TDXTextableInterface.h"
@@ -30,7 +29,7 @@ private:
 	ID2D1RenderTarget* _renderTarget2D;
 
 public:
-	TDXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : TBasicWindow(name, hInstance, nCmdShow) { }
+	TDXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
 
 public:
 	bool Init() override;
@@ -48,6 +47,10 @@ private:
 	void DrawObjects();
 	std::vector<TDXTextableInterface*> _textList;
 	void DrawTexts();
+
+public:
+	void AddDrawable(TDXDrawableInterface* drawable);
+	void AddTextable(TDXTextableInterface* textable);
 
 public:
 	ID3D11Device* GetDevice() { return _device; }

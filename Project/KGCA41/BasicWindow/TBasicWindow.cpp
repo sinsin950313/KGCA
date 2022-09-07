@@ -21,14 +21,15 @@ bool TBasicWindow::Init()
 	wcex.lpszClassName = _name;
 	wcex.hInstance = _hInstance;
 	wcex.style = CS_HREDRAW | CS_VREDRAW;
-	wcex.lpfnWndProc = &WndProc;
+	wcex.lpfnWndProc = WndProc;
 	wcex.hbrBackground = CreateSolidBrush(RGB(255, 255, 255));
 
-	_atom = RegisterClassExW(&wcex);
+	_atom = RegisterClassEx(&wcex);
 
 	RECT rect{ 0, 0, _width, _height };
-	AdjustWindowRect(&rect, wcex.style, FALSE);
-	_hWnd = CreateWindowW(_name, L"Title", WS_OVERLAPPEDWINDOW, 0, 0, rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, _hInstance, nullptr);
+	DWORD csStyle = WS_OVERLAPPEDWINDOW;
+	AdjustWindowRect(&rect, csStyle, FALSE);
+	_hWnd = CreateWindowW(_name, L"Title", csStyle, 0, 0, rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, _hInstance, nullptr);
 	if (!_hWnd)
 	{
 		return false;

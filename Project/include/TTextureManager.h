@@ -26,7 +26,7 @@ public:
 	static TTextureManager& GetInstance();
 
 public:
-	TTexture* Load(std::wstring fileName);
+	TTexture* Load(std::wstring fileName, std::wstring alphaFileName = nullptr);
 	ID3D11SamplerState* LoadSampler(std::wstring stateName);
 
 private:

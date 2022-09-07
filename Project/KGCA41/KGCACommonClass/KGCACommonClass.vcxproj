@@ -125,7 +125,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>md "$(ProjectDir)\..\..\include\"
+      <Command>if not exist "$(ProjectDir)\..\..\include\" mkdir "$(ProjectDir)\..\..\include\"
+
 copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>

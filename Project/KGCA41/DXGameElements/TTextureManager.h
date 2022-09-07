@@ -27,6 +27,7 @@ public:
 
 public:
 	TTexture* Load(std::wstring fileName);
+	TTexture* Load(std::wstring fileName, std::wstring alphaFileName);
 	ID3D11SamplerState* LoadSampler(std::wstring stateName);
 
 private:

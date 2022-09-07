@@ -8,7 +8,8 @@ class DXCoreTest : public DXCore
 {
 private:
 	TText* _timer;
-	TText* _str;
+	TText* _wasd;
+	TText* _mouse;
 
 public:
 	DXCoreTest(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXCore(name, hInstance, nCmdShow) { }
@@ -23,10 +24,15 @@ public:
 		_timer->SetBrush(TTextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
 		_timer->Init();
 
-		_str = new TText(L"", { 200, 300, 300, 500 });
-		_str->SetTextFormat(TTextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
-		_str->SetBrush(TTextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
-		_str->Init();
+		_wasd = new TText(L"", { 200, 300, 300, 500 });
+		_wasd->SetTextFormat(TTextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
+		_wasd->SetBrush(TTextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
+		_wasd->Init();
+
+		_mouse = new TText(L"", { 600, 300, 300, 700 });
+		_mouse->SetTextFormat(TTextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
+		_mouse->SetBrush(TTextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
+		_mouse->Init();
 
 		return true;
 	}
@@ -36,30 +42,38 @@ public:
 
 		_timer->SetString(std::to_wstring(GetGlobalTime()));
 
-		_str->SetString(L"");
+		_wasd->SetString(L"");
 		if (TInputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
 		{
-			_str->SetString(L"W Key Hold");
+			_wasd->SetString(L"W Key Hold");
 		}
 		if (TInputManager::GetInstance().GetKeyState('A') == EKeyState::KEY_HOLD)
 		{
-			_str->SetString(L"A Key Hold");
+			_wasd->SetString(L"A Key Hold");
 		}
 		if (TInputManager::GetInstance().GetKeyState('S') == EKeyState::KEY_HOLD)
 		{
-			_str->SetString(L"S Key Hold");
+			_wasd->SetString(L"S Key Hold");
 		}
 		if (TInputManager::GetInstance().GetKeyState('D') == EKeyState::KEY_HOLD)
 		{
-			_str->SetString(L"D Key Hold");
+			_wasd->SetString(L"D Key Hold");
 		}
+
+		_mouse->SetString(L"");
+		if (TInputManager::GetInstance().GetKeyState(VK_LBUTTON) == EKeyState::KEY_HOLD)
+		{
+			_mouse->SetString(std::to_wstring(TInputManager::GetInstance().GetMousePosition().x) + L", " + std::to_wstring(TInputManager::GetInstance().GetMousePosition().y));
+		}
+
 		return true;
 	}
 	bool PreRender() override
 	{
 		DXCore::PreRender();
 		AddTextable(_timer);
-		AddTextable(_str);
+		AddTextable(_wasd);
+		AddTextable(_mouse);
 
 		return true;
 	}

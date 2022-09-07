@@ -38,7 +38,7 @@ void TDX2DObject::UpdateBoundary()
 std::vector<SimpleVertex2D> TDX2DObject::GetNDCBoundary()
 {
     float width = g_Window->GetClientWidth();
-    float height = g_Window->GetClientWidth();
+    float height = g_Window->GetClientHeight();
 
     std::vector<SimpleVertex2D> ret;
     ret.resize(_orderedBoundaryVertice.size());
@@ -133,6 +133,7 @@ void TDX2DObject::Draw(ID3D11DeviceContext* dc)
     dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
     dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
     dc->PSSetShaderResources(0, 1, _texture->GetShaderResourceView());
+    dc->PSSetShaderResources(1, 1, _texture->GetShaderResourceView());
     ID3D11SamplerState* ss = _texture->GetSamplerState();
     dc->PSSetSamplers(0, 1, &ss);
     dc->Draw(_orderedBoundaryVertice.size(), 0);

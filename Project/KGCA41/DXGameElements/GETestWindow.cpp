@@ -5,6 +5,9 @@
 #include "TTextManager.h"
 #include "TTextureManager.h"
 #include "TShaderManager.h"
+#include "TBasicWindow.h"
+
+extern TBasicWindow* g_Window;
 
 bool GETestWindow::Init()
 {
@@ -14,10 +17,10 @@ bool GETestWindow::Init()
     _text->SetTextFormat(TTextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
     _text->SetBrush(TTextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
 
-    _object = new TDX2DObject({ 400, 300 }, 50, 50);
+    _object = new TDX2DObject({ (float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) }, g_Window->GetClientWidth(), g_Window->GetClientHeight());
     _object->SetTexture(TTextureManager::GetInstance().Load(L"KGCABK.bmp"));
-    _object->SetVertexShader(TShaderManager::GetInstance().LoadVertexShader(L"DefaultVertexShader.hlsl", "main", "vs_5_0"));
-    _object->SetPixelShader(TShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "main", "ps_5_0"));
+    _object->SetVertexShader(TShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
+    _object->SetPixelShader(TShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "main", "ps_5_0"));
     _object->Init();
 
     return true;

@@ -9,7 +9,14 @@ struct PS_input
 	float2 t : TEXCOORD0;
 };
 
-float4 main(PS_input input) : SV_TARGET
+float4 withoutMask(PS_input input) : SV_TARGET
+{
+	//return input.c;
+
+	return g_txTextureA.Sample(g_sampleA, input.t);
+}
+
+float4 withMask(PS_input input) : SV_TARGET
 {
 	//return input.c;
 

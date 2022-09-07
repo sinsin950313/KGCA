@@ -50,13 +50,6 @@ TTexture* TTextureManager::Load(std::wstring fileName)
     return _textureData.find(fileName)->second;
 }
 
-TTexture* TTextureManager::Load(std::wstring fileName, std::wstring alphaFileName)
-{
-    TTexture* texture = Load(fileName);
-
-    return _textureData.find(fileName)->second;
-}
-
 ID3D11SamplerState* TTextureManager::LoadSampler(std::wstring stateName)
 {
     if (_samplerData.find(stateName) == _samplerData.end())

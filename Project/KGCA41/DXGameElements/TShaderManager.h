@@ -24,7 +24,9 @@ public:
 	static TShaderManager& GetInstance();
 
 private:
+	template<typename func> TShader* LoadShader(std::wstring fileName, std::string entryPoint, std::string target, std::map<std::wstring, TShader*>& data, func);
 	std::wstring GetPath(std::wstring fileName) { return L"../../Shader/" + fileName; }
+	std::wstring GetKey(std::wstring fileName, std::string entryPoint);
 
 public:
 	TShader* LoadVertexShader(std::wstring fileName, std::string entryPoint, std::string target);

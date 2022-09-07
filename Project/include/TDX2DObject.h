@@ -49,6 +49,7 @@ private:
 	std::vector<SimpleVertex2D> _orderedBoundaryVertice;
 	ID3D11Buffer* _vertexBuffer;
 	TTexture* _texture;
+	TTexture* _maskTexture;
 	TShader* _vs;
 	TShader* _ps;
 	ID3D11InputLayout* _vertexLayout;
@@ -65,6 +66,7 @@ private:
 
 public:
 	void SetTexture(TTexture* texture) { _texture = texture; }
+	void SetMaskTexture(TTexture* alpha) { _maskTexture = alpha; }
 	void SetVertexShader(TShader* shader) { _vs = shader; }
 	void SetPixelShader(TShader* shader) { _ps = shader; }
 

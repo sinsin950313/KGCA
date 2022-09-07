@@ -29,9 +29,11 @@ TShaderManager& TShaderManager::GetInstance()
     return *_instance;
 }
 
-TShader* TShaderManager::LoadVertexShader(std::wstring fileName, std::string entryPoint, std::string target)
+template<typename func>
+TShader* TShaderManager::LoadShader(std::wstring fileName, std::string entryPoint, std::string target, std::map<std::wstring, TShader*>& data, func CreateShader)
 {
-    if (_vertexShaderData.find(fileName) == _vertexShaderData.end())
+	std::wstring key = GetKey(fileName, entryPoint);
+    if(data.find(key) == data.end())
     {
         HRESULT hr;
 
@@ -49,50 +51,43 @@ TShader* TShaderManager::LoadVertexShader(std::wstring fileName, std::string ent
             return nullptr;
         }
 
-        ID3D11VertexShader* shader;
-        hr = g_dxWindow->GetDevice()->CreateVertexShader(code->GetBufferPointer(), code->GetBufferSize(), NULL, &shader);
+        ID3D11DeviceChild* shader;
+        hr = CreateShader(code, &shader);
         if (FAILED(hr))
         {
             return nullptr;
         }
 
         TShader* shaderComp = new TShader(shader, code);
-        _vertexShaderData.insert(std::make_pair(fileName, shaderComp));
+        data.insert(std::make_pair(key, shaderComp));
     }
-    return _vertexShaderData.find(fileName)->second;
+    return data.find(key)->second;
+}
+
+std::wstring TShaderManager::GetKey(std::wstring fileName, std::string entryPoint)
+{
+	std::wstring wEntryPoint;
+	wEntryPoint.assign(entryPoint.begin(), entryPoint.end());
+
+    return fileName + wEntryPoint;
+}
+
+TShader* TShaderManager::LoadVertexShader(std::wstring fileName, std::string entryPoint, std::string target)
+{
+	auto createShader = [](ID3DBlob* code, ID3D11DeviceChild** shader)->HRESULT
+	{
+		return g_dxWindow->GetDevice()->CreateVertexShader(code->GetBufferPointer(), code->GetBufferSize(), NULL, (ID3D11VertexShader**)shader);
+	};
+    return LoadShader(fileName, entryPoint, target, _vertexShaderData, createShader);
 }
 
 TShader* TShaderManager::LoadPixelShader(std::wstring fileName, std::string entryPoint, std::string target)
 {
-    if (_pixelShaderData.find(fileName) == _pixelShaderData.end())
-    {
-        HRESULT hr;
-
-		auto path = GetPath(fileName);
-        ID3DBlob* code = nullptr;
-        ID3DBlob* errorCode = nullptr;
-        hr = D3DCompileFromFile(path.c_str(), NULL, NULL, entryPoint.c_str(), target.c_str(), 0, 0, &code, &errorCode);
-        if (FAILED(hr))
-        {
-            if (errorCode != nullptr)
-            {
-                OutputDebugStringA((char*)errorCode->GetBufferPointer());
-                errorCode->Release();
-            }
-            return nullptr;
-        }
-
-        ID3D11PixelShader* shader;
-        hr = g_dxWindow->GetDevice()->CreatePixelShader(code->GetBufferPointer(), code->GetBufferSize(), NULL, &shader);
-        if (FAILED(hr))
-        {
-            return nullptr;
-        }
-
-        TShader* shaderComp = new TShader(shader, code);
-        _vertexShaderData.insert(std::make_pair(fileName, shaderComp));
-    }
-    return _vertexShaderData.find(fileName)->second;
+	auto createShader = [](ID3DBlob* code, ID3D11DeviceChild** shader)->HRESULT
+	{
+		return g_dxWindow->GetDevice()->CreatePixelShader(code->GetBufferPointer(), code->GetBufferSize(), NULL, (ID3D11PixelShader**)shader);
+	};
+    return LoadShader(fileName, entryPoint, target, _pixelShaderData, createShader);
 }
 
 bool TShaderManager::Init()

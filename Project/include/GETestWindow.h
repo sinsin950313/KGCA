@@ -9,6 +9,7 @@ class GETestWindow : public TDXWindow
 {
 private:
 	TText* _text;
+	TDX2DObject* _background;
 	TDX2DObject* _object;
 
 public:

@@ -2,7 +2,7 @@
 
 #include "CommonClass.h"
 #include "TDXDrawableInterface.h"
-#include "Rectangle.h"
+#include <vector>
 
 class TTexture;
 class TShader;

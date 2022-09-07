@@ -15,7 +15,7 @@ bool GETestWindow::Init()
     _text->SetBrush(TTextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
 
     _object = new TDX2DObject({ 400, 300 }, 50, 50);
-    _object->SetTexture(TTextureManager::GetInstance().Load(L"../../Resource/KGCABK.bmp"));
+    _object->SetTexture(TTextureManager::GetInstance().Load(L"KGCABK.bmp"));
     _object->SetVertexShader(TShaderManager::GetInstance().LoadVertexShader(L"DefaultVertexShader.hlsl", "main", "vs_5_0"));
     _object->SetPixelShader(TShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "main", "ps_5_0"));
     _object->Init();
@@ -39,6 +39,10 @@ bool GETestWindow::Release()
 
     _object->Release();
     _text->Release();
+
+    TTextManager::GetInstance().Release();
+    TShaderManager::GetInstance().Release();
+    TTextureManager::GetInstance().Release();
 
     return true;
 }

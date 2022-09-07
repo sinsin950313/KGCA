@@ -78,10 +78,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\..\Output</OutDir>
-    <IntDir>$(ProjectDir)\..\Output</IntDir>
-    <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
-    <ReferencePath>$(ProjectDir)\..\lib;$(ReferencePath)</ReferencePath>
+    <OutDir>$(ProjectDir)\..\..\Output</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -120,21 +119,20 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\..\include;$(ProjectDir)\..\include\DXTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include;$(ProjectDir)\..\..\include\DXTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>
-md "$(ProjectDir)\..\include\"
-copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\include\"
+      <Command>md "$(ProjectDir)\..\..\include\"
+copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
 
-md "$(ProjectDir)\..\lib\"
+md "$(ProjectDir)\..\..\lib\"
 
-
-copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
+copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\"</Command>
     </PostBuildEvent>
     <Lib>
       <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>

@@ -95,6 +95,8 @@ bool TDX2DObject::Init()
 		return false;
 	}
 
+    g_dxWindow->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
     return true;
 }
 
@@ -131,5 +133,7 @@ void TDX2DObject::Draw(ID3D11DeviceContext* dc)
     dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
     dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
     dc->PSSetShaderResources(0, 1, _texture->GetShaderResourceView());
+    ID3D11SamplerState* ss = _texture->GetSamplerState();
+    dc->PSSetSamplers(0, 1, &ss);
     dc->Draw(_orderedBoundaryVertice.size(), 0);
 }

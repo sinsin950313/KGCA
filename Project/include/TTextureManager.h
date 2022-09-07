@@ -7,11 +7,13 @@
 class TTexture;
 class ID3D11Device;
 class ID3D11DeviceContext;
+class ID3D11SamplerState;
 
 class TTextureManager : public Common
 {
 private:
 	std::map<std::wstring, TTexture*> _textureData;
+	std::map<std::wstring, ID3D11SamplerState*> _samplerData;
 
 private:
 	static TTextureManager* _instance;
@@ -24,7 +26,11 @@ public:
 	static TTextureManager& GetInstance();
 
 public:
-	TTexture* Load(std::wstring path);
+	TTexture* Load(std::wstring fileName);
+	ID3D11SamplerState* LoadSampler(std::wstring stateName);
+
+private:
+	std::wstring GetPath(std::wstring fileName) { return L"../../Resource/" + fileName; }
 	
 public:
 	bool Init() override;

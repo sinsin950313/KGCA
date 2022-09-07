@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\..\Output</OutDir>
-    <IntDir>$(ProjectDir)\..\Output</IntDir>
+    <OutDir>$(ProjectDir)\..\..\Output</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -124,11 +124,16 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy "*.h" "$(ProjectDir)\..\include"
+      <Command>md "$(ProjectDir)\..\..\include\"
+copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
 
+md "$(ProjectDir)\..\..\lib\"
 
-copy "$(ProjectDir)\..\x64\Debug\CustomArray.lib" "$(ProjectDir)\..\lib"</Command>
+copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\"</Command>
     </PostBuildEvent>
+    <Lib>
+      <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

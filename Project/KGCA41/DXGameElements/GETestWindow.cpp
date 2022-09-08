@@ -16,6 +16,7 @@ bool GETestWindow::Init()
     _text = new TText(L"aaa", { 0, 0, 100, 50 });
     _text->SetTextFormat(TTextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
     _text->SetBrush(TTextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
+    _text->Init();
 
     _background = new TDX2DObject({ (float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) }, g_Window->GetClientWidth(), g_Window->GetClientHeight());
     _background->SetTexture(TTextureManager::GetInstance().Load(L"KGCABK.bmp"));

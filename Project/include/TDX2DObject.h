@@ -40,14 +40,15 @@ private:
 	// 0---1
 	// |   |
 	// 2---3
-	std::vector<SimpleVertex2D> _boundaryVertice;
+	std::vector<SimpleVertex2D> _vertexList;
+	std::vector<DWORD> _indexList;
 	Position2D _center;
 	float _width;
 	float _height;
 
 private:
-	std::vector<SimpleVertex2D> _orderedBoundaryVertice;
 	ID3D11Buffer* _vertexBuffer;
+	ID3D11Buffer* _indexBuffer;
 	TTexture* _texture;
 	TTexture* _maskTexture;
 	TShader* _vs;
@@ -61,6 +62,8 @@ public:
 	void Move(Position2D centerPosition) { _center = centerPosition; }
 
 private:
+	bool CreateVertexBuffer();
+	bool CreateIndexBuffer();
 	void UpdateBoundary();
 	std::vector<SimpleVertex2D> GetNDCBoundary();
 

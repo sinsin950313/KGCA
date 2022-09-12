@@ -26,6 +26,9 @@
     <ClCompile Include="DX2DCamera.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="DX2DGameObjectFactory.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX2DGameProject.h">
@@ -38,6 +41,9 @@
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="DX2DCamera.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="DX2DGameObjectFactory.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

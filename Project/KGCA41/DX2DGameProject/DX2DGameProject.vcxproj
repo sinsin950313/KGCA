@@ -146,6 +146,7 @@
   <ItemGroup>
     <ClCompile Include="DX2DCamera.cpp" />
     <ClCompile Include="DX2DGameObject.cpp" />
+    <ClCompile Include="DX2DGameObjectFactory.cpp" />
     <ClCompile Include="DX2DGameProject.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DX2DMapObject.cpp" />
@@ -153,6 +154,7 @@
   <ItemGroup>
     <ClInclude Include="DX2DCamera.h" />
     <ClInclude Include="DX2DGameObject.h" />
+    <ClInclude Include="DX2DGameObjectFactory.h" />
     <ClInclude Include="DX2DGameProject.h" />
     <ClInclude Include="DX2DMapObject.h" />
   </ItemGroup>

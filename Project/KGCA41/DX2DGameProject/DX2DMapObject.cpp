@@ -1,6 +1,6 @@
 #include "DX2DMapObject.h"
 #include "CollisionTree.h"
-#include "TDX2DObject.h"
+#include "DX2DGameObject.h"
 
 DX2DMapObject::DX2DMapObject(Position2D pos, float width, float height)
 {
@@ -20,7 +20,31 @@ DX2DMapObject::DX2DMapObject(Position2D pos, float width, float height)
 
 DX2DMapObject::~DX2DMapObject()
 {
+	_dxObject->Release();
+
+	delete _qt;
+
+	_physicsToDX2DMatch.clear();
+
 	Release();
+}
+
+std::vector<DX2DGameObject*> DX2DMapObject::GetCollideObjectList(DX2DGameObject* object)
+{
+	std::vector<DX2DGameObject*> collidedObjectList;
+
+	auto collidePhysicsObjectList = _qt->GetCollidedObjects(object->GetPhysicsObject());
+	for (auto physicsObject : collidePhysicsObjectList)
+	{
+		collidedObjectList.push_back(_physicsToDX2DMatch.find(physicsObject)->second);
+	}
+
+	return collidedObjectList;
+}
+
+bool DX2DMapObject::IsCollide(DX2DGameObject* object)
+{
+	return !_qt->GetCollidedObjects(object->GetPhysicsObject()).empty();
 }
 
 bool DX2DMapObject::Init()

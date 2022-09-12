@@ -1,21 +1,24 @@
 #pragma once
 
 #include "CommonClass.h"
-#include "CollisionTree.h"
-#include "TDX2DObject.h"
+#include <vector>
+
+class QuadTree;
+class DX2DGameObject;
+class TDX2DObject;
 
 class DX2DMapObject : public Common
 {
 private:
 	QuadTree* _qt = nullptr;
-	TDX2DObject _dxObject;
+	TDX2DObject* _dxObject;
 
 public:
-	DX2DMapObject();
+	DX2DMapObject(Position2D pos, float width, float height);
 	~DX2DMapObject();
 
 public:
-	void SetMapSize(float width, float height);
+	std::vector<DX2DGameObject*> GetCollideObjectList(DX2DGameObject* object);
 
 public:
 	bool Init() override;

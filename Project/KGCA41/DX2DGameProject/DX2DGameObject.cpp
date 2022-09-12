@@ -1,14 +1,26 @@
 #include "DX2DGameObject.h"
+#include "Rectangle.h"
 
-DX2DGameObject::DX2DGameObject()
+DX2DGameObject::DX2DGameObject(Position2D center, float width, float height, float mass)
 {
-	_dxObject = new TDX2DObject();
-	_physicsObject = new Object2D();
+	_dxObject = new TDX2DObject(center, width, height);
+	_physicsObject = new Object2D(new Custom::Rectangle(center.x, center.y, width, height), Rigidbody2D(mass));
 }
 
 DX2DGameObject::~DX2DGameObject()
 {
 	Release();
+}
+
+void DX2DGameObject::Move(float x, float y)
+{
+	Vector2D pos(Vector2DData{x, y});
+	Move(pos);
+}
+
+void DX2DGameObject::Move(Vector2D center)
+{
+	_physicsObject->GetVolume()->Reposition(center);
 }
 
 bool DX2DGameObject::Init()

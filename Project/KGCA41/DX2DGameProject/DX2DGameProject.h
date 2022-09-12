@@ -1,15 +1,16 @@
 #pragma once
 
 #include "DXCore.h"
-#include "DX2DMapObject.h"
-#include "DX2DCamera.h"
-#include "DX2DGameObject.h"
+
+class DX2DMapObject;
+class DX2DGameObject;
+class DX2DCamera;
 
 class DX2DGameProject : public DXCore
 {
 private:
-	DX2DMapObject _map;
-	DX2DCamera _camera;
+	DX2DMapObject* _map;
+	DX2DCamera* _camera;
 	std::vector<DX2DGameObject*> _objects;
 	DX2DGameObject* _player;
 
@@ -25,4 +26,8 @@ protected:
 	bool PreRender() override;
 	bool MainRender() override;
 	bool PostRender() override;
+
+private:
+	void GameLogic();
+	void SetDisplayPosition(DX2DGameObject* object);
 };

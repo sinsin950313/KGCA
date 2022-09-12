@@ -72,6 +72,7 @@ public:
 	void SetMaskTexture(TTexture* alpha) { _maskTexture = alpha; }
 	void SetVertexShader(TShader* shader) { _vs = shader; }
 	void SetPixelShader(TShader* shader) { _ps = shader; }
+	void SetCenter(Position2D center) { _center = center; }
 
 public:
 	bool Init() override;

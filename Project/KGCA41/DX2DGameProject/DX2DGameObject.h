@@ -4,8 +4,6 @@
 #include "TDX2DObject.h"
 #include "Object.h"
 
-class DX2DCamera;
-
 class DX2DGameObject : public Common
 {
 private:
@@ -21,8 +19,6 @@ public:
 	Object2D* GetPhysicsObject() { return _physicsObject; }
 	void Move(float x, float y);
 	void Move(Vector2D center);
-	// should be in Scene or Camera
-	//void CalculateDXPosition(DX2DCamera* camera);
 
 public:
 	bool Init() override;

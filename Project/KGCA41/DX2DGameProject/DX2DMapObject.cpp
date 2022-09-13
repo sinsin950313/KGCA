@@ -47,6 +47,18 @@ bool DX2DMapObject::IsCollide(DX2DGameObject* object)
 	return !_qt->GetCollidedObjects(object->GetPhysicsObject()).empty();
 }
 
+void DX2DMapObject::RegisterStaticObject(Object2D* object, DX2DGameObject* dxObject)
+{
+	_physicsToDX2DMatch.insert(std::make_pair(object, dxObject));
+	_qt->AddStaticObject(object);
+}
+
+void DX2DMapObject::RegisterDynamicObject(Object2D* object, DX2DGameObject* dxObject)
+{
+	_physicsToDX2DMatch.insert(std::make_pair(object, dxObject));
+	_qt->AddDynamicObject(object);
+}
+
 bool DX2DMapObject::Init()
 {
 	return true;

@@ -23,6 +23,8 @@ public:
 public:
 	std::vector<DX2DGameObject*> GetCollideObjectList(DX2DGameObject* object);
 	bool IsCollide(DX2DGameObject* object);
+	void RegisterStaticObject(Object2D* object, DX2DGameObject* dxObject);
+	void RegisterDynamicObject(Object2D* object, DX2DGameObject* dxObject);
 
 public:
 	bool Init() override;

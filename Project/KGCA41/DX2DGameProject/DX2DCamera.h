@@ -4,6 +4,8 @@
 #include "Rectangle.h"
 #include "TDX2DObject.h"
 
+class DX2DGameObject;
+
 class DX2DCamera : public Common
 {
 private:
@@ -16,10 +18,13 @@ public:
 
 public:
 	Vector2D GetCenter() { return _physicsArea.GetCenter(); }
-	// Physics Coordinate to Screen Coordinate
-	Position2D PhysicsToDisplay(Vector2D absolute);
+	void MontageForLens(DX2DGameObject* object);
 	void Move(float x, float y);
 	void Move(Vector2D center);
+
+private:
+	// Physics Coordinate to Screen Coordinate
+	Position2D PhysicsToDisplay(Vector2D absolute);
 
 public:
 	bool Init() override;

@@ -18,6 +18,7 @@ TShaderManager::~TShaderManager()
     Release();
 
     delete _instance;
+    _instance = nullptr;
 }
 
 TShaderManager& TShaderManager::GetInstance()

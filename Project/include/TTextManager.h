@@ -24,6 +24,7 @@ public:
 
 private:
 	TTextManager() { }
+	~TTextManager();
 
 public:
 	bool Init() override;

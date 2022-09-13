@@ -53,8 +53,8 @@ void Custom::Rectangle::Resize(float width, float height)
 	_width = width;
 	_height = height;
 
-	_lt = Vector2D(2, -GetClientWidth() / 2, GetClientHeight() / 2);
-	_rb = Vector2D(2, GetClientWidth() / 2, -GetClientHeight() / 2);
+	_lt = Vector2D(2, -GetWidth() / 2, GetHeight() / 2);
+	_rb = Vector2D(2, GetWidth() / 2, -GetHeight() / 2);
 }
 
 bool Custom::Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) const
@@ -75,7 +75,7 @@ void Custom::Rectangle::Print() const
 {
 	std::cout << "Left-Top " << "(" << GetLeft() << ", " << GetTop() << ")" 
 		<< ", " << "Right-Bottom " << "(" << GetRight() << ", " << GetBottom() << ")" 
-		<< ", " << "Width-Height " << GetClientWidth() << ", " << GetClientHeight() << std::endl << std::endl;
+		<< ", " << "Width-Height " << GetWidth() << ", " << GetHeight() << std::endl << std::endl;
 }
 
 Custom::RectangleVertexFactory::RectangleVertexFactory(float left, float top, float right, float bottom)

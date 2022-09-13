@@ -20,6 +20,7 @@ TTextureManager::~TTextureManager()
     Release();
 
     delete _instance;
+    _instance = nullptr;
 }
 
 TTextureManager& TTextureManager::GetInstance()

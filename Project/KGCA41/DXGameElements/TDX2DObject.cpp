@@ -8,6 +8,14 @@
 extern TDXWindow* g_dxWindow;
 extern TBasicWindow* g_Window;
 
+void TDX2DObject::Resize(float width, float height)
+{
+    _width = width;
+    _height = height;
+
+    UpdateBoundary();
+}
+
 bool TDX2DObject::CreateVertexBuffer()
 {
     _vertexList.resize(4);

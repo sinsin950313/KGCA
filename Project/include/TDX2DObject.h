@@ -60,6 +60,7 @@ public:
 
 public:
 	void Move(Position2D centerPosition) { _center = centerPosition; }
+	void Resize(float width, float height);
 
 private:
 	bool CreateVertexBuffer();

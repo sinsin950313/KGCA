@@ -1,6 +1,9 @@
 #pragma once
 
 #include "TDXWindow.h"
+#include "Scene.h"
+#include <map>
+#include <string>
 
 class TTimer;
 
@@ -8,12 +11,17 @@ class DXCore : public TDXWindow
 {
 private:
 	TTimer* _timer;
+	std::map<std::string, Scene*> _scenes;
+	Scene* _currentScene = nullptr;
 
 public:
 	DXCore(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
 
 public:
 	DWORD GetGlobalTime();
+	void NewScene(std::string sceneName, Scene* scene) { _scenes.insert(std::make_pair(sceneName, scene)); }
+	Scene* GetScene(std::string sceneName) { return _scenes.find(sceneName)->second; }
+	void SetCurrentScene(std::string sceneName) { _currentScene = _scenes.find(sceneName)->second; }
 
 public:
 	bool Init() override;

@@ -46,6 +46,14 @@ IDWriteTextFormat* TTextManager::LoadTextFormat(std::wstring name, std::wstring 
 	return _textFormats.find(name)->second;
 }
 
+TTextManager::~TTextManager()
+{
+	Release();
+
+	delete _instance;
+	_instance = nullptr;
+}
+
 bool TTextManager::Init()
 {
 	LoadBrush(L"Black", { 0, 0, 0, 1 });

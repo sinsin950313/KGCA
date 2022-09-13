@@ -34,6 +34,8 @@ bool DXCore::Init()
 
 	TTextureManager::GetInstance().Init();
 
+	_currentScene->Init();
+
 	return true;
 }
 
@@ -47,6 +49,13 @@ bool DXCore::Frame()
 	TTextManager::GetInstance().Frame();
 	TTextureManager::GetInstance().Frame();
 
+	if (_currentScene->IsFinished())
+	{
+		_currentScene = _currentScene->GetNextScene();
+		_currentScene->Init();
+	}
+	_currentScene->Frame();
+
 	return true;
 }
 
@@ -55,10 +64,21 @@ bool DXCore::Release()
 	TDXWindow::Release();
 
 	_timer->Release();
+	delete _timer;
+
 	TInputManager::GetInstance().Release();
 	TShaderManager::GetInstance().Release();
 	TTextManager::GetInstance().Release();
 	TTextureManager::GetInstance().Release();
+
+	_currentScene = nullptr;
+
+	for (auto scene : _scenes)
+	{
+		scene.second->Release();
+		delete scene.second;
+	}
+	_scenes.clear();
 
 	return true;
 }
@@ -72,6 +92,8 @@ bool DXCore::PreRender()
 	TShaderManager::GetInstance().Render();
 	TTextManager::GetInstance().Render();
 	TTextureManager::GetInstance().Render();
+
+	_currentScene->Render();
 
 	return true;
 }

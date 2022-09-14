@@ -1,10 +1,15 @@
 #include "DX2DMapObject.h"
 #include "CollisionTree.h"
 #include "DX2DGameObject.h"
+#include "DX2DCamera.h"
+#include "TTextureManager.h"
+#include "TShaderManager.h"
 
-DX2DMapObject::DX2DMapObject(Position2D pos, float width, float height)
+DX2DMapObject::DX2DMapObject(Vector2D center, float width, float height)
 {
-	_dxObject = new TDX2DObject(pos, width, height);
+	_object = new Object2D(new Custom::Rectangle(center.Get(0), center.Get(1), width, height), Rigidbody2D(0));
+	_dxObject = new TDX2DObject(Position2D{ 0, 0 }, width, height);
+	_dxObject->Tile(7, 9);
 
 	int maxLayer = 0;
 	float wTmp = width;
@@ -20,10 +25,6 @@ DX2DMapObject::DX2DMapObject(Position2D pos, float width, float height)
 
 DX2DMapObject::~DX2DMapObject()
 {
-	_dxObject->Release();
-
-	delete _qt;
-
 	_physicsToDX2DMatch.clear();
 
 	Release();
@@ -34,6 +35,19 @@ std::vector<DX2DGameObject*> DX2DMapObject::GetCollideObjectList(DX2DGameObject*
 	std::vector<DX2DGameObject*> collidedObjectList;
 
 	auto collidePhysicsObjectList = _qt->GetCollidedObjects(object->GetPhysicsObject());
+	for (auto physicsObject : collidePhysicsObjectList)
+	{
+		collidedObjectList.push_back(_physicsToDX2DMatch.find(physicsObject)->second);
+	}
+
+	return collidedObjectList;
+}
+
+std::vector<DX2DGameObject*> DX2DMapObject::GetCollideObjectList(DX2DCamera* camera)
+{
+	std::vector<DX2DGameObject*> collidedObjectList;
+
+	auto collidePhysicsObjectList = _qt->GetCollidedObjects(camera->GetCaptureArea());
 	for (auto physicsObject : collidePhysicsObjectList)
 	{
 		collidedObjectList.push_back(_physicsToDX2DMatch.find(physicsObject)->second);
@@ -61,11 +75,17 @@ void DX2DMapObject::RegisterDynamicObject(Object2D* object, DX2DGameObject* dxOb
 
 bool DX2DMapObject::Init()
 {
+	_dxObject->SetVertexShader(TShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
+	_dxObject->SetPixelShader(TShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withoutMask", "ps_5_0"));
+	_dxObject->SetTexture(TTextureManager::GetInstance().Load(L"KGCABK.bmp"));
+	_dxObject->Init();
+
 	return true;
 }
 
 bool DX2DMapObject::Frame()
 {
+	_dxObject->Frame();
 	return true;
 }
 
@@ -77,10 +97,18 @@ bool DX2DMapObject::Render()
 
 bool DX2DMapObject::Release()
 {
-	delete _qt;
+	if (_qt)
+	{
+		delete _qt;
+		_qt = nullptr;
+	}
 
-	_dxObject->Release();
-	delete _dxObject;
+	if (_dxObject)
+	{
+		_dxObject->Release();
+		delete _dxObject;
+		_dxObject = nullptr;
+	}
 
 	return true;
 }

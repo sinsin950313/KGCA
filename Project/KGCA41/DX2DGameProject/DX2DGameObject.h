@@ -17,6 +17,7 @@ public:
 public:
 	TDX2DObject* GetDXObject() { return _dxObject; }
 	Object2D* GetPhysicsObject() { return _physicsObject; }
+	Vector2D GetCenter() { return _physicsObject->GetVolume()->GetCenter(); }
 	void Move(float x, float y);
 	void Move(Vector2D center);
 

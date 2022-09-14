@@ -16,6 +16,18 @@ void TDX2DObject::Resize(float width, float height)
     UpdateBoundary();
 }
 
+void TDX2DObject::Scroll(float x, float y)
+{
+    _dTexture.u = x;
+    _dTexture.v = y;
+}
+
+void TDX2DObject::Tile(float x, float y)
+{
+    _dTile.u = x;
+    _dTile.v = y;
+}
+
 bool TDX2DObject::CreateVertexBuffer()
 {
     _vertexList.resize(4);
@@ -68,7 +80,7 @@ bool TDX2DObject::CreateIndexBuffer()
 void TDX2DObject::UpdateBoundary()
 {
     float dx[4]{ -1, 1, -1, 1 };
-    float dy[4]{ 1, 1, -1, -1 };
+    float dy[4]{ -1, -1, 1, 1 };
     float texU[4]{ 0, 1, 0, 1 };
     float texV[4]{ 0, 0, 1, 1 };
 
@@ -80,8 +92,8 @@ void TDX2DObject::UpdateBoundary()
         _vertexList[i].pos.x = _center.x + hWidth* dx[i];
         _vertexList[i].pos.y = _center.y + hHeight * dy[i];
         _vertexList[i].col = { 0.0f, 0.0f, 0.0f, 1.0f };
-        _vertexList[i].texParam.u = texU[i];
-        _vertexList[i].texParam.v = texV[i];
+        _vertexList[i].texParam.u = (texU[i] + _dTexture.u) * _dTile.u;
+        _vertexList[i].texParam.v = (texV[i] + _dTexture.v) * _dTile.v;
     }
 }
 
@@ -103,6 +115,7 @@ std::vector<SimpleVertex2D> TDX2DObject::GetNDCBoundary()
         ret[i].pos.y = _vertexList[i].pos.y / height;
         ret[i].pos.y *= 2;
         ret[i].pos.y -= 1;
+        ret[i].pos.y = -ret[i].pos.y;
     }
 
     return ret;

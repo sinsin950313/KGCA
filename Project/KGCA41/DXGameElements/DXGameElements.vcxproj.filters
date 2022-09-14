@@ -4,10 +4,13 @@
     <ClCompile Include="GETestWindow.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TDX2DObject.cpp">
+    <ClCompile Include="Sample.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Sample.cpp">
+    <ClCompile Include="TDX2DAnimation.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="TDX2DObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TShader.cpp">
@@ -31,6 +34,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GETestWindow.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="TDX2DAnimation.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="TDX2DObject.h">
@@ -57,10 +63,16 @@
   </ItemGroup>
   <ItemGroup>
     <Filter Include="소스 파일">
-      <UniqueIdentifier>{864619ba-b7c7-4ebf-9a3b-9641d5ab16d8}</UniqueIdentifier>
+      <UniqueIdentifier>{65833bf4-559e-450f-bf4d-99b6d3feb79e}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
     <Filter Include="헤더 파일">
-      <UniqueIdentifier>{a5188335-b452-4b03-8bac-83d1e835bfa0}</UniqueIdentifier>
+      <UniqueIdentifier>{c915925e-37c6-4f5e-ac4a-c9f4c5e9ec6b}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="리소스 파일">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
   </ItemGroup>
 </Project>

@@ -33,8 +33,8 @@ bool SoundManager::LoadSound(std::wstring fileName)
 	if (_soundList.find(fileName) == _soundList.end())
 	{
 		FMOD::Sound* sound = nullptr;
-		_system->createSound((wtm(fileName)).c_str(), FMOD_DEFAULT, nullptr, &sound);
-		if (sound == nullptr)
+		FMOD_RESULT fr = _system->createSound((wtm(fullpath)).c_str(), FMOD_DEFAULT, nullptr, &sound);
+		if (fr != FMOD_OK)
 		{
 			return false;
 		}
@@ -86,17 +86,17 @@ bool SoundManager::Render()
 
 bool SoundManager::Release()
 {
-	if (_system)
-	{
-		_system->close();
-		_system->release();
-	}
-
 	for (auto sound : _soundList)
 	{
 		sound.second->release();
 	}
 	_soundList.clear();
+
+	if (_system)
+	{
+		_system->close();
+		_system->release();
+	}
 
 	return true;
 }

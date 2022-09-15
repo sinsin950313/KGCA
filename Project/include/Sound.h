@@ -20,6 +20,7 @@ public:
 	Sound(FMOD::Sound* sound) { _sound = sound; }
 
 public:
+	void PlayInstance();
 	void Play(bool loop);
 	void Stop();
 	void Pause();

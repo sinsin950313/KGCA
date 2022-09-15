@@ -1,6 +1,3 @@
-#pragma comment (lib, "d3dcompiler.lib")
-#pragma comment (lib, "DirectXTK.lib")
-
 #include "GETestWindow.h"
 #include "TTextManager.h"
 #include "TTextureManager.h"

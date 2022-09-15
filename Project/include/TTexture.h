@@ -20,8 +20,8 @@ public:
 	ID3D11SamplerState* GetSamplerState() { return _samplerState; }
 
 public:
-	bool Init();
-	bool Frame();
-	bool Render();
-	bool Release();
+	bool Init() override;
+	bool Frame() override;
+	bool Render() override;
+	bool Release() override;
 };

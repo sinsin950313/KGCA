@@ -1,5 +1,4 @@
 #pragma once
-#pragma comment (lib, "d3dcompiler.lib")
 
 #include "CommonClass.h"
 #include <d3dcompiler.h>

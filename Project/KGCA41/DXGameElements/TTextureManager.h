@@ -14,6 +14,7 @@ class TTextureManager : public Common
 private:
 	std::map<std::wstring, TTexture*> _textureData;
 	std::map<std::wstring, ID3D11SamplerState*> _samplerData;
+	std::wstring _path = L"../../Resource/Texture/";
 
 private:
 	static TTextureManager* _instance;
@@ -26,11 +27,12 @@ public:
 	static TTextureManager& GetInstance();
 
 public:
+	void SetPath(std::wstring path) { _path = path; }
 	TTexture* Load(std::wstring fileName);
 	ID3D11SamplerState* LoadSampler(std::wstring stateName);
 
 private:
-	std::wstring GetPath(std::wstring fileName) { return L"../../Resource/" + fileName; }
+	std::wstring GetPath(std::wstring fileName) { return _path + fileName; }
 	
 public:
 	bool Init() override;

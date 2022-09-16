@@ -1,6 +1,5 @@
 #include "TDX2DObject.h"
 #include "TShader.h"
-#include "TTexture.h"
 #include "TTextureManager.h"
 #include "TShaderManager.h"
 #include "TDXWindow.h"
@@ -14,18 +13,6 @@ void TDX2DObject::Resize(float width, float height)
     _height = height;
 
     UpdateBoundary();
-}
-
-void TDX2DObject::Scroll(float x, float y)
-{
-    _dTexture.u = x;
-    _dTexture.v = y;
-}
-
-void TDX2DObject::Tile(float x, float y)
-{
-    _dTile.u = x;
-    _dTile.v = y;
 }
 
 bool TDX2DObject::CreateVertexBuffer()
@@ -81,8 +68,10 @@ void TDX2DObject::UpdateBoundary()
 {
     float dx[4]{ -1, 1, -1, 1 };
     float dy[4]{ -1, -1, 1, 1 };
-    float texU[4]{ 0, 1, 0, 1 };
-    float texV[4]{ 0, 0, 1, 1 };
+
+    auto texturePart = _texture->GetCurrentTexturePart();
+    float texU[4]{ texturePart.left, texturePart.right, texturePart.left, texturePart.right };
+    float texV[4]{ texturePart.top, texturePart.top, texturePart.bottom, texturePart.bottom };
 
     float hWidth = _width / 2;
     float hHeight = _height / 2;
@@ -92,8 +81,8 @@ void TDX2DObject::UpdateBoundary()
         _vertexList[i].pos.x = _center.x + hWidth* dx[i];
         _vertexList[i].pos.y = _center.y + hHeight * dy[i];
         _vertexList[i].col = { 0.0f, 0.0f, 0.0f, 1.0f };
-        _vertexList[i].texParam.u = (texU[i] + _dTexture.u) * _dTile.u;
-        _vertexList[i].texParam.v = (texV[i] + _dTexture.v) * _dTile.v;
+        _vertexList[i].texParam.u = texU[i];
+        _vertexList[i].texParam.v = texV[i];
     }
 }
 
@@ -190,4 +179,20 @@ void TDX2DObject::Draw(ID3D11DeviceContext* dc)
         dc->PSSetShaderResources(1, 1, _maskTexture->GetShaderResourceView());
     }
 	dc->DrawIndexed(_indexList.size(), 0, 0);
+}
+
+void TDX2DObject::Scroll(float xRatio, float yRatio)
+{
+    _texture->Scroll(xRatio, yRatio);
+}
+
+void TDX2DObject::Tile(float xCoefficient, float yCoefficient)
+{
+    _texture->Tile(xCoefficient, yCoefficient);
+}
+
+void TDX2DObject::SetRect(std::string actionName, RECT area)
+{
+    _texture->RegisterTexturePartWithRelativeValue(actionName, area);
+    _texture->SetCurrentTexturePart(actionName);
 }

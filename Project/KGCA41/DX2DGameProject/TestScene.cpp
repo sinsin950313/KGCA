@@ -26,11 +26,14 @@ TestScene::TestScene()
 bool TestScene::Init()
 {
 	_map->Init();
+	_map->GetDXObject()->SetRect("Background", { 0, 0, 1024, 768 });
 	for (auto object : _objects)
 	{
 		object->Init();
+		//object->GetDXObject()->SetRect("Enemy", {46, 62, 68, 79});
 	}
 	_player->Init();
+	_player->GetDXObject()->SetRect("Player", { 91, 2, 39, 59 });
 	_camera->Init();
 
 	return true;

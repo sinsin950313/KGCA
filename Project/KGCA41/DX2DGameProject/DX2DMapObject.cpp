@@ -9,7 +9,6 @@ DX2DMapObject::DX2DMapObject(Vector2D center, float width, float height)
 {
 	_object = new Object2D(new Custom::Rectangle(center.Get(0), center.Get(1), width, height), Rigidbody2D(0));
 	_dxObject = new TDX2DObject(Position2D{ 0, 0 }, width, height);
-	_dxObject->Tile(7, 9);
 
 	int maxLayer = 0;
 	float wTmp = width;
@@ -79,6 +78,7 @@ bool DX2DMapObject::Init()
 	_dxObject->SetPixelShader(TShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withoutMask", "ps_5_0"));
 	_dxObject->SetTexture(TTextureManager::GetInstance().Load(L"KGCABK.bmp"));
 	_dxObject->Init();
+	_dxObject->Tile(7, 9);
 
 	return true;
 }

@@ -3,8 +3,8 @@
 #include "CommonClass.h"
 #include "TDXDrawableInterface.h"
 #include <vector>
+#include "TTexture.h"
 
-class TTexture;
 class TShader;
 
 struct Position2D
@@ -19,12 +19,6 @@ struct ColorRGBA
 	float g;
 	float b;
 	float a;
-};
-
-struct TextureParam
-{
-	float u;
-	float v;
 };
 
 struct SimpleVertex2D
@@ -45,8 +39,6 @@ private:
 	Position2D _center;
 	float _width;
 	float _height;
-	TextureParam _dTexture;
-	TextureParam _dTile;
 
 private:
 	ID3D11Buffer* _vertexBuffer;
@@ -58,7 +50,7 @@ private:
 	ID3D11InputLayout* _vertexLayout;
 
 public:
-	TDX2DObject(Position2D center, float width, float height) : _center(center), _width(width), _height(height) { _dTile = { 1, 1 }; }
+	TDX2DObject(Position2D center, float width, float height) : _center(center), _width(width), _height(height) { }
 
 private:
 	bool CreateVertexBuffer();
@@ -74,8 +66,12 @@ public:
 	void Resize(float width, float height);
 	void Move(Position2D centerPosition) { _center = centerPosition; }
 	void SetCenter(Position2D center) { _center = center; }
-	void Scroll(float x, float y);
-	void Tile(float x, float y);
+
+	//tmp
+public:
+	void SetRect(std::string actionName, RECT area);
+	void Scroll(float xRatio, float yRatio);
+	void Tile(float xCoefficient, float yCoefficient);
 
 public:
 	bool Init() override;

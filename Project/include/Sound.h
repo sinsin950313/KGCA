@@ -1,41 +1,42 @@
 #pragma once
 
-#include "CommonClass.h"
+#include "Common.h"
 #include "fmod.h"
 #include "fmod.hpp"
 #include "fmod_errors.h"
 
-class Sound : public Common
+namespace SSB
 {
-private:
-	FMOD::Sound* _sound;
-	FMOD::Channel* _channel = nullptr;
-	bool _play = false;
-	float _volume = 0.0f;
-	const float _deltaVolume = 0.1f;
-	unsigned int _totalPlayTime = 0;
-	unsigned int _currentPlayTime = 0;
+	class Sound : public Common
+	{
+	private:
+		FMOD::Sound* _sound;
+		FMOD::Channel* _channel = nullptr;
+		bool _play = false;
+		float _volume = 0.0f;
+		const float _deltaVolume = 0.1f;
+		unsigned int _totalPlayTime = 0;
+		unsigned int _currentPlayTime = 0;
 
-public:
-	Sound(FMOD::Sound* sound) { _sound = sound; }
+	public:
+		Sound(FMOD::Sound* sound) { _sound = sound; }
 
-public:
-	void PlayInstance();
-	void Play(bool loop);
-	void Stop();
-	void Pause();
-	void Continue();
-	void VolumeUp();
-	void VolumeDown();
-	void SetLoop();
+	public:
+		void Play(bool loop);
+		void Stop();
+		void Pause();
+		void Continue();
+		void VolumeUp();
+		void VolumeDown();
+		void SetLoop();
 
-private:
-	bool IsChannelAlive();
+	private:
+		bool IsChannelAlive();
 
-public:
-	bool Init() override;
-	bool Frame() override;
-	bool Render() override;
-	bool Release() override;
-};
-
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Render() override;
+		bool Release() override;
+	};
+}

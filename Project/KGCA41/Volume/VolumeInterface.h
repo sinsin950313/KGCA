@@ -2,9 +2,12 @@
 
 #include "Volume.h"
 
-template<int dimension>
-class VolumeInterface
+namespace SSB
 {
-public:
-	virtual const Volume<dimension>* GetVolume() = 0;
-};
+	template<int dimension>
+	class VolumeInterface
+	{
+	public:
+		virtual const Volume<dimension>* GetVolume() = 0;
+	};
+}

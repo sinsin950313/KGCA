@@ -1,6 +1,8 @@
 #include "UtilityTestWIndow.h"
 #include "CommonUtility.h"
 
+using namespace SSB;
+
 int APIENTRY wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
 {
 	std::wstring wStr = L"abc";

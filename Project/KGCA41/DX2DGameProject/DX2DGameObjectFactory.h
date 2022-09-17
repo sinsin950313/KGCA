@@ -1,20 +1,23 @@
 #pragma once
 
-#include "TDX2DObject.h"
+#include "DX2DObject.h"
 #include "ObjectFactory.h"
 
-class DX2DGameObject;
-class DX2DMapObject;
-
-class DX2DGameObjectFactory
+namespace SSB
 {
-private:
-	DX2DMapObject* _mapObject;
+	class DX2DGameObject;
+	class DX2DMapObject;
 
-public:
-	void SetMapObject(DX2DMapObject* mapObject) { _mapObject = mapObject; }
+	class DX2DGameObjectFactory
+	{
+	private:
+		DX2DMapObject* _mapObject;
 
-public:
-	DX2DGameObject* CreateStaticGameObject(Position2D center, float width, float height, float mass);
-	DX2DGameObject* CreateDynamicGameObject(Position2D center, float width, float height, float mass/*, Game Object Logic?*/);
-};
+	public:
+		void SetMapObject(DX2DMapObject* mapObject) { _mapObject = mapObject; }
+
+	public:
+		DX2DGameObject* CreateStaticGameObject(Position2D center, float width, float height, float mass);
+		DX2DGameObject* CreateDynamicGameObject(Position2D center, float width, float height, float mass/*, Game Object Logic?*/);
+	};
+}

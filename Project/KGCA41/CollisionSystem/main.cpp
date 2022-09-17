@@ -4,6 +4,8 @@
 
 //#define QUADTREE
 
+using namespace SSB;
+
 int main()
 {
 	Rigidbody2D r2d;

@@ -15,18 +15,18 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TDXWindow.h">
+    <ClInclude Include="DXWindow.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TDXDrawableInterface.h">
+    <ClInclude Include="DXDrawableInterface.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TDXTextableInterface.h">
+    <ClInclude Include="DXTextableInterface.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TDXWindow.cpp">
+    <ClCompile Include="DXWindow.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">

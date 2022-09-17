@@ -80,8 +80,8 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
     <LibraryPath>$(ProjectDir)\..\lib;$(LibraryPath)</LibraryPath>
-    <OutDir>$(ProjectDir)\..\..\Output</OutDir>
-    <IntDir>$(ProjectDir)\..\..\Output</IntDir>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\GenericDataBaseSystem</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\GenericDataBaseSystem</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

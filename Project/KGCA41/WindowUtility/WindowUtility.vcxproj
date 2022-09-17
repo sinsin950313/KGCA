@@ -41,7 +41,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -79,8 +79,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\..\..\Output</OutDir>
-    <IntDir>$(ProjectDir)\..\..\Output</IntDir>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\WindowUtility</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\WindowUtility</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -124,7 +124,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>BasicWindow.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
@@ -132,10 +132,10 @@
 
 copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
 
-if not exist "$(ProjectDir)\..\..\lib\" mkdir "$(ProjectDir)\..\..\lib\"
+if not exist "$(ProjectDir)\..\..\lib\Debug\" mkdir "$(ProjectDir)\..\..\lib\Debug"
 
-if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\"
-if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\"</Command>
+if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\Debug\"
+if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\Debug\"</Command>
     </PostBuildEvent>
     <Lib>
       <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -162,16 +162,16 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
     <ClCompile Include="SoundManager.cpp" />
     <ClCompile Include="UtilityTestWindow.cpp" />
     <ClCompile Include="Sample.cpp" />
-    <ClCompile Include="TInputManager.cpp" />
-    <ClCompile Include="TTimer.cpp" />
+    <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonUtility.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="SoundManager.h" />
     <ClInclude Include="UtilityTestWindow.h" />
-    <ClInclude Include="TInputManager.h" />
-    <ClInclude Include="TTimer.h" />
+    <ClInclude Include="InputManager.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

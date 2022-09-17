@@ -33,11 +33,6 @@
     <ClInclude Include="VolumeInterface.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PhysicsMath\PhysicsMath.vcxproj">
-      <Project>{895d4eb2-1e4b-4094-8528-dcc7799f306c}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -102,8 +97,8 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
     <ReferencePath>$(ProjectDir)\..\lib;$(ReferencePath)</ReferencePath>
-    <OutDir>$(ProjectDir)\..\..\Output\Volume</OutDir>
-    <IntDir>$(ProjectDir)\..\..\Output\Volume</IntDir>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\Volume</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\Volume</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -164,10 +159,10 @@
 
 copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
 
-if not exist "$(ProjectDir)\..\..\lib\" mkdir "$(ProjectDir)\..\..\lib\"
+if not exist "$(ProjectDir)\..\..\lib\Debug\" mkdir "$(ProjectDir)\..\..\lib\Debug"
 
-if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\"
-if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\"</Command>
+if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\Debug\"
+if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\Debug\"</Command>
     </PostBuildEvent>
     <Lib>
       <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>

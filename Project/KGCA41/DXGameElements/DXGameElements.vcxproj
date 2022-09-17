@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\..\..\Output</OutDir>
-    <IntDir>$(ProjectDir)\..\..\Output</IntDir>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\DXGameElements</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\DXGameElements</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -124,17 +124,17 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
       <Command>if not exist "$(ProjectDir)\..\..\include\" mkdir "$(ProjectDir)\..\..\include\"
 
 copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
 
-if not exist "$(ProjectDir)\..\..\lib\" mkdir "$(ProjectDir)\..\..\lib\"
+if not exist "$(ProjectDir)\..\..\lib\Debug\" mkdir "$(ProjectDir)\..\..\lib\Debug"
 
-if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\"
-if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\"</Command>
+if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\Debug\"
+if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\Debug\"</Command>
     </PostBuildEvent>
     <Lib>
       <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -159,25 +159,25 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
   <ItemGroup>
     <ClCompile Include="GETestWindow.cpp" />
     <ClCompile Include="Sample.cpp" />
-    <ClCompile Include="TDX2DAnimation.cpp" />
-    <ClCompile Include="TDX2DObject.cpp" />
-    <ClCompile Include="TShader.cpp" />
-    <ClCompile Include="TShaderManager.cpp" />
-    <ClCompile Include="TText.cpp" />
-    <ClCompile Include="TTextManager.cpp" />
-    <ClCompile Include="TTexture.cpp" />
-    <ClCompile Include="TTextureManager.cpp" />
+    <ClCompile Include="DX2DAnimation.cpp" />
+    <ClCompile Include="DX2DObject.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="ShaderManager.cpp" />
+    <ClCompile Include="Text.cpp" />
+    <ClCompile Include="TextManager.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GETestWindow.h" />
-    <ClInclude Include="TDX2DAnimation.h" />
-    <ClInclude Include="TDX2DObject.h" />
-    <ClInclude Include="TShader.h" />
-    <ClInclude Include="TShaderManager.h" />
-    <ClInclude Include="TText.h" />
-    <ClInclude Include="TTextManager.h" />
-    <ClInclude Include="TTexture.h" />
-    <ClInclude Include="TTextureManager.h" />
+    <ClInclude Include="DX2DAnimation.h" />
+    <ClInclude Include="DX2DObject.h" />
+    <ClInclude Include="Shader.h" />
+    <ClInclude Include="ShaderManager.h" />
+    <ClInclude Include="Text.h" />
+    <ClInclude Include="TextManager.h" />
+    <ClInclude Include="Texture.h" />
+    <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,115 +1,118 @@
 #include "DXCore.h"
-#include "TTimer.h"
-#include "TInputManager.h"
-#include "TShaderManager.h"
-#include "TTextManager.h"
-#include "TTextureManager.h"
+#include "Timer.h"
+#include "InputManager.h"
+#include "ShaderManager.h"
+#include "TextManager.h"
+#include "TextureManager.h"
 
-DXCore* g_DXCore = nullptr;
-
-DXCore::DXCore(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : TDXWindow(name, hInstance, nCmdShow)
+namespace SSB
 {
-	g_DXCore = this;
-}
+	DXCore* g_DXCore = nullptr;
 
-DWORD DXCore::GetGlobalTime()
-{
-	return _timer->GetElapseTime();
-}
-
-bool DXCore::Init()
-{
-	TDXWindow::Init();
-
-	_timer = new TTimer();
-	_timer->Init();
-	_timer->Start();
-
-	TInputManager::GetInstance().Set(GetWindowHandle());
-	TInputManager::GetInstance().Init();
-
-	TShaderManager::GetInstance().Init();
-
-	TTextManager::GetInstance().Init();
-
-	TTextureManager::GetInstance().Init();
-
-	_currentScene->Init();
-
-	return true;
-}
-
-bool DXCore::Frame()
-{
-	TDXWindow::Frame();
-
-	_timer->Frame();
-	TInputManager::GetInstance().Frame();
-	TShaderManager::GetInstance().Frame();
-	TTextManager::GetInstance().Frame();
-	TTextureManager::GetInstance().Frame();
-
-	if (_currentScene->IsFinished())
+	DXCore::DXCore(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow)
 	{
-		_currentScene = _currentScene->GetNextScene();
+		g_DXCore = this;
+	}
+
+	DWORD DXCore::GetGlobalTime()
+	{
+		return _timer->GetElapseTime();
+	}
+
+	bool DXCore::Init()
+	{
+		DXWindow::Init();
+
+		_timer = new Timer();
+		_timer->Init();
+		_timer->Start();
+
+		InputManager::GetInstance().Set(GetWindowHandle());
+		InputManager::GetInstance().Init();
+
+		ShaderManager::GetInstance().Init();
+
+		TextManager::GetInstance().Init();
+
+		TextureManager::GetInstance().Init();
+
 		_currentScene->Init();
+
+		return true;
 	}
-	_currentScene->Frame();
 
-	return true;
-}
-
-bool DXCore::Release()
-{
-	TDXWindow::Release();
-
-	_timer->Release();
-	delete _timer;
-
-	TInputManager::GetInstance().Release();
-	TShaderManager::GetInstance().Release();
-	TTextManager::GetInstance().Release();
-	TTextureManager::GetInstance().Release();
-
-	_currentScene = nullptr;
-
-	for (auto scene : _scenes)
+	bool DXCore::Frame()
 	{
-		scene.second->Release();
-		delete scene.second;
+		DXWindow::Frame();
+
+		_timer->Frame();
+		InputManager::GetInstance().Frame();
+		ShaderManager::GetInstance().Frame();
+		TextManager::GetInstance().Frame();
+		TextureManager::GetInstance().Frame();
+
+		if (_currentScene->IsFinished())
+		{
+			_currentScene = _currentScene->GetNextScene();
+			_currentScene->Init();
+		}
+		_currentScene->Frame();
+
+		return true;
 	}
-	_scenes.clear();
 
-	return true;
-}
+	bool DXCore::Release()
+	{
+		DXWindow::Release();
 
-bool DXCore::PreRender()
-{
-	TDXWindow::PreRender();
+		_timer->Release();
+		delete _timer;
 
-	_timer->Render();
-	TInputManager::GetInstance().Render();
-	TShaderManager::GetInstance().Render();
-	TTextManager::GetInstance().Render();
-	TTextureManager::GetInstance().Render();
+		InputManager::GetInstance().Release();
+		ShaderManager::GetInstance().Release();
+		TextManager::GetInstance().Release();
+		TextureManager::GetInstance().Release();
 
-	_currentScene->Render();
+		_currentScene = nullptr;
 
-	return true;
-}
+		for (auto scene : _scenes)
+		{
+			scene.second->Release();
+			delete scene.second;
+		}
+		_scenes.clear();
 
-bool DXCore::MainRender()
-{
-	//rendering
+		return true;
+	}
 
-	TDXWindow::MainRender();
-	return true;
-}
+	bool DXCore::PreRender()
+	{
+		DXWindow::PreRender();
 
-bool DXCore::PostRender()
-{
-	//rendering
+		_timer->Render();
+		InputManager::GetInstance().Render();
+		ShaderManager::GetInstance().Render();
+		TextManager::GetInstance().Render();
+		TextureManager::GetInstance().Render();
 
-	TDXWindow::PostRender();
-	return true;
+		_currentScene->Render();
+
+		return true;
+	}
+
+	bool DXCore::MainRender()
+	{
+		//rendering
+
+		DXWindow::MainRender();
+		return true;
+	}
+
+	bool DXCore::PostRender()
+	{
+		//rendering
+
+		DXWindow::PostRender();
+		return true;
+	}
 }

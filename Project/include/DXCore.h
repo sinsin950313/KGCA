@@ -1,35 +1,38 @@
 #pragma once
 
-#include "TDXWindow.h"
+#include "DXWindow.h"
 #include "Scene.h"
 #include <map>
 #include <string>
 
-class TTimer;
-
-class DXCore : public TDXWindow
+namespace SSB
 {
-private:
-	TTimer* _timer;
-	std::map<std::string, Scene*> _scenes;
-	Scene* _currentScene = nullptr;
+	class Timer;
 
-public:
-	DXCore(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
+	class DXCore : public DXWindow
+	{
+	private:
+		Timer* _timer;
+		std::map<std::string, Scene*> _scenes;
+		Scene* _currentScene = nullptr;
 
-public:
-	DWORD GetGlobalTime();
-	void NewScene(std::string sceneName, Scene* scene) { _scenes.insert(std::make_pair(sceneName, scene)); }
-	Scene* GetScene(std::string sceneName) { return _scenes.find(sceneName)->second; }
-	void SetCurrentScene(std::string sceneName) { _currentScene = _scenes.find(sceneName)->second; }
+	public:
+		DXCore(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
 
-public:
-	bool Init() override;
-	bool Frame() override;
-	bool Release() override;
+	public:
+		DWORD GetGlobalTime();
+		void NewScene(std::string sceneName, Scene* scene) { _scenes.insert(std::make_pair(sceneName, scene)); }
+		Scene* GetScene(std::string sceneName) { return _scenes.find(sceneName)->second; }
+		void SetCurrentScene(std::string sceneName) { _currentScene = _scenes.find(sceneName)->second; }
 
-protected:
-	bool PreRender() override;
-	bool MainRender() override;
-	bool PostRender() override;
-};
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Release() override;
+
+	protected:
+		bool PreRender() override;
+		bool MainRender() override;
+		bool PostRender() override;
+	};
+}

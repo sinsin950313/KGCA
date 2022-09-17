@@ -3,100 +3,103 @@
 #include "SoundManager.h"
 #include "CommonUtility.h"
 
-SoundManager* SoundManager::_instance = nullptr;
-
-SoundManager::SoundManager()
+namespace SSB
 {
-	FMOD::System_Create(&_system);
-}
+	SoundManager* SoundManager::_instance = nullptr;
 
-SoundManager& SoundManager::GetInstance()
-{
-	if (_instance == nullptr)
+	SoundManager::SoundManager()
 	{
-		_instance = new SoundManager();
+		FMOD::System_Create(&_system);
 	}
-	return *_instance;
-}
 
-SoundManager::~SoundManager()
-{
-	Release();
-
-	delete _instance;
-	_instance = nullptr;
-}
-
-bool SoundManager::LoadSound(std::wstring fileName)
-{
-	auto fullpath = GetPath(fileName);
-	if (_soundList.find(fileName) == _soundList.end())
+	SoundManager& SoundManager::GetInstance()
 	{
-		FMOD::Sound* sound = nullptr;
-		FMOD_RESULT fr = _system->createSound((wtm(fullpath)).c_str(), FMOD_DEFAULT, nullptr, &sound);
-		if (fr != FMOD_OK)
+		if (_instance == nullptr)
 		{
-			return false;
+			_instance = new SoundManager();
 		}
-		_soundList.insert(std::make_pair(fileName, sound));
+		return *_instance;
 	}
-	return true;
-}
 
-Sound* SoundManager::Load(std::wstring fileName)
-{
-	if (!LoadSound(fileName))
+	SoundManager::~SoundManager()
 	{
-		return nullptr;
+		Release();
+
+		delete _instance;
+		_instance = nullptr;
 	}
-	FMOD::Sound* sound = _soundList.find(fileName)->second;
 
-	return new Sound(sound);
-}
-
-void SoundManager::PlayInstanceSound(std::wstring fileName)
-{
-	if (!LoadSound(fileName))
+	bool SoundManager::LoadSound(std::wstring fileName)
 	{
-		return;
+		auto fullpath = GetPath(fileName);
+		if (_soundList.find(fileName) == _soundList.end())
+		{
+			FMOD::Sound* sound = nullptr;
+			FMOD_RESULT fr = _system->createSound((wtm(fullpath)).c_str(), FMOD_DEFAULT, nullptr, &sound);
+			if (fr != FMOD_OK)
+			{
+				return false;
+			}
+			_soundList.insert(std::make_pair(fileName, sound));
+		}
+		return true;
 	}
-	FMOD::Sound* sound = _soundList.find(fileName)->second;
-	FMOD::Channel* channel;
-	_system->playSound(sound, nullptr, false, &channel);
-}
 
-bool SoundManager::Init()
-{
-	_system->init(32, FMOD_INIT_NORMAL, 0);
-
-	return true;
-}
-
-bool SoundManager::Frame()
-{
-	_system->update();
-
-	return true;
-}
-
-bool SoundManager::Render()
-{
-	return true;
-}
-
-bool SoundManager::Release()
-{
-	for (auto sound : _soundList)
+	Sound* SoundManager::Load(std::wstring fileName)
 	{
-		sound.second->release();
-	}
-	_soundList.clear();
+		if (!LoadSound(fileName))
+		{
+			return nullptr;
+		}
+		FMOD::Sound* sound = _soundList.find(fileName)->second;
 
-	if (_system)
+		return new Sound(sound);
+	}
+
+	void SoundManager::PlayInstanceSound(std::wstring fileName)
 	{
-		_system->close();
-		_system->release();
+		if (!LoadSound(fileName))
+		{
+			return;
+		}
+		FMOD::Sound* sound = _soundList.find(fileName)->second;
+		FMOD::Channel* channel;
+		_system->playSound(sound, nullptr, false, &channel);
 	}
 
-	return true;
+	bool SoundManager::Init()
+	{
+		_system->init(32, FMOD_INIT_NORMAL, 0);
+
+		return true;
+	}
+
+	bool SoundManager::Frame()
+	{
+		_system->update();
+
+		return true;
+	}
+
+	bool SoundManager::Render()
+	{
+		return true;
+	}
+
+	bool SoundManager::Release()
+	{
+		for (auto sound : _soundList)
+		{
+			sound.second->release();
+		}
+		_soundList.clear();
+
+		if (_system)
+		{
+			_system->close();
+			_system->release();
+		}
+
+		return true;
+	}
 }

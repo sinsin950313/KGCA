@@ -78,8 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\..\..\Output</OutDir>
-    <IntDir>$(ProjectDir)\..\..\Output</IntDir>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\BasicWindow</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\BasicWindow</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -131,10 +131,10 @@
 
 copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
 
-if not exist "$(ProjectDir)\..\..\lib\" mkdir "$(ProjectDir)\..\..\lib\"
+if not exist "$(ProjectDir)\..\..\lib\Debug\" mkdir "$(ProjectDir)\..\..\lib\Debug"
 
-if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\"
-if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\"</Command>
+if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\Debug\"
+if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\Debug\"</Command>
     </PostBuildEvent>
     <Lib>
       <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>
@@ -157,10 +157,10 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="TBasicWindow.h" />
+    <ClInclude Include="BasicWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TBasicWindow.cpp" />
+    <ClCompile Include="BasicWindow.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -7,28 +7,28 @@
     <ClCompile Include="Sample.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TDX2DAnimation.cpp">
+    <ClCompile Include="DX2DAnimation.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TDX2DObject.cpp">
+    <ClCompile Include="DX2DObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TShader.cpp">
+    <ClCompile Include="Shader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TShaderManager.cpp">
+    <ClCompile Include="ShaderManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TText.cpp">
+    <ClCompile Include="Text.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TTextManager.cpp">
+    <ClCompile Include="TextManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TTexture.cpp">
+    <ClCompile Include="Texture.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TTextureManager.cpp">
+    <ClCompile Include="TextureManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -36,28 +36,28 @@
     <ClInclude Include="GETestWindow.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TDX2DAnimation.h">
+    <ClInclude Include="DX2DAnimation.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TDX2DObject.h">
+    <ClInclude Include="DX2DObject.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TShader.h">
+    <ClInclude Include="Shader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TShaderManager.h">
+    <ClInclude Include="ShaderManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TText.h">
+    <ClInclude Include="Text.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TTextManager.h">
+    <ClInclude Include="TextManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TTexture.h">
+    <ClInclude Include="Texture.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TTextureManager.h">
+    <ClInclude Include="TextureManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

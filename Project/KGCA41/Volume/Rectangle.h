@@ -2,7 +2,7 @@
 
 #include "Volume.h"
 
-namespace Custom
+namespace SSB
 {
 	class RectangleVertexFactory : public VolumeVertexFactory<2>
 	{

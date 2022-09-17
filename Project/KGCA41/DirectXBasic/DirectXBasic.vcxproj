@@ -80,8 +80,8 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
     <ReferencePath>$(ProjectDir)\..\lib;$(ReferencePath)</ReferencePath>
-    <OutDir>$(ProjectDir)\..\..\Output</OutDir>
-    <IntDir>$(ProjectDir)\..\..\Output</IntDir>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\DirectXBasic</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\DirectXBasic</IntDir>
     <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -129,7 +129,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
     <Lib>
@@ -140,10 +140,10 @@
 
 copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
 
-if not exist "$(ProjectDir)\..\..\lib\" mkdir "$(ProjectDir)\..\..\lib\"
+if not exist "$(ProjectDir)\..\..\lib\Debug\" mkdir "$(ProjectDir)\..\..\lib\Debug"
 
-if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\"
-if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\"</Command>
+if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\Debug\"
+if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\Debug\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -177,13 +177,13 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="TDXDrawableInterface.h" />
-    <ClInclude Include="TDXTextableInterface.h" />
-    <ClInclude Include="TDXWindow.h" />
+    <ClInclude Include="DXDrawableInterface.h" />
+    <ClInclude Include="DXTextableInterface.h" />
+    <ClInclude Include="DXWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="TDXWindow.cpp" />
+    <ClCompile Include="DXWindow.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

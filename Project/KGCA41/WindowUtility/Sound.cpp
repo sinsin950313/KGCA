@@ -1,104 +1,107 @@
 #include "Sound.h"
 #include "SoundManager.h"
 
-bool Sound::Init()
+namespace SSB
 {
-	_channel = nullptr;
-	_play = false;
-	_volume = 0.5f;
-	_sound->getLength(&_totalPlayTime, FMOD_TIMEUNIT_MS);
-	_currentPlayTime = 0;
-
-	return true;
-}
-
-bool Sound::Frame()
-{
-	if (IsChannelAlive())
+	bool Sound::Init()
 	{
-		_channel->getPosition(&_currentPlayTime, FMOD_TIMEUNIT_MS);
+		_channel = nullptr;
+		_play = false;
+		_volume = 0.5f;
+		_sound->getLength(&_totalPlayTime, FMOD_TIMEUNIT_MS);
+		_currentPlayTime = 0;
+
+		return true;
 	}
 
-	return true;
-}
-
-bool Sound::Render()
-{
-	return true;
-}
-
-bool Sound::Release()
-{
-	_sound = nullptr;
-
-	return true;
-}
-
-void Sound::Play(bool loop)
-{
-	if (!IsChannelAlive())
+	bool Sound::Frame()
 	{
-		SoundManager::GetInstance().GetSystem()->playSound(_sound, nullptr, false, &_channel);
-		_channel->setVolume(_volume);
-	}
-}
+		if (IsChannelAlive())
+		{
+			_channel->getPosition(&_currentPlayTime, FMOD_TIMEUNIT_MS);
+		}
 
-void Sound::Stop()
-{
-	if (IsChannelAlive())
+		return true;
+	}
+
+	bool Sound::Render()
 	{
-		_channel->stop();
+		return true;
 	}
-}
 
-void Sound::Pause()
-{
-	if (IsChannelAlive())
+	bool Sound::Release()
 	{
-		_channel->setPaused(true);
-	}
-}
+		_sound = nullptr;
 
-void Sound::Continue()
-{
-	if (IsChannelAlive())
+		return true;
+	}
+
+	void Sound::Play(bool loop)
 	{
-		_channel->setPaused(false);
+		if (!IsChannelAlive())
+		{
+			SoundManager::GetInstance().GetSystem()->playSound(_sound, nullptr, false, &_channel);
+			_channel->setVolume(_volume);
+		}
 	}
-}
 
-void Sound::VolumeUp()
-{
-	_volume += _deltaVolume;
-	_volume = fmin(1.0f, _volume);
-	if (IsChannelAlive())
+	void Sound::Stop()
 	{
-		_channel->setVolume(_volume);
+		if (IsChannelAlive())
+		{
+			_channel->stop();
+		}
 	}
-}
 
-void Sound::VolumeDown()
-{
-	_volume -= _deltaVolume;
-	_volume = fmax(0.0f, _volume);
-	if (IsChannelAlive())
+	void Sound::Pause()
 	{
-		_channel->setVolume(_volume);
+		if (IsChannelAlive())
+		{
+			_channel->setPaused(true);
+		}
 	}
-}
 
-void Sound::SetLoop()
-{
-	_sound->setMode(FMOD_LOOP_NORMAL);
-}
-
-bool Sound::IsChannelAlive()
-{
-	if (_channel != nullptr)
+	void Sound::Continue()
 	{
-		_channel->isPlaying(&_play);
-		return _play;
+		if (IsChannelAlive())
+		{
+			_channel->setPaused(false);
+		}
 	}
-	_channel = nullptr;
-	return false;
+
+	void Sound::VolumeUp()
+	{
+		_volume += _deltaVolume;
+		_volume = fmin(1.0f, _volume);
+		if (IsChannelAlive())
+		{
+			_channel->setVolume(_volume);
+		}
+	}
+
+	void Sound::VolumeDown()
+	{
+		_volume -= _deltaVolume;
+		_volume = fmax(0.0f, _volume);
+		if (IsChannelAlive())
+		{
+			_channel->setVolume(_volume);
+		}
+	}
+
+	void Sound::SetLoop()
+	{
+		_sound->setMode(FMOD_LOOP_NORMAL);
+	}
+
+	bool Sound::IsChannelAlive()
+	{
+		if (_channel != nullptr)
+		{
+			_channel->isPlaying(&_play);
+			return _play;
+		}
+		_channel = nullptr;
+		return false;
+	}
 }

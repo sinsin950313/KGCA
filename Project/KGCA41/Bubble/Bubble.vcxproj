@@ -80,8 +80,8 @@
     <LinkIncremental>true</LinkIncremental>
     <ReferencePath>$(ProjectDir)\..\lib$(ProjectDir);$(ReferencePath)</ReferencePath>
     <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
-    <OutDir>$(ProjectDir)\..\..\Output</OutDir>
-    <IntDir>$(ProjectDir)\..\..\Output</IntDir>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\Bubble</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\Bubble</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>

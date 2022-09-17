@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iostream>
 
-Custom::Rectangle::Rectangle(float centerX, float centerY, float width, float height)
+SSB::Rectangle::Rectangle(float centerX, float centerY, float width, float height)
 	: Volume(Vector2D(2, centerX, centerY), sqrt(width* width + height * height) / 2, RectangleVertexFactory(-width / 2, -height / 2, width / 2, height / 2))
 	, _width(width), _height(height)
 {
@@ -12,7 +12,7 @@ Custom::Rectangle::Rectangle(float centerX, float centerY, float width, float he
 	Reposition(tmp);
 }
 
-bool Custom::Rectangle::operator==(const Rectangle& rect) const
+bool SSB::Rectangle::operator==(const Rectangle& rect) const
 {
 	auto IsSame = [](float a, float b)->bool { return fabs(a - b) < 0.001f; };
 	if (IsSame(GetLeft(), rect.GetLeft()))
@@ -41,12 +41,12 @@ bool Custom::Rectangle::operator==(const Rectangle& rect) const
 //	return Rectangle(left, top, right - left, bottom - top);
 //}
 
-bool Custom::Rectangle::operator&&(const Rectangle& rect) const
+bool SSB::Rectangle::operator&&(const Rectangle& rect) const
 {
 	return IsCollide(rect);
 }
 
-void Custom::Rectangle::Resize(float width, float height)
+void SSB::Rectangle::Resize(float width, float height)
 {
 	Volume::Resize(sqrt(width * width + height * height) / 2);
 
@@ -57,7 +57,7 @@ void Custom::Rectangle::Resize(float width, float height)
 	_rb = Vector2D(2, GetWidth() / 2, -GetHeight() / 2);
 }
 
-bool Custom::Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) const
+bool SSB::Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) const
 {
 	if (Volume::IsIn(coordinate, v))
 	{
@@ -71,19 +71,19 @@ bool Custom::Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) cons
 	return false;
 }
 
-void Custom::Rectangle::Print() const
+void SSB::Rectangle::Print() const
 {
 	std::cout << "Left-Top " << "(" << GetLeft() << ", " << GetTop() << ")" 
 		<< ", " << "Right-Bottom " << "(" << GetRight() << ", " << GetBottom() << ")" 
 		<< ", " << "Width-Height " << GetWidth() << ", " << GetHeight() << std::endl << std::endl;
 }
 
-Custom::RectangleVertexFactory::RectangleVertexFactory(float left, float top, float right, float bottom)
+SSB::RectangleVertexFactory::RectangleVertexFactory(float left, float top, float right, float bottom)
 	: _lt(2, left, top), _rb(2, right, bottom)
 {
 }
 
-std::vector<Vector2D*> Custom::RectangleVertexFactory::operator()()
+std::vector<SSB::Vector2D*> SSB::RectangleVertexFactory::operator()()
 {
 	std::vector<Vector2D*> ret;
 

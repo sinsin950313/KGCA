@@ -1,82 +1,89 @@
 #include "GETestWindow.h"
-#include "TTextManager.h"
-#include "TTextureManager.h"
-#include "TShaderManager.h"
-#include "TBasicWindow.h"
+#include "TextManager.h"
+#include "TextureManager.h"
+#include "ShaderManager.h"
+#include "BasicWindow.h"
 
-extern TBasicWindow* g_Window;
-
-bool GETestWindow::Init()
+namespace SSB
 {
-    TDXWindow::Init();
+    extern BasicWindow* g_Window;
 
-    _text = new TText(L"aaa", { 0, 0, 100, 50 });
-    _text->SetTextFormat(TTextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
-    _text->SetBrush(TTextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
-    _text->Init();
+    bool GETestWindow::Init()
+    {
+        DXWindow::Init();
 
-    _background = new TDX2DObject({ (float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) }, g_Window->GetClientWidth(), g_Window->GetClientHeight());
-    _background->SetTexture(TTextureManager::GetInstance().Load(L"KGCABK.bmp"));
-    _background->SetVertexShader(TShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
-    _background->SetPixelShader(TShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withoutMask", "ps_5_0"));
-    _background->Init();
+        _text = new Text(L"aaa", { 0, 0, 100, 50 });
+        _text->SetTextFormat(TextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
+        _text->SetBrush(TextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
+        _text->Init();
 
-    _object = new TDX2DObject({ (float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) }, 400, 300);
-    _object->SetTexture(TTextureManager::GetInstance().Load(L"bitmap1.bmp"));
-    _object->SetMaskTexture(TTextureManager::GetInstance().Load(L"bitmap2.bmp"));
-    _object->SetVertexShader(TShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
-    _object->SetPixelShader(TShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
-    _object->Init();
+        _background = new DX2DObject({ (float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) }, g_Window->GetClientWidth(), g_Window->GetClientHeight());
+        _background->SetTexture(TextureManager::GetInstance().Load(L"KGCABK.bmp"));
+        _background->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
+        _background->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withoutMask", "ps_5_0"));
+        _background->GetTexture()->RegisterTexturePartWithCoordinateValue("Background", { 0, 0, 1024, 768 });
+        _background->GetTexture()->SetCurrentTexturePart("Background");
+        _background->Init();
 
-    return true;
-}
+        _object = new DX2DObject({ (float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) }, 400, 300);
+        _object->SetTexture(TextureManager::GetInstance().Load(L"bitmap1.bmp"));
+        _object->SetMaskTexture(TextureManager::GetInstance().Load(L"bitmap2.bmp"));
+        _object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
+        _object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
+        _object->GetTexture()->RegisterTexturePartWithRelativeValue("Player", { 91, 2, 39, 59 });
+        _object->GetTexture()->SetCurrentTexturePart("Player");
+        _object->Init();
 
-bool GETestWindow::Frame()
-{
-    TDXWindow::Frame();
+        return true;
+    }
 
-    _background->Frame();
-    _object->Frame();
-    _text->Frame();
+    bool GETestWindow::Frame()
+    {
+        DXWindow::Frame();
 
-    return true;
-}
+        _background->Frame();
+        _object->Frame();
+        _text->Frame();
 
-bool GETestWindow::Release()
-{
-    TDXWindow::Release();
+        return true;
+    }
 
-    _background->Release();
-    _object->Release();
-    _text->Release();
+    bool GETestWindow::Release()
+    {
+        DXWindow::Release();
 
-    TTextManager::GetInstance().Release();
-    TShaderManager::GetInstance().Release();
-    TTextureManager::GetInstance().Release();
+        _background->Release();
+        _object->Release();
+        _text->Release();
 
-    return true;
-}
+        TextManager::GetInstance().Release();
+        ShaderManager::GetInstance().Release();
+        TextureManager::GetInstance().Release();
 
-bool GETestWindow::PreRender()
-{
-    TDXWindow::PreRender();
+        return true;
+    }
 
-    TDXWindow::AddDrawable(_background);
-    TDXWindow::AddDrawable(_object);
-    TDXWindow::AddTextable(_text);
+    bool GETestWindow::PreRender()
+    {
+        DXWindow::PreRender();
 
-    return true;
-}
+        DXWindow::AddDrawable(_background);
+        DXWindow::AddDrawable(_object);
+        DXWindow::AddTextable(_text);
 
-bool GETestWindow::MainRender()
-{
-    TDXWindow::MainRender();
+        return true;
+    }
 
-    return true;
-}
+    bool GETestWindow::MainRender()
+    {
+        DXWindow::MainRender();
 
-bool GETestWindow::PostRender()
-{
-    TDXWindow::PostRender();
-    return true;
+        return true;
+    }
+
+    bool GETestWindow::PostRender()
+    {
+        DXWindow::PostRender();
+        return true;
+    }
 }

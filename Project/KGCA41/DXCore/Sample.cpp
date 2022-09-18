@@ -3,10 +3,13 @@
 #include <string>
 #include "TextManager.h"
 #include "InputManager.h"
+#include "Scene.h"
 
 namespace SSB
 {
-	class DXCoreTest : public DXCore
+	extern DXCore* g_DXCore;
+
+	class TestScene : public Scene
 	{
 	private:
 		Text* _timer;
@@ -14,12 +17,9 @@ namespace SSB
 		Text* _mouse;
 
 	public:
-		DXCoreTest(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXCore(name, hInstance, nCmdShow) { }
-
-	public:
 		bool Init() override
 		{
-			DXCore::Init();
+			Scene::Init();
 
 			_timer = new Text(L"", { 0, 0, 100, 50 });
 			_timer->SetTextFormat(TextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
@@ -40,9 +40,9 @@ namespace SSB
 		}
 		bool Frame() override
 		{
-			DXCore::Frame();
+			Scene::Frame();
 
-			_timer->SetString(std::to_wstring(GetGlobalTime()));
+			_timer->SetString(std::to_wstring(g_DXCore->GetGlobalTime()));
 
 			_wasd->SetString(L"");
 			if (InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
@@ -68,14 +68,78 @@ namespace SSB
 				_mouse->SetString(std::to_wstring(InputManager::GetInstance().GetMousePosition().x) + L", " + std::to_wstring(InputManager::GetInstance().GetMousePosition().y));
 			}
 
+			if (InputManager::GetInstance().GetKeyState('Q') == EKeyState::KEY_HOLD)
+			{
+				SetFinished(true);
+			}
+
 			return true;
 		}
+		bool Render() override
+		{
+			Scene::Render();
+
+			g_DXCore->AddTextable(_timer);
+			g_DXCore->AddTextable(_wasd);
+			g_DXCore->AddTextable(_mouse);
+
+			return true;
+		}
+		bool Release() override
+		{
+			return Scene::Release();
+		}
+	};
+
+	class EndScene : public Scene
+	{
+	private:
+		Text* _endMessage;
+
+	public:
+		bool Init() override
+		{
+			Scene::Init();
+
+			_endMessage = new Text(L"", { 200, 300, 300, 500 });
+			_endMessage->SetTextFormat(TextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
+			_endMessage->SetBrush(TextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
+			_endMessage->SetString(L"Scene is finished");
+			_endMessage->Init();
+
+			return true;
+		}
+		bool Render() override
+		{
+			Scene::Render();
+
+			g_DXCore->AddTextable(_endMessage);
+
+			return true;
+		}
+		bool Release() override
+		{
+			_endMessage->Release();
+			return Scene::Release();
+		}
+	};
+
+	class DXCoreTest : public DXCore
+	{
+	public:
+		DXCoreTest(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXCore(name, hInstance, nCmdShow)
+		{
+			NewScene("Default", new TestScene());
+			SetCurrentScene("Default");
+			NewScene("End", new EndScene());
+			GetScene("Default")->LinkNewScene("End", GetScene("End"));
+			GetScene("Default")->SetNextScene("End");
+		}
+
+	public:
 		bool PreRender() override
 		{
 			DXCore::PreRender();
-			AddTextable(_timer);
-			AddTextable(_wasd);
-			AddTextable(_mouse);
 
 			return true;
 		}

@@ -31,8 +31,8 @@ namespace SSB
 	{
 		_dxObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
 		_dxObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
-		_dxObject->SetTexture(TextureManager::GetInstance().Load(L"bitmap1.bmp"));
-		_dxObject->SetMaskTexture(TextureManager::GetInstance().Load(L"bitmap2.bmp"));
+		_dxObject->SetTexture(TextureResourceManager::GetInstance().Load(L"bitmap1.bmp"));
+		_dxObject->SetMaskTexture(TextureResourceManager::GetInstance().Load(L"bitmap2.bmp"));
 		_dxObject->Init();
 		return true;
 	}

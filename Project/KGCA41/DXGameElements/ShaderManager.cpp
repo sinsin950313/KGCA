@@ -62,6 +62,7 @@ namespace SSB
             }
 
             Shader* shaderComp = new Shader(shader, code);
+            shaderComp->Init();
             data.insert(std::make_pair(key, shaderComp));
         }
         return data.find(key)->second;

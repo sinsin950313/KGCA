@@ -78,7 +78,7 @@ namespace SSB
 	{
 		_dxObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
 		_dxObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withoutMask", "ps_5_0"));
-		_dxObject->SetTexture(TextureManager::GetInstance().Load(L"KGCABK.bmp"));
+		_dxObject->SetTexture(TextureResourceManager::GetInstance().Load(L"KGCABK.bmp"));
 		_dxObject->Init();
 		_dxObject->GetTexture()->Tile(7, 9);
 

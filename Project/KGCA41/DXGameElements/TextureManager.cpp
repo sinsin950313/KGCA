@@ -11,33 +11,33 @@
 
 namespace SSB
 {
-    TextureManager* TextureManager::_instance = nullptr;
+    TextureResourceManager* TextureResourceManager::_instance = nullptr;
     extern DXWindow* g_dxWindow;
 
-    TextureManager::TextureManager()
+    TextureResourceManager::TextureResourceManager()
     {
     }
 
-    TextureManager::~TextureManager()
+    TextureResourceManager::~TextureResourceManager()
     {
         Release();
 
-        delete _instance;
+        if (_instance) delete _instance;
         _instance = nullptr;
     }
 
-    TextureManager& TextureManager::GetInstance()
+    TextureResourceManager& TextureResourceManager::GetInstance()
     {
         if (_instance == nullptr)
         {
-            _instance = new TextureManager();
+            _instance = new TextureResourceManager();
         }
         return *_instance;
     }
 
-    Texture* TextureManager::Load(std::wstring fileName, std::string samplerName)
+    TextureResource* TextureResourceManager::Load(std::wstring fileName)
     {
-        if (_textureData.find(fileName) == _textureData.end())
+        if (_resourceData.find(fileName) == _resourceData.end())
         {
             ID3D11Resource* textureResource = nullptr;
             ID3D11ShaderResourceView* textureResourceView = nullptr;
@@ -52,38 +52,119 @@ namespace SSB
                 }
             }
 
-            Texture* texture = new Texture(textureResource, textureResourceView, DXStateManager::GetInstance().GetSamplerState(samplerName));
-            _textureData.insert(make_pair(fileName, texture));
+            TextureResource* resource = new TextureResource(textureResource, textureResourceView);
+            resource->Init();
+            _resourceData.insert(make_pair(fileName, resource));
         }
 
-        return _textureData.find(fileName)->second;
+        return _resourceData.find(fileName)->second;
     }
 
-    bool TextureManager::Init()
+    bool TextureResourceManager::Init()
     {
         return true;
     }
 
-    bool TextureManager::Frame()
+    bool TextureResourceManager::Frame()
     {
         return true;
     }
 
-    bool TextureManager::Render()
+    bool TextureResourceManager::Render()
     {
         return true;
     }
 
-    bool TextureManager::Release()
+    bool TextureResourceManager::Release()
     {
-        for (auto iter : _textureData)
+        for (auto iter : _resourceData)
         {
             iter.second->Release();
             delete iter.second;
         }
-        _textureData.clear();
+        _resourceData.clear();
 
         return true;
+    }
+
+    TextureLoader& TextureLoader::GetInstance()
+    {
+        if (_instance == nullptr)
+        {
+            _instance = new TextureLoader();
+        }
+        return *_instance;
+    }
+
+    TextureLoader::~TextureLoader()
+    {
+        Release();
+
+        if (_instance) delete _instance;
+        _instance = nullptr;
+    }
+
+    Texture* TextureLoader::Load(std::wstring fileName, RECT part, std::wstring partName, std::string samplerName)
+    {
+        if (_textureParts.find(fileName) == _textureParts.end())
+        {
+            TextureResource* resource = TextureResourceManager::GetInstance().Load(fileName);
+            TextureData data;
+            data.resource = resource;
+            _textureParts.insert(std::make_pair(fileName, data));
+        }
+        auto iter = _textureParts.find(fileName);
+
+        return nullptr;
+    }
+
+    bool TextureLoader::Init()
+    {
+        return false;
+    }
+
+    bool TextureLoader::Frame()
+    {
+        return false;
+    }
+
+    bool TextureLoader::Render()
+    {
+        return false;
+    }
+
+    bool TextureLoader::Release()
+    {
+        _textureParts.clear();
+        return false;
+    }
+
+    SpriteLoader& SpriteLoader::GetInstance()
+    {
+        if (_instance == nullptr)
+        {
+            _instance = new SpriteLoader();
+        }
+        return *_instance;
+    }
+
+    SpriteLoader::~SpriteLoader()
+    {
+    }
+
+    Sprite* SpriteLoader::Load(Texture* resource, std::string samplerName, std::wstring infoFileName, std::string actionName)
+    {
+        return nullptr;
+    }
+
+    Sprite* SpriteLoader::Load(Texture* resource, std::wstring fileName, std::string actionName)
+    {
+        return nullptr;
+    }
+
+    std::wstring SpriteLoader::GetActionName(Texture* resource, std::string actionName)
+    {
+        return std::wstring();
     }
 
     void SpriteLoader::ParseSpriteData(std::wstring fileName)
@@ -118,5 +199,21 @@ namespace SSB
         }
         fclose(fp_src);
         return true;
+    }
+    bool SpriteLoader::Init()
+    {
+        return false;
+    }
+    bool SpriteLoader::Frame()
+    {
+        return false;
+    }
+    bool SpriteLoader::Render()
+    {
+        return false;
+    }
+    bool SpriteLoader::Release()
+    {
+        return false;
     }
 }

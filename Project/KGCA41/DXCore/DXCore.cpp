@@ -34,7 +34,7 @@ namespace SSB
 
 		TextManager::GetInstance().Init();
 
-		TextureManager::GetInstance().Init();
+		TextureResourceManager::GetInstance().Init();
 
 		_currentScene->Init();
 
@@ -49,7 +49,7 @@ namespace SSB
 		InputManager::GetInstance().Frame();
 		ShaderManager::GetInstance().Frame();
 		TextManager::GetInstance().Frame();
-		TextureManager::GetInstance().Frame();
+		TextureResourceManager::GetInstance().Frame();
 
 		if (_currentScene->IsFinished())
 		{
@@ -71,7 +71,7 @@ namespace SSB
 		InputManager::GetInstance().Release();
 		ShaderManager::GetInstance().Release();
 		TextManager::GetInstance().Release();
-		TextureManager::GetInstance().Release();
+		TextureResourceManager::GetInstance().Release();
 
 		_currentScene = nullptr;
 
@@ -93,7 +93,7 @@ namespace SSB
 		InputManager::GetInstance().Render();
 		ShaderManager::GetInstance().Render();
 		TextManager::GetInstance().Render();
-		TextureManager::GetInstance().Render();
+		TextureResourceManager::GetInstance().Render();
 
 		_currentScene->Render();
 

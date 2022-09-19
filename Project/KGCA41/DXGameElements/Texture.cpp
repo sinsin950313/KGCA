@@ -2,34 +2,33 @@
 
 namespace SSB
 {
-    Texture::Texture(ID3D11Resource* textureResource, ID3D11ShaderResourceView* textureResourceView, ID3D11SamplerState* samplerState)
+    TextureResource::TextureResource(ID3D11Resource* textureResource, ID3D11ShaderResourceView* textureResourceView, ID3D11SamplerState* samplerState)
         : _textureResource(textureResource), _textureResourceView(textureResourceView), _samplerState(samplerState)
     {
         static_cast<ID3D11Texture2D*>(_textureResource)->GetDesc(&_desc);
-        _dTile = { 1, 1 };
     }
 
-    void Texture::SetSamplerState(ID3D11SamplerState* samplerState)
+    void TextureResource::SetSamplerState(ID3D11SamplerState* samplerState)
     {
         _samplerState = samplerState;
     }
 
-    bool Texture::Init()
+    bool TextureResource::Init()
     {
         return true;
     }
 
-    bool Texture::Frame()
+    bool TextureResource::Frame()
     {
         return true;
     }
 
-    bool Texture::Render()
+    bool TextureResource::Render()
     {
         return true;
     }
 
-    bool Texture::Release()
+    bool TextureResource::Release()
     {
         if (_textureResource) _textureResource->Release();
         if (_textureResourceView)_textureResourceView->Release();
@@ -41,7 +40,7 @@ namespace SSB
         return true;
     }
 
-    void Texture::RegisterTexturePartWithRelativeValue(std::string actionName, RECT size)
+    void TextureResource::RegisterTexturePartWithRelativeValue(std::string actionName, RECT size)
     {
         RECT tmp;
         tmp.left = size.left;
@@ -52,18 +51,23 @@ namespace SSB
         _textureParts.insert(std::make_pair(actionName, tmp));
     }
 
-    void Texture::RegisterTexturePartWithCoordinateValue(std::string actionName, RECT size)
+    void TextureResource::RegisterTexturePartWithCoordinateValue(std::string actionName, RECT size)
     {
         _textureParts.insert(std::make_pair(actionName, size));
+    }
+
+    Texture::Texture(TextureResource* resource) : _resource(resource)
+    {
+        _dTile = { 1, 1 };
     }
 
     TexturePart Texture::GetCurrentTexturePart()
     {
         TexturePart ret;
-        ret.left = (((float)_currentTexturePart.left / _desc.Width) + _dTexture.u) * _dTile.u;
-        ret.top = (((float)_currentTexturePart.top / _desc.Height) + _dTexture.v) * _dTile.v;
-        ret.right = (((float)_currentTexturePart.right / _desc.Width) + _dTexture.u) * _dTile.u;
-        ret.bottom = (((float)_currentTexturePart.bottom / _desc.Height) + _dTexture.v) * _dTile.v;
+        ret.left = (((float)_currentTexturePart.left / _resource->GetWidth()) + _dTexture.u) * _dTile.u;
+        ret.top = (((float)_currentTexturePart.top / _resource->GetHeight()) + _dTexture.v) * _dTile.v;
+        ret.right = (((float)_currentTexturePart.right / _resource->GetWidth()) + _dTexture.u) * _dTile.u;
+        ret.bottom = (((float)_currentTexturePart.bottom / _resource->GetHeight()) + _dTexture.v) * _dTile.v;
 
         return ret;
     }
@@ -79,4 +83,55 @@ namespace SSB
         _dTile.u = xCoefficient;
         _dTile.v = yCoefficient;
     }
+    bool Texture::Init()
+    {
+        return false;
+    }
+    bool Texture::Frame()
+    {
+        return false;
+    }
+    bool Texture::Render()
+    {
+        return false;
+    }
+    bool Texture::Release()
+    {
+        return false;
+    }
+
+	bool SSB::Sprite::Init()
+	{
+		_timer.Init();
+		_timer.Start();
+		_lastTime = _timer.GetElapseTime();
+
+		return true;
+	}
+
+	bool SSB::Sprite::Frame()
+	{
+		if (_interval <= _timer.GetElapseTime() - _lastTime)
+		{
+			++_currentActionIndex;
+			if (_currentActionIndex == _actionSequence.size())
+			{
+				_currentActionIndex = 0;
+			}
+		}
+		_lastTime = _timer.GetElapseTime();
+
+		return true;
+	}
+
+	bool SSB::Sprite::Render()
+	{
+		return true;
+	}
+
+	bool SSB::Sprite::Release()
+	{
+		_texture = nullptr;
+		return true;
+	}
 }

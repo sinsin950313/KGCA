@@ -28,8 +28,8 @@ namespace SSB
 		D3D11_TEXTURE2D_DESC _desc;
 		ID3D11ShaderResourceView* _textureResourceView;
 		ID3D11SamplerState* _samplerState;
-		std::map<std::string, RECT> _actions;
-		RECT _currentAction;
+		std::map<std::string, RECT> _textureParts;
+		RECT _currentTexturePart;
 		TextureParam _dTexture;
 		TextureParam _dTile;
 
@@ -41,11 +41,12 @@ namespace SSB
 		ID3D11Resource* GetResource() const { return _textureResource; }
 		ID3D11ShaderResourceView** GetShaderResourceView() { return &_textureResourceView; }
 		ID3D11SamplerState* GetSamplerState() { return _samplerState; }
+
 		// left, top, width, height
 		void RegisterTexturePartWithRelativeValue(std::string actionName, RECT size);
 		/// left, top, right, bottom
 		void RegisterTexturePartWithCoordinateValue(std::string actionName, RECT size);
-		void SetCurrentTexturePart(std::string action) { _currentAction = _actions.find(action)->second; }
+		void SetCurrentTexturePart(std::string action) { _currentTexturePart = _textureParts.find(action)->second; }
 		TexturePart GetCurrentTexturePart();
 		void Scroll(float xRatio, float yRatio);
 		void Tile(float xCoefficient, float yCoefficient);

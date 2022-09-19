@@ -7,7 +7,6 @@
 class ID3D11Device;
 class ID3D11DeviceContext;
 class ID3D11SamplerState;
-class SamplerStateFactory;
 
 namespace SSB
 {

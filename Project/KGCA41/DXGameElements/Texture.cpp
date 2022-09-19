@@ -49,21 +49,21 @@ namespace SSB
         tmp.right = size.right + size.left;
         tmp.bottom = size.bottom + size.top;
 
-        _actions.insert(std::make_pair(actionName, tmp));
+        _textureParts.insert(std::make_pair(actionName, tmp));
     }
 
     void Texture::RegisterTexturePartWithCoordinateValue(std::string actionName, RECT size)
     {
-        _actions.insert(std::make_pair(actionName, size));
+        _textureParts.insert(std::make_pair(actionName, size));
     }
 
     TexturePart Texture::GetCurrentTexturePart()
     {
         TexturePart ret;
-        ret.left = (((float)_currentAction.left / _desc.Width) + _dTexture.u) * _dTile.u;
-        ret.top = (((float)_currentAction.top / _desc.Height) + _dTexture.v) * _dTile.v;
-        ret.right = (((float)_currentAction.right / _desc.Width) + _dTexture.u) * _dTile.u;
-        ret.bottom = (((float)_currentAction.bottom / _desc.Height) + _dTexture.v) * _dTile.v;
+        ret.left = (((float)_currentTexturePart.left / _desc.Width) + _dTexture.u) * _dTile.u;
+        ret.top = (((float)_currentTexturePart.top / _desc.Height) + _dTexture.v) * _dTile.v;
+        ret.right = (((float)_currentTexturePart.right / _desc.Width) + _dTexture.u) * _dTile.u;
+        ret.bottom = (((float)_currentTexturePart.bottom / _desc.Height) + _dTexture.v) * _dTile.v;
 
         return ret;
     }

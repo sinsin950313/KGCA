@@ -85,4 +85,38 @@ namespace SSB
 
         return true;
     }
+
+    void SpriteLoader::ParseSpriteData(std::wstring fileName)
+    {
+        TCHAR pBuffer[256] = { 0 };
+        TCHAR pTemp[256] = { 0 };
+
+        int iNumSprite = 0;
+        FILE* fp_src;
+        _wfopen_s(&fp_src, pszLoad, _T("rt"));
+        if (fp_src == NULL) return false;
+
+        _fgetts(pBuffer, _countof(pBuffer), fp_src);
+        _stscanf_s(pBuffer, _T("%s%d%s"), pTemp, (unsigned int)_countof(pTemp), &iNumSprite);
+        m_rtSpriteList.resize(iNumSprite);
+
+        for (int iCnt = 0; iCnt < iNumSprite; iCnt++)
+        {
+            int iNumFrame = 0;
+            _fgetts(pBuffer, _countof(pBuffer), fp_src);
+            _stscanf_s(pBuffer, _T("%s %d"), pTemp, (unsigned int)_countof(pTemp), &iNumFrame);
+            //m_rtSpriteList[iCnt].resize(iNumFrame);
+
+            RECT rt;
+            for (int iFrame = 0; iFrame < iNumFrame; iFrame++)
+            {
+                _fgetts(pBuffer, _countof(pBuffer), fp_src);
+                _stscanf_s(pBuffer, _T("%s %d %d %d %d"), pTemp, (unsigned int)_countof(pTemp),
+                    &rt.left, &rt.top, &rt.right, &rt.bottom);
+                m_rtSpriteList[iCnt].push_back(rt);
+            }
+        }
+        fclose(fp_src);
+        return true;
+    }
 }

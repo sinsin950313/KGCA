@@ -30,3 +30,8 @@ float4 withMask(PS_input input) : SV_TARGET
 	float4 vColor = g_txTextureA.Sample(g_sampleA, input.t);
 	return vColor;
 }
+
+float4 WireFrame(PS_input input) : SV_TARGET
+{
+	return float4(1, 0, 0, 1);
+}

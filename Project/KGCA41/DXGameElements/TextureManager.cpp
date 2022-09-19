@@ -7,6 +7,7 @@
 #include "WICTextureLoader.h"
 #include "DDSTextureLoader.h"
 #include "DXWindow.h"
+#include "DXStateManager.h"
 
 namespace SSB
 {
@@ -34,7 +35,7 @@ namespace SSB
         return *_instance;
     }
 
-    Texture* TextureManager::Load(std::wstring fileName)
+    Texture* TextureManager::Load(std::wstring fileName, std::string samplerName)
     {
         if (_textureData.find(fileName) == _textureData.end())
         {
@@ -51,29 +52,11 @@ namespace SSB
                 }
             }
 
-            Texture* texture = new Texture(textureResource, textureResourceView, LoadSampler(L"Default"));
+            Texture* texture = new Texture(textureResource, textureResourceView, DXStateManager::GetInstance().GetSamplerState(samplerName));
             _textureData.insert(make_pair(fileName, texture));
         }
 
         return _textureData.find(fileName)->second;
-    }
-
-    ID3D11SamplerState* TextureManager::LoadSampler(std::wstring stateName)
-    {
-        if (_samplerData.find(stateName) == _samplerData.end())
-        {
-            D3D11_SAMPLER_DESC samplerDesc;
-            ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
-            samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-            samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-            samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-            samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-            ID3D11SamplerState* samplerState;
-            g_dxWindow->GetDevice()->CreateSamplerState(&samplerDesc, &samplerState);
-
-            _samplerData.insert(std::make_pair(stateName, samplerState));
-        }
-        return _samplerData.find(stateName)->second;
     }
 
     bool TextureManager::Init()
@@ -99,13 +82,6 @@ namespace SSB
             delete iter.second;
         }
         _textureData.clear();
-
-        for (auto iter : _samplerData)
-        {
-            iter.second->Release();
-        }
-        _samplerData.clear();
-
 
         return true;
     }

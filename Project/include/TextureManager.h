@@ -7,6 +7,7 @@
 class ID3D11Device;
 class ID3D11DeviceContext;
 class ID3D11SamplerState;
+class SamplerStateFactory;
 
 namespace SSB
 {
@@ -16,7 +17,6 @@ namespace SSB
 	{
 	private:
 		std::map<std::wstring, Texture*> _textureData;
-		std::map<std::wstring, ID3D11SamplerState*> _samplerData;
 		std::wstring _path = L"../../Resource/Texture/";
 
 	private:
@@ -31,8 +31,7 @@ namespace SSB
 
 	public:
 		void SetPath(std::wstring path) { _path = path; }
-		Texture* Load(std::wstring fileName);
-		ID3D11SamplerState* LoadSampler(std::wstring stateName);
+		Texture* Load(std::wstring fileName, std::string samplerName);
 
 	private:
 		std::wstring GetPath(std::wstring fileName) { return _path + fileName; }

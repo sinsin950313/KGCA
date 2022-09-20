@@ -37,6 +37,26 @@ namespace SSB
         _object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
         _object->Init();
 
+        _spriteObject = new DX2DObject({100, 200}, 30, 30);
+        std::vector<TexturePartRelative> sequence;
+        sequence.push_back(TexturePartRelative{ 1, 142, 41, 41 });
+        sequence.push_back(TexturePartRelative{ 43, 142, 38, 43 });
+        sequence.push_back(TexturePartRelative{ 82, 142, 36, 43 });
+        sequence.push_back(TexturePartRelative{ 119, 142, 35, 45 });
+        sequence.push_back(TexturePartRelative{ 155, 142, 34, 46 });
+        sequence.push_back(TexturePartRelative{ 190, 142, 34, 41 });
+        sequence.push_back(TexturePartRelative{ 225, 142, 33, 38 });
+        sequence.push_back(TexturePartRelative{ 259, 142, 31, 36 });
+        sequence.push_back(TexturePartRelative{ 291, 142, 29, 32 });
+        sequence.push_back(TexturePartRelative{ 321, 142, 27, 26 });
+        sequence.push_back(TexturePartRelative{ 349, 142, 24, 24 });
+        sequence.push_back(TexturePartRelative{ 374, 142, 22, 18 });
+        SpriteLoader::GetInstance().RegisterSpriteWithRelativeValue(L"bitmap1.bmp", L"Explosion", sequence);
+        _spriteObject->SetTexture(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"Explosion", DXStateManager::kDefaultWrapSample));
+        _spriteObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
+        _spriteObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
+        _spriteObject->Init();
+
         return true;
     }
 
@@ -46,6 +66,7 @@ namespace SSB
 
         _background->Frame();
         _object->Frame();
+        _spriteObject->Frame();
         _text->Frame();
 
         return true;
@@ -57,6 +78,7 @@ namespace SSB
 
         _background->Release();
         _object->Release();
+        _spriteObject->Release();
         _text->Release();
 
         TextManager::GetInstance().Release();
@@ -73,6 +95,7 @@ namespace SSB
 
         DXWindow::AddDrawable(_background);
         DXWindow::AddDrawable(_object);
+        DXWindow::AddDrawable(_spriteObject);
         DXWindow::AddTextable(_text);
 
         return true;

@@ -86,25 +86,27 @@ namespace SSB
 		bool Release() override;
 	};
 
-	//class Sprite : public Texture
-	//{
-	//private:
-	//	Texture* _texture;
-	//	ID3D11SamplerState* _samplerState;
-	//	std::vector<RECT> _actionSequence;
-	//	bool _loop;
-	//	Timer _timer;
-	//	float _interval;
-	//	int _currentActionIndex;
-	//	float _lastTime;
+	class Sprite : public Texture
+	{
+	private:
+		std::vector<TexturePartCoordinate> _actionSequence;
+		bool _loop;
+		Timer _timer;
+		float _interval;
+		int _currentActionIndex;
+		float _lastTime;
 
-	//public:
-	//	Sprite(Texture* resource, std::vector<RECT> actionSequence, bool loop, float interval, ID3D11SamplerState* samplerState);
+	public:
+		Sprite(TextureResource* resource, std::vector<TexturePartCoordinate> actionSequence, ID3D11SamplerState* samplerState);
 
-	//public:
-	//	bool Init() override;
-	//	bool Frame() override;
-	//	bool Render() override;
-	//	bool Release() override;
-	//};
+	public:
+		void SetLoop(bool loop) { _loop = loop; }
+		void SetInterval(float interval) { _interval = interval; }
+
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Render() override;
+		bool Release() override;
+	};
 }

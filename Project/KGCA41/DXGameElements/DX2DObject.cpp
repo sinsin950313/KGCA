@@ -143,6 +143,12 @@ bool SSB::DX2DObject::Frame()
     auto ndcBoundary = GetNDCBoundary();
     g_dxWindow->GetDeviceContext()->UpdateSubresource(_vertexBuffer, NULL, NULL, &ndcBoundary.at(0), 0, 0);
 
+    _texture->Frame();
+    if (_maskTexture)
+    {
+        _maskTexture->Frame();
+    }
+
     return true;
 }
 

@@ -13,6 +13,7 @@ namespace SSB
 		Text* _text;
 		DX2DObject* _background;
 		DX2DObject* _object;
+		DX2DObject* _spriteObject;
 
 	public:
 		GETestWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }

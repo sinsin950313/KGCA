@@ -1,4 +1,5 @@
 #include "Texture.h"
+#pragma comment (lib, "WindowUtility.lib")
 
 namespace SSB
 {
@@ -111,38 +112,51 @@ namespace SSB
 		return rel;
 	}
 
-    //	bool SSB::Sprite::Init()
-//	{
-//		_timer.Init();
-//		_timer.Start();
-//		_lastTime = _timer.GetElapseTime();
-//
-//		return true;
-//	}
-//
-//	bool SSB::Sprite::Frame()
-//	{
-//		if (_interval <= _timer.GetElapseTime() - _lastTime)
-//		{
-//			++_currentActionIndex;
-//			if (_currentActionIndex == _actionSequence.size())
-//			{
-//				_currentActionIndex = 0;
-//			}
-//		}
-//		_lastTime = _timer.GetElapseTime();
-//
-//		return true;
-//	}
-//
-//	bool SSB::Sprite::Render()
-//	{
-//		return true;
-//	}
-//
-//	bool SSB::Sprite::Release()
-//	{
-//		_texture = nullptr;
-//		return true;
-//	}
+    Sprite::Sprite(TextureResource* resource, std::vector<TexturePartCoordinate> actionSequence, ID3D11SamplerState* samplerState) 
+        : Texture(resource, actionSequence[0], samplerState), _actionSequence(actionSequence)
+    {
+        _loop = false;
+        _interval = 1.0f;
+    }
+
+    bool SSB::Sprite::Init()
+	{
+		_currentActionIndex = 0;
+
+		_timer.Init();
+		_timer.Start();
+		_lastTime = _timer.GetElapseTime();
+
+		return true;
+	}
+
+	bool SSB::Sprite::Frame()
+	{
+        _timer.Frame();
+
+		if (_interval <= _timer.GetElapseTime() - _lastTime)
+		{
+			++_currentActionIndex;
+			if (_currentActionIndex == _actionSequence.size())
+			{
+				_currentActionIndex = 0;
+			}
+			_lastTime = _timer.GetElapseTime();
+		}
+        Texture::SetCurrentTexturePart(_actionSequence[_currentActionIndex]);
+
+		return true;
+	}
+
+	bool SSB::Sprite::Render()
+	{
+		return true;
+	}
+
+	bool SSB::Sprite::Release()
+	{
+        Texture::Release();
+        _actionSequence.clear();
+		return true;
+	}
 }

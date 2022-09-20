@@ -3,6 +3,7 @@
 #include "Common.h"
 #include <map>
 #include <string>
+#include "Texture.h"
 
 class ID3D11Device;
 class ID3D11DeviceContext;
@@ -10,9 +11,6 @@ class ID3D11SamplerState;
 
 namespace SSB
 {
-	class Texture;
-	class Sprite;
-
 	class TextureResourceManager : public Common
 	{
 	private:
@@ -21,7 +19,7 @@ namespace SSB
 
 	private:
 		static TextureResourceManager* _instance;
-		TextureResourceManager();
+		TextureResourceManager() { }
 
 	public:
 		~TextureResourceManager();
@@ -30,7 +28,7 @@ namespace SSB
 		static TextureResourceManager& GetInstance();
 
 	public:
-		void SetPath(std::wstring path) { _path = path; }
+		void ChangePath(std::wstring path) { _path = path; }
 		TextureResource* Load(std::wstring fileName);
 
 	private:
@@ -46,24 +44,32 @@ namespace SSB
 	struct TextureData
 	{
 		TextureResource* resource;
-		std::map<std::string, RECT> texturePart;
+		std::map<std::string, TexturePartRelative> textureParts;
 	};
 
 	class TextureLoader : public Common
 	{
 	private:
-		std::map<std::wstring, TextureData> _textureParts;
+		std::map<std::wstring, TextureData> _textureDatas;
 
 	private:
 		static TextureLoader* _instance;
 		TextureLoader() { }
 
 	public:
-		TextureLoader& GetInstance();
+		static TextureLoader& GetInstance();
 		~TextureLoader();
 
 	public:
-		Texture* Load(std::wstring fileName, RECT part, std::wstring partName, std::string samplerName);
+		/// <summary>
+		/// InfoFile should be relative data.
+		/// </summary>
+		/// <param name="infoFileName"></param>
+		void RegisterTexturePartFromFile(std::wstring infoFileName);
+		void RegisterTexturePartWithRelativeValue(std::wstring fileName, std::wstring partName, TexturePartRelative part);
+		void RegisterTexturePartWithCoordinateValue(std::wstring fileName, std::wstring partName, TexturePartCoordinate part);
+		Texture* Load(std::wstring fileName, std::wstring partName, std::string samplerName);
+		//TexturePartRelative GetTexturePart(std::wstring fileName, std::wstring partName);
 
 	public:
 		bool Init() override;
@@ -72,38 +78,38 @@ namespace SSB
 		bool Release() override;
 	};
 
-	struct SpriteData
-	{
-		std::string actionName;
-		std::vector<RECT> actionSequence;
-	};
+	//struct SpriteData
+	//{
+	//	std::string actionName;
+	//	std::vector<RECT> actionSequence;
+	//};
 
-	class SpriteLoader : public Common
-	{
-	private:
-		std::map<std::wstring, SpriteData> _spriteData;
-		std::wstring _spritePath = L"../../Resource/SpriteData/";
+	//class SpriteLoader : public Common
+	//{
+	//private:
+	//	std::map<std::wstring, SpriteData> _spriteData;
+	//	std::wstring _spritePath = L"../../Resource/SpriteData/";
 
-	private:
-		static SpriteLoader* _instance;
-		SpriteLoader() { }
+	//private:
+	//	static SpriteLoader* _instance;
+	//	SpriteLoader() { }
 
-	public:
-		static SpriteLoader& GetInstance();
-		~SpriteLoader();
+	//public:
+	//	static SpriteLoader& GetInstance();
+	//	~SpriteLoader();
 
-	public:
-		Sprite* Load(Texture* resource, std::string samplerName, std::wstring infoFileName, std::string actionName);
+	//public:
+	//	Sprite* Load(Texture* resource, std::string samplerName, std::string actionName);
 
-	private:
-		std::wstring GetSpritePath(std::wstring fileName) { return _spritePath + fileName; }
-		std::wstring GetActionName(Texture* resource, std::string actionName);
-		void ParseSpriteData(std::wstring fileName);
+	//private:
+	//	std::wstring GetSpritePath(std::wstring fileName) { return _spritePath + fileName; }
+	//	std::wstring GetActionName(Texture* resource, std::string actionName);
+	//	void ParseSpriteData(std::wstring infoFileName);
 
-	public:
-		bool Init() override;
-		bool Frame() override;
-		bool Render() override;
-		bool Release() override;
-	};
+	//public:
+	//	bool Init() override;
+	//	bool Frame() override;
+	//	bool Render() override;
+	//	bool Release() override;
+	//};
 }

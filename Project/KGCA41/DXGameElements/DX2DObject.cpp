@@ -173,13 +173,13 @@ void SSB::DX2DObject::Draw(ID3D11DeviceContext* dc)
     dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
     if (_texture != nullptr)
     {
-        dc->PSSetShaderResources(0, 1, _texture->GetShaderResourceView());
+        dc->PSSetShaderResources(0, 1, _texture->GetResource()->GetShaderResourceView());
 		ID3D11SamplerState* ss = _texture->GetSamplerState();
 		dc->PSSetSamplers(0, 1, &ss);
     }
     if (_maskTexture != nullptr)
     {
-        dc->PSSetShaderResources(1, 1, _maskTexture->GetShaderResourceView());
+        dc->PSSetShaderResources(1, 1, _maskTexture->GetResource()->GetShaderResourceView());
     }
 	dc->DrawIndexed(_indexList.size(), 0, 0);
 }

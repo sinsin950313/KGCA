@@ -24,7 +24,7 @@ namespace SSB
 		AnimationState* _nextState;
 
 	public:
-		void AddState(std::string stateName, Texture* texture, RECT area, float transitionTime);
+		void AddState(std::string stateName, Texture* resource, RECT area, float transitionTime);
 		void LinkState(std::string fromState, std::string toState);
 		std::map<std::string, AnimationState*>& GetNextPossibleState() { return _currentState->_changableState; }
 		void SetNextState(std::string stateName) { _nextState = _currentState->_changableState.find(stateName)->second; }

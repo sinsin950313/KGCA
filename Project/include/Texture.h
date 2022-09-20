@@ -4,16 +4,52 @@
 #include "Common.h"
 #include <map>
 #include <string>
+#include "Timer.h"
+#include <vector>
 
 namespace SSB
 {
-	struct TexturePart
+	class TextureResource : public Common
+	{
+	private:
+		ID3D11Resource* _textureResource;
+		D3D11_TEXTURE2D_DESC _desc;
+		ID3D11ShaderResourceView* _textureResourceView;
+
+	public:
+		TextureResource(ID3D11Resource* textureResource, ID3D11ShaderResourceView* textureResourceView);
+
+	public:
+		ID3D11Resource* GetResource() const { return _textureResource; }
+		ID3D11ShaderResourceView** GetShaderResourceView() { return &_textureResourceView; }
+		UINT GetWidth() { return _desc.Width; }
+		UINT GetHeight() { return _desc.Height; }
+
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Render() override;
+		bool Release() override;
+	};
+
+	struct TexturePartCoordinate
 	{
 		float left;
 		float top;
 		float right;
 		float bottom;
 	};
+
+	struct TexturePartRelative
+	{
+		float left;
+		float top;
+		float width;
+		float height;
+	};
+
+	TexturePartCoordinate RtC(TexturePartRelative rel);
+	TexturePartRelative CtR(TexturePartCoordinate coord);
 
 	struct TextureParam
 	{
@@ -24,30 +60,22 @@ namespace SSB
 	class Texture : public Common
 	{
 	private:
-		ID3D11Resource* _textureResource;
-		D3D11_TEXTURE2D_DESC _desc;
-		ID3D11ShaderResourceView* _textureResourceView;
+		TextureResource* _resource;
 		ID3D11SamplerState* _samplerState;
-		std::map<std::string, RECT> _textureParts;
-		RECT _currentTexturePart;
+		TexturePartCoordinate _currentTexturePart;
 		TextureParam _dTexture;
 		TextureParam _dTile;
 
 	public:
-		Texture(ID3D11Resource* textureResource, ID3D11ShaderResourceView* textureResourceView, ID3D11SamplerState* samplerState);
+		Texture(TextureResource* resource, TexturePartCoordinate texturePart, ID3D11SamplerState* samplerState);
 
 	public:
+		TextureResource* GetResource() { return _resource; }
 		void SetSamplerState(ID3D11SamplerState* samplerState);
-		ID3D11Resource* GetResource() const { return _textureResource; }
-		ID3D11ShaderResourceView** GetShaderResourceView() { return &_textureResourceView; }
 		ID3D11SamplerState* GetSamplerState() { return _samplerState; }
-
-		// left, top, width, height
-		void RegisterTexturePartWithRelativeValue(std::string actionName, RECT size);
-		/// left, top, right, bottom
-		void RegisterTexturePartWithCoordinateValue(std::string actionName, RECT size);
-		void SetCurrentTexturePart(std::string action) { _currentTexturePart = _textureParts.find(action)->second; }
-		TexturePart GetCurrentTexturePart();
+		TexturePartCoordinate GetCurrentTexturePart();
+		void SetCurrentTexturePart(TexturePartCoordinate part) { _currentTexturePart = part; }
+		void SetCurrentTexturePart(TexturePartRelative part);
 		void Scroll(float xRatio, float yRatio);
 		void Tile(float xCoefficient, float yCoefficient);
 
@@ -57,4 +85,26 @@ namespace SSB
 		bool Render() override;
 		bool Release() override;
 	};
+
+	//class Sprite : public Texture
+	//{
+	//private:
+	//	Texture* _texture;
+	//	ID3D11SamplerState* _samplerState;
+	//	std::vector<RECT> _actionSequence;
+	//	bool _loop;
+	//	Timer _timer;
+	//	float _interval;
+	//	int _currentActionIndex;
+	//	float _lastTime;
+
+	//public:
+	//	Sprite(Texture* resource, std::vector<RECT> actionSequence, bool loop, float interval, ID3D11SamplerState* samplerState);
+
+	//public:
+	//	bool Init() override;
+	//	bool Frame() override;
+	//	bool Render() override;
+	//	bool Release() override;
+	//};
 }

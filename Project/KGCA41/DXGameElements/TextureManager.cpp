@@ -85,118 +85,6 @@ namespace SSB
         return true;
     }
 
-    TextureLoader* TextureLoader::_instance = nullptr;
-
-    TextureLoader& TextureLoader::GetInstance()
-    {
-        if (_instance == nullptr)
-        {
-            _instance = new TextureLoader();
-        }
-        return *_instance;
-    }
-
-    TextureLoader::~TextureLoader()
-    {
-        Release();
-
-        if (_instance) delete _instance;
-        _instance = nullptr;
-    }
-
-    void TextureLoader::RegisterTexturePartWithRelativeValue(std::wstring resourceFileName, std::wstring partName, TexturePartRelative part)
-    {
-        if (_textureDatas.find(resourceFileName) == _textureDatas.end())
-        {
-            TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
-
-            TextureData data;
-            data.resource = resource;
-            _textureDatas.insert(std::make_pair(resourceFileName, data));
-        }
-
-        _textureDatas.find(resourceFileName)->second.textureParts.insert(std::make_pair(wtm(partName), part));
-    }
-
-    void TextureLoader::RegisterTexturePartWithCoordinateValue(std::wstring resourceFileName, std::wstring partName, TexturePartCoordinate part)
-    {
-        RegisterTexturePartWithRelativeValue(resourceFileName, partName, CtR(part));
-    }
-
-    void TextureLoader::RegisterTexturePartFromFile(std::wstring resourceFileName, std::wstring infoFileName)
-    {
-        // Need to update
-    }
-
-    Texture* TextureLoader::Load(std::wstring resourceFileName, std::wstring partName, std::string samplerName)
-    {
-        if (_textureDatas.find(resourceFileName) == _textureDatas.end())
-        {
-            TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
-
-            TextureData data;
-            data.resource = resource;
-            _textureDatas.insert(std::make_pair(resourceFileName, data));
-        }
-
-        auto textureParts = _textureDatas.find(resourceFileName)->second.textureParts;
-        if (textureParts.find(wtm(partName)) == textureParts.end())
-        {
-            std::wstring textureInfoFile = SplitPath(resourceFileName)[2];
-            RegisterTexturePartFromFile(resourceFileName, textureInfoFile);
-        }
-
-        auto iter = _textureDatas.find(resourceFileName);
-        TextureResource* resource = iter->second.resource;
-        TexturePartRelative relative = iter->second.textureParts.find(wtm(partName))->second;
-        TexturePartCoordinate coord = RtC(relative);
-        Texture* texture = new Texture(resource, coord, DXStateManager::GetInstance().GetSamplerState(samplerName));
-
-        return texture;
-    }
-
-    //TexturePartRelative TextureLoader::GetTexturePart(std::wstring resourceFileName, std::wstring partName)
-    //{
-    //    if (_textureDatas.find(resourceFileName) == _textureDatas.end())
-    //    {
-    //        TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
-
-    //        TextureData data;
-    //        data.resource = resource;
-    //        _textureDatas.insert(std::make_pair(resourceFileName, data));
-    //    }
-
-    //    auto textureParts = _textureDatas.find(resourceFileName)->second.textureParts;
-    //    if (textureParts.find(wtm(partName)) == textureParts.end())
-    //    {
-    //        RegisterTexturePartFromFile(resourceFileName);
-    //    }
-
-    //    auto iter = _textureDatas.find(resourceFileName);
-    //    return iter->second.textureParts.find(wtm(partName))->second;
-    //}
-
-    bool TextureLoader::Init()
-    {
-        return false;
-    }
-
-    bool TextureLoader::Frame()
-    {
-        return false;
-    }
-
-    bool TextureLoader::Render()
-    {
-        return false;
-    }
-
-    bool TextureLoader::Release()
-    {
-        _textureDatas.clear();
-        return false;
-    }
-
     SpriteLoader* SpriteLoader::_instance = nullptr;
 
     SpriteLoader& SpriteLoader::GetInstance()
@@ -213,15 +101,10 @@ namespace SSB
         Release();
 
         if (_instance) delete _instance;
-		_instance = nullptr;
+        _instance = nullptr;
     }
 
-    void SpriteLoader::RegisterSpriteFromFile(std::wstring resourceFileName, std::wstring infoFileName)
-    {
-        // Need to update
-    }
-
-    void SpriteLoader::RegisterSpriteWithRelativeValue(std::wstring resourceFileName, std::wstring actionName, std::vector<TexturePartRelative> sequenceRel)
+    void SpriteLoader::RegisterSpriteWithRelativeValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartRelative part)
     {
         if (_spriteDatas.find(resourceFileName) == _spriteDatas.end())
         {
@@ -232,38 +115,205 @@ namespace SSB
             _spriteDatas.insert(std::make_pair(resourceFileName, data));
         }
 
-        _spriteDatas.find(resourceFileName)->second.sequenceDatas.insert(std::make_pair(wtm(actionName), sequenceRel));
+        _spriteDatas.find(resourceFileName)->second.textureParts.insert(std::make_pair(wtm(spriteName), part));
     }
 
-    void SpriteLoader::RegisterSpriteWithCoordinateValue(std::wstring resourceFileName, std::wstring actionName, std::vector<TexturePartCoordinate> sequenceCoord)
+    void SpriteLoader::RegisterSpriteWithCoordinateValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartCoordinate part)
+    {
+        RegisterSpriteWithRelativeValue(resourceFileName, spriteName, CtR(part));
+    }
+
+    void SpriteLoader::RegisterSpriteFromFile(std::wstring resourceFileName, std::wstring infoFileName)
+    {
+        TCHAR pBuffer[256] = { 0 };
+        TCHAR pTemp[256] = { 0 };
+
+        int iNumSprite = 0;
+        FILE* fp_src;
+        _wfopen_s(&fp_src, GetPath(infoFileName).c_str(), _T("rt"));
+        if (fp_src == NULL) return;
+
+        _fgetts(pBuffer, _countof(pBuffer), fp_src);
+        _stscanf_s(pBuffer, _T("%s%d%s"), pTemp, (unsigned int)_countof(pTemp), &iNumSprite);
+        auto spriteData = _spriteDatas.find(resourceFileName);
+
+        for (int iCnt = 0; iCnt < iNumSprite; iCnt++)
+        {
+            int iNumFrame = 0;
+            _fgetts(pBuffer, _countof(pBuffer), fp_src);
+            TexturePartRelative texturePart;
+            _stscanf_s(pBuffer, _T("%s %d %d %d %d"), pTemp, (unsigned int)_countof(pTemp),
+				&texturePart.left, &texturePart.top, &texturePart.width, &texturePart.height);
+			spriteData->second.textureParts.insert(std::make_pair(wtm(pTemp), texturePart));
+        }
+        fclose(fp_src);
+    }
+
+    Sprite* SpriteLoader::Load(std::wstring resourceFileName, std::wstring spriteName, std::string samplerName)
+    {
+        if (_spriteDatas.find(resourceFileName) == _spriteDatas.end())
+        {
+            TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
+
+            SpriteData data;
+            data.resource = resource;
+            _spriteDatas.insert(std::make_pair(resourceFileName, data));
+        }
+
+        auto textureParts = _spriteDatas.find(resourceFileName)->second.textureParts;
+        if (textureParts.find(wtm(spriteName)) == textureParts.end())
+        {
+            std::wstring textureInfoFile = SplitPath(resourceFileName)[2];
+            RegisterSpriteFromFile(resourceFileName, textureInfoFile);
+        }
+
+        auto iter = _spriteDatas.find(resourceFileName);
+        TextureResource* resource = iter->second.resource;
+        TexturePartRelative relative = iter->second.textureParts.find(wtm(spriteName))->second;
+        TexturePartCoordinate coord = RtC(relative);
+        Sprite* sprite = new Sprite(resource, coord, DXStateManager::GetInstance().GetSamplerState(samplerName));
+
+        return sprite;
+    }
+
+    TexturePartRelative SpriteLoader::GetTexturePart(std::wstring resourceFileName, std::wstring spriteName)
+    {
+        if (_spriteDatas.find(resourceFileName) == _spriteDatas.end())
+        {
+            TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
+
+            SpriteData data;
+            data.resource = resource;
+            _spriteDatas.insert(std::make_pair(resourceFileName, data));
+        }
+
+        auto textureParts = _spriteDatas.find(resourceFileName)->second.textureParts;
+        if (textureParts.find(wtm(spriteName)) == textureParts.end())
+        {
+            RegisterSpriteFromFile(resourceFileName, resourceFileName);
+        }
+
+        auto iter = _spriteDatas.find(resourceFileName);
+        return iter->second.textureParts.find(wtm(spriteName))->second;
+    }
+
+    bool SpriteLoader::Init()
+    {
+        return false;
+    }
+
+    bool SpriteLoader::Frame()
+    {
+        return false;
+    }
+
+    bool SpriteLoader::Render()
+    {
+        return false;
+    }
+
+    bool SpriteLoader::Release()
+    {
+        _spriteDatas.clear();
+        return false;
+    }
+
+    SpriteActionLoader* SpriteActionLoader::_instance = nullptr;
+
+    SpriteActionLoader& SpriteActionLoader::GetInstance()
+    {
+        if (_instance == nullptr)
+        {
+            _instance = new SpriteActionLoader();
+        }
+        return *_instance;
+    }
+
+    SpriteActionLoader::~SpriteActionLoader()
+    {
+        Release();
+
+        if (_instance) delete _instance;
+		_instance = nullptr;
+    }
+
+    void SpriteActionLoader::RegisterSpriteActionFromFile(std::wstring resourceFileName, std::wstring infoFileName)
+    {
+        TCHAR pBuffer[256] = { 0 };
+        TCHAR pTemp[256] = { 0 };
+
+        int iNumSprite = 0;
+        FILE* fp_src;
+        _wfopen_s(&fp_src, GetPath(infoFileName).c_str(), _T("rt"));
+        if (fp_src == NULL) return;
+
+        _fgetts(pBuffer, _countof(pBuffer), fp_src);
+        _stscanf_s(pBuffer, _T("%s%d%s"), pTemp, (unsigned int)_countof(pTemp), &iNumSprite);
+        auto spriteData = _spriteActionDatas.find(resourceFileName);
+
+        for (int iCnt = 0; iCnt < iNumSprite; iCnt++)
+        {
+            int iNumFrame = 0;
+            _fgetts(pBuffer, _countof(pBuffer), fp_src);
+            _stscanf_s(pBuffer, _T("%s %d"), pTemp, (unsigned int)_countof(pTemp), &iNumFrame);
+
+            std::vector<TexturePartRelative> sequence;
+            for (int iFrame = 0; iFrame < iNumFrame; iFrame++)
+            {
+				TexturePartRelative texturePart;
+                _fgetts(pBuffer, _countof(pBuffer), fp_src);
+                _stscanf_s(pBuffer, _T("%s %d %d %d %d"), pTemp, (unsigned int)_countof(pTemp),
+                    &texturePart.left, &texturePart.top, &texturePart.width, &texturePart.height);
+                sequence.push_back(texturePart);
+            }
+			spriteData->second.sequenceDatas.insert(std::make_pair(wtm(pTemp), sequence));
+        }
+        fclose(fp_src);
+    }
+
+    void SpriteActionLoader::RegisterSpriteActionWithRelativeValue(std::wstring resourceFileName, std::wstring actionName, std::vector<TexturePartRelative> sequenceRel)
+    {
+        if (_spriteActionDatas.find(resourceFileName) == _spriteActionDatas.end())
+        {
+            TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
+
+            SpriteActionData data;
+            data.resource = resource;
+            _spriteActionDatas.insert(std::make_pair(resourceFileName, data));
+        }
+
+        _spriteActionDatas.find(resourceFileName)->second.sequenceDatas.insert(std::make_pair(wtm(actionName), sequenceRel));
+    }
+
+    void SpriteActionLoader::RegisterSpriteActionWithCoordinateValue(std::wstring resourceFileName, std::wstring actionName, std::vector<TexturePartCoordinate> sequenceCoord)
     {
         std::vector<TexturePartRelative> sequenceRel;
         for (auto coor : sequenceCoord)
         {
             sequenceRel.push_back(CtR(coor));
         }
-        RegisterSpriteWithRelativeValue(resourceFileName, actionName, sequenceRel);
+        RegisterSpriteActionWithRelativeValue(resourceFileName, actionName, sequenceRel);
     }
 
-    Sprite* SpriteLoader::Load(std::wstring resourceFileName, std::wstring actionName, std::string samplerName)
+    SpriteAction* SpriteActionLoader::Load(std::wstring resourceFileName, std::wstring actionName, std::string samplerName)
     {
-        if (_spriteDatas.find(resourceFileName) == _spriteDatas.end())
+        if (_spriteActionDatas.find(resourceFileName) == _spriteActionDatas.end())
         {
             TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
 
-            SpriteData data;
+            SpriteActionData data;
             data.resource = resource;
-            _spriteDatas.insert(std::make_pair(resourceFileName, data));
+            _spriteActionDatas.insert(std::make_pair(resourceFileName, data));
         }
 
-        auto spriteData = _spriteDatas.find(resourceFileName)->second.sequenceDatas;
+        auto spriteData = _spriteActionDatas.find(resourceFileName)->second.sequenceDatas;
         if (spriteData.find(wtm(actionName)) == spriteData.end())
         {
             std::wstring spriteInfoFile = SplitPath(resourceFileName)[2];
-            RegisterSpriteFromFile(resourceFileName, spriteInfoFile);
+            RegisterSpriteActionFromFile(resourceFileName, spriteInfoFile);
         }
 
-        auto iter = _spriteDatas.find(resourceFileName);
+        auto iter = _spriteActionDatas.find(resourceFileName);
         TextureResource* resource = iter->second.resource;
         std::vector<TexturePartRelative> relative = iter->second.sequenceDatas.find(wtm(actionName))->second;
         std::vector<TexturePartCoordinate> sequenceCoord;
@@ -271,59 +321,55 @@ namespace SSB
         {
             sequenceCoord.push_back(RtC(rel));
         }
-        Sprite* sprite = new Sprite(resource, sequenceCoord, DXStateManager::GetInstance().GetSamplerState(samplerName));
+        SpriteAction* spriteAction = new SpriteAction(resource, sequenceCoord, DXStateManager::GetInstance().GetSamplerState(samplerName));
 
-        return sprite;
+        return spriteAction;
     }
 
-    void SpriteLoader::ParseSpriteData(std::wstring infoFileName)
+    std::vector<TexturePartRelative> SpriteActionLoader::GetSpriteAction(std::wstring resourceFileName, std::wstring actionName)
     {
-        //TCHAR pBuffer[256] = { 0 };
-        //TCHAR pTemp[256] = { 0 };
+        if (_spriteActionDatas.find(resourceFileName) == _spriteActionDatas.end())
+        {
+            TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
 
-        //int iNumSprite = 0;
-        //FILE* fp_src;
-        //_wfopen_s(&fp_src, pszLoad, _T("rt"));
-        //if (fp_src == NULL) return false;
+            SpriteActionData data;
+            data.resource = resource;
+            _spriteActionDatas.insert(std::make_pair(resourceFileName, data));
+        }
 
-        //_fgetts(pBuffer, _countof(pBuffer), fp_src);
-        //_stscanf_s(pBuffer, _T("%s%d%s"), pTemp, (unsigned int)_countof(pTemp), &iNumSprite);
-        //m_rtSpriteList.resize(iNumSprite);
+        auto actionData = _spriteActionDatas.find(resourceFileName)->second.sequenceDatas;
+        if (actionData.find(wtm(actionName)) == actionData.end())
+        {
+            RegisterSpriteActionFromFile(resourceFileName, resourceFileName);
+        }
 
-        //for (int iCnt = 0; iCnt < iNumSprite; iCnt++)
-        //{
-        //    int iNumFrame = 0;
-        //    _fgetts(pBuffer, _countof(pBuffer), fp_src);
-        //    _stscanf_s(pBuffer, _T("%s %d"), pTemp, (unsigned int)_countof(pTemp), &iNumFrame);
-        //    //m_rtSpriteList[iCnt].resize(iNumFrame);
-
-        //    RECT rt;
-        //    for (int iFrame = 0; iFrame < iNumFrame; iFrame++)
-        //    {
-        //        _fgetts(pBuffer, _countof(pBuffer), fp_src);
-        //        _stscanf_s(pBuffer, _T("%s %d %d %d %d"), pTemp, (unsigned int)_countof(pTemp),
-        //            &rt.left, &rt.top, &rt.right, &rt.bottom);
-        //        m_rtSpriteList[iCnt].push_back(rt);
-        //    }
-        //}
-        //fclose(fp_src);
-        //return true;
+        auto actionSequence = actionData.find(wtm(actionName));
+        std::vector<TexturePartRelative> ret;
+        for (auto action : actionSequence->second)
+        {
+            ret.push_back(action);
+        }
+        return ret;
     }
-    bool SpriteLoader::Init()
+
+    bool SpriteActionLoader::Init()
     {
         return true;
     }
-    bool SpriteLoader::Frame()
+
+    bool SpriteActionLoader::Frame()
     {
         return true;
     }
-    bool SpriteLoader::Render()
+
+    bool SpriteActionLoader::Render()
     {
         return true;
     }
-    bool SpriteLoader::Release()
+
+    bool SpriteActionLoader::Release()
     {
-        _spriteDatas.clear();
+        _spriteActionDatas.clear();
         return true;
     }
 }

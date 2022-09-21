@@ -14,6 +14,8 @@ namespace SSB
 		DX2DObject* _background;
 		DX2DObject* _object;
 		DX2DObject* _spriteObject;
+		DX2DObject* _objectWithFile;
+		DX2DObject* _spriteObjectWithFile;
 
 	public:
 		GETestWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }

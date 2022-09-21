@@ -41,54 +41,13 @@ namespace SSB
 		bool Release() override;
 	};
 	
-	struct TextureData
+	struct SpriteData
 	{
 		TextureResource* resource;
 		std::map<std::string, TexturePartRelative> textureParts;
 	};
 
-	class TextureLoader : public Common
-	{
-	private:
-		std::map<std::wstring, TextureData> _textureDatas;
-		std::wstring _path = L"../../Resource/Data/Texture/";
-
-	private:
-		static TextureLoader* _instance;
-		TextureLoader() { }
-
-	public:
-		static TextureLoader& GetInstance();
-		~TextureLoader();
-
-	public:
-		void ChangePath(std::wstring path) { _path = path; }
-		/// <summary>
-		/// InfoFile should be relative data.
-		/// </summary>
-		/// <param name="infoFileName"></param>
-		void RegisterTexturePartFromFile(std::wstring resourceFileName, std::wstring infoFileName);
-		void RegisterTexturePartWithRelativeValue(std::wstring resourceFileName, std::wstring partName, TexturePartRelative part);
-		void RegisterTexturePartWithCoordinateValue(std::wstring resourceFileName, std::wstring partName, TexturePartCoordinate part);
-		Texture* Load(std::wstring resourceFileName, std::wstring partName, std::string samplerName);
-		//TexturePartRelative GetTexturePart(std::wstring resourceFileName, std::wstring partName);
-
-	private:
-		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".textureInfo"; }
-
-	public:
-		bool Init() override;
-		bool Frame() override;
-		bool Render() override;
-		bool Release() override;
-	};
-
-	struct SpriteData
-	{
-		TextureResource* resource;
-		std::map<std::string, std::vector<TexturePartRelative>> sequenceDatas;
-	};
-
+	// Never use extension name to infoFileName
 	class SpriteLoader : public Common
 	{
 	private:
@@ -106,19 +65,62 @@ namespace SSB
 	public:
 		void ChangePath(std::wstring path) { _path = path; }
 		/// <summary>
+		/// InfoFile should be relative data.
+		/// </summary>
+		/// <param name="infoFileName"></param>
+		void RegisterSpriteFromFile(std::wstring resourceFileName, std::wstring infoFileName);
+		void RegisterSpriteWithRelativeValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartRelative part);
+		void RegisterSpriteWithCoordinateValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartCoordinate part);
+		Sprite* Load(std::wstring resourceFileName, std::wstring spriteName, std::string samplerName);
+		TexturePartRelative GetTexturePart(std::wstring resourceFileName, std::wstring spriteName);
+
+	private:
+		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".SpriteInfo"; }
+
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Render() override;
+		bool Release() override;
+	};
+
+	struct SpriteActionData
+	{
+		TextureResource* resource;
+		std::map<std::string, std::vector<TexturePartRelative>> sequenceDatas;
+	};
+
+	// Never use extension name to infoFileName
+	class SpriteActionLoader : public Common
+	{
+	private:
+		std::map<std::wstring, SpriteActionData> _spriteActionDatas;
+		std::wstring _path = L"../../Resource/Data/SpriteAction/";
+
+	private:
+		static SpriteActionLoader* _instance;
+		SpriteActionLoader() { }
+
+	public:
+		static SpriteActionLoader& GetInstance();
+		~SpriteActionLoader();
+
+	public:
+		void ChangePath(std::wstring path) { _path = path; }
+		/// <summary>
 		/// InfoFile should be relative.
 		/// </summary>
 		/// <param name="resourceFileName"></param>
 		/// <param name="actionName"></param>
 		/// <param name="infoFileName"></param>
-		void RegisterSpriteFromFile(std::wstring resourceFileName, std::wstring infoFileName);
-		void RegisterSpriteWithRelativeValue(std::wstring resourceFileName, std::wstring actionName, std::vector<TexturePartRelative> sequenceRel);
-		void RegisterSpriteWithCoordinateValue(std::wstring resourceFileName, std::wstring actionName, std::vector<TexturePartCoordinate> sequenceCoord);
-		Sprite* Load(std::wstring resourceFileName, std::wstring actionName, std::string samplerName);
+		void RegisterSpriteActionFromFile(std::wstring resourceFileName, std::wstring infoFileName);
+		void RegisterSpriteActionWithRelativeValue(std::wstring resourceFileName, std::wstring actionName, std::vector<TexturePartRelative> sequenceRel);
+		void RegisterSpriteActionWithCoordinateValue(std::wstring resourceFileName, std::wstring actionName, std::vector<TexturePartCoordinate> sequenceCoord);
+		SpriteAction* Load(std::wstring resourceFileName, std::wstring actionName, std::string samplerName);
+		std::vector<TexturePartRelative> GetSpriteAction(std::wstring resourceFileName, std::wstring actionName);
 
 	private:
-		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".spriteInfo"; }
-		void ParseSpriteData(std::wstring infoFileName);
+		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".spriteActionInfo"; }
 
 	public:
 		bool Init() override;

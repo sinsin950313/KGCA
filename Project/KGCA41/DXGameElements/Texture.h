@@ -34,6 +34,14 @@ namespace SSB
 
 	struct TexturePartCoordinate
 	{
+		UINT left;
+		UINT top;
+		UINT right;
+		UINT bottom;
+	};
+
+	struct TexturePartCoordinateRatio
+	{
 		float left;
 		float top;
 		float right;
@@ -42,10 +50,10 @@ namespace SSB
 
 	struct TexturePartRelative
 	{
-		float left;
-		float top;
-		float width;
-		float height;
+		UINT left;
+		UINT top;
+		UINT width;
+		UINT height;
 	};
 
 	TexturePartCoordinate RtC(TexturePartRelative rel);
@@ -57,7 +65,7 @@ namespace SSB
 		float v;
 	};
 
-	class Texture : public Common
+	class Sprite : public Common
 	{
 	private:
 		TextureResource* _resource;
@@ -67,15 +75,15 @@ namespace SSB
 		TextureParam _dTile;
 
 	public:
-		Texture(TextureResource* resource, TexturePartCoordinate texturePart, ID3D11SamplerState* samplerState);
+		Sprite(TextureResource* resource, TexturePartCoordinate texturePart, ID3D11SamplerState* samplerState);
 
 	public:
 		TextureResource* GetResource() { return _resource; }
 		void SetSamplerState(ID3D11SamplerState* samplerState);
 		ID3D11SamplerState* GetSamplerState() { return _samplerState; }
-		TexturePartCoordinate GetCurrentTexturePart();
-		void SetCurrentTexturePart(TexturePartCoordinate part) { _currentTexturePart = part; }
-		void SetCurrentTexturePart(TexturePartRelative part);
+		TexturePartCoordinateRatio GetCurrentTexturePart();
+		void SetCurrentSprite(TexturePartCoordinate part) { _currentTexturePart = part; }
+		void SetCurrentSprite(TexturePartRelative part);
 		void Scroll(float xRatio, float yRatio);
 		void Tile(float xCoefficient, float yCoefficient);
 
@@ -86,10 +94,11 @@ namespace SSB
 		bool Release() override;
 	};
 
-	class Sprite : public Texture
+	class SpriteAction : public Sprite
 	{
 	private:
 		std::vector<TexturePartCoordinate> _actionSequence;
+		bool _finished = false;
 		bool _loop;
 		Timer _timer;
 		float _interval;
@@ -97,11 +106,14 @@ namespace SSB
 		float _lastTime;
 
 	public:
-		Sprite(TextureResource* resource, std::vector<TexturePartCoordinate> actionSequence, ID3D11SamplerState* samplerState);
+		SpriteAction(TextureResource* resource, std::vector<TexturePartCoordinate> actionSequence, ID3D11SamplerState* samplerState);
 
 	public:
 		void SetLoop(bool loop) { _loop = loop; }
 		void SetInterval(float interval) { _interval = interval; }
+		bool IsFinished() { return _finished; }
+		void SetSpriteAction(std::vector<TexturePartCoordinate> actionSequence);
+		void SetSpriteAction(std::vector<TexturePartRelative> actionSequence);
 
 	public:
 		bool Init() override;

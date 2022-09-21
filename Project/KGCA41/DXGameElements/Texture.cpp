@@ -35,21 +35,21 @@ namespace SSB
         return true;
     }
 
-    Texture::Texture(TextureResource* resource, TexturePartCoordinate texturePart, ID3D11SamplerState* samplerState) 
+    Sprite::Sprite(TextureResource* resource, TexturePartCoordinate texturePart, ID3D11SamplerState* samplerState) 
         : _resource(resource), _currentTexturePart(texturePart), _samplerState(samplerState)
     {
         _dTile = { 1, 1 };
         _dTexture = { 0, 0 };
     }
 
-    void Texture::SetSamplerState(ID3D11SamplerState* samplerState)
+    void Sprite::SetSamplerState(ID3D11SamplerState* samplerState)
     {
         _samplerState = samplerState;
     }
 
-    TexturePartCoordinate Texture::GetCurrentTexturePart()
+    TexturePartCoordinateRatio Sprite::GetCurrentTexturePart()
     {
-        TexturePartCoordinate ret;
+        TexturePartCoordinateRatio ret;
         ret.left = (((float)_currentTexturePart.left / _resource->GetWidth()) + _dTexture.u) * _dTile.u;
         ret.top = (((float)_currentTexturePart.top / _resource->GetHeight()) + _dTexture.v) * _dTile.v;
         ret.right = (((float)_currentTexturePart.right / _resource->GetWidth()) + _dTexture.u) * _dTile.u;
@@ -58,35 +58,35 @@ namespace SSB
         return ret;
     }
 
-    void Texture::SetCurrentTexturePart(TexturePartRelative part)
+    void Sprite::SetCurrentSprite(TexturePartRelative part)
     {
-        SetCurrentTexturePart(RtC(part));
+        SetCurrentSprite(RtC(part));
     }
 
-    void Texture::Scroll(float xRatio, float yRatio)
+    void Sprite::Scroll(float xRatio, float yRatio)
     {
         _dTexture.u = xRatio;
         _dTexture.v = yRatio;
     }
 
-    void Texture::Tile(float xCoefficient, float yCoefficient)
+    void Sprite::Tile(float xCoefficient, float yCoefficient)
     {
         _dTile.u = xCoefficient;
         _dTile.v = yCoefficient;
     }
-    bool Texture::Init()
+    bool Sprite::Init()
     {
         return false;
     }
-    bool Texture::Frame()
+    bool Sprite::Frame()
     {
         return false;
     }
-    bool Texture::Render()
+    bool Sprite::Render()
     {
         return false;
     }
-    bool Texture::Release()
+    bool Sprite::Release()
     {
         _samplerState = nullptr;
         return false;
@@ -112,14 +112,28 @@ namespace SSB
 		return rel;
 	}
 
-    Sprite::Sprite(TextureResource* resource, std::vector<TexturePartCoordinate> actionSequence, ID3D11SamplerState* samplerState) 
-        : Texture(resource, actionSequence[0], samplerState), _actionSequence(actionSequence)
+    SpriteAction::SpriteAction(TextureResource* resource, std::vector<TexturePartCoordinate> actionSequence, ID3D11SamplerState* samplerState) 
+        : Sprite(resource, actionSequence[0], samplerState), _actionSequence(actionSequence)
     {
         _loop = false;
         _interval = 1.0f;
     }
 
-    bool SSB::Sprite::Init()
+    void SpriteAction::SetSpriteAction(std::vector<TexturePartCoordinate> actionSequence)
+    {
+        _actionSequence = actionSequence;
+    }
+
+    void SpriteAction::SetSpriteAction(std::vector<TexturePartRelative> actionSequence)
+    {
+        _actionSequence.clear();
+        for (auto action : actionSequence)
+        {
+            _actionSequence.push_back(RtC(action));
+        }
+    }
+
+    bool SSB::SpriteAction::Init()
 	{
 		_currentActionIndex = 0;
 
@@ -130,32 +144,45 @@ namespace SSB
 		return true;
 	}
 
-	bool SSB::Sprite::Frame()
+	bool SSB::SpriteAction::Frame()
 	{
-        _timer.Frame();
+        if (!_finished)
+        {
+            _timer.Frame();
 
-		if (_interval <= _timer.GetElapseTime() - _lastTime)
-		{
-			++_currentActionIndex;
-			if (_currentActionIndex == _actionSequence.size())
-			{
-				_currentActionIndex = 0;
-			}
-			_lastTime = _timer.GetElapseTime();
-		}
-        Texture::SetCurrentTexturePart(_actionSequence[_currentActionIndex]);
+            if (_interval <= _timer.GetElapseTime() - _lastTime)
+            {
+                if (_currentActionIndex < _actionSequence.size() - 1)
+                {
+					++_currentActionIndex;
+                }
+                else
+				{
+                    if (_loop)
+                    {
+                        _currentActionIndex = 0;
+                    }
+                    else
+                    {
+                        _finished = true;
+                    }
+                }
+                _lastTime = _timer.GetElapseTime();
+            }
+            Sprite::SetCurrentSprite(_actionSequence[_currentActionIndex]);
+        }
 
 		return true;
 	}
 
-	bool SSB::Sprite::Render()
+	bool SSB::SpriteAction::Render()
 	{
 		return true;
 	}
 
-	bool SSB::Sprite::Release()
+	bool SSB::SpriteAction::Release()
 	{
-        Texture::Release();
+        Sprite::Release();
         _actionSequence.clear();
 		return true;
 	}

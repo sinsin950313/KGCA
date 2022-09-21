@@ -45,8 +45,8 @@ namespace SSB
 	private:
 		ID3D11Buffer* _vertexBuffer;
 		ID3D11Buffer* _indexBuffer;
-		Texture* _texture;
-		Texture* _maskTexture;
+		Sprite* _sprite;
+		Sprite* _maskSprite;
 		Shader* _vs;
 		Shader* _ps;
 		ID3D11InputLayout* _vertexLayout;
@@ -61,14 +61,14 @@ namespace SSB
 		std::vector<SimpleVertex2D> GetNDCBoundary();
 
 	public:
-		void SetTexture(Texture* resource) { _texture = resource; }
-		void SetMaskTexture(Texture* alpha) { _maskTexture = alpha; }
+		void SetTexture(Sprite* resource) { _sprite = resource; }
+		void SetMaskSprite(Sprite* alpha) { _maskSprite = alpha; }
 		void SetVertexShader(Shader* shader) { _vs = shader; }
 		void SetPixelShader(Shader* shader) { _ps = shader; }
 		void Resize(float width, float height);
 		void Move(Position2D centerPosition) { _center = centerPosition; }
 		void SetCenter(Position2D center) { _center = center; }
-		Texture* GetTexture() { return _texture; }
+		Sprite* GetSprite() { return _sprite; }
 
 	public:
 		bool Init() override;

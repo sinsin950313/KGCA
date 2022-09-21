@@ -72,7 +72,7 @@ void SSB::DX2DObject::UpdateBoundary()
     float dx[4]{ -1, 1, -1, 1 };
     float dy[4]{ -1, -1, 1, 1 };
 
-    auto texturePart = _texture->GetCurrentTexturePart();
+    auto texturePart = _sprite->GetCurrentTexturePart();
     float texU[4]{ texturePart.left, texturePart.right, texturePart.left, texturePart.right };
     float texV[4]{ texturePart.top, texturePart.top, texturePart.bottom, texturePart.bottom };
 
@@ -143,10 +143,10 @@ bool SSB::DX2DObject::Frame()
     auto ndcBoundary = GetNDCBoundary();
     g_dxWindow->GetDeviceContext()->UpdateSubresource(_vertexBuffer, NULL, NULL, &ndcBoundary.at(0), 0, 0);
 
-    _texture->Frame();
-    if (_maskTexture)
+    _sprite->Frame();
+    if (_maskSprite)
     {
-        _maskTexture->Frame();
+        _maskSprite->Frame();
     }
 
     return true;
@@ -177,15 +177,15 @@ void SSB::DX2DObject::Draw(ID3D11DeviceContext* dc)
     dc->IASetInputLayout(_vertexLayout);
     dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
     dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
-    if (_texture != nullptr)
+    if (_sprite != nullptr)
     {
-        dc->PSSetShaderResources(0, 1, _texture->GetResource()->GetShaderResourceView());
-		ID3D11SamplerState* ss = _texture->GetSamplerState();
+        dc->PSSetShaderResources(0, 1, _sprite->GetResource()->GetShaderResourceView());
+		ID3D11SamplerState* ss = _sprite->GetSamplerState();
 		dc->PSSetSamplers(0, 1, &ss);
     }
-    if (_maskTexture != nullptr)
+    if (_maskSprite != nullptr)
     {
-        dc->PSSetShaderResources(1, 1, _maskTexture->GetResource()->GetShaderResourceView());
+        dc->PSSetShaderResources(1, 1, _maskSprite->GetResource()->GetShaderResourceView());
     }
 	dc->DrawIndexed(_indexList.size(), 0, 0);
 }

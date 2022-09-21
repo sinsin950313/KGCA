@@ -35,8 +35,8 @@ namespace SSB
         return true;
     }
 
-    Sprite::Sprite(TextureResource* resource, TexturePartCoordinate texturePart, ID3D11SamplerState* samplerState) 
-        : _resource(resource), _currentTexturePart(texturePart), _samplerState(samplerState)
+    Sprite::Sprite(TextureResource* resource, TextureResource* maskResource) 
+        : _resource(resource), _maskResource(maskResource)
     {
         _dTile = { 1, 1 };
         _dTexture = { 0, 0 };
@@ -88,6 +88,7 @@ namespace SSB
     }
     bool Sprite::Release()
     {
+        _resource = nullptr;
         _samplerState = nullptr;
         return false;
     }
@@ -112,8 +113,8 @@ namespace SSB
 		return rel;
 	}
 
-    SpriteAction::SpriteAction(TextureResource* resource, std::vector<TexturePartCoordinate> actionSequence, ID3D11SamplerState* samplerState) 
-        : Sprite(resource, actionSequence[0], samplerState), _actionSequence(actionSequence)
+    SpriteAction::SpriteAction(TextureResource* resource, TextureResource* maskResource) 
+        : Sprite(resource, maskResource)
     {
         _loop = false;
         _interval = 1.0f;

@@ -148,6 +148,7 @@ copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Common.h" />
+    <ClInclude Include="CommonPath.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

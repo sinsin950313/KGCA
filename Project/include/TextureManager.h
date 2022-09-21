@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.h"
+#include "CommonPath.h"
 #include <map>
 #include <string>
 #include "Texture.h"
@@ -15,7 +16,7 @@ namespace SSB
 	{
 	private:
 		std::map<std::wstring, TextureResource*> _resourceData;
-		std::wstring _path = L"../../Resource/Texture/";
+		std::wstring _path = kTextureResourcePath;
 
 	private:
 		static TextureResourceManager* _instance;
@@ -33,6 +34,7 @@ namespace SSB
 
 	private:
 		std::wstring GetPath(std::wstring resourceFileName) { return _path + resourceFileName; }
+
 
 	public:
 		bool Init() override;
@@ -52,7 +54,7 @@ namespace SSB
 	{
 	private:
 		std::map<std::wstring, SpriteData> _spriteDatas;
-		std::wstring _path = L"../../Resource/Data/Sprite/";
+		std::wstring _path = kSpritePath;
 
 	private:
 		static SpriteLoader* _instance;
@@ -95,7 +97,7 @@ namespace SSB
 	{
 	private:
 		std::map<std::wstring, SpriteActionData> _spriteActionDatas;
-		std::wstring _path = L"../../Resource/Data/SpriteAction/";
+		std::wstring _path = kSpriteActionPath;
 
 	private:
 		static SpriteActionLoader* _instance;

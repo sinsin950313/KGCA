@@ -144,7 +144,7 @@ namespace SSB
             TexturePartRelative texturePart;
             _stscanf_s(pBuffer, _T("%s %d %d %d %d"), pTemp, (unsigned int)_countof(pTemp),
 				&texturePart.left, &texturePart.top, &texturePart.width, &texturePart.height);
-			spriteData->second.textureParts.insert(std::make_pair(wtm(pTemp), texturePart));
+            RegisterSpriteWithRelativeValue(resourceFileName, pTemp, texturePart);
         }
         fclose(fp_src);
     }
@@ -154,9 +154,11 @@ namespace SSB
         if (_spriteDatas.find(resourceFileName) == _spriteDatas.end())
         {
             TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
+            TextureResource* maskResource = TextureResourceManager::GetInstance().Load(GetMaskFileName(resourceFileName));
 
             SpriteData data;
             data.resource = resource;
+            data.maskResource = maskResource;
             _spriteDatas.insert(std::make_pair(resourceFileName, data));
         }
 
@@ -166,12 +168,15 @@ namespace SSB
             std::wstring textureInfoFile = SplitPath(resourceFileName)[2];
             RegisterSpriteFromFile(resourceFileName, textureInfoFile);
         }
-
         auto iter = _spriteDatas.find(resourceFileName);
         TextureResource* resource = iter->second.resource;
+        TextureResource* maskResource = iter->second.maskResource;
         TexturePartRelative relative = iter->second.textureParts.find(wtm(spriteName))->second;
         TexturePartCoordinate coord = RtC(relative);
-        Sprite* sprite = new Sprite(resource, coord, DXStateManager::GetInstance().GetSamplerState(samplerName));
+
+        Sprite* sprite = new Sprite(resource, maskResource);
+        sprite->SetCurrentSprite(coord);
+        sprite->SetSamplerState(DXStateManager::GetInstance().GetSamplerState(samplerName));
 
         return sprite;
     }
@@ -266,7 +271,7 @@ namespace SSB
                     &texturePart.left, &texturePart.top, &texturePart.width, &texturePart.height);
                 sequence.push_back(texturePart);
             }
-			spriteData->second.sequenceDatas.insert(std::make_pair(wtm(pTemp), sequence));
+            RegisterSpriteActionWithRelativeValue(resourceFileName, pTemp, sequence);
         }
         fclose(fp_src);
     }
@@ -321,7 +326,13 @@ namespace SSB
         {
             sequenceCoord.push_back(RtC(rel));
         }
-        SpriteAction* spriteAction = new SpriteAction(resource, sequenceCoord, DXStateManager::GetInstance().GetSamplerState(samplerName));
+
+        TextureResource* maskResource;
+        asf;
+
+        SpriteAction* spriteAction = new SpriteAction(resource, maskResource);
+        spriteAction->SetSpriteAction(sequenceCoord);
+        spriteAction->SetSamplerState(DXStateManager::GetInstance().GetSamplerState(samplerName));
 
         return spriteAction;
     }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.h"
+#include "CommonPath.h"
 #include <map>
 #include <string>
 #include "Texture.h"
@@ -15,7 +16,7 @@ namespace SSB
 	{
 	private:
 		std::map<std::wstring, TextureResource*> _resourceData;
-		std::wstring _path = L"../../Resource/Texture/";
+		std::wstring _path = kTextureResourcePath;
 
 	private:
 		static TextureResourceManager* _instance;
@@ -34,6 +35,7 @@ namespace SSB
 	private:
 		std::wstring GetPath(std::wstring resourceFileName) { return _path + resourceFileName; }
 
+
 	public:
 		bool Init() override;
 		bool Frame() override;
@@ -44,6 +46,7 @@ namespace SSB
 	struct SpriteData
 	{
 		TextureResource* resource;
+		TextureResource* maskResource;
 		std::map<std::string, TexturePartRelative> textureParts;
 	};
 
@@ -52,7 +55,7 @@ namespace SSB
 	{
 	private:
 		std::map<std::wstring, SpriteData> _spriteDatas;
-		std::wstring _path = L"../../Resource/Data/Sprite/";
+		std::wstring _path = kSpritePath;
 
 	private:
 		static SpriteLoader* _instance;
@@ -72,10 +75,13 @@ namespace SSB
 		void RegisterSpriteWithRelativeValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartRelative part);
 		void RegisterSpriteWithCoordinateValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartCoordinate part);
 		Sprite* Load(std::wstring resourceFileName, std::wstring spriteName, std::string samplerName);
-		TexturePartRelative GetTexturePart(std::wstring resourceFileName, std::wstring spriteName);
+		//TexturePartRelative GetTexturePart(std::wstring resourceFileName, std::wstring spriteName);
 
 	private:
 		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".SpriteInfo"; }
+		std::wstring GetMaskFileName(std::wstring originFileName);
+		SpriteData& GetSpriteData(std::wstring resourceFileName);
+		std::map<std::string, TexturePartRelative>& GetTexturePart(std::wstring resourceFileName, std::wstring spriteName);
 
 	public:
 		bool Init() override;
@@ -87,6 +93,7 @@ namespace SSB
 	struct SpriteActionData
 	{
 		TextureResource* resource;
+		TextureResource* maskResource;
 		std::map<std::string, std::vector<TexturePartRelative>> sequenceDatas;
 	};
 
@@ -95,7 +102,7 @@ namespace SSB
 	{
 	private:
 		std::map<std::wstring, SpriteActionData> _spriteActionDatas;
-		std::wstring _path = L"../../Resource/Data/SpriteAction/";
+		std::wstring _path = kSpriteActionPath;
 
 	private:
 		static SpriteActionLoader* _instance;

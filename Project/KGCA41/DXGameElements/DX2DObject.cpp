@@ -144,10 +144,6 @@ bool SSB::DX2DObject::Frame()
     g_dxWindow->GetDeviceContext()->UpdateSubresource(_vertexBuffer, NULL, NULL, &ndcBoundary.at(0), 0, 0);
 
     _sprite->Frame();
-    if (_maskSprite)
-    {
-        _maskSprite->Frame();
-    }
 
     return true;
 }
@@ -163,6 +159,7 @@ bool SSB::DX2DObject::Release()
     if (_vertexBuffer) _vertexBuffer->Release();
     if (_vertexLayout) _vertexLayout->Release();
     if (_indexBuffer) _indexBuffer->Release();
+    if (_sprite) _sprite->Release();
 
     return true;
 }
@@ -183,9 +180,9 @@ void SSB::DX2DObject::Draw(ID3D11DeviceContext* dc)
 		ID3D11SamplerState* ss = _sprite->GetSamplerState();
 		dc->PSSetSamplers(0, 1, &ss);
     }
-    if (_maskSprite != nullptr)
+    if (_sprite->HasMaskResource())
     {
-        dc->PSSetShaderResources(1, 1, _maskSprite->GetResource()->GetShaderResourceView());
+        dc->PSSetShaderResources(1, 1, _sprite->GetMaskResource()->GetShaderResourceView());
     }
 	dc->DrawIndexed(_indexList.size(), 0, 0);
 }

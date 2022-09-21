@@ -2,6 +2,7 @@
 #include "Rectangle.h"
 #include "TextureManager.h"
 #include "ShaderManager.h"
+#include "DXStateManager.h"
 
 namespace SSB
 {
@@ -31,8 +32,8 @@ namespace SSB
 	{
 		_dxObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
 		_dxObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
-		_dxObject->SetTexture(TextureResourceManager::GetInstance().Load(L"bitmap1.bmp"));
-		_dxObject->SetMaskTexture(TextureResourceManager::GetInstance().Load(L"bitmap2.bmp"));
+		//_dxObject->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"bitmap1", DXStateManager::kDefaultSolidRasterizer));
+		//_dxObject->SetMaskSprite(TextureResourceManager::GetInstance().Load(L"bitmap2.bmp"));
 		_dxObject->Init();
 		return true;
 	}

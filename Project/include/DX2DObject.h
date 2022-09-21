@@ -61,7 +61,7 @@ namespace SSB
 		std::vector<SimpleVertex2D> GetNDCBoundary();
 
 	public:
-		void SetTexture(Sprite* resource) { _sprite = resource; }
+		void SetSprite(Sprite* resource) { _sprite = resource; }
 		void SetMaskSprite(Sprite* alpha) { _maskSprite = alpha; }
 		void SetVertexShader(Shader* shader) { _vs = shader; }
 		void SetPixelShader(Shader* shader) { _ps = shader; }

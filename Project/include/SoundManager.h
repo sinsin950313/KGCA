@@ -7,6 +7,7 @@
 #include <string>
 #include "Common.h"
 #include "Sound.h"
+#include "CommonPath.h"
 
 namespace SSB
 {
@@ -15,7 +16,7 @@ namespace SSB
 	private:
 		FMOD::System* _system;
 		std::map<std::wstring, FMOD::Sound*> _soundList;
-		std::wstring _path = L"../../Resource/Sound/";
+		std::wstring _path = kSoundPath;
 
 	public:
 		static SoundManager* _instance;

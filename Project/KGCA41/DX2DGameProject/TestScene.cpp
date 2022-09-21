@@ -5,6 +5,8 @@
 #include "InputManager.h"
 #include "DXWindow.h"
 #include "DX2DGameObjectFactory.h"
+#include "TextureManager.h"
+#include "DXStateManager.h"
 
 namespace SSB
 {
@@ -27,17 +29,20 @@ namespace SSB
 
 	bool TestScene::Init()
 	{
+		SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"KGCABK.bmp", L"Background", {0, 0, 1024, 768});
+		_map->GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"KGCABK.bmp", L"Background", DXStateManager::kDefaultWrapSample));
 		_map->Init();
-		_map->GetDXObject()->GetTexture()->RegisterTexturePartWithCoordinateValue("Background", { 0, 0, 1024, 768 });
-		_map->GetDXObject()->GetTexture()->SetCurrentTexturePart("Background");
-		for (auto object : _objects)
-		{
-			object->Init();
-			//object->GetDXObject()->SetRect("Enemy", {46, 62, 68, 79});
-		}
+
+		//for (auto object : _objects)
+		//{
+		//	object->Init();
+		//	//object->GetDXObject()->SetRect("Enemy", {46, 62, 68, 79});
+		//}
+
+		SpriteLoader::GetInstance().RegisterSpriteFromFile(L"bitmap1.bmp", L"bitmap1");
+		_player->GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"Player", DXStateManager::kDefaultWrapSample));
 		_player->Init();
-		_player->GetDXObject()->GetTexture()->RegisterTexturePartWithRelativeValue("Player", { 91, 2, 39, 59 });
-		_player->GetDXObject()->GetTexture()->SetCurrentTexturePart("Player");
+
 		_camera->Init();
 
 		return true;
@@ -49,10 +54,10 @@ namespace SSB
 
 		_map->Frame();
 
-		for (auto object : _objects)
-		{
-			object->Frame();
-		}
+		//for (auto object : _objects)
+		//{
+		//	object->Frame();
+		//}
 		_player->Frame();
 
 		_camera->ConnectTo(_player);
@@ -67,12 +72,12 @@ namespace SSB
 		delete _map;
 		_map = nullptr;
 
-		for (auto object : _objects)
-		{
-			object->Release();
-			delete object;
-		}
-		_objects.clear();
+		//for (auto object : _objects)
+		//{
+		//	object->Release();
+		//	delete object;
+		//}
+		//_objects.clear();
 
 		_player->Release();
 		delete _player;

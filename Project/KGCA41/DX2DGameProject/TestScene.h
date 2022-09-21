@@ -15,7 +15,7 @@ namespace SSB
 	private:
 		DX2DMapObject* _map;
 		DX2DCamera* _camera;
-		std::vector<DX2DGameObject*> _objects;
+		//std::vector<DX2DGameObject*> _objects;
 		DX2DGameObject* _player;
 		DX2DGameObjectFactory* _factory;
 		float _dx = 0;

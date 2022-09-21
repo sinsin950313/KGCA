@@ -3,6 +3,7 @@
 #include "Common.h"
 #include <string>
 #include <map>
+#include "CommonPath.h"
 
 class ID3D11Device;
 
@@ -15,7 +16,7 @@ namespace SSB
 	private:
 		std::map<std::wstring, Shader*> _vertexShaderData;
 		std::map<std::wstring, Shader*> _pixelShaderData;
-		std::wstring _path = L"../../Shader/";
+		std::wstring _path = kShaderPath;
 
 	private:
 		static ShaderManager* _instance;

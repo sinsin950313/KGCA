@@ -119,7 +119,7 @@ namespace SSB
 		}
 		bool Release() override
 		{
-			_endMessage->Release();
+			if (_endMessage)_endMessage->Release();
 			return Scene::Release();
 		}
 	};

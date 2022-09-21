@@ -69,16 +69,18 @@ namespace SSB
 	{
 	private:
 		TextureResource* _resource;
+		TextureResource* _maskResource = nullptr;
 		ID3D11SamplerState* _samplerState;
 		TexturePartCoordinate _currentTexturePart;
 		TextureParam _dTexture;
 		TextureParam _dTile;
 
 	public:
-		Sprite(TextureResource* resource, TexturePartCoordinate texturePart, ID3D11SamplerState* samplerState);
+		Sprite(TextureResource* resource, TextureResource* maskResource = nullptr);
 
 	public:
 		TextureResource* GetResource() { return _resource; }
+		TextureResource* GetMaskResource() { return _maskResource; }
 		void SetSamplerState(ID3D11SamplerState* samplerState);
 		ID3D11SamplerState* GetSamplerState() { return _samplerState; }
 		TexturePartCoordinateRatio GetCurrentTexturePart();
@@ -86,6 +88,7 @@ namespace SSB
 		void SetCurrentSprite(TexturePartRelative part);
 		void Scroll(float xRatio, float yRatio);
 		void Tile(float xCoefficient, float yCoefficient);
+		bool HasMaskResource() { return _maskResource != nullptr; }
 
 	public:
 		bool Init() override;
@@ -106,7 +109,7 @@ namespace SSB
 		float _lastTime;
 
 	public:
-		SpriteAction(TextureResource* resource, std::vector<TexturePartCoordinate> actionSequence, ID3D11SamplerState* samplerState);
+		SpriteAction(TextureResource* resource, TextureResource* maskResource = nullptr);
 
 	public:
 		void SetLoop(bool loop) { _loop = loop; }

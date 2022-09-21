@@ -46,6 +46,7 @@ namespace SSB
 	struct SpriteData
 	{
 		TextureResource* resource;
+		TextureResource* maskResource;
 		std::map<std::string, TexturePartRelative> textureParts;
 	};
 
@@ -78,6 +79,7 @@ namespace SSB
 
 	private:
 		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".SpriteInfo"; }
+		std::wstring GetMaskFileName(std::wstring originFileName);
 
 	public:
 		bool Init() override;
@@ -89,6 +91,7 @@ namespace SSB
 	struct SpriteActionData
 	{
 		TextureResource* resource;
+		TextureResource* maskResource;
 		std::map<std::string, std::vector<TexturePartRelative>> sequenceDatas;
 	};
 
@@ -123,6 +126,7 @@ namespace SSB
 
 	private:
 		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".spriteActionInfo"; }
+		std::wstring GetMaskFileName(std::wstring originFileName);
 
 	public:
 		bool Init() override;

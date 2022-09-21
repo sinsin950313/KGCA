@@ -1,5 +1,6 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "DirectXTK.lib")
+#pragma comment (lib, "WindowUtility.lib")
 
 #include "TextureManager.h"
 #include "Texture.h"
@@ -109,9 +110,11 @@ namespace SSB
         if (_spriteDatas.find(resourceFileName) == _spriteDatas.end())
         {
             TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
+            TextureResource* maskResource = TextureResourceManager::GetInstance().Load(GetMaskFileName(resourceFileName));
 
             SpriteData data;
             data.resource = resource;
+            data.maskResource = maskResource;
             _spriteDatas.insert(std::make_pair(resourceFileName, data));
         }
 
@@ -183,23 +186,16 @@ namespace SSB
 
     TexturePartRelative SpriteLoader::GetTexturePart(std::wstring resourceFileName, std::wstring spriteName)
     {
-        if (_spriteDatas.find(resourceFileName) == _spriteDatas.end())
-        {
-            TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
+        return _spriteDatas.find(resourceFileName)->second.textureParts.find(wtm(spriteName))->second;
+    }
 
-            SpriteData data;
-            data.resource = resource;
-            _spriteDatas.insert(std::make_pair(resourceFileName, data));
-        }
-
-        auto textureParts = _spriteDatas.find(resourceFileName)->second.textureParts;
-        if (textureParts.find(wtm(spriteName)) == textureParts.end())
-        {
-            RegisterSpriteFromFile(resourceFileName, resourceFileName);
-        }
-
-        auto iter = _spriteDatas.find(resourceFileName);
-        return iter->second.textureParts.find(wtm(spriteName))->second;
+    std::wstring SpriteLoader::GetMaskFileName(std::wstring originFileName)
+    {
+        auto part = SplitPath(originFileName);
+        std::wstring fileName = part[2];
+        fileName += L"Mask";
+        fileName += part[3];
+        return fileName;
     }
 
     bool SpriteLoader::Init()
@@ -281,9 +277,11 @@ namespace SSB
         if (_spriteActionDatas.find(resourceFileName) == _spriteActionDatas.end())
         {
             TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
+            TextureResource* maskResource = TextureResourceManager::GetInstance().Load(GetMaskFileName(resourceFileName));
 
             SpriteActionData data;
             data.resource = resource;
+            data.maskResource = maskResource;
             _spriteActionDatas.insert(std::make_pair(resourceFileName, data));
         }
 
@@ -305,9 +303,11 @@ namespace SSB
         if (_spriteActionDatas.find(resourceFileName) == _spriteActionDatas.end())
         {
             TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
+            TextureResource* maskResource = TextureResourceManager::GetInstance().Load(GetMaskFileName(resourceFileName));
 
             SpriteActionData data;
             data.resource = resource;
+            data.maskResource = maskResource;
             _spriteActionDatas.insert(std::make_pair(resourceFileName, data));
         }
 
@@ -320,15 +320,13 @@ namespace SSB
 
         auto iter = _spriteActionDatas.find(resourceFileName);
         TextureResource* resource = iter->second.resource;
+        TextureResource* maskResource = iter->second.maskResource;
         std::vector<TexturePartRelative> relative = iter->second.sequenceDatas.find(wtm(actionName))->second;
         std::vector<TexturePartCoordinate> sequenceCoord;
         for (auto rel : relative)
         {
             sequenceCoord.push_back(RtC(rel));
         }
-
-        TextureResource* maskResource;
-        asf;
 
         SpriteAction* spriteAction = new SpriteAction(resource, maskResource);
         spriteAction->SetSpriteAction(sequenceCoord);
@@ -339,28 +337,16 @@ namespace SSB
 
     std::vector<TexturePartRelative> SpriteActionLoader::GetSpriteAction(std::wstring resourceFileName, std::wstring actionName)
     {
-        if (_spriteActionDatas.find(resourceFileName) == _spriteActionDatas.end())
-        {
-            TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
+        return _spriteActionDatas.find(resourceFileName)->second.sequenceDatas.find(wtm(actionName))->second;
+    }
 
-            SpriteActionData data;
-            data.resource = resource;
-            _spriteActionDatas.insert(std::make_pair(resourceFileName, data));
-        }
-
-        auto actionData = _spriteActionDatas.find(resourceFileName)->second.sequenceDatas;
-        if (actionData.find(wtm(actionName)) == actionData.end())
-        {
-            RegisterSpriteActionFromFile(resourceFileName, resourceFileName);
-        }
-
-        auto actionSequence = actionData.find(wtm(actionName));
-        std::vector<TexturePartRelative> ret;
-        for (auto action : actionSequence->second)
-        {
-            ret.push_back(action);
-        }
-        return ret;
+    std::wstring SpriteActionLoader::GetMaskFileName(std::wstring originFileName)
+    {
+        auto part = SplitPath(originFileName);
+        std::wstring fileName = part[2];
+        fileName += L"Mask";
+        fileName += part[3];
+        return fileName;
     }
 
     bool SpriteActionLoader::Init()

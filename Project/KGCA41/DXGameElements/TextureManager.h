@@ -75,13 +75,11 @@ namespace SSB
 		void RegisterSpriteWithRelativeValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartRelative part);
 		void RegisterSpriteWithCoordinateValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartCoordinate part);
 		Sprite* Load(std::wstring resourceFileName, std::wstring spriteName, std::string samplerName);
-		//TexturePartRelative GetTexturePart(std::wstring resourceFileName, std::wstring spriteName);
+		TexturePartRelative GetTexturePart(std::wstring resourceFileName, std::wstring spriteName);
 
 	private:
 		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".SpriteInfo"; }
 		std::wstring GetMaskFileName(std::wstring originFileName);
-		SpriteData& GetSpriteData(std::wstring resourceFileName);
-		std::map<std::string, TexturePartRelative>& GetTexturePart(std::wstring resourceFileName, std::wstring spriteName);
 
 	public:
 		bool Init() override;
@@ -128,6 +126,7 @@ namespace SSB
 
 	private:
 		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".spriteActionInfo"; }
+		std::wstring GetMaskFileName(std::wstring originFileName);
 
 	public:
 		bool Init() override;

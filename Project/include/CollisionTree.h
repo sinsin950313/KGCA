@@ -53,6 +53,7 @@ namespace SSB
 		public:
 			const Volume<dimension>* GetVolume() override { return _space; }
 			void ClearDynamicObjects();
+			void Clear();
 		};
 
 	private:
@@ -76,6 +77,15 @@ namespace SSB
 			{
 				UpdateDynamicObject(*iter);
 			}
+		}
+		void ClearDynamicObject()
+		{
+			_root->ClearDynamicObjects();
+		}
+		void Clear()
+		{
+			_dynamicObjectList.clear();
+			_root->Clear();
 		}
 	};
 
@@ -249,6 +259,20 @@ namespace SSB
 			if (_child[i] != nullptr)
 			{
 				_child[i]->ClearDynamicObjects();
+			}
+		}
+	}
+
+	template<int dimension>
+	inline void CollisionTree<dimension>::Node::Clear()
+	{
+		_staticObjects.clear();
+		_dynamicObjects.clear();
+		for (int i = 0; i < _divideCount; ++i)
+		{
+			if (_child[i] != nullptr)
+			{
+				_child[i]->Clear();
 			}
 		}
 	}

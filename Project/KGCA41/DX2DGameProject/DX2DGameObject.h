@@ -11,6 +11,7 @@ namespace SSB
 	private:
 		DX2DObject* _dxObject;
 		Object2D* _physicsObject;
+		int _currentLayer;
 
 	public:
 		DX2DGameObject(Position2D center, float width, float height, float mass);
@@ -22,6 +23,8 @@ namespace SSB
 		Vector2D GetCenter() { return _physicsObject->GetVolume()->GetCenter(); }
 		void Move(float x, float y);
 		void Move(Vector2D center);
+		void SetCurrentLayer(int layer) { _currentLayer = layer; }
+		int GetCurrentLayer() { return _currentLayer; }
 
 	public:
 		bool Init() override;

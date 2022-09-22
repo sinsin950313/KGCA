@@ -45,6 +45,8 @@ namespace SSB
 
 		_camera->Init();
 
+		_map->SetPlayer(_player);
+
 		return true;
 	}
 

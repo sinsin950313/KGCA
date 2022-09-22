@@ -12,16 +12,21 @@ namespace SSB
 		_object = new Object2D(new Rectangle(center.Get(0), center.Get(1), width, height), Rigidbody2D(0));
 		_dxObject = new DX2DObject(Position2D{ 0, 0 }, width, height);
 
-		int maxLayer = 0;
+		int treeMaxLayer = 0;
 		float wTmp = width;
 		float hTmp = height;
 		while (wTmp / 2 < 2 || hTmp / 2 < 2)
 		{
-			++maxLayer;
+			++treeMaxLayer;
 			wTmp /= 2;
 			hTmp /= 2;
 		}
-		_qt = new QuadTree(width, height, maxLayer);
+
+		_layer.resize(_maxLayer);
+		for (int i = 0; i < _maxLayer; ++i)
+		{
+			_layer[i] = new QuadTree(width, height, treeMaxLayer);
+		}
 	}
 
 	DX2DMapObject::~DX2DMapObject()
@@ -33,9 +38,11 @@ namespace SSB
 
 	std::vector<DX2DGameObject*> DX2DMapObject::GetCollideObjectList(DX2DGameObject* object)
 	{
+		int currentLayer = object->GetCurrentLayer();
 		std::vector<DX2DGameObject*> collidedObjectList;
 
-		auto collidePhysicsObjectList = _qt->GetCollidedObjects(object->GetPhysicsObject());
+		QuadTree* currentLayerTree = _layer[currentLayer];
+		auto collidePhysicsObjectList = currentLayerTree->GetCollidedObjects(object->GetPhysicsObject());
 		for (auto physicsObject : collidePhysicsObjectList)
 		{
 			collidedObjectList.push_back(_physicsToDX2DMatch.find(physicsObject)->second);
@@ -48,10 +55,13 @@ namespace SSB
 	{
 		std::vector<DX2DGameObject*> collidedObjectList;
 
-		auto collidePhysicsObjectList = _qt->GetCollidedObjects(camera->GetCaptureArea());
-		for (auto physicsObject : collidePhysicsObjectList)
+		for (auto currentLayer : _layer)
 		{
-			collidedObjectList.push_back(_physicsToDX2DMatch.find(physicsObject)->second);
+			auto collidePhysicsObjectList = currentLayer->GetCollidedObjects(camera->GetCaptureArea());
+			for (auto physicsObject : collidePhysicsObjectList)
+			{
+				collidedObjectList.push_back(_physicsToDX2DMatch.find(physicsObject)->second);
+			}
 		}
 
 		return collidedObjectList;
@@ -59,19 +69,23 @@ namespace SSB
 
 	bool DX2DMapObject::IsCollide(DX2DGameObject* object)
 	{
-		return !_qt->GetCollidedObjects(object->GetPhysicsObject()).empty();
+		int currentLayer = object->GetCurrentLayer();
+		return !_layer[currentLayer]->GetCollidedObjects(object->GetPhysicsObject()).empty();
 	}
 
-	void DX2DMapObject::RegisterStaticObject(Object2D* object, DX2DGameObject* dxObject)
+	void DX2DMapObject::RegisterStaticObject(DX2DGameObject* dxObject)
 	{
-		_physicsToDX2DMatch.insert(std::make_pair(object, dxObject));
-		_qt->AddStaticObject(object);
+		_physicsToDX2DMatch.insert(std::make_pair(dxObject->GetPhysicsObject(), dxObject));
+		int currentLayer = dxObject->GetCurrentLayer();
+		_layer[currentLayer]->AddStaticObject(dxObject->GetPhysicsObject());
 	}
 
-	void DX2DMapObject::RegisterDynamicObject(Object2D* object, DX2DGameObject* dxObject)
+	void DX2DMapObject::RegisterDynamicObject(DX2DGameObject* dxObject)
 	{
-		_physicsToDX2DMatch.insert(std::make_pair(object, dxObject));
-		_qt->AddDynamicObject(object);
+		_physicsToDX2DMatch.insert(std::make_pair(dxObject->GetPhysicsObject(), dxObject));
+		int currentLayer = dxObject->GetCurrentLayer();
+		_layer[currentLayer]->AddDynamicObject(dxObject->GetPhysicsObject());
+		_dynamicObjectList.push_back(dxObject);
 	}
 
 	bool DX2DMapObject::Init()
@@ -88,6 +102,18 @@ namespace SSB
 	bool DX2DMapObject::Frame()
 	{
 		_dxObject->Frame();
+		for (auto layer : _layer)
+		{
+			layer->ClearDynamicObject();
+		}
+
+		for (auto object : _dynamicObjectList)
+		{
+			int currentLayer = GetCurrentLayer(object);
+			object->SetCurrentLayer(currentLayer);
+			_layer[currentLayer]->AddDynamicObject(object->GetPhysicsObject());
+		}
+
 		return true;
 	}
 
@@ -99,11 +125,12 @@ namespace SSB
 
 	bool DX2DMapObject::Release()
 	{
-		if (_qt)
+		for (auto layer : _layer)
 		{
-			delete _qt;
-			_qt = nullptr;
+			delete layer;
 		}
+		_layer.clear();
+		_dynamicObjectList.clear();
 
 		if (_dxObject)
 		{
@@ -119,5 +146,17 @@ namespace SSB
 		}
 
 		return true;
+	}
+	int DX2DMapObject::GetCurrentLayer(DX2DGameObject* object)
+	{
+		int objectLayer = object->GetCurrentLayer();
+		int playerLayer = _player->GetCurrentLayer();
+		int diff = objectLayer - playerLayer;
+
+		int halfLayer = _maxLayer / 2;
+		diff = max(diff, -halfLayer);
+		diff = min(diff, halfLayer);
+
+		return diff;
 	}
 }

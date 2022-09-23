@@ -38,7 +38,7 @@ namespace SSB
 
 	std::vector<DX2DGameObject*> DX2DMapObject::GetCollideObjectList(DX2DGameObject* object)
 	{
-		int currentLayer = object->GetCurrentLayer();
+		int currentLayer = object->GetCurrentMapLayer();
 		std::vector<DX2DGameObject*> collidedObjectList;
 
 		QuadTree* currentLayerTree = _layer[currentLayer];
@@ -69,21 +69,21 @@ namespace SSB
 
 	bool DX2DMapObject::IsCollide(DX2DGameObject* object)
 	{
-		int currentLayer = object->GetCurrentLayer();
+		int currentLayer = object->GetCurrentMapLayer();
 		return !_layer[currentLayer]->GetCollidedObjects(object->GetPhysicsObject()).empty();
 	}
 
 	void DX2DMapObject::RegisterStaticObject(DX2DGameObject* dxObject)
 	{
 		_physicsToDX2DMatch.insert(std::make_pair(dxObject->GetPhysicsObject(), dxObject));
-		int currentLayer = dxObject->GetCurrentLayer();
+		int currentLayer = dxObject->GetCurrentMapLayer();
 		_layer[currentLayer]->AddStaticObject(dxObject->GetPhysicsObject());
 	}
 
 	void DX2DMapObject::RegisterDynamicObject(DX2DGameObject* dxObject)
 	{
 		_physicsToDX2DMatch.insert(std::make_pair(dxObject->GetPhysicsObject(), dxObject));
-		int currentLayer = dxObject->GetCurrentLayer();
+		int currentLayer = dxObject->GetCurrentMapLayer();
 		_layer[currentLayer]->AddDynamicObject(dxObject->GetPhysicsObject());
 		_dynamicObjectList.push_back(dxObject);
 	}
@@ -107,9 +107,10 @@ namespace SSB
 			layer->ClearDynamicObject();
 		}
 
+		int playerCurrentLayer = _player->GetCurrentMapLayer();
 		for (auto object : _dynamicObjectList)
 		{
-			int currentLayer = GetCurrentLayer(object);
+			int currentLayer = GetCurrentMapLayer(object, playerCurrentLayer);
 			object->SetCurrentLayer(currentLayer);
 			_layer[currentLayer]->AddDynamicObject(object->GetPhysicsObject());
 		}
@@ -147,16 +148,15 @@ namespace SSB
 
 		return true;
 	}
-	int DX2DMapObject::GetCurrentLayer(DX2DGameObject* object)
+	int DX2DMapObject::GetCurrentMapLayer(DX2DGameObject* object, int playerCurrentLayer)
 	{
-		int objectLayer = object->GetCurrentLayer();
-		int playerLayer = _player->GetCurrentLayer();
-		int diff = objectLayer - playerLayer;
+		int objectLayer = object->GetCurrentMapLayer();
+		int diff = objectLayer - playerCurrentLayer;
 
 		int halfLayer = _maxLayer / 2;
 		diff = max(diff, -halfLayer);
 		diff = min(diff, halfLayer);
 
-		return diff;
+		return diff + halfLayer;
 	}
 }

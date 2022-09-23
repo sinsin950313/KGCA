@@ -22,7 +22,10 @@ namespace SSB
 		//_objects.push_back(_factory->CreateStaticGameObject(Position2D{ 20, 20 }, 10, 10, 1));
 		//_objects.push_back(_factory->CreateDynamicGameObject(Position2D{ -20, 20 }, 10, 10, 1));
 
-		_player = _factory->CreateDynamicGameObject(Position2D{ 0, 0, }, 10, 10, 1);
+		_playerObject = _factory->CreateDynamicGameObject(Position2D{ 0, 0, }, 10, 10, 1);
+		_playerController = new PlayerController(_playerObject);
+
+		_enemyObject = _factory->CreateDynamicGameObject(Position2D{ 0, 50, }, 10, 10, 2);
 
 		_camera = new DX2DCamera(Vector2D(Vector2DData{ 0, 0 }), 100, 100);
 	}
@@ -40,29 +43,34 @@ namespace SSB
 		//}
 
 		SpriteLoader::GetInstance().RegisterSpriteFromFile(L"bitmap1.bmp", L"bitmap1");
-		_player->GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"Player", DXStateManager::kDefaultWrapSample));
-		_player->Init();
+		_playerObject->GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"Player", DXStateManager::kDefaultWrapSample));
+		_playerObject->Init();
+
+		_enemyObject->GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"Enemy1", DXStateManager::kDefaultWrapSample));
+		_enemyObject->Init();
 
 		_camera->Init();
 
-		_map->SetPlayer(_player);
+		_map->SetPlayer(_playerObject);
 
 		return true;
 	}
 
 	bool TestScene::Frame()
 	{
-		GameLogic();
-
 		_map->Frame();
 
 		//for (auto object : _objects)
 		//{
 		//	object->Frame();
 		//}
-		_player->Frame();
 
-		_camera->ConnectTo(_player);
+		_playerController->Frame();
+		//_playerObject->Frame();
+		//_enemyrObject->Move(_playerObject->GetCenter().Get(0), _playerObject->GetCenter().Get(1) + 20);
+		_enemyObject->Frame();
+
+		_camera->ConnectTo(_playerObject);
 		_camera->Frame();
 
 		return true;
@@ -81,9 +89,13 @@ namespace SSB
 		//}
 		//_objects.clear();
 
-		_player->Release();
-		delete _player;
-		_player = nullptr;
+		_playerObject->Release();
+		delete _playerObject;
+		_playerObject = nullptr;
+
+		_enemyObject->Release();
+		delete _enemyObject;
+		_enemyObject = nullptr;
 
 		_camera->Release();
 		delete _camera;
@@ -104,43 +116,13 @@ namespace SSB
 			g_dxWindow->AddDrawable(object->GetDXObject());
 		}
 
-		SetDisplayPosition(_player);
-		g_dxWindow->AddDrawable(_player->GetDXObject());
+		//SetDisplayPosition(_playerObject);
+		//g_dxWindow->AddDrawable(_playerObject->GetDXObject());
+
+		//SetDisplayPosition(_enemyrObject);
+		//g_dxWindow->AddDrawable(_enemyrObject->GetDXObject());
 
 		return true;
-	}
-
-	void TestScene::GameLogic()
-	{
-		float vel = 0.01f;
-		if (InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
-		{
-			_player->Move(_player->GetCenter().Get(0), _player->GetCenter().Get(1) + vel);
-			_dy -= vel * vel;
-		}
-		if (InputManager::GetInstance().GetKeyState('A') == EKeyState::KEY_HOLD)
-		{
-			_player->Move(_player->GetCenter().Get(0) - vel, _player->GetCenter().Get(1));
-			_dx -= vel * vel;
-		}
-		if (InputManager::GetInstance().GetKeyState('S') == EKeyState::KEY_HOLD)
-		{
-			_player->Move(_player->GetCenter().Get(0), _player->GetCenter().Get(1) - vel);
-			_dy += vel * vel;
-		}
-		if (InputManager::GetInstance().GetKeyState('D') == EKeyState::KEY_HOLD)
-		{
-			_player->Move(_player->GetCenter().Get(0) + vel, _player->GetCenter().Get(1));
-			_dx += vel * vel;
-		}
-
-		if (_map->IsCollide(_player))
-		{
-			auto collide = _map->GetCollideObjectList(_player);
-			std::string count = std::to_string(collide.size());
-			std::string hit = "Hit : " + count + "\n";
-			OutputDebugStringA(hit.c_str());
-		}
 	}
 
 	void TestScene::SetDisplayPosition(DX2DGameObject* object)

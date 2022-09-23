@@ -149,6 +149,7 @@
     <ClCompile Include="DX2DGameObject.cpp" />
     <ClCompile Include="DX2DGameObjectFactory.cpp" />
     <ClCompile Include="DX2DGameProject.cpp" />
+    <ClCompile Include="DX2DProjectController.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DX2DMapObject.cpp" />
     <ClCompile Include="TestScene.cpp" />
@@ -159,6 +160,7 @@
     <ClInclude Include="DX2DGameObjectFactory.h" />
     <ClInclude Include="DX2DGameProject.h" />
     <ClInclude Include="DX2DMapObject.h" />
+    <ClInclude Include="DX2DProjectController.h" />
     <ClInclude Include="TestScene.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -39,7 +39,7 @@ namespace SSB
 		void SetPlayer(DX2DGameObject* player) { _player = player; }
 
 	private:
-		int GetCurrentLayer(DX2DGameObject* object);
+		int GetCurrentMapLayer(DX2DGameObject* object, int playerCurrentLayer);
 
 	public:
 		bool Init() override;

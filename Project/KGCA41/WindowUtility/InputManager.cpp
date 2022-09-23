@@ -41,11 +41,25 @@ namespace SSB
 			SHORT sKey = GetAsyncKeyState(iKeyIndex);
 			if (sKey & 0x8000)
 			{
-				_keyState[iKeyIndex] = EKeyState::KEY_HOLD;
+				if (_keyState[iKeyIndex] == EKeyState::KEY_PRESSED || _keyState[iKeyIndex] == EKeyState::KEY_HOLD)
+				{
+					_keyState[iKeyIndex] = EKeyState::KEY_HOLD;
+				}
+				else
+				{
+					_keyState[iKeyIndex] = EKeyState::KEY_PRESSED;
+				}
 			}
 			else
 			{
-				_keyState[iKeyIndex] = EKeyState::KEY_FREE;
+				if (_keyState[iKeyIndex] == EKeyState::KEY_PRESSED || _keyState[iKeyIndex] == EKeyState::KEY_HOLD)
+				{
+					_keyState[iKeyIndex] = EKeyState::KEY_RELEASE;
+				}
+				else
+				{
+					_keyState[iKeyIndex] = EKeyState::KEY_FREE;
+				}
 			}
 		}
 

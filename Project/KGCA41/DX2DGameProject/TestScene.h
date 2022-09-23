@@ -2,6 +2,7 @@
 
 #include "Scene.h"
 #include <vector>
+#include "DX2DProjectController.h"
 
 namespace SSB
 {
@@ -15,11 +16,11 @@ namespace SSB
 	private:
 		DX2DMapObject* _map;
 		DX2DCamera* _camera;
-		//std::vector<DX2DGameObject*> _objects;
-		DX2DGameObject* _player;
 		DX2DGameObjectFactory* _factory;
-		float _dx = 0;
-		float _dy = 0;
+		//std::vector<DX2DGameObject*> _objects;
+		PlayerController* _playerController;
+		DX2DGameObject* _playerObject;
+		DX2DGameObject* _enemyObject;
 
 	public:
 		TestScene();
@@ -31,7 +32,6 @@ namespace SSB
 		bool Release() override;
 
 	private:
-		void GameLogic();
 		void SetDisplayPosition(DX2DGameObject* object);
 		void SetDisplayPosition(DX2DMapObject* map);
 	};

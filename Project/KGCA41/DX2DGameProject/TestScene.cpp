@@ -7,10 +7,12 @@
 #include "DX2DGameObjectFactory.h"
 #include "TextureManager.h"
 #include "DXStateManager.h"
+#include "TextManager.h"
 
 namespace SSB
 {
 	extern DXWindow* g_dxWindow;
+	DX2DCamera* g_Camera;
 
 	TestScene::TestScene()
 	{
@@ -28,6 +30,7 @@ namespace SSB
 		_enemyObject = _factory->CreateDynamicGameObject(Position2D{ 0, 50, }, 10, 10, 2);
 
 		_camera = new DX2DCamera(Vector2D(Vector2DData{ 0, 0 }), 100, 100);
+		g_Camera = _camera;
 	}
 
 	bool TestScene::Init()
@@ -53,6 +56,11 @@ namespace SSB
 
 		_map->SetPlayer(_playerObject);
 
+        _text = new Text(L"", { 0, 0, 100, 50 });
+        _text->SetTextFormat(TextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
+        _text->SetBrush(TextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
+        _text->Init();
+
 		return true;
 	}
 
@@ -72,6 +80,9 @@ namespace SSB
 
 		_camera->ConnectTo(_playerObject);
 		_camera->Frame();
+
+		_text->SetString(std::to_wstring(_enemyObject->GetCurrentMapLayer()));
+		_text->Frame();
 
 		return true;
 	}
@@ -101,19 +112,21 @@ namespace SSB
 		delete _camera;
 		_camera = nullptr;
 
+		_text->Release();
+
 		return true;
 	}
 
 	bool TestScene::Render()
 	{
 		SetDisplayPosition(_map);
-		g_dxWindow->AddDrawable(_map->GetDXObject());
+		_map->Render();
 
 		auto objectList = _map->GetCollideObjectList(_camera);
 		for (auto object : objectList)
 		{
 			SetDisplayPosition(object);
-			g_dxWindow->AddDrawable(object->GetDXObject());
+			object->Render();
 		}
 
 		//SetDisplayPosition(_playerObject);
@@ -121,6 +134,8 @@ namespace SSB
 
 		//SetDisplayPosition(_enemyrObject);
 		//g_dxWindow->AddDrawable(_enemyrObject->GetDXObject());
+
+		g_dxWindow->AddTextable(_text);
 
 		return true;
 	}

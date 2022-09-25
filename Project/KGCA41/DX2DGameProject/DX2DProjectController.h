@@ -8,17 +8,17 @@ namespace SSB
 	class DX2DProjectController : public Common
 	{
 	protected:
-		DX2DGameObject* _controlledObject;
+		DX2DInGameObject* _controlledObject;
 
 	public:
-		DX2DProjectController(DX2DGameObject* controlledObject);
+		DX2DProjectController(DX2DInGameObject* controlledObject);
 		~DX2DProjectController();
 
 	protected:
 		virtual void Logic() = 0;
 
 	public:
-		void SetControlledObject(DX2DGameObject* controlledObject);
+		void SetControlledObject(DX2DInGameObject* controlledObject);
 
 	public:
 		bool Init() override;
@@ -30,7 +30,7 @@ namespace SSB
 	class PlayerController : public DX2DProjectController
 	{
 	public:
-		PlayerController(DX2DGameObject* controlledObject);
+		PlayerController(DX2DInGameObject* controlledObject);
 		~PlayerController();
 
 	protected:

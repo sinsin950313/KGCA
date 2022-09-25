@@ -4,9 +4,12 @@
 #include "DX2DCamera.h"
 #include "TextureManager.h"
 #include "ShaderManager.h"
+#include "DXWindow.h"
 
 namespace SSB
 {
+	extern DXWindow* g_dxWindow;
+
 	DX2DMapObject::DX2DMapObject(Vector2D center, float width, float height)
 	{
 		_object = new Object2D(new Rectangle(center.Get(0), center.Get(1), width, height), Rigidbody2D(0));
@@ -36,10 +39,10 @@ namespace SSB
 		Release();
 	}
 
-	std::vector<DX2DGameObject*> DX2DMapObject::GetCollideObjectList(DX2DGameObject* object)
+	std::vector<DX2DInGameObject*> DX2DMapObject::GetCollideObjectList(DX2DInGameObject* object)
 	{
 		int currentLayer = object->GetCurrentMapLayer();
-		std::vector<DX2DGameObject*> collidedObjectList;
+		std::vector<DX2DInGameObject*> collidedObjectList;
 
 		QuadTree* currentLayerTree = _layer[currentLayer];
 		auto collidePhysicsObjectList = currentLayerTree->GetCollidedObjects(object->GetPhysicsObject());
@@ -51,9 +54,9 @@ namespace SSB
 		return collidedObjectList;
 	}
 
-	std::vector<DX2DGameObject*> DX2DMapObject::GetCollideObjectList(DX2DCamera* camera)
+	std::vector<DX2DInGameObject*> DX2DMapObject::GetCollideObjectList(DX2DCamera* camera)
 	{
-		std::vector<DX2DGameObject*> collidedObjectList;
+		std::vector<DX2DInGameObject*> collidedObjectList;
 
 		for (auto currentLayer : _layer)
 		{
@@ -67,20 +70,20 @@ namespace SSB
 		return collidedObjectList;
 	}
 
-	bool DX2DMapObject::IsCollide(DX2DGameObject* object)
+	bool DX2DMapObject::IsCollide(DX2DInGameObject* object)
 	{
 		int currentLayer = object->GetCurrentMapLayer();
 		return !_layer[currentLayer]->GetCollidedObjects(object->GetPhysicsObject()).empty();
 	}
 
-	void DX2DMapObject::RegisterStaticObject(DX2DGameObject* dxObject)
+	void DX2DMapObject::RegisterStaticObject(DX2DInGameObject* dxObject)
 	{
 		_physicsToDX2DMatch.insert(std::make_pair(dxObject->GetPhysicsObject(), dxObject));
 		int currentLayer = dxObject->GetCurrentMapLayer();
 		_layer[currentLayer]->AddStaticObject(dxObject->GetPhysicsObject());
 	}
 
-	void DX2DMapObject::RegisterDynamicObject(DX2DGameObject* dxObject)
+	void DX2DMapObject::RegisterDynamicObject(DX2DInGameObject* dxObject)
 	{
 		_physicsToDX2DMatch.insert(std::make_pair(dxObject->GetPhysicsObject(), dxObject));
 		int currentLayer = dxObject->GetCurrentMapLayer();
@@ -120,7 +123,8 @@ namespace SSB
 
 	bool DX2DMapObject::Render()
 	{
-		_dxObject->Render();
+		g_dxWindow->AddDrawable(GetDXObject());
+
 		return true;
 	}
 
@@ -148,7 +152,8 @@ namespace SSB
 
 		return true;
 	}
-	int DX2DMapObject::GetCurrentMapLayer(DX2DGameObject* object, int playerCurrentLayer)
+
+	int DX2DMapObject::GetCurrentMapLayer(DX2DInGameObject* object, int playerCurrentLayer)
 	{
 		int objectLayer = object->GetCurrentMapLayer();
 		int diff = objectLayer - playerCurrentLayer;

@@ -67,6 +67,7 @@ namespace SSB
 		void Move(Position2D centerPosition) { _center = centerPosition; }
 		void SetCenter(Position2D center) { _center = center; }
 		Sprite* GetSprite() { return _sprite; }
+		Position2D GetCenter() { return _center; }
 
 	public:
 		bool Init() override;

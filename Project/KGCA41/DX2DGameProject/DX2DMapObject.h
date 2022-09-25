@@ -5,6 +5,7 @@
 #include <map>
 #include "Object.h"
 #include "DX2DObject.h"
+#include "DX2DGameObject.h"
 
 namespace SSB
 {
@@ -18,28 +19,28 @@ namespace SSB
 		const int _maxLayer = 5;
 		std::vector<QuadTree*> _layer;
 		DX2DObject* _dxObject;
-		std::map<Object2D*, DX2DGameObject*> _physicsToDX2DMatch;
+		std::map<Object2D*, DX2DInGameObject*> _physicsToDX2DMatch;
 		Object2D* _object;
-		DX2DGameObject* _player;
-		std::vector<DX2DGameObject*> _dynamicObjectList;
+		DX2DInGameObject* _player;
+		std::vector<DX2DInGameObject*> _dynamicObjectList;
 
 	public:
 		DX2DMapObject(Vector2D center, float width, float height);
 		~DX2DMapObject();
 
 	public:
-		std::vector<DX2DGameObject*> GetCollideObjectList(DX2DGameObject* object);
-		std::vector<DX2DGameObject*> GetCollideObjectList(DX2DCamera* camera);
-		bool IsCollide(DX2DGameObject* object);
-		void RegisterStaticObject(DX2DGameObject* dxObject);
-		void RegisterDynamicObject(DX2DGameObject* dxObject);
+		std::vector<DX2DInGameObject*> GetCollideObjectList(DX2DInGameObject* object);
+		std::vector<DX2DInGameObject*> GetCollideObjectList(DX2DCamera* camera);
+		bool IsCollide(DX2DInGameObject* object);
+		void RegisterStaticObject(DX2DInGameObject* dxObject);
+		void RegisterDynamicObject(DX2DInGameObject* dxObject);
 		DX2DObject* GetDXObject() { return _dxObject; }
 		Object2D* GetPhysicsObject() { return _object; }
 		Vector2D GetCenter() { return _object->GetVolume()->GetCenter(); }
-		void SetPlayer(DX2DGameObject* player) { _player = player; }
+		void SetPlayer(DX2DInGameObject* player) { _player = player; }
 
 	private:
-		int GetCurrentMapLayer(DX2DGameObject* object, int playerCurrentLayer);
+		int GetCurrentMapLayer(DX2DInGameObject* object, int playerCurrentLayer);
 
 	public:
 		bool Init() override;

@@ -4,10 +4,16 @@
 #include "ShaderManager.h"
 #include "DXStateManager.h"
 #include "DXCore.h"
+#include "DX2DCamera.h"
 
 namespace SSB
 {
 	extern DXCore* g_DXCore;
+	extern DXWindow* g_dxWindow;
+	extern DX2DCamera* g_Camera;
+
+	DWORD time;
+	DWORD printInterval = 1000;
 
 	DX2DGameObject::DX2DGameObject(Position2D center, float width, float height, float mass)
 	{
@@ -31,29 +37,6 @@ namespace SSB
 		_physicsObject->GetVolume()->Reposition(center);
 	}
 
-	void DX2DGameObject::RiseUp()
-	{
-		if (_flightStatus != EFlightStatus::RISE)
-		{
-			_flightStatus = EFlightStatus::RISE;
-			_lastRiseTime = g_DXCore->GetGlobalTime();
-		}
-	}
-
-	void DX2DGameObject::ParallelTranslation()
-	{
-		_flightStatus = EFlightStatus::NONE;
-	}
-
-	void DX2DGameObject::FallDown()
-	{
-		if (_flightStatus != EFlightStatus::FALL)
-		{
-			_flightStatus = EFlightStatus::FALL;
-			_lastFallTime = g_DXCore->GetGlobalTime();
-		}
-	}
-
 	bool DX2DGameObject::Init()
 	{
 		_dxObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
@@ -62,6 +45,8 @@ namespace SSB
 		//_dxObject->SetMaskSprite(TextureResourceManager::GetInstance().Load(L"bitmap2.bmp"));
 		_dxObject->Init();
 
+		time = g_DXCore->GetGlobalTime();
+		
 		return true;
 	}
 
@@ -69,29 +54,12 @@ namespace SSB
 	{
 		_dxObject->Frame();
 
-		if (_flightStatus == EFlightStatus::RISE)
-		{
-			if (_elevationTravelTime < g_DXCore->GetGlobalTime() - _lastRiseTime)
-			{
-				++_currentLayer;
-				_lastRiseTime = g_DXCore->GetGlobalTime();
-			}
-		}
-		if (_flightStatus == EFlightStatus::FALL)
-		{
-			if (_elevationTravelTime < g_DXCore->GetGlobalTime() - _lastFallTime)
-			{
-				--_currentLayer;
-				_lastFallTime = g_DXCore->GetGlobalTime();
-			}
-		}
-
 		return true;
 	}
 
 	bool DX2DGameObject::Render()
 	{
-		_dxObject->Render();
+		g_dxWindow->AddDrawable(GetDXObject());
 
 		return true;
 	}
@@ -109,6 +77,191 @@ namespace SSB
 		{
 			delete _physicsObject;
 			_physicsObject = nullptr;
+		}
+		
+		return true;
+	}
+
+	int DX2DGameObject::GetHitboxIndex(EAireplaneFlightState flightState)
+	{
+		return (int)flightState;
+	}
+
+	DX2DHitBox::DX2DHitBox(Position2D center, float width, float height, float mass) : DX2DGameObject(center, width, height, mass)
+	{
+	}
+
+	DX2DHitBox::~DX2DHitBox()
+	{
+	}
+
+	void DX2DHitBox::SetRelativePosition(HitboxPosition* position)
+	{
+		_relativePosition = position;
+	}
+
+	void DX2DHitBox::SetParent(DX2DGameObject* parent)
+	{
+		_parent = parent;
+	}
+
+	bool DX2DHitBox::Init()
+	{
+		GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
+		GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"HitBoxDebug.hlsl", "main", "ps_5_0"));
+		GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"Player", DXStateManager::kDefaultWrapSample));
+		GetDXObject()->Init();
+
+		return true;
+	}
+
+	bool DX2DHitBox::Frame()
+	{
+		Vector2D position = _parent->GetCenter() + _relativePosition->rectangle.GetCenter();
+		GetPhysicsObject()->GetVolume()->Reposition(position);
+		g_Camera->MontageForFilm(this);
+		Position2D center = GetDXObject()->GetCenter();
+		if (printInterval < g_DXCore->GetGlobalTime() - time)
+		{
+			OutputDebugString(std::to_wstring(center.y).c_str());
+		}
+
+		return true;
+	}
+
+	bool DX2DHitBox::Render()
+	{
+		DX2DGameObject::Render();
+
+		return true;
+	}
+
+	bool DX2DHitBox::Release()
+	{
+		_parent = nullptr;
+		_relativePosition = nullptr;
+
+		return true;
+	}
+	DX2DInGameObject::DX2DInGameObject(Position2D center, float width, float height, float mass) : DX2DGameObject(center, width, height, mass)
+	{
+		for (int i = 0; i < hitboxCount; ++i)
+		{
+			_hitBox[i] = new DX2DHitBox(center, width, height, mass);
+		}
+
+		int layerIndex[9]{ 0, 1, -1, 0, 0, 1, -1, 1, -1 };
+		int horizontalDirectionIndex[9]{ 0, 0, 0, -1, 1, -1, -1, 1, 1 };
+
+		for (int i = 0; i < 9; ++i)
+		{
+			for (int j = 0; j < hitboxCount; ++j)
+			{
+				_hitBoxData[i][j] = new HitboxPosition{ layerIndex[i] * (j / 3), Rectangle(horizontalDirectionIndex[i] * (width * (j / 3) + (width / 2)), height * (j + 1) + (height / 2), width, height)};
+			}
+		}
+	}
+
+	void DX2DInGameObject::FlightStateChangeOrder(EAireplaneFlightState state)
+	{
+		if (_flightStateChangeOrder != state)
+		{
+			_flightStateChangeOrder = state;
+			_stateTransitionLastTime = g_DXCore->GetGlobalTime();
+		}
+	}
+	bool DX2DInGameObject::Init()
+	{
+		DX2DGameObject::Init();
+
+		for (int i = 0; i < hitboxCount; ++i)
+		{
+			_hitBox[i]->SetParent(this);
+			_hitBox[i]->Init();
+		}
+
+		return true;
+	}
+	bool DX2DInGameObject::Frame()
+	{
+		DX2DGameObject::Frame();
+
+		if (_currentFlightState != _flightStateChangeOrder)
+		{
+			if (_stateTransitionRequiredTime < g_DXCore->GetGlobalTime() - _stateTransitionLastTime)
+			{
+				_currentFlightState = _flightStateChangeOrder;
+			}
+		}
+
+		if (_currentFlightState == _flightStateChangeOrder)
+		{
+			if (_stateTransitionRequiredTime < g_DXCore->GetGlobalTime() - _stateTransitionLastTime)
+			{
+				_stateTransitionLastTime = g_DXCore->GetGlobalTime();
+
+				if ((_currentFlightState == EAireplaneFlightState::TOP)
+					|| (_currentFlightState == EAireplaneFlightState::LEFT_TOP)
+					|| (_currentFlightState == EAireplaneFlightState::RIGHT_TOP))
+				{
+					++_currentLayer;
+				}
+
+				if ((_currentFlightState == EAireplaneFlightState::BOTTOM)
+					|| (_currentFlightState == EAireplaneFlightState::LEFT_BOTTOM)
+					|| (_currentFlightState == EAireplaneFlightState::RIGHT_BOTTOM))
+				{
+					--_currentLayer;
+				}
+			}
+		}
+		
+		for (int i = 0; i < hitboxCount; ++i)
+		{
+			_hitBox[i]->SetRelativePosition(_hitBoxData[(int)_currentFlightState][i]);
+			_hitBox[i]->Frame();
+
+			if (printInterval < g_DXCore->GetGlobalTime() - time)
+			{
+				OutputDebugString(L", ");
+			}
+		}
+			if (printInterval < g_DXCore->GetGlobalTime() - time)
+		{
+			OutputDebugString(L"\n");
+			time = g_DXCore->GetGlobalTime();
+		}
+
+		return true;
+	}
+	bool DX2DInGameObject::Render()
+	{
+		DX2DGameObject::Render();
+
+		for (int i = 0; i < hitboxCount; ++i)
+		{
+			_hitBox[i]->Render();
+		}
+
+		return true;
+	}
+	bool DX2DInGameObject::Release()
+	{
+		DX2DGameObject::Release();
+
+		for (int i = 0; i < hitboxCount; ++i)
+		{
+			_hitBox[i]->Release();
+			delete _hitBox[i];
+		}
+
+		for (int i = 0; i < 9; ++i)
+		{
+			for (int j = 0; j < hitboxCount; ++j)
+			{
+				delete _hitBoxData[i][j];
+				_hitBoxData[i][j] = nullptr;
+			}
 		}
 
 		return true;

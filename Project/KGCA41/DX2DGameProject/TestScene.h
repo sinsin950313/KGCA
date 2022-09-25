@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include <vector>
 #include "DX2DProjectController.h"
+#include "Text.h"
 
 namespace SSB
 {
@@ -19,8 +20,10 @@ namespace SSB
 		DX2DGameObjectFactory* _factory;
 		//std::vector<DX2DGameObject*> _objects;
 		PlayerController* _playerController;
-		DX2DGameObject* _playerObject;
-		DX2DGameObject* _enemyObject;
+		DX2DInGameObject* _playerObject;
+		DX2DInGameObject* _enemyObject;
+
+		Text* _text;
 
 	public:
 		TestScene();

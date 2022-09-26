@@ -11,9 +11,7 @@ namespace SSB
 	extern DXCore* g_DXCore;
 	extern DXWindow* g_dxWindow;
 	extern DX2DCamera* g_Camera;
-
-	DWORD time;
-	DWORD printInterval = 1000;
+	extern bool g_Debug;
 
 	DX2DGameObject::DX2DGameObject(Position2D center, float width, float height, float mass)
 	{
@@ -39,13 +37,11 @@ namespace SSB
 
 	bool DX2DGameObject::Init()
 	{
-		_dxObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
-		_dxObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
+		_dxObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+		_dxObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
 		//_dxObject->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"bitmap1", DXStateManager::kDefaultSolidRasterizer));
 		//_dxObject->SetMaskSprite(TextureResourceManager::GetInstance().Load(L"bitmap2.bmp"));
 		_dxObject->Init();
-
-		time = g_DXCore->GetGlobalTime();
 		
 		return true;
 	}
@@ -107,9 +103,10 @@ namespace SSB
 
 	bool DX2DHitBox::Init()
 	{
-		GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
-		GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"HitBoxDebug.hlsl", "main", "ps_5_0"));
-		GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"Player", DXStateManager::kDefaultWrapSample));
+		GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+		GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"HitBoxDebug.hlsl", "Debug", "ps_5_0"));
+		SpriteLoader::GetInstance().RegisterSpriteFromFile(L"Target.bmp", L"Target");
+		GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"Target.bmp", L"Target1", DXStateManager::kDefaultWrapSample));
 		GetDXObject()->Init();
 
 		return true;
@@ -117,21 +114,20 @@ namespace SSB
 
 	bool DX2DHitBox::Frame()
 	{
+		DX2DGameObject::Frame();
 		Vector2D position = _parent->GetCenter() + _relativePosition->rectangle.GetCenter();
 		GetPhysicsObject()->GetVolume()->Reposition(position);
 		g_Camera->MontageForFilm(this);
-		Position2D center = GetDXObject()->GetCenter();
-		if (printInterval < g_DXCore->GetGlobalTime() - time)
-		{
-			OutputDebugString(std::to_wstring(center.y).c_str());
-		}
 
 		return true;
 	}
 
 	bool DX2DHitBox::Render()
 	{
-		DX2DGameObject::Render();
+		if (g_Debug)
+		{
+			DX2DGameObject::Render();
+		}
 
 		return true;
 	}
@@ -143,11 +139,12 @@ namespace SSB
 
 		return true;
 	}
+
 	DX2DInGameObject::DX2DInGameObject(Position2D center, float width, float height, float mass) : DX2DGameObject(center, width, height, mass)
 	{
 		for (int i = 0; i < hitboxCount; ++i)
 		{
-			_hitBox[i] = new DX2DHitBox(center, width, height, mass);
+			_hitBox[i] = new DX2DHitBox(center, width / 2, height / 2, mass);
 		}
 
 		int layerIndex[9]{ 0, 1, -1, 0, 0, 1, -1, 1, -1 };
@@ -157,9 +154,11 @@ namespace SSB
 		{
 			for (int j = 0; j < hitboxCount; ++j)
 			{
-				_hitBoxData[i][j] = new HitboxPosition{ layerIndex[i] * (j / 3), Rectangle(horizontalDirectionIndex[i] * (width * (j / 3) + (width / 2)), height * (j + 1) + (height / 2), width, height)};
+				_hitBoxData[i][j] = new HitboxPosition{ layerIndex[i] * (j / 3), Rectangle(horizontalDirectionIndex[i] * (width / 2 * (j / 3) + (width / 2 / 2)), height / 2 * (j + 1) + (height / 2 / 2), width / 2, height / 2)};
 			}
 		}
+
+		_dxTargetedObject = new DX2DObject(center, width, height);
 	}
 
 	void DX2DInGameObject::FlightStateChangeOrder(EAireplaneFlightState state)
@@ -170,6 +169,26 @@ namespace SSB
 			_stateTransitionLastTime = g_DXCore->GetGlobalTime();
 		}
 	}
+
+	void DX2DInGameObject::Targeted()
+	{
+		if (!_targeted)
+		{
+			_targeted = true;
+			_lastTargetedTime = g_DXCore->GetGlobalTime();
+		}
+	}
+
+	bool DX2DInGameObject::IsHit()
+	{
+		if (_targeted && _aimmingTime < g_DXCore->GetGlobalTime() - _lastTargetedTime)
+		{
+			_lastTargetedTime = g_DXCore->GetGlobalTime();
+			return true;
+		}
+		return false;
+	}
+
 	bool DX2DInGameObject::Init()
 	{
 		DX2DGameObject::Init();
@@ -180,8 +199,15 @@ namespace SSB
 			_hitBox[i]->Init();
 		}
 
+		_dxTargetedObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+		_dxTargetedObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"HitBoxDebug.hlsl", "Main", "ps_5_0"));
+		SpriteLoader::GetInstance().RegisterSpriteFromFile(L"Target.bmp", L"Target");
+		_dxTargetedObject->SetSprite(SpriteLoader::GetInstance().Load(L"Target.bmp", L"Target1", DXStateManager::kDefaultWrapSample));
+		_dxTargetedObject->Init();
+
 		return true;
 	}
+
 	bool DX2DInGameObject::Frame()
 	{
 		DX2DGameObject::Frame();
@@ -220,20 +246,15 @@ namespace SSB
 		{
 			_hitBox[i]->SetRelativePosition(_hitBoxData[(int)_currentFlightState][i]);
 			_hitBox[i]->Frame();
+		}
 
-			if (printInterval < g_DXCore->GetGlobalTime() - time)
-			{
-				OutputDebugString(L", ");
-			}
-		}
-			if (printInterval < g_DXCore->GetGlobalTime() - time)
-		{
-			OutputDebugString(L"\n");
-			time = g_DXCore->GetGlobalTime();
-		}
+		_dxTargetedObject->Move(GetDXObject()->GetCenter());
+		_dxTargetedObject->Resize(GetDXObject()->GetWidth(), GetDXObject()->GetHeight());
+		_dxTargetedObject->Frame();
 
 		return true;
 	}
+
 	bool DX2DInGameObject::Render()
 	{
 		DX2DGameObject::Render();
@@ -243,8 +264,14 @@ namespace SSB
 			_hitBox[i]->Render();
 		}
 
+		if (_targeted)
+		{
+			g_dxWindow->AddDrawable(_dxTargetedObject);
+		}
+
 		return true;
 	}
+
 	bool DX2DInGameObject::Release()
 	{
 		DX2DGameObject::Release();
@@ -262,6 +289,13 @@ namespace SSB
 				delete _hitBoxData[i][j];
 				_hitBoxData[i][j] = nullptr;
 			}
+		}
+
+		if (_dxTargetedObject)
+		{
+			_dxTargetedObject->Release();
+			delete _dxTargetedObject;
+			_dxTargetedObject = nullptr;
 		}
 
 		return true;

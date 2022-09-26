@@ -12,7 +12,7 @@ struct VS_out
 	float2 t : TEXCOORD0;
 };
 
-VS_out main(VS_in input)
+VS_out Main(VS_in input)
 {
 	VS_out output = (VS_out)0;
 

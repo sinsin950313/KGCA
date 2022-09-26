@@ -76,6 +76,29 @@ namespace SSB
 		return !_layer[currentLayer]->GetCollidedObjects(object->GetPhysicsObject()).empty();
 	}
 
+	bool DX2DMapObject::IsHit(DX2DInGameObject* attack, DX2DInGameObject* defense)
+	{
+		int attackerLayer = attack->GetCurrentMapLayer();
+
+		auto hitboxDatas = attack->GetHitBoxData();
+		for (int i = 0; i < hitboxCount; ++i)
+		{
+			int layer = attackerLayer + hitboxDatas[i]->GetRelativeLayer();
+			if (0 <= layer && layer < _maxLayer)
+			{
+				auto collideList = _layer[layer]->GetCollidedObjects(hitboxDatas[i]->GetPhysicsObject());
+				for (auto collideObject : collideList)
+				{
+					if (collideObject == defense->GetPhysicsObject())
+					{
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 	void DX2DMapObject::RegisterStaticObject(DX2DInGameObject* dxObject)
 	{
 		_physicsToDX2DMatch.insert(std::make_pair(dxObject->GetPhysicsObject(), dxObject));
@@ -93,8 +116,8 @@ namespace SSB
 
 	bool DX2DMapObject::Init()
 	{
-		_dxObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
-		_dxObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withoutMask", "ps_5_0"));
+		_dxObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+		_dxObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithoutMask", "ps_5_0"));
 		//_dxObject->SetTexture(TextureResourceManager::GetInstance().Load(L"KGCABK.bmp"));
 		_dxObject->Init();
 		_dxObject->GetSprite()->Tile(7, 9);

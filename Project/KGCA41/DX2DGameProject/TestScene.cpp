@@ -8,11 +8,13 @@
 #include "TextureManager.h"
 #include "DXStateManager.h"
 #include "TextManager.h"
+#include "DXCore.h"
 
 namespace SSB
 {
 	extern DXWindow* g_dxWindow;
 	DX2DCamera* g_Camera;
+	extern DXCore* g_DXCore;
 
 	TestScene::TestScene()
 	{
@@ -80,6 +82,40 @@ namespace SSB
 
 		_camera->ConnectTo(_playerObject);
 		_camera->Frame();
+
+		//collide check
+		if (_map->IsHit(_playerObject, _enemyObject))
+		{
+			_enemyObject->Targeted();
+			if (_enemyObject->IsHit())
+			{
+				++_hitCount;
+			}
+		}
+		else
+		{
+			_enemyObject->UnTargeted();
+		}
+		
+		if (_map->IsHit(_enemyObject, _playerObject))
+		{
+			_playerObject->Targeted();
+			if (_playerObject->IsHit())
+			{
+				++_hittedCount;
+			}
+		}
+		else
+		{
+			_playerObject->UnTargeted();
+		}
+
+		//static DWORD timeStamp = g_DXCore->GetGlobalTime();
+		//if (1000 < g_DXCore->GetGlobalTime() - timeStamp)
+		//{
+		//	OutputDebugString((std::to_wstring(_hitCount) + L", " + std::to_wstring(_hittedCount) + L"\n").c_str());
+		//	timeStamp = g_DXCore->GetGlobalTime();
+		//}
 
 		_text->SetString(std::to_wstring(_enemyObject->GetCurrentMapLayer()));
 		_text->Frame();

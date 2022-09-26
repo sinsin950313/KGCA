@@ -22,6 +22,8 @@ namespace SSB
 		PlayerController* _playerController;
 		DX2DInGameObject* _playerObject;
 		DX2DInGameObject* _enemyObject;
+		UINT _hitCount = 0;
+		UINT _hittedCount = 0;
 
 		Text* _text;
 

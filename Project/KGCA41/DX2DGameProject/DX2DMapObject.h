@@ -32,6 +32,7 @@ namespace SSB
 		std::vector<DX2DInGameObject*> GetCollideObjectList(DX2DInGameObject* object);
 		std::vector<DX2DInGameObject*> GetCollideObjectList(DX2DCamera* camera);
 		bool IsCollide(DX2DInGameObject* object);
+		bool IsHit(DX2DInGameObject* attack, DX2DInGameObject* defense);
 		void RegisterStaticObject(DX2DInGameObject* dxObject);
 		void RegisterDynamicObject(DX2DInGameObject* dxObject);
 		DX2DObject* GetDXObject() { return _dxObject; }

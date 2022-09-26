@@ -56,6 +56,7 @@ namespace SSB
 	public:
 		void SetRelativePosition(HitboxPosition* position);
 		void SetParent(DX2DGameObject* parent);
+		int GetRelativeLayer() { return _relativePosition->layer; }
 
 	public:
 		bool Init() override;
@@ -75,6 +76,10 @@ namespace SSB
 
 		DX2DHitBox* _hitBox[hitboxCount];
 		HitboxPosition* _hitBoxData[9][hitboxCount];
+		DX2DObject* _dxTargetedObject;
+		bool _targeted = false;
+		const DWORD _aimmingTime = 100;
+		DWORD _lastTargetedTime;
 
 	public:
 		DX2DInGameObject(Position2D center, float width, float height, float mass);
@@ -83,6 +88,10 @@ namespace SSB
 		void SetCurrentLayer(int layer) { _currentLayer = layer; }
 		int GetCurrentMapLayer() { return _currentLayer; }
 		void FlightStateChangeOrder(EAireplaneFlightState state);
+		void Targeted();
+		void UnTargeted() { _targeted = false; }
+		bool IsHit();
+		DX2DHitBox** GetHitBoxData() { return _hitBox; }
 
 	public:
 		bool Init() override;

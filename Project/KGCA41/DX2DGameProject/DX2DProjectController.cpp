@@ -7,6 +7,7 @@
 namespace SSB
 {
 	extern DXWindow* g_dxWindow;
+	bool g_Debug = true;
 }
 
 SSB::DX2DProjectController::DX2DProjectController(DX2DInGameObject* controlledObject)
@@ -73,14 +74,13 @@ bool SSB::PlayerController::Frame()
 	int horizontal = 0;
 	int vertical = 0;
 
-	static bool debug = true;
 	if (InputManager::GetInstance().GetKeyState('V') == EKeyState::KEY_PRESSED)
 	{
-		debug = !debug;
+		g_Debug = !g_Debug;
 	}
 
 	// For Debug
-	if (debug)
+	if (g_Debug)
 	{
         static Text* text = new Text(L"", { 300, 0, 600, 50 });
         text->SetTextFormat(TextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));

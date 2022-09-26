@@ -59,6 +59,14 @@ namespace SSB
 		object->GetDXObject()->Resize(screenWidth, screenHeight);
 	}
 
+	void DX2DCamera::MontageForFilm(DX2DInGameObject* object)
+	{
+		int currentLayer = object->GetCurrentMapLayer() - 2;
+		float ratio = (10.0f + currentLayer) / 10.0f;
+		MontageForFilm((DX2DGameObject*)object);
+		object->GetDXObject()->Resize(object->GetDXObject()->GetWidth() * ratio, object->GetDXObject()->GetHeight() * ratio);
+	}
+
 	void DX2DCamera::MontageForFilm(DX2DMapObject* map)
 	{
 		auto center = PhysicsToDisplay(map->GetCenter());

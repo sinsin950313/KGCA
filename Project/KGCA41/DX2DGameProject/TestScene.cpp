@@ -176,7 +176,7 @@ namespace SSB
 		return true;
 	}
 
-	void TestScene::SetDisplayPosition(DX2DGameObject* object)
+	void TestScene::SetDisplayPosition(DX2DInGameObject* object)
 	{
 		_camera->MontageForFilm(object);
 	}

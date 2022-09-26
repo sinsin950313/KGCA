@@ -7,6 +7,7 @@
 namespace SSB
 {
 	class DX2DGameObject;
+	class DX2DInGameObject;
 	class DX2DMapObject;
 
 	class DX2DCamera : public Common
@@ -23,6 +24,7 @@ namespace SSB
 	public:
 		Vector2D GetCenter() { return _captureArea->GetVolume()->GetCenter(); }
 		void MontageForFilm(DX2DGameObject* object);
+		void MontageForFilm(DX2DInGameObject* object);
 		void MontageForFilm(DX2DMapObject* map);
 		void Move(float x, float y);
 		void Move(Vector2D center);

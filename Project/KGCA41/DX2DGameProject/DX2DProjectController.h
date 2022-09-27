@@ -43,8 +43,31 @@ namespace SSB
 		bool Release() override;
 	};
 	
-	//class AIController : public DX2DProjectController
-	//{
+	class EnemyController : public DX2DProjectController
+	{
+	private:
+		bool _offensive = true;
+		DX2DInGameObject* _enemy;
+		const DWORD _maxDecisionTime = 300;
+		DWORD _lastDecisionTime;
+		DWORD _decisionTime;
 
-	//};
+	public:
+		EnemyController(DX2DInGameObject* controlledObject);
+		~EnemyController();
+
+	protected:
+		void Logic() override;
+
+	public:
+		void SetEnemy(DX2DInGameObject* enemy) { _enemy = enemy; }
+		void SetOffensive() { _offensive = true; }
+		void SetDeffensive() { _offensive = false; }
+
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Render() override;
+		bool Release() override;
+	};
 }

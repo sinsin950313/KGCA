@@ -161,6 +161,58 @@ namespace SSB
 		_dxTargetedObject = new DX2DObject(center, width, height);
 	}
 
+	void DX2DInGameObject::FlightStateChangeOrder(EXAxis xAxis, EYAxis yAxis, EZAxis zAxis)
+	{
+		EAireplaneFlightState state = EAireplaneFlightState::STRAIGHT;
+		if (xAxis == EXAxis::LEFT)
+		{
+			if (yAxis == EYAxis::TOP)
+			{
+				state = EAireplaneFlightState::LEFT_TOP;
+			}
+			else if (yAxis == EYAxis::BOTTOM)
+			{
+				state = EAireplaneFlightState::LEFT_BOTTOM;
+			}
+			else
+			{
+				state = EAireplaneFlightState::LEFT;
+			}
+		}
+		else if (xAxis == EXAxis::RIGHT)
+		{
+			if (yAxis == EYAxis::TOP)
+			{
+				state = EAireplaneFlightState::RIGHT_TOP;
+			}
+			else if (yAxis == EYAxis::BOTTOM)
+			{
+				state = EAireplaneFlightState::RIGHT_BOTTOM;
+			}
+			else
+			{
+				state = EAireplaneFlightState::RIGHT;
+			}
+		}
+		else
+		{
+			if (yAxis == EYAxis::TOP)
+			{
+				state = EAireplaneFlightState::TOP;
+			}
+			else if (yAxis == EYAxis::BOTTOM)
+			{
+				state = EAireplaneFlightState::BOTTOM;
+			}
+			else
+			{
+				state = EAireplaneFlightState::STRAIGHT;
+			}
+		}
+
+		FlightStateChangeOrder(state);
+	}
+
 	void DX2DInGameObject::FlightStateChangeOrder(EAireplaneFlightState state)
 	{
 		if (_flightStateChangeOrder != state)
@@ -168,6 +220,14 @@ namespace SSB
 			_flightStateChangeOrder = state;
 			_stateTransitionLastTime = g_DXCore->GetGlobalTime();
 		}
+	}
+
+	void DX2DInGameObject::FlightAccelerateDirection(EXAxis xAxis, EYAxis yAxis, EZAxis zAxis)
+	{
+		FlightStateChangeOrder(xAxis, yAxis, zAxis);
+		_xAxis = xAxis;
+		_yAxis = yAxis;
+		_zAxis = zAxis;
 	}
 
 	void DX2DInGameObject::Targeted()
@@ -211,6 +271,23 @@ namespace SSB
 	bool DX2DInGameObject::Frame()
 	{
 		DX2DGameObject::Frame();
+
+		if (_zAxis == EZAxis::ACCELERATE)
+		{
+			Move(GetCenter().Get(0), GetCenter().Get(1) + _velocity);
+		}
+		if(_xAxis == EXAxis::LEFT)
+		{
+			Move(GetCenter().Get(0) - _velocity, GetCenter().Get(1));
+		}
+		if(_zAxis == EZAxis::DECELERATE)
+		{
+			Move(GetCenter().Get(0), GetCenter().Get(1) - _velocity);
+		}
+		if(_xAxis == EXAxis::RIGHT)
+		{
+			Move(GetCenter().Get(0) + _velocity, GetCenter().Get(1));
+		}
 
 		if (_currentFlightState != _flightStateChangeOrder)
 		{

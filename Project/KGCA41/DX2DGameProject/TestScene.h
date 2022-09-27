@@ -21,6 +21,7 @@ namespace SSB
 		//std::vector<DX2DGameObject*> _objects;
 		PlayerController* _playerController;
 		DX2DInGameObject* _playerObject;
+		EnemyController* _enemyController;
 		DX2DInGameObject* _enemyObject;
 		UINT _hitCount = 0;
 		UINT _hittedCount = 0;

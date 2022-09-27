@@ -30,6 +30,8 @@ namespace SSB
 		_playerController = new PlayerController(_playerObject);
 
 		_enemyObject = _factory->CreateDynamicGameObject(Position2D{ 0, 50, }, 10, 10, 2);
+		_enemyController = new EnemyController(_enemyObject);
+		_enemyController->SetEnemy(_playerObject);
 
 		_camera = new DX2DCamera(Vector2D(Vector2DData{ 0, 0 }), 100, 100);
 		g_Camera = _camera;
@@ -78,7 +80,7 @@ namespace SSB
 		_playerController->Frame();
 		//_playerObject->Frame();
 		//_enemyrObject->Move(_playerObject->GetCenter().Get(0), _playerObject->GetCenter().Get(1) + 20);
-		_enemyObject->Frame();
+		_enemyController->Frame();
 
 		_camera->ConnectTo(_playerObject);
 		_camera->Frame();

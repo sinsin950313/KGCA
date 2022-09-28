@@ -5,6 +5,7 @@
 #include "BasicWindow.h"
 #include "DXStateManager.h"
 #include "Shader.h"
+#include "DX2DAnimation.h"
 
 namespace SSB
 {
@@ -24,8 +25,8 @@ namespace SSB
         _background = new DX2DObject({ (float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) }, g_Window->GetClientWidth(), g_Window->GetClientHeight());
         SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"KGCABK.bmp", L"Background", {0, 0, 1024, 768});
         _background->SetSprite(SpriteLoader::GetInstance().Load(L"KGCABK.bmp", L"Background", DXStateManager::kDefaultWrapSample));
-        _background->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
-        _background->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withoutMask", "ps_5_0"));
+        _background->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+        _background->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithoutMask", "ps_5_0"));
         _background->Init();
 
         _object = new DX2DObject({ (float)(g_Window->GetClientWidth() / 2 - 100), (float)(g_Window->GetClientHeight() / 2 + 100) }, 100, 100);
@@ -33,8 +34,8 @@ namespace SSB
         _object->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"Player", DXStateManager::kDefaultWrapSample));
         //SpriteLoader::GetInstance().RegisterSpriteWithRelativeValue(L"bitmap1Mask.bmp", L"Player", {91, 2, 39, 59});
         //_object->SetMaskSprite(SpriteLoader::GetInstance().Load(L"bitmap1Mask.bmp", L"Player", DXStateManager::kDefaultWrapSample));
-        _object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
-        _object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
+        _object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+        _object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
         _object->Init();
 
         _spriteObject = new DX2DObject({100, 200}, 30, 30);
@@ -55,8 +56,8 @@ namespace SSB
         _spriteObject->SetSprite(SpriteActionLoader::GetInstance().Load(L"bitmap1.bmp", L"Explosion", DXStateManager::kDefaultWrapSample));
         //SpriteActionLoader::GetInstance().RegisterSpriteActionWithRelativeValue(L"bitmap1Mask.bmp", L"Explosion", sequence);
         //_spriteObject->SetMaskSprite(SpriteActionLoader::GetInstance().Load(L"bitmap1Mask.bmp", L"Explosion", DXStateManager::kDefaultWrapSample));
-        _spriteObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
-        _spriteObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
+        _spriteObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+        _spriteObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
         _spriteObject->Init();
 
         _objectWithFile = new DX2DObject({ (float)(g_Window->GetClientWidth() / 2 + 100), (float)(g_Window->GetClientHeight() / 2 + 100) }, 100, 100);
@@ -64,18 +65,56 @@ namespace SSB
         _objectWithFile->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"Player", DXStateManager::kDefaultWrapSample));
         //SpriteLoader::GetInstance().RegisterSpriteWithRelativeValue(L"bitmap1Mask.bmp", L"Player", {91, 2, 39, 59});
         //_objectWithFile->SetMaskSprite(SpriteLoader::GetInstance().Load(L"bitmap1Mask.bmp", L"Player", DXStateManager::kDefaultWrapSample));
-        _objectWithFile->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
-        _objectWithFile->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
+        _objectWithFile->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+        _objectWithFile->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
         _objectWithFile->Init();
 
         _spriteObjectWithFile = new DX2DObject({200, 300}, 30, 30);
-        SpriteActionLoader::GetInstance().RegisterSpriteActionFromFile(L"bitmap1.bmp", L"Explosion");
-        _spriteObjectWithFile->SetSprite(SpriteActionLoader::GetInstance().Load(L"bitmap1.bmp", L"Explosion", DXStateManager::kDefaultWrapSample));
-        //SpriteActionLoader::GetInstance().RegisterSpriteActionFromFile(L"bitmap1Mask.bmp", L"Explosion");
-        //_spriteObjectWithFile->SetMaskSprite(SpriteActionLoader::GetInstance().Load(L"bitmap1Mask.bmp", L"Explosion", DXStateManager::kDefaultWrapSample));
-        _spriteObjectWithFile->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "main", "vs_5_0"));
-        _spriteObjectWithFile->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
+        SpriteActionLoader::GetInstance().RegisterSpriteActionFromFile(L"bitmap1.bmp", L"bitmap1");
+        SpriteActionLoader::GetInstance().RegisterSpriteActionFromFile(L"bitmap1.bmp", L"bitmap1");
+        _spriteObjectWithFile->SetSprite(SpriteActionLoader::GetInstance().Load(L"bitmap1.bmp", L"rtExplosion", DXStateManager::kDefaultWrapSample));
+        _spriteObjectWithFile->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+        _spriteObjectWithFile->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
         _spriteObjectWithFile->Init();
+
+        _animationObject = new DX2DObject({ 300, 300 }, 30, 30);
+        DX2DAnimation* animation = new DX2DAnimation(TextureResourceManager::GetInstance().Load(L"FA-18 Super Hornet.bmp"));
+        SpriteAction* sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"Straight", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(true);
+        animation->RegisterState("Straight", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"PostStall", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(500);
+        animation->RegisterState("PostStall", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"Left", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(true);
+        ((SpriteAction*)sprite)->SetInterval(100);
+        animation->RegisterState("Left", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"Right", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(true);
+        ((SpriteAction*)sprite)->SetInterval(100);
+        animation->RegisterState("Right", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"TopRight", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(100);
+        animation->RegisterState("TopRight", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"TopLeft", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(100);
+        animation->RegisterState("TopLeft", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"BottomLeft", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(1000);
+        animation->RegisterState("BottomLeft", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"BottomRight", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(1000);
+        animation->RegisterState("BottomRight", sprite);
+        animation->SetCurrentState("PostStall");
+        _animationObject->SetSprite(animation);
+        _animationObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+        _animationObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"FA-18 Super Hornet PixelShader.hlsl", "Main", "ps_5_0"));
+        _animationObject->Init();
 
         return true;
     }
@@ -89,6 +128,7 @@ namespace SSB
         _spriteObject->Frame();
         _objectWithFile->Frame();
         _spriteObjectWithFile->Frame();
+        _animationObject->Frame();
         _text->Frame();
 
         return true;
@@ -103,6 +143,7 @@ namespace SSB
         _spriteObject->Release();
         _objectWithFile->Release();
         _spriteObjectWithFile->Release();
+        _animationObject->Release();
         _text->Release();
 
         TextManager::GetInstance().Release();
@@ -122,6 +163,7 @@ namespace SSB
         DXWindow::AddDrawable(_spriteObject);
         DXWindow::AddDrawable(_objectWithFile);
         DXWindow::AddDrawable(_spriteObjectWithFile);
+        DXWindow::AddDrawable(_animationObject);
         DXWindow::AddTextable(_text);
 
         return true;
@@ -130,8 +172,8 @@ namespace SSB
     bool GETestWindow::MainRender()
     {
         GetDeviceContext()->RSSetState(DXStateManager::GetInstance().GetRasterizerState(DXStateManager::kDefaultSolidRasterizer));
-        _object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
-        _objectWithFile->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "withMask", "ps_5_0"));
+        _object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
+        _objectWithFile->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
         DXWindow::MainRender();
 
         GetDeviceContext()->RSSetState(DXStateManager::GetInstance().GetRasterizerState(DXStateManager::kDefaultWireFrameRasterizer));

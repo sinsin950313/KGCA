@@ -5,6 +5,7 @@
 #include "DXStateManager.h"
 #include "DXCore.h"
 #include "DX2DCamera.h"
+#include "DX2DAnimation.h"
 
 namespace SSB
 {
@@ -37,8 +38,9 @@ namespace SSB
 
 	bool DX2DGameObject::Init()
 	{
-		_dxObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
-		_dxObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
+		PreInit();
+		//_dxObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+		//_dxObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
 		//_dxObject->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"bitmap1", DXStateManager::kDefaultSolidRasterizer));
 		//_dxObject->SetMaskSprite(TextureResourceManager::GetInstance().Load(L"bitmap2.bmp"));
 		_dxObject->Init();
@@ -164,18 +166,34 @@ namespace SSB
 	void DX2DInGameObject::FlightStateChangeOrder(EXAxis xAxis, EYAxis yAxis, EZAxis zAxis)
 	{
 		EAireplaneFlightState state = EAireplaneFlightState::STRAIGHT;
+		DX2DAnimation* anim = (DX2DAnimation*)GetDXObject()->GetSprite();
 		if (xAxis == EXAxis::LEFT)
 		{
 			if (yAxis == EYAxis::TOP)
 			{
+				if (_flightStateChangeOrder != EAireplaneFlightState::LEFT_TOP)
+				{
+					anim->SetCurrentState("TopLeft");
+					//OutputDebugString(L"TopLeft\n");
+				}
 				state = EAireplaneFlightState::LEFT_TOP;
 			}
 			else if (yAxis == EYAxis::BOTTOM)
 			{
+				if (_flightStateChangeOrder != EAireplaneFlightState::LEFT_BOTTOM)
+				{
+					anim->SetCurrentState("BottomLeft");
+					//OutputDebugString(L"BottomLeft\n");
+				}
 				state = EAireplaneFlightState::LEFT_BOTTOM;
 			}
 			else
 			{
+				if (_flightStateChangeOrder != EAireplaneFlightState::LEFT)
+				{
+					anim->SetCurrentState("Left");
+					//OutputDebugString(L"Left\n");
+				}
 				state = EAireplaneFlightState::LEFT;
 			}
 		}
@@ -183,19 +201,41 @@ namespace SSB
 		{
 			if (yAxis == EYAxis::TOP)
 			{
+				if (_flightStateChangeOrder != EAireplaneFlightState::RIGHT_TOP)
+				{
+					anim->SetCurrentState("TopRight");
+					//OutputDebugString(L"TopRight\n");
+				}
 				state = EAireplaneFlightState::RIGHT_TOP;
 			}
 			else if (yAxis == EYAxis::BOTTOM)
 			{
+				if (_flightStateChangeOrder != EAireplaneFlightState::RIGHT_BOTTOM)
+				{
+					anim->SetCurrentState("BottomRight");
+					//OutputDebugString(L"BottomRight\n");
+				}
 				state = EAireplaneFlightState::RIGHT_BOTTOM;
 			}
 			else
 			{
+				if (_flightStateChangeOrder != EAireplaneFlightState::RIGHT)
+				{
+					anim->SetCurrentState("Right");
+					//OutputDebugString(L"Right\n");
+				}
 				state = EAireplaneFlightState::RIGHT;
 			}
 		}
 		else
 		{
+			if (_flightStateChangeOrder != EAireplaneFlightState::TOP &&
+				_flightStateChangeOrder != EAireplaneFlightState::BOTTOM &&
+				_flightStateChangeOrder != EAireplaneFlightState::STRAIGHT)
+			{
+				anim->SetCurrentState("Straight");
+				//OutputDebugString(L"Straight\n");
+			}
 			if (yAxis == EYAxis::TOP)
 			{
 				state = EAireplaneFlightState::TOP;
@@ -247,6 +287,47 @@ namespace SSB
 			return true;
 		}
 		return false;
+	}
+
+	void DX2DInGameObject::PreInit()
+	{
+        DX2DAnimation* animation = new DX2DAnimation(TextureResourceManager::GetInstance().Load(L"FA-18 Super Hornet.bmp"));
+        SpriteAction* sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"Straight", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(true);
+        ((SpriteAction*)sprite)->SetInterval(500);
+        animation->RegisterState("Straight", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"Left", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(500);
+        animation->RegisterState("Left", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"Right", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(500);
+        animation->RegisterState("Right", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"TopRight", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(500);
+        animation->RegisterState("TopRight", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"TopLeft", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(500);
+        animation->RegisterState("TopLeft", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"BottomLeft", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(500);
+        animation->RegisterState("BottomLeft", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"BottomRight", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(500);
+        animation->RegisterState("BottomRight", sprite);
+        sprite = SpriteActionLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"PostStall", DXStateManager::kDefaultWrapSample);
+        ((SpriteAction*)sprite)->SetLoop(false);
+        ((SpriteAction*)sprite)->SetInterval(500);
+        animation->RegisterState("PostStall", sprite);
+        animation->SetCurrentState("Straight");
+        GetDXObject()->SetSprite(animation);
+        GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+        GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"FA-18 Super Hornet PixelShader.hlsl", "Main", "ps_5_0"));
 	}
 
 	bool DX2DInGameObject::Init()

@@ -42,6 +42,9 @@ namespace SSB
 
 	private:
 		int GetHitboxIndex(EAireplaneFlightState flightState);
+
+	protected:
+		virtual void PreInit() { }
 	};
 
 	class DX2DHitBox : public DX2DGameObject
@@ -112,5 +115,6 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
+		void PreInit() override;
 	};
 }

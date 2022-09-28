@@ -161,7 +161,7 @@ namespace SSB
 				{
                     if (_loop)
                     {
-                        _currentActionIndex = 0;
+                        ResetAction();
                     }
                     else
                     {

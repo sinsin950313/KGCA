@@ -155,7 +155,7 @@ namespace SSB
 
 	bool DXWindow::PreRender()
 	{
-		float color[4] = { 1, 1, 1, 1.0f };
+		float color[4] = { 0, 0, 0, 1.0f };
 		_deviceContext->ClearRenderTargetView(_renderTargetView, color);
 
 		return true;

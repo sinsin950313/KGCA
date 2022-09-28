@@ -238,11 +238,13 @@ bool SSB::PlayerController::Frame()
 	const int mouseDelta = 100;
 	if ((int)(g_dxWindow->GetClientHeight() / 2 - mouseDelta) > (int)(InputManager::GetInstance().GetMousePosition().y))
 	{
-		yAxis += 1;
+		//yAxis += 1;
+		yAxis -= 1;
 	}
 	if ((int)(g_dxWindow->GetClientHeight() / 2 + mouseDelta) < (int)(InputManager::GetInstance().GetMousePosition().y))
 	{
-		yAxis -= 1;
+		//yAxis -= 1;
+		yAxis += 1;
 	}
 
 	if (g_Debug)

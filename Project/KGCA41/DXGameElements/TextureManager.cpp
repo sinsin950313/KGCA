@@ -249,25 +249,27 @@ namespace SSB
         if (fp_src == NULL) return;
 
         _fgetts(pBuffer, _countof(pBuffer), fp_src);
-        _stscanf_s(pBuffer, _T("%s%d%s"), pTemp, (unsigned int)_countof(pTemp), &iNumSprite);
+        _stscanf_s(pBuffer, _T("%s%d"), pTemp, (unsigned int)_countof(pTemp), &iNumSprite);
         auto spriteData = _spriteActionDatas.find(resourceFileName);
 
         for (int iCnt = 0; iCnt < iNumSprite; iCnt++)
         {
             int iNumFrame = 0;
             _fgetts(pBuffer, _countof(pBuffer), fp_src);
-            _stscanf_s(pBuffer, _T("%s %d"), pTemp, (unsigned int)_countof(pTemp), &iNumFrame);
+			TCHAR actionName[256] = { 0 };
+            _stscanf_s(pBuffer, _T("%s %d"), actionName, (unsigned int)_countof(actionName), &iNumFrame);
 
             std::vector<TexturePartRelative> sequence;
             for (int iFrame = 0; iFrame < iNumFrame; iFrame++)
             {
 				TexturePartRelative texturePart;
                 _fgetts(pBuffer, _countof(pBuffer), fp_src);
-                _stscanf_s(pBuffer, _T("%s %d %d %d %d"), pTemp, (unsigned int)_countof(pTemp),
+				TCHAR dummy[256] = { 0 };
+                _stscanf_s(pBuffer, _T("%s %d %d %d %d"), dummy, (unsigned int)_countof(dummy),
                     &texturePart.left, &texturePart.top, &texturePart.width, &texturePart.height);
                 sequence.push_back(texturePart);
             }
-            RegisterSpriteActionWithRelativeValue(resourceFileName, pTemp, sequence);
+            RegisterSpriteActionWithRelativeValue(resourceFileName, actionName, sequence);
         }
         fclose(fp_src);
     }

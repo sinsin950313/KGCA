@@ -159,7 +159,11 @@ bool SSB::DX2DObject::Release()
     if (_vertexBuffer) _vertexBuffer->Release();
     if (_vertexLayout) _vertexLayout->Release();
     if (_indexBuffer) _indexBuffer->Release();
-    if (_sprite) _sprite->Release();
+    if (_sprite)
+    {
+        _sprite->Release();
+        delete _sprite;
+    }
 
     return true;
 }

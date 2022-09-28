@@ -83,12 +83,14 @@ namespace SSB
 		TextureResource* GetMaskResource() { return _maskResource; }
 		void SetSamplerState(ID3D11SamplerState* samplerState);
 		ID3D11SamplerState* GetSamplerState() { return _samplerState; }
-		TexturePartCoordinateRatio GetCurrentTexturePart();
 		void SetCurrentSprite(TexturePartCoordinate part) { _currentTexturePart = part; }
 		void SetCurrentSprite(TexturePartRelative part);
 		void Scroll(float xRatio, float yRatio);
 		void Tile(float xCoefficient, float yCoefficient);
 		bool HasMaskResource() { return _maskResource != nullptr; }
+
+	public:
+		virtual TexturePartCoordinateRatio GetCurrentTexturePart();
 
 	public:
 		bool Init() override;
@@ -117,6 +119,7 @@ namespace SSB
 		bool IsFinished() { return _finished; }
 		void SetSpriteAction(std::vector<TexturePartCoordinate> actionSequence);
 		void SetSpriteAction(std::vector<TexturePartRelative> actionSequence);
+		void ResetAction() { _currentActionIndex = 0; _finished = false; }
 
 	public:
 		bool Init() override;

@@ -46,7 +46,7 @@ namespace SSB
 	class EnemyController : public DX2DProjectController
 	{
 	private:
-		bool _offensive = false;
+		bool _offensive = true;
 		DX2DInGameObject* _enemy;
 		const DWORD _maxDecisionTime = 300;
 		DWORD _lastDecisionTime;

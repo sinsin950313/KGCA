@@ -9,6 +9,7 @@
 #include "DXStateManager.h"
 #include "TextManager.h"
 #include "DXCore.h"
+#include "ShaderManager.h"
 
 namespace SSB
 {
@@ -35,6 +36,8 @@ namespace SSB
 
 		_camera = new DX2DCamera(Vector2D(Vector2DData{ 0, 0 }), 100, 100);
 		g_Camera = _camera;
+
+		_pool.SetCamera(_camera);
 	}
 
 	bool TestScene::Init()
@@ -59,6 +62,8 @@ namespace SSB
 		_camera->Init();
 
 		_map->SetPlayer(_playerObject);
+
+		_pool.Init();
 
         _text = new Text(L"", { 0, 0, 100, 50 });
         _text->SetTextFormat(TextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
@@ -85,6 +90,8 @@ namespace SSB
 		_camera->ConnectTo(_playerObject);
 		_camera->Frame();
 
+		_pool.Frame();
+
 		//collide check
 		if (_map->IsHit(_playerObject, _enemyObject))
 		{
@@ -92,6 +99,7 @@ namespace SSB
 			if (_enemyObject->IsHit())
 			{
 				++_hitCount;
+				_pool.RunEffect(_enemyObject->GetCenter());
 			}
 		}
 		else
@@ -105,6 +113,7 @@ namespace SSB
 			if (_playerObject->IsHit())
 			{
 				++_hittedCount;
+				_pool.RunEffect(_playerObject->GetCenter());
 			}
 		}
 		else
@@ -150,6 +159,8 @@ namespace SSB
 		delete _camera;
 		_camera = nullptr;
 
+		_pool.Release();
+
 		_text->Release();
 
 		return true;
@@ -173,12 +184,15 @@ namespace SSB
 		//SetDisplayPosition(_enemyrObject);
 		//g_dxWindow->AddDrawable(_enemyrObject->GetDXObject());
 
-		g_dxWindow->AddTextable(_text);
+		_pool.Render();
+
+		//g_dxWindow->AddTextable(_text);
+		_text->Render();
 
 		return true;
 	}
 
-	void TestScene::SetDisplayPosition(DX2DInGameObject* object)
+	void TestScene::SetDisplayPosition(DX2DGameObject* object)
 	{
 		_camera->MontageForFilm(object);
 	}
@@ -186,5 +200,101 @@ namespace SSB
 	void TestScene::SetDisplayPosition(DX2DMapObject* map)
 	{
 		_camera->MontageForFilm(map);
+	}
+
+	TestScene::HitEffectMemoryPool::HitEffectMemoryPool()
+	{
+	}
+
+	TestScene::HitEffectMemoryPool::~HitEffectMemoryPool()
+	{
+		Release();
+	}
+
+	void TestScene::HitEffectMemoryPool::RequireMemory(int newCount)
+	{
+		_effectList.resize(newCount);
+
+		for (int i = _effectCount; i < newCount; ++i)
+		{
+			DX2DObject* effect = new DX2DObject({ 0, 0 }, 30, 30);
+			effect->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+			effect->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
+
+			SpriteLoader::GetInstance().RegisterSpriteFromFile(L"Effect.bmp", L"Effect");
+			SpriteAction* action = SpriteActionLoader::GetInstance().Load(L"Effect.bmp", L"Bomb", DXStateManager::kDefaultWrapSample);
+			action->SetInterval(300);
+			action->SetLoop(false);
+			action->Off();
+			effect->SetSprite(action);
+			effect->Init();
+
+			_effectList[i] = effect;
+		}
+		_effectCount = newCount;
+	}
+
+	void TestScene::HitEffectMemoryPool::SetCamera(DX2DCamera* camera)
+	{
+		_camera = camera;
+	}
+
+	void TestScene::HitEffectMemoryPool::RunEffect(Vector2D pos)
+	{
+		for (auto effect : _effectList)
+		{
+			SpriteAction* action = (SpriteAction*)effect->GetSprite();
+			if (action->IsFinished())
+			{
+				effect->SetCenter(_camera->PhysicsToDisplay(pos));
+				action->ResetAction();
+				return;
+			}
+		}
+		RequireMemory(_effectCount + 10);
+		RunEffect(pos);
+	}
+
+	bool TestScene::HitEffectMemoryPool::Init()
+	{
+		RequireMemory(_initialEffectCount);
+
+		return true;
+	}
+
+	bool TestScene::HitEffectMemoryPool::Frame()
+	{
+		for (auto effect : _effectList)
+		{
+			effect->Frame();
+		}
+		return true;
+	}
+
+	bool TestScene::HitEffectMemoryPool::Render()
+	{
+		for (auto effect : _effectList)
+		{
+			SpriteAction* action = (SpriteAction*)effect->GetSprite();
+			if (!action->IsFinished())
+			{
+				effect->Render();
+			}
+		}
+		return true;
+	}
+
+	bool TestScene::HitEffectMemoryPool::Release()
+	{
+		for (auto effect : _effectList)
+		{
+			effect->Release();
+			delete effect;
+		}
+		_effectList.clear();
+
+		_camera = nullptr;
+
+		return true;
 	}
 }

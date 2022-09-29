@@ -22,103 +22,103 @@ namespace SSB
 
 	void EnemyController::Logic()
 	{
-		if (_lastDecisionTime + _decisionTime < g_DXCore->GetGlobalTime())
-		{
-			_decisionTime = rand() % _maxDecisionTime;
+		//if (_lastDecisionTime + _decisionTime < g_DXCore->GetGlobalTime())
+		//{
+		//	_decisionTime = rand() % _maxDecisionTime;
 
-			EXAxis xAxis;
-			EYAxis yAxis;
-			EZAxis zAxis;
+		//	EXAxis xAxis;
+		//	EYAxis yAxis;
+		//	EZAxis zAxis;
 
-			if (_offensive)
-			{
-				if (_enemy->GetCurrentMapLayer() < _controlledObject->GetCurrentMapLayer())
-				{
-					yAxis = EYAxis::BOTTOM;
-				}
-				else if (_enemy->GetCurrentMapLayer() > _controlledObject->GetCurrentMapLayer())
-				{
-					yAxis = EYAxis::TOP;
-				}
-				else
-				{
-					yAxis = EYAxis::STEADY;
-				}
+		//	if (_offensive)
+		//	{
+		//		if (_enemy->GetCurrentMapLayer() < _controlledObject->GetCurrentMapLayer())
+		//		{
+		//			yAxis = EYAxis::BOTTOM;
+		//		}
+		//		else if (_enemy->GetCurrentMapLayer() > _controlledObject->GetCurrentMapLayer())
+		//		{
+		//			yAxis = EYAxis::TOP;
+		//		}
+		//		else
+		//		{
+		//			yAxis = EYAxis::STEADY;
+		//		}
 
-				if (_enemy->GetCenter().Get(0) < _controlledObject->GetCenter().Get(0))
-				{
-					xAxis = EXAxis::LEFT;
-				}
-				else if (_enemy->GetCenter().Get(0) > _controlledObject->GetCenter().Get(0))
-				{
-					xAxis = EXAxis::RIGHT;
-				}
-				else
-				{
-					xAxis = EXAxis::STEADY;
-				}
+		//		if (_enemy->GetCenter().Get(0) < _controlledObject->GetCenter().Get(0))
+		//		{
+		//			xAxis = EXAxis::LEFT;
+		//		}
+		//		else if (_enemy->GetCenter().Get(0) > _controlledObject->GetCenter().Get(0))
+		//		{
+		//			xAxis = EXAxis::RIGHT;
+		//		}
+		//		else
+		//		{
+		//			xAxis = EXAxis::STEADY;
+		//		}
 
-				if (_enemy->GetCenter().Get(1) - 20 < _controlledObject->GetCenter().Get(1))
-				{
-					zAxis = EZAxis::DECELERATE;
-				}
-				else if (_enemy->GetCenter().Get(1) + 20 > _controlledObject->GetCenter().Get(1))
-				{
-					zAxis = EZAxis::ACCELERATE;
-				}
-				else
-				{
-					zAxis = EZAxis::STEADY;
-				}
-			}
-			else
-			{
-				int x = rand() % 3 - 1;
-				if (x == -1)
-				{
-					xAxis = EXAxis::LEFT;
-				}
-				else if (x == 1)
-				{
-					xAxis = EXAxis::RIGHT;
-				}
-				else
-				{
-					xAxis = EXAxis::STEADY;
-				}
+		//		if (_enemy->GetCenter().Get(1) - 20 < _controlledObject->GetCenter().Get(1))
+		//		{
+		//			zAxis = EZAxis::DECELERATE;
+		//		}
+		//		else if (_enemy->GetCenter().Get(1) + 20 > _controlledObject->GetCenter().Get(1))
+		//		{
+		//			zAxis = EZAxis::ACCELERATE;
+		//		}
+		//		else
+		//		{
+		//			zAxis = EZAxis::STEADY;
+		//		}
+		//	}
+		//	else
+		//	{
+		//		int x = rand() % 3 - 1;
+		//		if (x == -1)
+		//		{
+		//			xAxis = EXAxis::LEFT;
+		//		}
+		//		else if (x == 1)
+		//		{
+		//			xAxis = EXAxis::RIGHT;
+		//		}
+		//		else
+		//		{
+		//			xAxis = EXAxis::STEADY;
+		//		}
 
-				int y = rand() % 3 - 1;
-				if (y == -1)
-				{
-					yAxis = EYAxis::BOTTOM;
-				}
-				else if (y == 1)
-				{
-					yAxis = EYAxis::TOP;
-				}
-				else
-				{
-					yAxis = EYAxis::STEADY;
-				}
+		//		int y = rand() % 3 - 1;
+		//		if (y == -1)
+		//		{
+		//			yAxis = EYAxis::BOTTOM;
+		//		}
+		//		else if (y == 1)
+		//		{
+		//			yAxis = EYAxis::TOP;
+		//		}
+		//		else
+		//		{
+		//			yAxis = EYAxis::STEADY;
+		//		}
 
-				int z = rand() % 3 - 1;
-				if (z == -1)
-				{
-					zAxis = EZAxis::DECELERATE;
-				}
-				else if (z == 1)
-				{
-					zAxis = EZAxis::ACCELERATE;
-				}
-				else
-				{
-					zAxis = EZAxis::STEADY;
-				}
-			}
-			_controlledObject->FlightAccelerateDirection(xAxis, yAxis, zAxis);
+		//		int z = rand() % 3 - 1;
+		//		if (z == -1)
+		//		{
+		//			zAxis = EZAxis::DECELERATE;
+		//		}
+		//		else if (z == 1)
+		//		{
+		//			zAxis = EZAxis::ACCELERATE;
+		//		}
+		//		else
+		//		{
+		//			zAxis = EZAxis::STEADY;
+		//		}
+		//	}
+		//	_controlledObject->FlightAccelerateDirection(xAxis, yAxis, zAxis);
 
-			_lastDecisionTime = g_DXCore->GetGlobalTime();
-		}
+		//	_lastDecisionTime = g_DXCore->GetGlobalTime();
+		//}
 	}
 
 	bool EnemyController::Init()

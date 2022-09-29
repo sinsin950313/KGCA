@@ -150,7 +150,8 @@ bool SSB::DX2DObject::Frame()
 
 bool SSB::DX2DObject::Render()
 {
-    Draw(g_dxWindow->GetDeviceContext());
+    //Draw(g_dxWindow->GetDeviceContext());
+    g_dxWindow->AddDrawable(this);
     return true;
 }
 

@@ -79,7 +79,7 @@ namespace SSB
 		int _currentLayer;
 		EAireplaneFlightState _flightStateChangeOrder = EAireplaneFlightState::STRAIGHT;
 		EAireplaneFlightState _currentFlightState = EAireplaneFlightState::STRAIGHT;
-		const DWORD _stateTransitionRequiredTime = 100;
+		const DWORD _stateTransitionRequiredTime = 300;
 		DWORD _stateTransitionLastTime;
 
 		DX2DHitBox* _hitBox[hitboxCount];
@@ -117,4 +117,20 @@ namespace SSB
 		bool Release() override;
 		void PreInit() override;
 	};
+
+	//class DX2DHitEffect : public DX2DGameObject
+	//{
+	//public:
+	//	DX2DHitEffect(Position2D center, float width, float height);
+
+	//public:
+	//	void Action();
+
+	//public:
+	//	bool Init() override;
+	//	bool Frame() override;
+	//	bool Render() override;
+	//	bool Release() override;
+	//	void PreInit() override;
+	//};
 }

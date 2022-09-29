@@ -25,7 +25,6 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
-		void Draw(ID2D1RenderTarget* renderTarget);
 
 	public:
 		void SetTextFormat(IDWriteTextFormat* format) { _textFormat = format; }
@@ -38,5 +37,8 @@ namespace SSB
 	public:
 		ID2D1SolidColorBrush* GetBrush() { return _brush; }
 		IDWriteTextFormat* GetFormat() { return _textFormat; }
+
+	protected:
+		void Draw(ID2D1RenderTarget* renderTarget);
 	};
 }

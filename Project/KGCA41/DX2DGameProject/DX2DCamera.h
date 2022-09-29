@@ -30,8 +30,6 @@ namespace SSB
 		void Move(Vector2D center);
 		Object2D* GetCaptureArea() { return _captureArea; }
 		void ConnectTo(DX2DGameObject* object);
-
-	private:
 		// Physics Coordinate to Screen Coordinate
 		Position2D PhysicsToDisplay(Vector2D absolute);
 

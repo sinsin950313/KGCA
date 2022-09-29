@@ -120,6 +120,7 @@ namespace SSB
 		void SetSpriteAction(std::vector<TexturePartCoordinate> actionSequence);
 		void SetSpriteAction(std::vector<TexturePartRelative> actionSequence);
 		void ResetAction() { _currentActionIndex = 0; _finished = false; }
+		void Off() { _finished = true; }
 
 	public:
 		bool Init() override;

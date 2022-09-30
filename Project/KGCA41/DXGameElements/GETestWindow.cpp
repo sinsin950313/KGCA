@@ -118,6 +118,16 @@ namespace SSB
         _animationObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"FA-18 Super Hornet PixelShader.hlsl", "Main", "ps_5_0"));
         _animationObject->Init();
 
+        _textUI = new TextUI(L"Font.png");
+        _textUI->SetCenter({ 400, 50 });
+        _textUI->SetText("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:");
+        _textUI->Init();
+
+        _dialog = new DX2DObject({ 400, 300 }, 200, 300);
+        SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"Dialog.png", L"Dialog", { 0, 0, 2419, 3000 });
+        _dialog->SetSprite(SpriteLoader::GetInstance().Load(L"Dialog.png", L"Dialog", DXStateManager::kDefaultWrapSample));
+        _dialog->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+        _dialog->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithoutMask", "ps_5_0"));
         class TestButtonFunctor : public ButtonFunctor
         {
         public:
@@ -126,7 +136,7 @@ namespace SSB
                 OutputDebugString(L"Button Action!");
             }
         };
-        _button = new Button({ 200, 300 }, 50, 30, new TestButtonFunctor);
+        _button = new Button({ 0, 130 }, 50, 30, new TestButtonFunctor);
         SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"DefaultButtonNormal.png", L"Normal", { 0, 0, 306, 196 });
         _button->RegisterButton("Normal", SpriteLoader::GetInstance().Load(L"DefaultButtonNormal.png", L"Normal", DXStateManager::kDefaultWrapSample));
         SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"DefaultButtonHover.png", L"Hover", { 0, 0, 306, 196 });
@@ -135,12 +145,8 @@ namespace SSB
         _button->RegisterButton("Push", SpriteLoader::GetInstance().Load(L"DefaultButtonPush.png", L"Push", DXStateManager::kDefaultWrapSample));
         _button->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
         _button->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithoutMask", "ps_5_0"));
-        _button->Init();
-
-        _textUI = new TextUI(L"Font.png");
-        _textUI->SetCenter({ 400, 50 });
-        _textUI->SetText("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:");
-        _textUI->Init();
+        _dialog->AddChild(_button);
+        _dialog->Init();
 
         return true;
     }
@@ -156,9 +162,11 @@ namespace SSB
         _objectWithFile->Frame();
         _spriteObjectWithFile->Frame();
         _animationObject->Frame();
-        _button->Frame();
+        //_button->Frame();
         _textUI->Frame();
         _text->Frame();
+        _dialog->Move({ _dialog->GetCenter().x + 0.01f, _dialog->GetCenter().y + 0.01f });
+        _dialog->Frame();
 
         return true;
     }
@@ -174,9 +182,10 @@ namespace SSB
         _objectWithFile->Release();
         _spriteObjectWithFile->Release();
         _animationObject->Release();
-        _button->Release();
+        //_button->Release();
         _textUI->Release();
         _text->Release();
+        _dialog->Release();
 
         TextManager::GetInstance().Release();
         ShaderManager::GetInstance().Release();
@@ -196,9 +205,10 @@ namespace SSB
         DXWindow::AddDrawable(_objectWithFile);
         DXWindow::AddDrawable(_spriteObjectWithFile);
         DXWindow::AddDrawable(_animationObject);
-        DXWindow::AddDrawable(_button);
+        //DXWindow::AddDrawable(_button);
         DXWindow::AddDrawable(_textUI);
         DXWindow::AddTextable(_text);
+        _dialog->Render();
 
         return true;
     }

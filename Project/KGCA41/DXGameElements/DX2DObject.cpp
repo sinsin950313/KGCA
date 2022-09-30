@@ -8,6 +8,10 @@ namespace SSB
 {
     extern DXWindow* g_dxWindow;
     extern BasicWindow* g_Window;
+    Position2D operator+(Position2D& lValue, Position2D& rValue)
+	{
+		return { lValue.x + rValue.x, lValue.y + rValue.y };
+	}
 }
 
 void SSB::DX2DObject::Resize(float width, float height)
@@ -81,8 +85,8 @@ void SSB::DX2DObject::UpdateBoundary()
 
     for (int i = 0; i < 4; ++i)
     {
-        _vertexList[i].pos.x = _center.x + hWidth* dx[i];
-        _vertexList[i].pos.y = _center.y + hHeight * dy[i];
+        _vertexList[i].pos.x = _parentCenter.x + _center.x + hWidth* dx[i];
+        _vertexList[i].pos.y = _parentCenter.y + _center.y + hHeight * dy[i];
         _vertexList[i].col = { 0.0f, 0.0f, 0.0f, 1.0f };
         _vertexList[i].texParam.u = texU[i];
         _vertexList[i].texParam.v = texV[i];
@@ -134,6 +138,11 @@ bool SSB::DX2DObject::Init()
 
     g_dxWindow->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+    for (auto dxObject : _childObjectList)
+    {
+        dxObject->Init();
+    }
+
     return true;
 }
 
@@ -145,6 +154,13 @@ bool SSB::DX2DObject::Frame()
 
     _sprite->Frame();
 
+	Position2D center = _center + _parentCenter;
+    for (auto dxObject : _childObjectList)
+    {
+        dxObject->UpdateParentCenter(center);
+        dxObject->Frame();
+    }
+
     return true;
 }
 
@@ -152,6 +168,12 @@ bool SSB::DX2DObject::Render()
 {
     //Draw(g_dxWindow->GetDeviceContext());
     g_dxWindow->AddDrawable(this);
+
+    for (auto dxObject : _childObjectList)
+    {
+        dxObject->Render();
+    }
+
     return true;
 }
 
@@ -165,6 +187,11 @@ bool SSB::DX2DObject::Release()
         _sprite->Release();
         delete _sprite;
         _sprite = nullptr;
+    }
+
+    for (auto dxObject : _childObjectList)
+    {
+        dxObject->Release();
     }
 
     return true;

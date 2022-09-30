@@ -15,6 +15,8 @@ namespace SSB
 		float y;
 	};
 
+	Position2D operator+(Position2D& lValue, Position2D& rValue);
+
 	struct ColorRGBA
 	{
 		float r;
@@ -39,8 +41,10 @@ namespace SSB
 		std::vector<SimpleVertex2D> _vertexList;
 		std::vector<DWORD> _indexList;
 		Position2D _center;
+		Position2D _parentCenter{ 0, 0 };
 		float _width;
 		float _height;
+		std::vector<DX2DObject*> _childObjectList;
 
 	private:
 		ID3D11Buffer* _vertexBuffer;
@@ -66,10 +70,13 @@ namespace SSB
 		void Resize(float width, float height);
 		void Move(Position2D centerPosition) { _center = centerPosition; }
 		void SetCenter(Position2D center) { _center = center; }
+		void UpdateParentCenter(Position2D parentCenter) { _parentCenter = parentCenter; }
 		Sprite* GetSprite() { return _sprite; }
 		float GetWidth() { return _width; }
 		float GetHeight() { return _height; }
-		Position2D GetCenter() { return _center; }
+		Position2D GetCenter() { return _center + _parentCenter; }
+		// don't Init before AddChild.
+		void AddChild(DX2DObject* child) { _childObjectList.push_back(child); }
 
 	public:
 		bool Init() override;

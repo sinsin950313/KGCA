@@ -20,6 +20,7 @@ namespace SSB
 		DX2DObject* _animationObject;
 		Button* _button;
 		TextUI* _textUI;
+		DX2DObject* _dialog;
 
 	public:
 		GETestWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }

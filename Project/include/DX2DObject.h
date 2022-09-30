@@ -76,8 +76,6 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
-
-	protected:
 		void Draw(ID3D11DeviceContext* dc) override;
 	};
 }

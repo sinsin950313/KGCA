@@ -164,6 +164,7 @@ bool SSB::DX2DObject::Release()
     {
         _sprite->Release();
         delete _sprite;
+        _sprite = nullptr;
     }
 
     return true;

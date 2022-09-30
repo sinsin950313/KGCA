@@ -4,6 +4,7 @@
 #include "DXWindow.h"
 #include "DX2DObject.h"
 #include "Text.h"
+#include "UI.h"
 
 namespace SSB
 {
@@ -17,6 +18,8 @@ namespace SSB
 		DX2DObject* _objectWithFile;
 		DX2DObject* _spriteObjectWithFile;
 		DX2DObject* _animationObject;
+		Button* _button;
+		TextUI* _textUI;
 
 	public:
 		GETestWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }

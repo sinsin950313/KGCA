@@ -68,4 +68,15 @@ namespace SSB
 		void SetDisplayPosition(DX2DGameObject* object);
 		void SetDisplayPosition(DX2DMapObject* map);
 	};
+
+	class ChangeScene : public Scene
+	{
+		Position2D _enemyPosition;
+		Position2D _playerPosition;
+
+		// Change scene only has DXObject.
+		// This Scene just direct animation which is change position from deffense to offense.
+		DX2DObject _enemy;
+		DX2DObject _player;
+	};
 }

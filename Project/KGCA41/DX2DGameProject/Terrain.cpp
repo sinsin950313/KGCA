@@ -133,6 +133,7 @@ namespace SSB
 	{
 		GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
 		GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithoutMask", "ps_5_0"));
+		GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"Sea.bmp", L"Sea1", DXStateManager::kDefaultWrapSample));
 
 		DX2DGameObject::Init();
 
@@ -191,12 +192,12 @@ namespace SSB
 
 	void Terrain::Tile::PreInit()
 	{
-		GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"KGCABK.bmp", L"Background", DXStateManager::kDefaultWrapSample));
+		Render();
 	}
 
 	Terrain::TileMemoryPool::TileMemoryPool(int widthUnit, int heightUnit) : _widthUnit(widthUnit), _heightUnit(heightUnit)
 	{
-		SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"KGCABK.bmp", L"Background", {0, 0, 1024, 768});
+		SpriteLoader::GetInstance().RegisterSpriteFromFile(L"Sea.bmp", L"Sea");
 	}
 
 	Terrain::TileMemoryPool::~TileMemoryPool()
@@ -216,6 +217,9 @@ namespace SSB
 			if (!tile->IsUsing())
 			{
 				tile->SetUse();
+				int index = rand() % 6 + 1;
+				std::wstring seaName = L"Sea" + std::to_wstring(index);
+				tile->GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"Sea.bmp", seaName, DXStateManager::kDefaultWrapSample));
 				return tile;
 			}
 		}

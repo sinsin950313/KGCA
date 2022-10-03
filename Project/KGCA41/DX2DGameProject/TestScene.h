@@ -20,7 +20,7 @@ namespace SSB
 		private:
 			const int _initialEffectCount = 10;
 			int _effectCount = 0;
-			std::vector<DX2DObject*> _effectList;
+			std::vector<DX2DGameObject*> _effectList;
 			DX2DCamera* _camera;
 
 		public:
@@ -40,6 +40,22 @@ namespace SSB
 			bool Render() override;
 			bool Release() override;
 		};
+		class CloudManager : public Common
+		{
+		private:
+			std::vector<DX2DGameObject*> _clouds;
+			const DWORD _interval = 400;
+			DWORD _lastTime;
+
+		private:
+			DX2DGameObject* GetCloud();
+
+		public:
+			bool Init() override;
+			bool Frame() override;
+			bool Render() override;
+			bool Release() override;
+		};
 	private:
 		DX2DMapObject* _map;
 		DX2DCamera* _camera;
@@ -52,6 +68,7 @@ namespace SSB
 		UINT _hitCount = 0;
 		UINT _hittedCount = 0;
 		HitEffectMemoryPool _pool;
+		CloudManager* _cloudManager;
 
 		Text* _text;
 

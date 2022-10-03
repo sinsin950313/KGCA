@@ -10,6 +10,7 @@
 #include "TextManager.h"
 #include "DXCore.h"
 #include "ShaderManager.h"
+#include "SoundManager.h"
 
 namespace SSB
 {
@@ -38,6 +39,8 @@ namespace SSB
 		g_Camera = _camera;
 
 		_pool.SetCamera(_camera);
+
+		_cloudManager = new CloudManager;
 	}
 
 	bool TestScene::Init()
@@ -68,6 +71,8 @@ namespace SSB
         _text->SetBrush(TextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
         _text->Init();
 
+		_cloudManager->Init();
+
 		return true;
 	}
 
@@ -79,6 +84,10 @@ namespace SSB
 		//{
 		//	object->Frame();
 		//}
+
+		const float kDefaultSpeed = 0.5f;
+		_playerObject->Move(_playerObject->GetCenter().Get(0), _playerObject->GetCenter().Get(1) + kDefaultSpeed);
+		_enemyObject->Move(_enemyObject->GetCenter().Get(0), _enemyObject->GetCenter().Get(1) + kDefaultSpeed);
 
 		_playerController->Frame();
 		//_playerObject->Frame();
@@ -129,6 +138,8 @@ namespace SSB
 		_text->SetString(std::to_wstring(_enemyObject->GetCurrentMapLayer()));
 		_text->Frame();
 
+		_cloudManager->Frame();
+
 		return true;
 	}
 
@@ -161,6 +172,8 @@ namespace SSB
 
 		_text->Release();
 
+		_cloudManager->Release();
+
 		return true;
 	}
 
@@ -168,6 +181,8 @@ namespace SSB
 	{
 		//SetDisplayPosition(_map);
 		_map->Render();
+
+		_cloudManager->Render();
 
 		auto objectList = _map->GetCollideObjectList(_camera);
 		for (auto object : objectList)
@@ -215,16 +230,16 @@ namespace SSB
 
 		for (int i = _effectCount; i < newCount; ++i)
 		{
-			DX2DObject* effect = new DX2DObject({ 0, 0 }, 30, 30);
-			effect->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
-			effect->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
+			DX2DGameObject* effect = new DX2DGameObject({ 0, 0 }, 5, 5, 0);
+			effect->GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+			effect->GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
 
 			SpriteLoader::GetInstance().RegisterSpriteFromFile(L"Effect.bmp", L"Effect");
 			SpriteAction* action = SpriteActionLoader::GetInstance().Load(L"Effect.bmp", L"Bomb", DXStateManager::kDefaultWrapSample);
 			action->SetInterval(300);
 			action->SetLoop(false);
 			action->Off();
-			effect->SetSprite(action);
+			effect->GetDXObject()->SetSprite(action);
 			effect->Init();
 
 			_effectList[i] = effect;
@@ -241,11 +256,12 @@ namespace SSB
 	{
 		for (auto effect : _effectList)
 		{
-			SpriteAction* action = (SpriteAction*)effect->GetSprite();
+			SpriteAction* action = (SpriteAction*)effect->GetDXObject()->GetSprite();
 			if (action->IsFinished())
 			{
-				effect->SetCenter(_camera->PhysicsToDisplay(pos));
+				effect->GetPhysicsObject()->GetVolume()->Reposition(pos);
 				action->ResetAction();
+				SoundManager::GetInstance().PlayInstanceSound(L"20mm effect.mp3");
 				return;
 			}
 		}
@@ -264,6 +280,7 @@ namespace SSB
 	{
 		for (auto effect : _effectList)
 		{
+			_camera->MontageForFilm(effect);
 			effect->Frame();
 		}
 		return true;
@@ -273,7 +290,7 @@ namespace SSB
 	{
 		for (auto effect : _effectList)
 		{
-			SpriteAction* action = (SpriteAction*)effect->GetSprite();
+			SpriteAction* action = (SpriteAction*)effect->GetDXObject()->GetSprite();
 			if (!action->IsFinished())
 			{
 				effect->Render();
@@ -292,6 +309,84 @@ namespace SSB
 		_effectList.clear();
 
 		_camera = nullptr;
+
+		return true;
+	}
+
+	DX2DGameObject* TestScene::CloudManager::GetCloud()
+	{
+		for (auto cloud : _clouds)
+		{
+			if (cloud->GetCenter().Get(1) < g_Camera->GetCenter().Get(1) - 100)
+			{
+				return cloud;
+			}
+		}
+		return nullptr;
+	}
+
+	bool TestScene::CloudManager::Init()
+	{
+		_lastTime = g_DXCore->GetGlobalTime();
+
+		_clouds.resize(5);
+		for (int i = 0; i < 5; ++i)
+		{
+			DX2DGameObject* cloud = new DX2DGameObject({ 0, -500 }, rand() % 20 + 10, rand() % 20 + 10, 0);
+			cloud->GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+			cloud->GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"CloudPixelShader.hlsl", "Main", "ps_5_0"));
+
+			SpriteLoader::GetInstance().RegisterSpriteFromFile(L"cloud.bmp", L"cloud");
+			Sprite* sprite = SpriteLoader::GetInstance().Load(L"cloud.bmp", L"cloud1", DXStateManager::kDefaultWrapSample);
+			cloud->GetDXObject()->SetSprite(sprite);
+			cloud->Init();
+
+			_clouds[i] = cloud;
+		}
+		return true;
+	}
+
+	bool TestScene::CloudManager::Frame()
+	{
+		if (_lastTime + _interval < g_DXCore->GetGlobalTime())
+		{
+			if (rand() % 3 == 0)
+			{
+				auto cloud = GetCloud();
+				if (cloud != nullptr)
+				{
+					std::wstring cloudName = L"cloud" + std::to_wstring(rand() % 3 + 1);
+					cloud->GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"cloud.bmp", cloudName, DXStateManager::kDefaultWrapSample));
+					cloud->Move(g_Camera->GetCenter().Get(0) + (rand() % 100 - 50), g_Camera->GetCenter().Get(1) + 100);
+				}
+			}
+			_lastTime = g_DXCore->GetGlobalTime();
+		}
+
+		for (auto cloud : _clouds)
+		{
+			g_Camera->MontageForFilm(cloud);
+			cloud->Frame();
+		}
+		return true;
+	}
+
+	bool TestScene::CloudManager::Render()
+	{
+		for (auto cloud : _clouds)
+		{
+			cloud->Render();
+		}
+
+		return true;
+	}
+
+	bool TestScene::CloudManager::Release()
+	{
+		for (auto cloud : _clouds)
+		{
+			cloud->Release();
+		}
 
 		return true;
 	}

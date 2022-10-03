@@ -9,7 +9,7 @@ namespace SSB
 {
 	extern DXWindow* g_dxWindow;
 	extern DXCore* g_DXCore;
-	bool g_Debug = true;
+	bool g_Debug = false;
 
 	EnemyController::EnemyController(DX2DInGameObject* controlledObject) : DX2DProjectController(controlledObject)
 	{

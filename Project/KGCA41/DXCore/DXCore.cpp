@@ -7,6 +7,7 @@
 #include "ShaderManager.h"
 #include "TextManager.h"
 #include "TextureManager.h"
+#include "SoundManager.h"
 
 namespace SSB
 {
@@ -41,6 +42,8 @@ namespace SSB
 
 		TextureResourceManager::GetInstance().Init();
 
+		SoundManager::GetInstance().Init();
+
 		_currentScene->Init();
 
 		return true;
@@ -56,6 +59,7 @@ namespace SSB
 		ShaderManager::GetInstance().Frame();
 		TextManager::GetInstance().Frame();
 		TextureResourceManager::GetInstance().Frame();
+		SoundManager::GetInstance().Frame();
 
 		if (_currentScene->IsFinished())
 		{
@@ -79,6 +83,7 @@ namespace SSB
 		ShaderManager::GetInstance().Release();
 		TextManager::GetInstance().Release();
 		TextureResourceManager::GetInstance().Release();
+		SoundManager::GetInstance().Release();
 
 		_currentScene = nullptr;
 
@@ -102,6 +107,7 @@ namespace SSB
 		ShaderManager::GetInstance().Render();
 		TextManager::GetInstance().Render();
 		TextureResourceManager::GetInstance().Render();
+		SoundManager::GetInstance().Render();
 
 		_currentScene->Render();
 

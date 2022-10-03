@@ -25,13 +25,15 @@ namespace SSB
 		Vector2D GetCenter() { return _captureArea->GetVolume()->GetCenter(); }
 		void MontageForFilm(DX2DGameObject* object);
 		void MontageForFilm(DX2DInGameObject* object);
-		void MontageForFilm(DX2DMapObject* map);
+		//void MontageForFilm(DX2DMapObject* map);
 		void Move(float x, float y);
 		void Move(Vector2D center);
 		Object2D* GetCaptureArea() { return _captureArea; }
 		void ConnectTo(DX2DGameObject* object);
 		// Physics Coordinate to Screen Coordinate
 		Position2D PhysicsToDisplay(Vector2D absolute);
+		float GetWidth() { return _windowWidth; }
+		float GetHeight() { return _windowHeight; }
 
 	public:
 		bool Init() override;

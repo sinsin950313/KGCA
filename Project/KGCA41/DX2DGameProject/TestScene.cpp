@@ -42,8 +42,8 @@ namespace SSB
 
 	bool TestScene::Init()
 	{
-		SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"KGCABK.bmp", L"Background", {0, 0, 1024, 768});
-		_map->GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"KGCABK.bmp", L"Background", DXStateManager::kDefaultWrapSample));
+		_camera->Init();
+
 		_map->Init();
 
 		//for (auto object : _objects)
@@ -58,8 +58,6 @@ namespace SSB
 
 		//_enemyObject->GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"Enemy1", DXStateManager::kDefaultWrapSample));
 		_enemyObject->Init();
-
-		_camera->Init();
 
 		_map->SetPlayer(_playerObject);
 
@@ -168,7 +166,7 @@ namespace SSB
 
 	bool TestScene::Render()
 	{
-		SetDisplayPosition(_map);
+		//SetDisplayPosition(_map);
 		_map->Render();
 
 		auto objectList = _map->GetCollideObjectList(_camera);
@@ -197,10 +195,10 @@ namespace SSB
 		_camera->MontageForFilm(object);
 	}
 
-	void TestScene::SetDisplayPosition(DX2DMapObject* map)
-	{
-		_camera->MontageForFilm(map);
-	}
+	//void TestScene::SetDisplayPosition(DX2DMapObject* map)
+	//{
+	//	_camera->MontageForFilm(map);
+	//}
 
 	TestScene::HitEffectMemoryPool::HitEffectMemoryPool()
 	{

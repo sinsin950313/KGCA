@@ -6,6 +6,7 @@
 #include "Object.h"
 #include "DX2DObject.h"
 #include "DX2DGameObject.h"
+#include "Terrain.h"
 
 namespace SSB
 {
@@ -18,7 +19,7 @@ namespace SSB
 	private:
 		const int _maxLayer = 5;
 		std::vector<QuadTree*> _layer;
-		DX2DObject* _dxObject;
+		Terrain* _terrian;
 		std::map<Object2D*, DX2DInGameObject*> _physicsToDX2DMatch;
 		Object2D* _object;
 		DX2DInGameObject* _player;
@@ -35,7 +36,7 @@ namespace SSB
 		bool IsHit(DX2DInGameObject* attack, DX2DInGameObject* defense);
 		void RegisterStaticObject(DX2DInGameObject* dxObject);
 		void RegisterDynamicObject(DX2DInGameObject* dxObject);
-		DX2DObject* GetDXObject() { return _dxObject; }
+		//DX2DObject* GetDXObject() { return _dxObject; }
 		Object2D* GetPhysicsObject() { return _object; }
 		Vector2D GetCenter() { return _object->GetVolume()->GetCenter(); }
 		void SetPlayer(DX2DInGameObject* player) { _player = player; }

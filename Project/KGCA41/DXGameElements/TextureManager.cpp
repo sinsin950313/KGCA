@@ -137,7 +137,7 @@ namespace SSB
         if (fp_src == NULL) return;
 
         _fgetts(pBuffer, _countof(pBuffer), fp_src);
-        _stscanf_s(pBuffer, _T("%s%d%s"), pTemp, (unsigned int)_countof(pTemp), &iNumSprite);
+        _stscanf_s(pBuffer, _T("%s%d"), pTemp, (unsigned int)_countof(pTemp), &iNumSprite);
         auto spriteData = _spriteDatas.find(resourceFileName);
 
         for (int iCnt = 0; iCnt < iNumSprite; iCnt++)

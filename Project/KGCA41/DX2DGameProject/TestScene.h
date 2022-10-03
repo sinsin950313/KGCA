@@ -66,7 +66,7 @@ namespace SSB
 
 	private:
 		void SetDisplayPosition(DX2DGameObject* object);
-		void SetDisplayPosition(DX2DMapObject* map);
+		//void SetDisplayPosition(DX2DMapObject* map);
 	};
 
 	class ChangeScene : public Scene

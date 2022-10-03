@@ -92,7 +92,7 @@ namespace SSB
 		EXAxis _xAxis;
 		EYAxis _yAxis;
 		EZAxis _zAxis;
-		float _velocity = 0.01f;
+		float _velocity = 0.1f;
 
 	public:
 		DX2DInGameObject(Position2D center, float width, float height, float mass);

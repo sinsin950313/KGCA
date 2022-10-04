@@ -20,6 +20,7 @@ namespace SSB
 
 	public:
 		Sound(FMOD::Sound* sound) { _sound = sound; }
+		~Sound() { Release(); }
 
 	public:
 		void Play(bool loop);

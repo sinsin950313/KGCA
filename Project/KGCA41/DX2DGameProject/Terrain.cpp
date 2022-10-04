@@ -460,7 +460,12 @@ namespace SSB
 	bool Terrain::Release()
 	{
 		_tiles.clear();
-		delete _memoryPool;
+
+		if (_memoryPool)
+		{
+			delete _memoryPool;
+			_memoryPool = nullptr;
+		}
 
 		return true;
 	}

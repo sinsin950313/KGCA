@@ -204,7 +204,9 @@ bool SSB::DX2DObject::Release()
     for (auto dxObject : _childObjectList)
     {
         dxObject->Release();
+        delete dxObject;
     }
+    _childObjectList.clear();
 
     return true;
 }

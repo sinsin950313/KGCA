@@ -23,6 +23,7 @@ namespace SSB
 
 	private:
 		InputManager() { }
+		~InputManager();
 
 	public:
 		void Set(HWND hWnd);

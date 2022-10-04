@@ -94,11 +94,11 @@ namespace SSB
 		}
 		_soundList.clear();
 
-		//if (_system)
-		//{
-		//	_system->release();
-		//	_system = nullptr;
-		//}
+		if (_system)
+		{
+			_system->release();
+			_system = nullptr;
+		}
 
 		return true;
 	}

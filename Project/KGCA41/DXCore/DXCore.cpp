@@ -112,7 +112,12 @@ namespace SSB
 		}
 		_scenes.clear();
 
-		_timerText->Release();
+		if (_timerText)
+		{
+			_timerText->Release();
+			delete _timerText;
+			_timerText = nullptr;
+		}
 
 		return true;
 	}

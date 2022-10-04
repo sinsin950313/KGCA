@@ -89,6 +89,7 @@ namespace SSB
     bool Sprite::Release()
     {
         _resource = nullptr;
+        _maskResource = nullptr;
         _samplerState = nullptr;
         return false;
     }

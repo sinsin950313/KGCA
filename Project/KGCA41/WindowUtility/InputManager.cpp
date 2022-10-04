@@ -4,6 +4,17 @@ namespace SSB
 {
 	InputManager* InputManager::_instance = nullptr;
 
+	InputManager::~InputManager()
+	{
+		Release();
+
+		if (_instance)
+		{
+			delete _instance;
+			_instance = nullptr;
+		}
+	}
+
 	void InputManager::Set(HWND hWnd)
 	{
 		_hWnd = hWnd;

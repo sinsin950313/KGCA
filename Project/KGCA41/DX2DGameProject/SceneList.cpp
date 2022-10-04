@@ -37,6 +37,10 @@ namespace SSB
 	{
 		Scene::Init();
 
+		_bgm = SoundManager::GetInstance().Load(L"Title.mp3");
+		_bgm->Init();
+		_bgm->Play(true);
+
 		_mainScene = new DX2DObject({ (float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) }, g_Window->GetClientWidth(), g_Window->GetClientHeight());
 		SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"TitleBackground.jpg", L"TitleBackground", { 0, 0, 5101, 3401 });
 		_mainScene->SetSprite(SpriteLoader::GetInstance().Load(L"TitleBackground.jpg", L"TitleBackground", DXStateManager::kDefaultWrapSample));
@@ -55,17 +59,19 @@ namespace SSB
 		{
 		private:
 			Scene* _currentScene;
+			Sound* _bgm;
 
 		public:
-			StartButtonFunctor(Scene* currentScene) : _currentScene(currentScene) { }
+			StartButtonFunctor(Scene* currentScene, Sound* bgm) : _currentScene(currentScene), _bgm(bgm) { }
 
         public:
             void operator()() override
             {
+				_bgm->Stop();
 				_currentScene->SetFinished(true);
             }
 		};
-		_startButton = new Button({(float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) + 200}, 400, 150, new StartButtonFunctor(this));
+		_startButton = new Button({(float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) + 200}, 400, 150, new StartButtonFunctor(this, _bgm));
         SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"DefaultButtonNormal.png", L"Normal", { 0, 0, 300, 196 });
         _startButton->RegisterButton("Normal", SpriteLoader::GetInstance().Load(L"DefaultButtonNormal.png", L"Normal", DXStateManager::kDefaultWrapSample));
         SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"DefaultButtonHover.png", L"Hover", { 0, 0, 300, 196 });
@@ -107,6 +113,7 @@ namespace SSB
 		_startButton->Frame();
 		_titleTextTop->Frame();
 		_titleTextGun->Frame();
+		_bgm->Frame();
 
 		return true;
 	}
@@ -120,6 +127,7 @@ namespace SSB
 		_startButton->Render();
 		_titleTextTop->Render();
 		_titleTextGun->Render();
+		_bgm->Render();
 
 		return true;
 	}
@@ -128,11 +136,42 @@ namespace SSB
 	{
 		Scene::Release();
 
-		if (_mainScene)	_mainScene->Release();
-		if (_flight) _flight->Release();
-		if (_startButton)_startButton->Release();
-		if (_titleTextTop)_titleTextTop->Release();
-		if (_titleTextGun)_titleTextGun->Release();
+		if (_mainScene)
+		{
+			_mainScene->Release();
+			delete _mainScene;
+			_mainScene = nullptr;
+		}
+		if (_flight)
+		{
+			_flight->Release();
+			delete _flight;
+			_flight = nullptr;
+		}
+		if (_startButton)
+		{
+			_startButton->Release();
+			delete _startButton;
+			_startButton = nullptr;
+		}
+		if (_titleTextTop)
+		{
+			_titleTextTop->Release();
+			delete _titleTextTop;
+			_titleTextTop = nullptr;
+		}
+		if (_titleTextGun)
+		{
+			_titleTextGun->Release();
+			delete _titleTextGun;
+			_titleTextGun = nullptr;
+		}
+		if (_bgm)
+		{
+			_bgm->Release();
+			delete _bgm;
+			_bgm = nullptr;
+		}
 
 		return true;
 	}
@@ -208,6 +247,11 @@ namespace SSB
 			SetNextScene("ChangeScene");
 			_playerObject->Move(g_Camera->GetCenter().Get(0), g_Camera->GetCenter().Get(1) + 50);
 			_enemyObject->Move(g_Camera->GetCenter().Get(0), g_Camera->GetCenter().Get(1) - 50);
+
+			SoundManager::GetInstance().PlayInstanceSound(L"BattleStart.mp3");
+
+			_bgm = SoundManager::GetInstance().Load(L"BattleBGM.mp3");
+			_bgm->Init();
 		}
 		else
 		{
@@ -217,6 +261,7 @@ namespace SSB
 		}
 
 		_startTime = g_DXCore->GetGlobalTime();
+		_bgm->Play(true);
 
 		return true;
 	}
@@ -230,12 +275,16 @@ namespace SSB
 			{
 				((ChangeScene*)GetNextScene())->SetInitialPosition(_playerObject->GetDXObject()->GetCenter(), _enemyObject->GetDXObject()->GetCenter());
 				((ChangeScene*)GetNextScene())->SetTerrian(_map->GetTerrain());
+				_bgm->Stop();
 			}
 			else
 			{
 				((EndScene*)GetNextScene())->SetScore(_hitCount, _damagedCount);
+				_bgm->Stop();
 			}
 		}
+
+		_bgm->Frame();
 
 		float remainTime = (_maxTime - (g_DXCore->GetGlobalTime() - _startTime)) / 1000.0f;
 		_timerText->SetText(std::to_string(remainTime));
@@ -308,6 +357,8 @@ namespace SSB
 
 	bool BattleScene::Release()
 	{
+		Scene::Release();
+
 		if (_factory)
 		{
 			delete _factory;
@@ -379,6 +430,13 @@ namespace SSB
 			_timerText = nullptr;
 		}
 
+		if (_bgm)
+		{
+			_bgm->Release();
+			delete _bgm;
+			_bgm = nullptr;
+		}
+
 		return true;
 	}
 
@@ -411,6 +469,8 @@ namespace SSB
 		}
 
 		_timerText->Render();
+
+		_bgm->Render();
 
 		return true;
 	}
@@ -654,6 +714,8 @@ namespace SSB
 
 		SetNextScene("OffenseScene");
 
+		SoundManager::GetInstance().PlayInstanceSound(L"PostStall.mp3");
+
 		return true;
 	}
 
@@ -732,6 +794,10 @@ namespace SSB
 	{
 		Scene::Init();
 
+		_bgm = SoundManager::GetInstance().Load(L"Ending.mp3");
+		_bgm->Init();
+		_bgm->Play(true);
+
 		_mainScene = new DX2DObject({ (float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) }, g_Window->GetClientWidth(), g_Window->GetClientHeight());
 		SpriteLoader::GetInstance().RegisterSpriteFromFile(L"FA-18 Super Hornet.bmp", L"FA-18 Super Hornet");
 		_mainScene->SetSprite(SpriteLoader::GetInstance().Load(L"FA-18 Super Hornet.bmp", L"End", DXStateManager::kDefaultWrapLinearSample));
@@ -761,6 +827,7 @@ namespace SSB
 		_mainScene->Frame();
 		_hitUI->Frame();
 		_damageUI->Frame();
+		_bgm->Frame();
 
 		return true;
 	}
@@ -772,6 +839,7 @@ namespace SSB
 		_mainScene->Render();
 		_hitUI->Render();
 		_damageUI->Render();
+		_bgm->Render();
 
 		return true;
 	}
@@ -799,6 +867,13 @@ namespace SSB
 			_damageUI->Release();
 			delete _damageUI;
 			_damageUI = nullptr;
+		}
+
+		if (_bgm)
+		{
+			_bgm->Release();
+			delete _bgm;
+			_bgm = nullptr;
 		}
 
 		return true;

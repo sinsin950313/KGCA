@@ -6,6 +6,7 @@
 #include "Text.h"
 #include "UI.h"
 #include "Terrain.h"
+#include "Sound.h"
 
 namespace SSB
 {
@@ -22,6 +23,7 @@ namespace SSB
 		Button* _startButton;
 		TextUI* _titleTextTop;
 		TextUI* _titleTextGun;
+		Sound* _bgm;
 
 	public:
 		TitleScene();
@@ -97,11 +99,14 @@ namespace SSB
 
 		Text* _text;
 
-		const DWORD _maxTime = 30000;
+		//const DWORD _maxTime = 30000;
+		const DWORD _maxTime = 10000;
 		DWORD _startTime = 0;
 		TextUI* _timerText;
 
 		bool _defenseStage = true;
+
+		Sound* _bgm;
 
 	public:
 		BattleScene();
@@ -161,6 +166,7 @@ namespace SSB
 		TextUI* _damageUI;
 		UINT _hitCount;
 		UINT _damagedCount;
+		Sound* _bgm;
 
 	public:
 		~EndScene();

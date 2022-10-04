@@ -179,9 +179,21 @@ bool SSB::DX2DObject::Render()
 
 bool SSB::DX2DObject::Release()
 {
-    if (_vertexBuffer) _vertexBuffer->Release();
-    if (_vertexLayout) _vertexLayout->Release();
-    if (_indexBuffer) _indexBuffer->Release();
+    if (_vertexBuffer)
+    {
+        _vertexBuffer->Release();
+        _vertexBuffer = nullptr;
+    }
+    if (_vertexLayout)
+    {
+        _vertexLayout->Release();
+        _vertexLayout = nullptr;
+    }
+    if (_indexBuffer)
+    {
+        _indexBuffer->Release();
+        _indexBuffer = nullptr;
+    }
     if (_sprite)
     {
         _sprite->Release();

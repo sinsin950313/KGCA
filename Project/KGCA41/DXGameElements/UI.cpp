@@ -91,7 +91,11 @@ namespace SSB
 
 		_spriteSet.clear();
 
-		delete _functor;
+		if (_functor)
+		{
+			delete _functor;
+			_functor = nullptr;
+		}
 
 		return true;
 	}

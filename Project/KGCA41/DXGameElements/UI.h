@@ -37,7 +37,7 @@ namespace SSB
 		bool Release() override;
 	};
 
-	class TextUI : public Common, public DXDrawableInterface
+	class TextUI : public DXDrawableInterface
 	{
 	private:
 		std::wstring _fontFileName;
@@ -47,6 +47,7 @@ namespace SSB
 		std::map<char, Sprite*> _fontSprites;
 		int _textSize;
 		std::vector<DX2DObject*> _outputText;
+		Position2D _parentCenter{ 0, 0 };
 
 	public:
 		TextUI(std::wstring fontFileName, std::wstring fontInfoFileName = std::wstring());
@@ -68,5 +69,6 @@ namespace SSB
 		bool Render() override;
 		bool Release() override;
 		void Draw(ID3D11DeviceContext* dc) override;
+		void UpdateParentCenter(Position2D parentCenter) override { _parentCenter = parentCenter; }
 	};
 }

@@ -16,6 +16,25 @@ namespace SSB
         virtual ID3D11SamplerState* Create() = 0;
     };
 
+    class DefaultWrapLinearSamplerFactory : public SamplerStateFactoryInterface
+    {
+    public:
+        ID3D11SamplerState* Create()
+        {
+            D3D11_SAMPLER_DESC samplerDesc;
+            ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
+            samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+            samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+            samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+            samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+            ID3D11SamplerState* samplerState;
+            g_dxWindow->GetDevice()->CreateSamplerState(&samplerDesc, &samplerState);
+
+            return samplerState;
+        }
+    };
+
     class DefaultWrapSamplerFactory : public SamplerStateFactoryInterface
     {
     public:
@@ -85,6 +104,7 @@ namespace SSB
 
     public:
         const static std::string kDefaultWrapSample;
+		const static std::string kDefaultWrapLinearSample;
 		const static std::string kDefaultSolidRasterizer;
 		const static std::string kDefaultWireFrameRasterizer;
 

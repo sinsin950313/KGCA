@@ -103,8 +103,11 @@ namespace SSB
 
         InputManager::GetInstance().Release();
 
+        if (_sound != nullptr)
+        {
+            _sound->Release();
+        }
         SoundManager::GetInstance().Release();
-        _sound->Release();
 
         return true;
     }

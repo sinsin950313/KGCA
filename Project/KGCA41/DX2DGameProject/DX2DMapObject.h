@@ -19,7 +19,7 @@ namespace SSB
 	private:
 		const int _maxLayer = 5;
 		std::vector<QuadTree*> _layer;
-		Terrain* _terrian;
+		Terrain* _terrain;
 		std::map<Object2D*, DX2DInGameObject*> _physicsToDX2DMatch;
 		Object2D* _object;
 		DX2DInGameObject* _player;
@@ -40,6 +40,7 @@ namespace SSB
 		Object2D* GetPhysicsObject() { return _object; }
 		Vector2D GetCenter() { return _object->GetVolume()->GetCenter(); }
 		void SetPlayer(DX2DInGameObject* player) { _player = player; }
+		Terrain* GetTerrain() { return _terrain; }
 
 	private:
 		int GetCurrentMapLayer(DX2DInGameObject* object, int playerCurrentLayer);

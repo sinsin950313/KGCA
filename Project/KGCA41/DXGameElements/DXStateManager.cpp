@@ -3,6 +3,7 @@
 namespace SSB
 {
 	const std::string DXStateManager::kDefaultWrapSample = "DefaultWrapSample";
+	const std::string DXStateManager::kDefaultWrapLinearSample = "DefaultWrapLinearSample";
 	const std::string DXStateManager::kDefaultSolidRasterizer = "DefaultSolidRasterizer";
 	const std::string DXStateManager::kDefaultWireFrameRasterizer = "DefaultWireFrameRasterizer";
 	DXStateManager* DXStateManager::_instance = nullptr;
@@ -54,6 +55,7 @@ namespace SSB
 	bool SSB::DXStateManager::Init()
 	{
 		AddSamplerState(kDefaultWrapSample, new DefaultWrapSamplerFactory);
+		AddSamplerState(kDefaultWrapLinearSample, new DefaultWrapLinearSamplerFactory);
 		AddRasterizerState(kDefaultSolidRasterizer, new DefaultSolidRasterizerFactory);
 		AddRasterizerState(kDefaultWireFrameRasterizer, new DefaultWireFrameRasterizerFactory);
 

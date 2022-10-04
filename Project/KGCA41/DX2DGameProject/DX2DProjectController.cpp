@@ -249,7 +249,7 @@ bool SSB::PlayerController::Frame()
 
 	if (g_Debug)
 	{
-        static Text* text = new Text(L"", { 300, 0, 600, 50 });
+        static Text* text = new Text(L"", { 300, 100, 600, 50 });
         text->SetTextFormat(TextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
         text->SetBrush(TextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
         text->Init();
@@ -367,6 +367,7 @@ bool SSB::PlayerController::Render()
 
 bool SSB::PlayerController::Release()
 {
-	DX2DProjectController::Frame();
+	DX2DProjectController::Release();
+
 	return true;
 }

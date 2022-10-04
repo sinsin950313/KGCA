@@ -31,6 +31,10 @@ namespace SSB
 		_timer->Init();
 		_timer->Start();
 
+		_beforeTime = _timer->GetElapseTime();
+		_frames = 0;
+		_fps = 0.0f;
+
 		InputManager::GetInstance().Set(GetWindowHandle());
 		InputManager::GetInstance().Init();
 
@@ -45,6 +49,11 @@ namespace SSB
 		SoundManager::GetInstance().Init();
 
 		_currentScene->Init();
+
+		_timerText = new Text(L"", { 0, 0, 500, 100 });
+        _timerText->SetTextFormat(TextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
+        _timerText->SetBrush(TextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
+        _timerText->Init();
 
 		return true;
 	}
@@ -67,6 +76,15 @@ namespace SSB
 			_currentScene->Init();
 		}
 		_currentScene->Frame();
+
+		++_frames;
+		if (1000.0f < _timer->GetElapseTime() - _beforeTime)
+		{
+			_fps = _frames * 1000.0f / (_timer->GetElapseTime() - _beforeTime);
+			_frames = 0;
+			_beforeTime = _timer->GetElapseTime();
+		}
+		_timerText->SetString(L"Time : " + std::to_wstring(_timer->GetElapseTime() / 1000.0f) + L" FPS : " + std::to_wstring(_fps));
 
 		return true;
 	}
@@ -94,6 +112,8 @@ namespace SSB
 		}
 		_scenes.clear();
 
+		_timerText->Release();
+
 		return true;
 	}
 
@@ -102,6 +122,7 @@ namespace SSB
 		DXWindow::PreRender();
 
 		_timer->Render();
+		_timerText->Render();
 		InputManager::GetInstance().Render();
         DXStateManager::GetInstance().Render();
 		ShaderManager::GetInstance().Render();

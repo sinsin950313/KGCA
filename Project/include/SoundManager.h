@@ -14,7 +14,7 @@ namespace SSB
 	class SoundManager : public Common
 	{
 	private:
-		FMOD::System* _system;
+		FMOD::System* _system = nullptr;
 		std::map<std::wstring, FMOD::Sound*> _soundList;
 		std::wstring _path = kSoundPath;
 

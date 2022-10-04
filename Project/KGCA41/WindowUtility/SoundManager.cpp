@@ -25,8 +25,8 @@ namespace SSB
 	{
 		Release();
 
-		delete _instance;
-		_instance = nullptr;
+		//delete _instance;
+		//_instance = nullptr;
 	}
 
 	bool SoundManager::LoadSound(std::wstring fileName)
@@ -94,11 +94,11 @@ namespace SSB
 		}
 		_soundList.clear();
 
-		if (_system)
-		{
-			_system->close();
-			_system->release();
-		}
+		//if (_system)
+		//{
+		//	_system->release();
+		//	_system = nullptr;
+		//}
 
 		return true;
 	}

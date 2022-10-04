@@ -11,7 +11,7 @@ struct PS_input
 float4 Main(PS_input input) : SV_TARGET
 {
 	float4 vColor = g_txTextureA.Sample(g_sampleA, input.t);
-	if(vColor.g > 0.99f && vColor.r < 0.01f)
+	if(vColor.g > 0.8f && vColor.r < 0.2f && vColor.b < 0.2f)
 	{
 		discard;
 	}

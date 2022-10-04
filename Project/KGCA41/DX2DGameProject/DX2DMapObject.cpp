@@ -13,7 +13,7 @@ namespace SSB
 	DX2DMapObject::DX2DMapObject(Vector2D center, float width, float height)
 	{
 		_object = new Object2D(new Rectangle(center.Get(0), center.Get(1), width, height), Rigidbody2D(0));
-		_terrian = new Terrain(width, height);
+		_terrain = new Terrain(width, height);
 
 		int treeMaxLayer = 0;
 		float wTmp = width;
@@ -116,14 +116,14 @@ namespace SSB
 
 	bool DX2DMapObject::Init()
 	{
-		_terrian->Init();
+		_terrain->Init();
 
 		return true;
 	}
 
 	bool DX2DMapObject::Frame()
 	{
-		_terrian->Frame();
+		_terrain->Frame();
 		for (auto layer : _layer)
 		{
 			layer->ClearDynamicObject();
@@ -142,7 +142,7 @@ namespace SSB
 
 	bool DX2DMapObject::Render()
 	{
-		_terrian->Render();
+		_terrain->Render();
 
 		return true;
 	}
@@ -156,11 +156,11 @@ namespace SSB
 		_layer.clear();
 		_dynamicObjectList.clear();
 
-		if (_terrian)
+		if (_terrain)
 		{
-			_terrian->Release();
-			delete _terrian;
-			_terrian = nullptr;
+			_terrain->Release();
+			delete _terrain;
+			_terrain = nullptr;
 		}
 
 		if (_object)

@@ -16,9 +16,9 @@ float4 Main(PS_input input) : SV_TARGET
 		discard;
 	}
 
-	vColor.r = 1;
-	vColor.g = 1;
-	vColor.b = 0;
+	// vColor.r = 1;
+	// vColor.g = 1;
+	// vColor.b = 0;
 
 	return vColor;
 }

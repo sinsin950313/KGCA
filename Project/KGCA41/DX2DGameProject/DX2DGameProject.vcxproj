@@ -153,7 +153,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DX2DMapObject.cpp" />
     <ClCompile Include="Terrain.cpp" />
-    <ClCompile Include="TestScene.cpp" />
+    <ClCompile Include="SceneList.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DX2DCamera.h" />
@@ -163,7 +163,7 @@
     <ClInclude Include="DX2DMapObject.h" />
     <ClInclude Include="DX2DProjectController.h" />
     <ClInclude Include="Terrain.h" />
-    <ClInclude Include="TestScene.h" />
+    <ClInclude Include="SceneList.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

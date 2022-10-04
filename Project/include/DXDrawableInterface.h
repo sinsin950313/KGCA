@@ -1,12 +1,20 @@
 #pragma once
 
 #include <d3d11.h>
+#include "Common.h"
 
 namespace SSB
 {
-	class DXDrawableInterface
+	struct Position2D
+	{
+		float x;
+		float y;
+	};
+
+	class DXDrawableInterface : public Common
 	{
 	public:
 		virtual void Draw(ID3D11DeviceContext* dc) = 0;
+		virtual void UpdateParentCenter(Position2D parentCenter) = 0;
 	};
 }

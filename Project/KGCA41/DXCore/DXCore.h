@@ -4,6 +4,7 @@
 #include "Scene.h"
 #include <map>
 #include <string>
+#include "Text.h"
 
 namespace SSB
 {
@@ -15,6 +16,10 @@ namespace SSB
 		Timer* _timer;
 		std::map<std::string, Scene*> _scenes;
 		Scene* _currentScene = nullptr;
+		Text* _timerText;
+		int _frames;
+		DWORD _beforeTime;
+		float _fps;
 
 	public:
 		DXCore(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);

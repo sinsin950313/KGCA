@@ -137,7 +137,15 @@ namespace SSB
 	{
 		if (_fontSprites.find(c) == _fontSprites.end())
 		{
-			std::string cStr(1, c);
+			std::string cStr;
+			if (c != ' ')
+			{
+				cStr = (1, c);
+			}
+			else
+			{
+				cStr = "Space";
+			}
 			_fontSprites.insert(std::make_pair(c, SpriteLoader::GetInstance().Load(_fontFileName, std::wstring(cStr.begin(), cStr.end()), DXStateManager::kDefaultWrapSample)));
 		}
 		return _fontSprites.find(c)->second;
@@ -159,6 +167,7 @@ namespace SSB
 
 	bool TextUI::Frame()
 	{
+
 		for (int i = 0; i < _textSize; ++i)
 		{
 			_outputText[i]->SetSprite(GetSprite(_str[i]));
@@ -172,13 +181,14 @@ namespace SSB
 		}
 		float hWidth = width / 2;
 
-		float left = _center.x - hWidth;
+		Position2D center = _center + _parentCenter;
+		float left = center.x - hWidth;
 		for (int i = 0; i < _textSize; ++i)
 		{
 			float hWidth = _outputText[i]->GetWidth() / 2;
 
 			left += hWidth;
-			_outputText[i]->SetCenter({ left, _center.y });
+			_outputText[i]->SetCenter({ left, center.y });
 			left += hWidth;
 		}
 

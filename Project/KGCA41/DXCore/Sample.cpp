@@ -91,7 +91,7 @@ namespace SSB
 		}
 	};
 
-	class EndScene : public Scene
+	class TestEndScene : public Scene
 	{
 	private:
 		Text* _endMessage;
@@ -131,7 +131,7 @@ namespace SSB
 		{
 			NewScene("Default", new TestScene());
 			SetCurrentScene("Default");
-			NewScene("End", new EndScene());
+			NewScene("End", new TestEndScene());
 			GetScene("Default")->LinkNewScene("End", GetScene("End"));
 			GetScene("Default")->SetNextScene("End");
 		}

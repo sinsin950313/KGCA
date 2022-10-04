@@ -29,7 +29,7 @@
     <ClCompile Include="DX2DGameObjectFactory.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="TestScene.cpp">
+    <ClCompile Include="SceneList.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DX2DProjectController.cpp">
@@ -55,7 +55,7 @@
     <ClInclude Include="DX2DGameObjectFactory.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="TestScene.h">
+    <ClInclude Include="SceneList.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="DX2DProjectController.h">

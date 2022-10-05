@@ -123,6 +123,7 @@ namespace SSB
 
 	private:
 		void SetDisplayPosition(DX2DGameObject* object);
+		void SetDisplayPosition(DX2DInGameObject* object);
 		//void SetDisplayPosition(DX2DMapObject* map);
 	};
 

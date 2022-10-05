@@ -475,6 +475,11 @@ namespace SSB
 		return true;
 	}
 
+	void BattleScene::SetDisplayPosition(DX2DInGameObject* object)
+	{
+		_camera->MontageForFilm(object);
+	}
+
 	void BattleScene::SetDisplayPosition(DX2DGameObject* object)
 	{
 		_camera->MontageForFilm(object);

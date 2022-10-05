@@ -6,6 +6,8 @@ namespace SSB
 	const std::string DXStateManager::kDefaultWrapLinearSample = "DefaultWrapLinearSample";
 	const std::string DXStateManager::kDefaultSolidRasterizer = "DefaultSolidRasterizer";
 	const std::string DXStateManager::kDefaultWireFrameRasterizer = "DefaultWireFrameRasterizer";
+	const std::string DXStateManager::kDefaultBlend = "DefaultBlendState";
+
 	DXStateManager* DXStateManager::_instance = nullptr;
 
 	DXStateManager& DXStateManager::GetInstance()
@@ -32,6 +34,11 @@ namespace SSB
 		_rasterizerStateFactory.insert(std::make_pair(name, factory));
 	}
 
+	void DXStateManager::AddBlendState(std::string name, BlendStateFactoryInterface* factory)
+	{
+		_blendStateFactory.insert(std::make_pair(name, factory));
+	}
+
 	ID3D11SamplerState* SSB::DXStateManager::GetSamplerState(std::string name)
 	{
 		if (_samplerStateList.find(name) == _samplerStateList.end())
@@ -52,12 +59,23 @@ namespace SSB
 		return _rasterizerList.find(name)->second;
 	}
 
+	ID3D11BlendState* DXStateManager::GetBlendState(std::string name)
+	{
+		if (_blendStateList.find(name) == _blendStateList.end())
+		{
+			ID3D11BlendState* state = _blendStateFactory.find(name)->second->Create();
+			_blendStateList.insert(std::make_pair(name, state));
+		}
+		return _blendStateList.find(name)->second;
+	}
+
 	bool SSB::DXStateManager::Init()
 	{
 		AddSamplerState(kDefaultWrapSample, new DefaultWrapSamplerFactory);
 		AddSamplerState(kDefaultWrapLinearSample, new DefaultWrapLinearSamplerFactory);
 		AddRasterizerState(kDefaultSolidRasterizer, new DefaultSolidRasterizerFactory);
 		AddRasterizerState(kDefaultWireFrameRasterizer, new DefaultWireFrameRasterizerFactory);
+		AddBlendState(kDefaultBlend, new DefaultBlendFactory);
 
 		return true;
 	}
@@ -86,6 +104,12 @@ namespace SSB
 		}
 		_rasterizerStateFactory.clear();
 
+		for (auto iter : _blendStateFactory)
+		{
+			delete iter.second;
+		}
+		_blendStateFactory.clear();
+
 		for (auto iter : _samplerStateList)
 		{
 			iter.second->Release();
@@ -97,6 +121,12 @@ namespace SSB
 			iter.second->Release();
 		}
 		_rasterizerList.clear();
+
+		for (auto iter : _blendStateList)
+		{
+			iter.second->Release();
+		}
+		_blendStateList.clear();
 
 		return true;
 	}

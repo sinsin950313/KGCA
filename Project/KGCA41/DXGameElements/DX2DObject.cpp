@@ -3,6 +3,8 @@
 #include "TextureManager.h"
 #include "ShaderManager.h"
 #include "DXWindow.h"
+#include "Common.h"
+#include "DXStateManager.h"
 
 namespace SSB
 {
@@ -85,7 +87,7 @@ void SSB::DX2DObject::UpdateBoundary()
 
     for (int i = 0; i < 4; ++i)
     {
-        _vertexList[i].pos.x = _parentCenter.x + _center.x + hWidth* dx[i];
+        _vertexList[i].pos.x = _parentCenter.x + _center.x + hWidth * dx[i];
         _vertexList[i].pos.y = _parentCenter.y + _center.y + hHeight * dy[i];
         _vertexList[i].col = { 0.0f, 0.0f, 0.0f, 1.0f };
         _vertexList[i].texParam.u = texU[i];
@@ -100,21 +102,70 @@ std::vector<SSB::SimpleVertex2D> SSB::DX2DObject::GetNDCBoundary()
 
     std::vector<SimpleVertex2D> ret;
     ret.resize(_vertexList.size());
+    SimpleVertex2D center{ 0, 0 };
+    for (int i = 0; i < ret.size(); ++i)
+    {
+        center.pos.x += _vertexList[i].pos.x;
+        center.pos.y += _vertexList[i].pos.y;
+    }
+    center.pos.x /= 4.0f;
+    center.pos.y /= 4.0f;
+
     for (int i = 0; i < ret.size(); ++i)
     {
         ret[i] = _vertexList[i];
 
-        ret[i].pos.x = _vertexList[i].pos.x / width;
+        Rotate(ret[i], center);
+
+        ret[i].pos.x = ret[i].pos.x / width;
         ret[i].pos.x *= 2;
         ret[i].pos.x -= 1;
 
-        ret[i].pos.y = _vertexList[i].pos.y / height;
+        ret[i].pos.y = ret[i].pos.y / height;
         ret[i].pos.y *= 2;
         ret[i].pos.y -= 1;
         ret[i].pos.y = -ret[i].pos.y;
     }
 
     return ret;
+}
+
+void SSB::DX2DObject::Rotate(SimpleVertex2D& vertex, SimpleVertex2D center)
+{
+    RotateFromParent(vertex);
+
+    SimpleVertex2D tmp = vertex;
+    tmp.pos.x -= center.pos.x;
+    tmp.pos.y -= center.pos.y;
+
+    tmp.pos.x = (vertex.pos.x - center.pos.x) * cos(_radian) - (vertex.pos.y - center.pos.y) * sin(_radian);
+    tmp.pos.y = (vertex.pos.x - center.pos.x) * sin(_radian) + (vertex.pos.y - center.pos.y) * cos(_radian);
+
+    vertex.pos.x = tmp.pos.x + center.pos.x;
+    vertex.pos.y = tmp.pos.y + center.pos.y;
+}
+
+void SSB::DX2DObject::RotateFromParent(SimpleVertex2D& vertex)
+{
+    SimpleVertex2D tmp = vertex;
+    tmp.pos.x -= _parentCenter.x;
+    tmp.pos.y -= _parentCenter.y;
+
+    tmp.pos.x = (vertex.pos.x - _parentCenter.x) * cos(_parentRadian) - (vertex.pos.y - _parentCenter.y) * sin(_parentRadian);
+    tmp.pos.y = (vertex.pos.x - _parentCenter.x) * sin(_parentRadian) + (vertex.pos.y - _parentCenter.y) * cos(_parentRadian);
+
+    vertex.pos.x = tmp.pos.x + _parentCenter.x;
+    vertex.pos.y = tmp.pos.y + _parentCenter.y;
+}
+
+void SSB::DX2DObject::RotateDegree(float degree)
+{
+    RotateRadian(DegreeToRadian(degree));
+}
+
+void SSB::DX2DObject::RotateRadian(float radian)
+{
+    _radian += radian;
 }
 
 bool SSB::DX2DObject::Init()
@@ -157,7 +208,7 @@ bool SSB::DX2DObject::Frame()
 	Position2D center = _center + _parentCenter;
     for (auto dxObject : _childObjectList)
     {
-        dxObject->UpdateParentCenter(center);
+        dxObject->UpdateParentData(center, _radian + _parentRadian);
         dxObject->Frame();
     }
 
@@ -232,4 +283,5 @@ void SSB::DX2DObject::Draw(ID3D11DeviceContext* dc)
         dc->PSSetShaderResources(1, 1, _sprite->GetMaskResource()->GetShaderResourceView());
     }
 	dc->DrawIndexed(_indexList.size(), 0, 0);
+    dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
 }

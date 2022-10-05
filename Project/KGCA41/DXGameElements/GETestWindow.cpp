@@ -121,7 +121,7 @@ namespace SSB
         _textUI = new TextUI(L"Font.png");
         _textUI->SetCenter({ 400, 50 });
         _textUI->SetText("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789.,:");
-        _textUI->Init();
+        //_textUI->Init();
 
         _dialog = new DX2DObject({ 400, 300 }, 200, 300);
         SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"Dialog.png", L"Dialog", { 0, 0, 2419, 3000 });
@@ -146,6 +146,8 @@ namespace SSB
         _button->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
         _button->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithoutMask", "ps_5_0"));
         _dialog->AddChild(_button);
+
+        _dialog->AddChild(_textUI);
         _dialog->Init();
 
         return true;
@@ -166,6 +168,7 @@ namespace SSB
         _textUI->Frame();
         _text->Frame();
         _dialog->Move({ _dialog->GetCenter().x + 0.01f, _dialog->GetCenter().y + 0.01f });
+        _dialog->RotateDegree(0.1f);
         _dialog->Frame();
 
         return true;

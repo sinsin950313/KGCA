@@ -1,6 +1,9 @@
 #pragma once
 
+#define _USE_MATH_DEFINES 
+
 #include <Unknwnbase.h>
+#include <math.h>
 
 namespace SSB
 {
@@ -32,4 +35,9 @@ namespace SSB
 		/// <returns></returns>
 		virtual bool Release() = 0;
 	};
+
+	inline float DegreeToRadian(float degree)
+	{
+		return (degree / 180.0f) * M_PI;
+	}
 };

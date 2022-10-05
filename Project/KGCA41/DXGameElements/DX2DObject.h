@@ -39,6 +39,8 @@ namespace SSB
 		float _width;
 		float _height;
 		std::vector<DXDrawableInterface*> _childObjectList;
+		float _parentRadian = 0.0f;
+		float _radian = 0.0f;
 
 	private:
 		ID3D11Buffer* _vertexBuffer;
@@ -56,6 +58,8 @@ namespace SSB
 		bool CreateIndexBuffer();
 		void UpdateBoundary();
 		std::vector<SimpleVertex2D> GetNDCBoundary();
+		void Rotate(SimpleVertex2D& vertex, SimpleVertex2D center);
+		void RotateFromParent(SimpleVertex2D& vertex);
 
 	public:
 		void SetSprite(Sprite* resource) { _sprite = resource; }
@@ -70,6 +74,8 @@ namespace SSB
 		Position2D GetCenter() { return _center + _parentCenter; }
 		// don't Init before AddChild.
 		void AddChild(DXDrawableInterface* child) { _childObjectList.push_back(child); }
+		void RotateDegree(float degree);
+		void RotateRadian(float radian);
 
 	public:
 		bool Init() override;
@@ -77,6 +83,6 @@ namespace SSB
 		bool Render() override;
 		bool Release() override;
 		void Draw(ID3D11DeviceContext* dc) override;
-		void UpdateParentCenter(Position2D parentCenter) override { _parentCenter = parentCenter; }
+		void UpdateParentData(Position2D parentCenter, float parentRadian) override { _parentCenter = parentCenter; _parentRadian = parentRadian; }
 	};
 }

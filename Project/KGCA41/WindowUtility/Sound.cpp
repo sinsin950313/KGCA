@@ -40,7 +40,7 @@ namespace SSB
 	{
 		if (!IsChannelAlive())
 		{
-			SoundManager::GetInstance().GetSystem()->playSound(_sound, nullptr, false, &_channel);
+			//SoundManager::GetInstance().GetSystem()->playSound(_sound, nullptr, false, &_channel);
 			_channel->setVolume(_volume);
 		}
 	}

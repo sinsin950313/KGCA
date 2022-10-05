@@ -9,7 +9,7 @@ namespace SSB
 
 	SoundManager::SoundManager()
 	{
-		FMOD::System_Create(&_system);
+		Init();
 	}
 
 	SoundManager& SoundManager::GetInstance()
@@ -69,6 +69,7 @@ namespace SSB
 
 	bool SoundManager::Init()
 	{
+		FMOD::System_Create(&_system);
 		_system->init(32, FMOD_INIT_NORMAL, 0);
 
 		return true;
@@ -96,6 +97,7 @@ namespace SSB
 
 		if (_system)
 		{
+			_system->close();
 			_system->release();
 			_system = nullptr;
 		}

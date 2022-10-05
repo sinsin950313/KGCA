@@ -15,6 +15,6 @@ namespace SSB
 	{
 	public:
 		virtual void Draw(ID3D11DeviceContext* dc) = 0;
-		virtual void UpdateParentCenter(Position2D parentCenter) = 0;
+		virtual void UpdateParentData(Position2D parentCenter, float parentRadian) = 0;
 	};
 }

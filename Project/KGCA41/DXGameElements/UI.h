@@ -49,6 +49,9 @@ namespace SSB
 		std::vector<DX2DObject*> _outputText;
 		Position2D _parentCenter{ 0, 0 };
 
+		float _parentRadian = 0.0f;
+		float _radian = 0.0f;
+
 	public:
 		TextUI(std::wstring fontFileName, std::wstring fontInfoFileName = std::wstring());
 		~TextUI();
@@ -69,6 +72,6 @@ namespace SSB
 		bool Render() override;
 		bool Release() override;
 		void Draw(ID3D11DeviceContext* dc) override;
-		void UpdateParentCenter(Position2D parentCenter) override { _parentCenter = parentCenter; }
+		void UpdateParentData(Position2D parentCenter, float parentRadian) override { _parentCenter = parentCenter; _parentRadian = parentRadian; }
 	};
 }

@@ -99,8 +99,7 @@ namespace SSB
 
 		Text* _text;
 
-		//const DWORD _maxTime = 30000;
-		const DWORD _maxTime = 10000;
+		const DWORD _maxTime = 30000;
 		DWORD _startTime = 0;
 		TextUI* _timerText;
 

@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SSB::Sound">
+    <Position X="8" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="_channel" Hidden="true" />
+      <Field Name="_currentPlayTime" Hidden="true" />
+      <Field Name="_deltaVolume" Hidden="true" />
+      <Field Name="_play" Hidden="true" />
+      <Field Name="_sound" Hidden="true" />
+      <Field Name="_totalPlayTime" Hidden="true" />
+      <Field Name="_volume" Hidden="true" />
+      <Method Name="~Sound" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+      <Method Name="Sound" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>EEAgCAAAACAAACABAAAAAEAIAAQAEAAApBACAhCCAAE=</HashCode>
+      <FileName>Sound.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::SoundManager">
+    <Position X="6" Y="0.5" Width="1.75" />
+    <Members>
+      <Field Name="_instance" Hidden="true" />
+      <Field Name="_path" Hidden="true" />
+      <Field Name="_soundList" Hidden="true" />
+      <Field Name="_system" Hidden="true" />
+      <Method Name="~SoundManager" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="GetPath" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+      <Method Name="SoundManager" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAUgAAAAAACAIABQAAAAAAIBAACIAAAABAGABCAAAE=</HashCode>
+      <FileName>SoundManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::InputManager">
+    <Position X="3" Y="0.5" Width="2" />
+    <Members>
+      <Field Name="_hWnd" Hidden="true" />
+      <Field Name="_instance" Hidden="true" />
+      <Field Name="_keyState" Hidden="true" />
+      <Field Name="_mousePosition" Hidden="true" />
+      <Method Name="~InputManager" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="InputManager" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+      <Method Name="Set" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AEAEAAAAAAAAhAAAgAAAAAIABAAAAAEAABACIBIAAAE=</HashCode>
+      <FileName>InputManager.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::Timer">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="_currentTime" Hidden="true" />
+      <Field Name="_startTime" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+      <Method Name="Timer" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAICAAAAAAAAAAAAAAAQAAABAAABACABAEAAE=</HashCode>
+      <FileName>Timer.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="SSB::EKeyState">
+    <Position X="3" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAABAAAAAAAgABAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>InputManager.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>

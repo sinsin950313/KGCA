@@ -31,7 +31,7 @@ namespace SSB
 		RECT rect{ 0, 0, _width, _height };
 		DWORD csStyle = WS_OVERLAPPEDWINDOW;
 		AdjustWindowRect(&rect, csStyle, FALSE);
-		_hWnd = CreateWindowW(_name, L"Title", csStyle, 0, 0, rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, _hInstance, nullptr);
+		_hWnd = CreateWindowW(_name, _name, csStyle, 0, 0, rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, _hInstance, nullptr);
 		if (!_hWnd)
 		{
 			return false;

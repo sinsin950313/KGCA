@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="SSB::ButtonFunctor">
-    <Position X="18.25" Y="14.5" Width="1.5" />
+    <Position X="16.75" Y="12.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>UI.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::Button">
-    <Position X="16.5" Y="14.5" Width="1.5" />
+    <Position X="15" Y="12.25" Width="1.5" />
     <Members>
       <Field Name="_functor" Hidden="true" />
       <Field Name="_spriteSet" Hidden="true" />
@@ -25,7 +25,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::TextUI">
-    <Position X="18.75" Y="10" Width="1.75" />
+    <Position X="17.25" Y="7.75" Width="1.75" />
     <Members>
       <Field Name="_center" Hidden="true" />
       <Field Name="_fontFileName" Hidden="true" />
@@ -50,66 +50,63 @@
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::SamplerStateFactoryInterface">
-    <Position X="2.25" Y="10.25" Width="2.25" />
+    <Position X="2.25" Y="6.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>DXStateManager.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::DefaultWrapLinearSamplerFactory" Collapsed="true">
-    <Position X="0.5" Y="11.75" Width="2.5" />
+    <Position X="0.5" Y="8" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>DXStateManager.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::DefaultWrapSamplerFactory" Collapsed="true">
-    <Position X="3.25" Y="11.75" Width="2.25" />
+    <Position X="3.25" Y="8" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>DXStateManager.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::RasterizerStateFactoryInterface">
-    <Position X="9.75" Y="10.25" Width="2.5" />
+    <Position X="9.75" Y="6.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>DXStateManager.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::DefaultSolidRasterizerFactory" Collapsed="true">
-    <Position X="8.25" Y="11.75" Width="2.25" />
+    <Position X="8.25" Y="8" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>DXStateManager.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::DefaultWireFrameRasterizerFactory" Collapsed="true">
-    <Position X="11" Y="11.75" Width="2.75" />
+    <Position X="11" Y="8" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>DXStateManager.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::BlendStateFactoryInterface">
-    <Position X="2.25" Y="13" Width="2.25" />
+    <Position X="2.25" Y="9.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACAAEAAAAAAAAAAAAA=</HashCode>
       <FileName>DXStateManager.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::DefaultBlendFactory" Collapsed="true">
-    <Position X="2" Y="14.75" Width="2" />
-    <Members>
-      <Field Name="_renderTargetIndex" Hidden="true" />
-    </Members>
+    <Position X="2" Y="11" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACBAEAAAAAAAAAAAAA=</HashCode>
       <FileName>DXStateManager.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::DXStateManager">
-    <Position X="6" Y="11.5" Width="2" />
+    <Position X="6" Y="7.75" Width="2" />
     <Members>
       <Field Name="_blendStateFactory" Hidden="true" />
       <Field Name="_blendStateList" Hidden="true" />
@@ -136,7 +133,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::DX2DAnimation">
-    <Position X="0.5" Y="3.25" Width="2" />
+    <Position X="5.25" Y="3.5" Width="2" />
     <Members>
       <Field Name="_actionList" Hidden="true" />
       <Field Name="_currentAction" Hidden="true" />
@@ -152,15 +149,24 @@
       <FileName>DX2DAnimation.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SSB::Shader" Collapsed="true">
-    <Position X="13.75" Y="0.5" Width="1.5" />
+  <Class Name="SSB::Shader">
+    <Position X="14.5" Y="1" Width="1.5" />
+    <Members>
+      <Field Name="_code" Hidden="true" />
+      <Field Name="_shader" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+      <Method Name="Shader" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>QAAAAAAAAAAIAAAAAAAAAAAAAAAAAAAAABBCABCgAAE=</HashCode>
       <FileName>Shader.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::DX2DObject">
-    <Position X="16.25" Y="8.75" Width="2" />
+    <Position X="14.75" Y="6.5" Width="2" />
     <Members>
       <Field Name="_center" Hidden="true" />
       <Field Name="_childObjectList" Hidden="true" />
@@ -187,36 +193,79 @@
       <FileName>DX2DObject.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SSB::ShaderManager" Collapsed="true">
-    <Position X="15.5" Y="0.5" Width="1.5" />
+  <Class Name="SSB::ShaderManager">
+    <Position X="16.25" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="_instance" Hidden="true" />
+      <Field Name="_path" Hidden="true" />
+      <Field Name="_pixelShaderData" Hidden="true" />
+      <Field Name="_vertexShaderData" Hidden="true" />
+      <Method Name="~ShaderManager" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>AYAEAACAAAASAAQAAAAAAAQABAACIAAAABACEBAAAAE=</HashCode>
       <FileName>ShaderManager.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SSB::Text" Collapsed="true">
-    <Position X="13.75" Y="1.5" Width="1.5" />
+  <Class Name="SSB::Text">
+    <Position X="14.5" Y="3.25" Width="1.5" />
+    <Members>
+      <Field Name="_brush" Hidden="true" />
+      <Field Name="_pos" Hidden="true" />
+      <Field Name="_str" Hidden="true" />
+      <Field Name="_textFormat" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+      <Method Name="Text" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>ACBAAAAAACAABgQIAEAABAAAAgAAAgAAABIiCBAAAAE=</HashCode>
       <FileName>Text.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SSB::TextManager" Collapsed="true">
-    <Position X="15.5" Y="1.5" Width="1.5" />
+  <Class Name="SSB::TextManager">
+    <Position X="16.25" Y="4" Width="1.5" />
+    <Members>
+      <Field Name="_brushes" Hidden="true" />
+      <Field Name="_instance" Hidden="true" />
+      <Field Name="_textFormats" Hidden="true" />
+      <Method Name="~TextManager" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+      <Method Name="TextManager" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>AAAEAAAAAAACAgAYAAAAAAAABAAAIAAAABACABAAIAE=</HashCode>
       <FileName>TextManager.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SSB::TextureResource" Collapsed="true">
-    <Position X="12" Y="2.5" Width="1.5" />
+  <Class Name="SSB::TextureResource">
+    <Position X="0.5" Y="0.5" Width="2" />
+    <Members>
+      <Field Name="_desc" Hidden="true" />
+      <Field Name="_textureResource" Hidden="true" />
+      <Field Name="_textureResourceView" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+      <Method Name="TextureResource" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>AABAAAAAAAAAAQAAACAAAABAAAAAAAAAABAKCFEAAAE=</HashCode>
       <FileName>Texture.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::Sprite">
-    <Position X="1.75" Y="0.5" Width="2.5" />
+    <Position X="6.5" Y="0.75" Width="2.5" />
     <Members>
       <Field Name="_currentTexturePart" Hidden="true" />
       <Field Name="_dTexture" Hidden="true" />
@@ -239,7 +288,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::SpriteAction">
-    <Position X="3" Y="3.25" Width="2.5" />
+    <Position X="7.75" Y="3.5" Width="2.5" />
     <Members>
       <Field Name="_actionSequence" Hidden="true" />
       <Field Name="_currentActionIndex" Hidden="true" />
@@ -259,22 +308,44 @@
       <FileName>Texture.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SSB::TextureResourceManager" Collapsed="true">
-    <Position X="13.75" Y="2.5" Width="1.5" />
+  <Class Name="SSB::TextureResourceManager">
+    <Position X="2.75" Y="0.5" Width="2.25" />
+    <Members>
+      <Field Name="_instance" Hidden="true" />
+      <Field Name="_path" Hidden="true" />
+      <Field Name="_resourceData" Hidden="true" />
+      <Method Name="~TextureResourceManager" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+      <Method Name="TextureResourceManager" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>AAAEggAAAAACAEAAAAAAAAEABAADAAAAABACABAAAAE=</HashCode>
       <FileName>TextureManager.h</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="SSB::SpriteLoader" Collapsed="true">
-    <Position X="12" Y="1.5" Width="1.5" />
+  <Class Name="SSB::SpriteLoader">
+    <Position X="10.75" Y="0.5" Width="2.75" />
+    <Members>
+      <Field Name="_instance" Hidden="true" />
+      <Field Name="_path" Hidden="true" />
+      <Field Name="_spriteDatas" Hidden="true" />
+      <Method Name="~SpriteLoader" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+      <Method Name="SpriteLoader" Hidden="true" />
+    </Members>
     <TypeIdentifier>
       <HashCode>AAIEgoAAEAAGAAAAgEAAACAABAACAAQAABACABAAAAE=</HashCode>
       <FileName>TextureManager.h</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="SSB::SpriteActionLoader">
-    <Position X="1.25" Y="5.75" Width="3" />
+    <Position X="10.75" Y="3.5" Width="3" />
     <Members>
       <Field Name="_instance" Hidden="true" />
       <Field Name="_path" Hidden="true" />
@@ -294,56 +365,56 @@
     </TypeIdentifier>
   </Class>
   <Struct Name="SSB::ColorRGBA">
-    <Position X="19.5" Y="5" Width="1.5" />
+    <Position X="20" Y="11.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAoAQABAAAAAAA=</HashCode>
       <FileName>DX2DObject.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="SSB::SimpleVertex2D">
-    <Position X="19.5" Y="1.25" Width="1.5" />
+    <Position X="20" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAEYAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DX2DObject.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="SSB::TexturePartCoordinate">
-    <Position X="19.5" Y="3" Width="1.5" />
+    <Position X="20" Y="9.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAABAAAAAAAAgAAAAIAAAAAAAAAAAAgAA=</HashCode>
       <FileName>Texture.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="SSB::TexturePartCoordinateRatio">
-    <Position X="21.25" Y="3" Width="1.5" />
+    <Position X="21.75" Y="9.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAABAAAAAAAAgAAAAIAAAAAAAAAAAAgAA=</HashCode>
       <FileName>Texture.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="SSB::TexturePartRelative">
-    <Position X="23" Y="3" Width="1.5" />
+    <Position X="23.5" Y="9.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAQAAAAAgAAAAIAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Texture.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="SSB::TextureParam">
-    <Position X="21.25" Y="5" Width="1.5" />
+    <Position X="21.75" Y="11.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABIAAAAAAAA=</HashCode>
       <FileName>Texture.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="SSB::SpriteData">
-    <Position X="23" Y="1.25" Width="1.5" />
+    <Position X="23.5" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAACACEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>TextureManager.h</FileName>
     </TypeIdentifier>
   </Struct>
   <Struct Name="SSB::SpriteActionData">
-    <Position X="21.25" Y="1.25" Width="1.5" />
+    <Position X="21.75" Y="8" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAQAAAACAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>TextureManager.h</FileName>

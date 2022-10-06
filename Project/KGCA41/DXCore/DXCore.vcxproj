@@ -166,6 +166,9 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
     <ClInclude Include="DXCore.h" />
     <ClInclude Include="Scene.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

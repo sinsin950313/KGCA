@@ -3,9 +3,11 @@
 #include "TDXTextureWindow.h"
 #include "d3dcompiler.h"
 
+using namespace SSB;
+
 bool TDXTextureWindow::Init()
 {
-    TDXWindow::Init();
+    DXWindow::Init();
 
     HRESULT hr;
 
@@ -31,7 +33,7 @@ bool TDXTextureWindow::Init()
         return false;
     }
 
-    hr = DirectX::CreateWICTextureFromFile(GetDevice(), GetDeviceContext(), L"../../Resource/KGCABK.bmp", &_textureResource, &_textureShaderResourceView);
+    hr = DirectX::CreateWICTextureFromFile(GetDevice(), GetDeviceContext(), L"../../Resource/Texture/TextureResource/KGCABK.bmp", &_textureResource, &_textureShaderResourceView);
     if (FAILED(hr))
     {
         return false;
@@ -89,14 +91,14 @@ bool TDXTextureWindow::Init()
 
 bool TDXTextureWindow::Frame()
 {
-    TDXWindow::Frame();
+    DXWindow::Frame();
 
     return true;
 }
 
 bool TDXTextureWindow::Release()
 {
-    TDXWindow::Release();
+    DXWindow::Release();
 
     if (_vertexBuffer) _vertexBuffer->Release();
     if (_textureResource) _textureResource->Release();
@@ -112,14 +114,14 @@ bool TDXTextureWindow::Release()
 
 bool TDXTextureWindow::PreRender()
 {
-    TDXWindow::PreRender();
+    DXWindow::PreRender();
 
     return true;
 }
 
 bool TDXTextureWindow::MainRender()
 {
-    TDXWindow::MainRender();
+    DXWindow::MainRender();
 
     UINT stride = sizeof(SimpleVertex);
     UINT offset = 0;
@@ -136,7 +138,7 @@ bool TDXTextureWindow::MainRender()
 
 bool TDXTextureWindow::PostRender()
 {
-    TDXWindow::PostRender();
+    DXWindow::PostRender();
 
     return true;
 }

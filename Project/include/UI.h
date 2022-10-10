@@ -21,7 +21,7 @@ namespace SSB
 		ButtonFunctor* _functor;
 
 	public:
-		Button(Position2D center, float width, float height, ButtonFunctor* functor);
+		Button(ButtonFunctor* functor, Position2D center = { 0, 0 }, float width = 0, float height = 0);
 		~Button();
 
 	public:

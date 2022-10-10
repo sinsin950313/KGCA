@@ -107,8 +107,8 @@ namespace SSB
 		bool _loop;
 		Timer _timer;
 		float _interval;
-		int _currentActionIndex;
-		float _lastTime;
+		int _currentActionIndex = 0;
+		float _lastTime = 0.0f;
 
 	public:
 		SpriteAction(TextureResource* resource, TextureResource* maskResource = nullptr);

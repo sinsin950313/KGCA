@@ -13,6 +13,9 @@ namespace SSB
 
 	Terrain::Tile::Tile(int width, int height) : DX2DGameObject({ 0, 0 }, width, height, 0)
 	{
+		GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+		GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithoutMask", "ps_5_0"));
+		GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"Sea.bmp", L"Sea1", DXStateManager::kDefaultWrapSample));
 	}
 
 	void Terrain::Tile::SetCenter(int posX, int posY)
@@ -131,10 +134,6 @@ namespace SSB
 
 	bool Terrain::Tile::Init()
 	{
-		GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
-		GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithoutMask", "ps_5_0"));
-		GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"Sea.bmp", L"Sea1", DXStateManager::kDefaultWrapSample));
-
 		DX2DGameObject::Init();
 
 		_left = nullptr;
@@ -161,8 +160,6 @@ namespace SSB
 
 	bool Terrain::Tile::Release()
 	{
-		DX2DGameObject::Release();
-
 		if (_left != nullptr)
 		{
 			_left->_right = nullptr;
@@ -186,6 +183,8 @@ namespace SSB
 			_bottom->_top = nullptr;
 		}
 		_bottom = nullptr;
+
+		DX2DGameObject::Release();
 
 		return true;
 	}
@@ -271,6 +270,13 @@ namespace SSB
 	{
 		_widthCount = mapWidth / _widthUnit;
 		_heightCount = mapHeight / _heightUnit;
+
+		_memoryPool = new TileMemoryPool(_widthUnit, _heightUnit);
+	}
+
+	Terrain::~Terrain()
+	{
+		Release();
 	}
 
 	bool Terrain::ShouldBeAlive(Terrain::Tile* tile)
@@ -359,8 +365,6 @@ namespace SSB
 
 	bool Terrain::Init()
 	{
-		_memoryPool = new TileMemoryPool(_widthUnit, _heightUnit);
-
 		std::queue<std::pair<std::pair<int, int>, Tile*>> q;
 
 		{

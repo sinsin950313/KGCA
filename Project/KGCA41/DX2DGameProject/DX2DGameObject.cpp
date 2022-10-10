@@ -39,10 +39,6 @@ namespace SSB
 	bool DX2DGameObject::Init()
 	{
 		PreInit();
-		//_dxObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
-		//_dxObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
-		//_dxObject->SetSprite(SpriteLoader::GetInstance().Load(L"bitmap1.bmp", L"bitmap1", DXStateManager::kDefaultSolidRasterizer));
-		//_dxObject->SetMaskSprite(TextureResourceManager::GetInstance().Load(L"bitmap2.bmp"));
 		_dxObject->Init();
 		
 		return true;
@@ -57,7 +53,6 @@ namespace SSB
 
 	bool DX2DGameObject::Render()
 	{
-		//g_dxWindow->AddDrawable(GetDXObject());
 		GetDXObject()->Render();
 
 		return true;
@@ -92,6 +87,7 @@ namespace SSB
 
 	DX2DHitBox::~DX2DHitBox()
 	{
+		Release();
 	}
 
 	void DX2DHitBox::SetRelativePosition(HitboxPosition* position)
@@ -106,11 +102,7 @@ namespace SSB
 
 	bool DX2DHitBox::Init()
 	{
-		GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
-		GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"HitBoxDebug.hlsl", "Debug", "ps_5_0"));
-		SpriteLoader::GetInstance().RegisterSpriteFromFile(L"Target.bmp", L"Target");
-		GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"Target.bmp", L"Target1", DXStateManager::kDefaultWrapSample));
-		GetDXObject()->Init();
+		DX2DGameObject::Init();
 
 		return true;
 	}
@@ -140,7 +132,17 @@ namespace SSB
 		_parent = nullptr;
 		_relativePosition = nullptr;
 
+		DX2DGameObject::Release();
+
 		return true;
+	}
+
+	void DX2DHitBox::PreInit()
+	{
+		GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
+		GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"HitBoxDebug.hlsl", "Debug", "ps_5_0"));
+		SpriteLoader::GetInstance().RegisterSpriteFromFile(L"Target.bmp", L"Target");
+		GetDXObject()->SetSprite(SpriteLoader::GetInstance().Load(L"Target.bmp", L"Target1", DXStateManager::kDefaultWrapSample));
 	}
 
 	DX2DInGameObject::DX2DInGameObject(Position2D center, float width, float height, float mass) : DX2DGameObject(center, width, height, mass)
@@ -433,8 +435,6 @@ namespace SSB
 
 	bool DX2DInGameObject::Release()
 	{
-		DX2DGameObject::Release();
-
 		for (int i = 0; i < hitboxCount; ++i)
 		{
 			_hitBox[i]->Release();
@@ -457,58 +457,8 @@ namespace SSB
 			_dxTargetedObject = nullptr;
 		}
 
+		DX2DGameObject::Release();
+
 		return true;
 	}
-
-	//DX2DHitEffect::DX2DHitEffect(Position2D center, float width, float height) : DX2DGameObject(center, width, height, 0)
-	//{
-	//}
-
-	//void DX2DHitEffect::Action()
-	//{
-	//	DX2DAnimation* anim = (DX2DAnimation*)GetDXObject()->GetSprite();
-	//	anim->ResetAction();
-	//}
-
-	//bool DX2DHitEffect::Init()
-	//{
-	//	DX2DGameObject::Init();
-	//	return true;
-	//}
-
-	//bool DX2DHitEffect::Frame()
-	//{
-	//	DX2DGameObject::Frame();
-
-	//	return true;
-	//}
-
-	//bool DX2DHitEffect::Render()
-	//{
-	//	SpriteAction* action = (SpriteAction*)GetDXObject()->GetSprite();
-	//	if (!action->IsFinished())
-	//	{
-	//		DX2DGameObject::Render();
-	//	}
-
-	//	return true;
-	//}
-
-	//bool DX2DHitEffect::Release()
-	//{
-	//	DX2DGameObject::Release();
-
-	//	return true;
-	//}
-
-	//void DX2DHitEffect::PreInit()
-	//{
-	//	GetDXObject()->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
-	//	GetDXObject()->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
-	//	SpriteLoader::GetInstance().RegisterSpriteFromFile(L"Effect.bmp", L"Effect");
-	//	SpriteAction* action = SpriteActionLoader::GetInstance().Load(L"Effect.bmp", L"Bomb", DXStateManager::kDefaultWrapSample);
-	//	action->SetInterval(100);
-	//	action->SetLoop(false);
-	//	GetDXObject()->SetSprite(action);
-	//}
 }

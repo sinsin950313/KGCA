@@ -51,7 +51,7 @@ namespace SSB
 		ID3D11InputLayout* _vertexLayout;
 
 	public:
-		DX2DObject(Position2D center, float width, float height) : _center(center), _width(width), _height(height) { }
+		DX2DObject(Position2D center = { 0, 0 }, float width = 0, float height = 0);
 
 	private:
 		bool CreateVertexBuffer();

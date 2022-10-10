@@ -34,8 +34,6 @@ namespace SSB
 
 	DX2DMapObject::~DX2DMapObject()
 	{
-		_physicsToDX2DMatch.clear();
-
 		Release();
 	}
 
@@ -168,6 +166,8 @@ namespace SSB
 			delete _object;
 			_object = nullptr;
 		}
+
+		_physicsToDX2DMatch.clear();
 
 		return true;
 	}

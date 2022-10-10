@@ -16,6 +16,16 @@ namespace SSB
 	DXCore::DXCore(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow)
 	{
 		g_DXCore = this;
+
+		InputManager::GetInstance();
+        DXStateManager::GetInstance();
+		ShaderManager::GetInstance();
+		TextManager::GetInstance();
+		TextureResourceManager::GetInstance();
+		SoundManager::GetInstance();
+
+		_timer = new Timer();
+		_timerText = new Text(L"", { 0, 0, 500, 100 });
 	}
 
 	DWORD DXCore::GetGlobalTime()
@@ -27,7 +37,6 @@ namespace SSB
 	{
 		DXWindow::Init();
 
-		_timer = new Timer();
 		_timer->Init();
 		_timer->Start();
 
@@ -50,7 +59,6 @@ namespace SSB
 
 		_currentScene->Init();
 
-		_timerText = new Text(L"", { 0, 0, 500, 100 });
         _timerText->SetTextFormat(TextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
         _timerText->SetBrush(TextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
         _timerText->Init();
@@ -93,8 +101,12 @@ namespace SSB
 	{
 		DXWindow::Release();
 
-		_timer->Release();
-		delete _timer;
+		if (_timer)
+		{
+			_timer->Release();
+			delete _timer;
+			_timer = nullptr;
+		}
 
 		InputManager::GetInstance().Release();
         DXStateManager::GetInstance().Release();

@@ -20,11 +20,17 @@ namespace SSB
 
     bool Shader::Release()
     {
-        if (_shader)_shader->Release();
-        if (_code)_code->Release();
+        if (_shader)
+        {
+            _shader->Release();
+			_shader = nullptr;
+        }
 
-        _shader = nullptr;
-        _code = nullptr;
+        if (_code)
+        {
+            _code->Release();
+            _code = nullptr;
+        }
 
         return true;
     }

@@ -6,7 +6,7 @@
 
 namespace SSB
 {
-	Button::Button(Position2D center, float width, float height, ButtonFunctor* functor)
+	Button::Button(ButtonFunctor* functor, Position2D center, float width, float height)
 		: DX2DObject(center, width, height), _functor(functor)
 	{
 	}
@@ -43,9 +43,9 @@ namespace SSB
 
 	bool Button::Init()
 	{
-		SetSprite(_spriteSet.find("Normal")->second);
-
 		DX2DObject::Init();
+
+		SetSprite(_spriteSet.find("Normal")->second);
 
 		return true;
 	}
@@ -87,15 +87,21 @@ namespace SSB
 
 	bool Button::Release()
 	{
-		DX2DObject::Release();
-
+		for (auto sprite : _spriteSet)
+		{
+			sprite.second->Release();
+			delete sprite.second;
+		}
 		_spriteSet.clear();
+		SetSprite(nullptr);
 
 		if (_functor)
 		{
 			delete _functor;
 			_functor = nullptr;
 		}
+
+		DX2DObject::Release();
 
 		return true;
 	}
@@ -120,10 +126,11 @@ namespace SSB
 
 	void TextUI::ChangeText(std::string str)
 	{
-		if (_str.size() < str.size())
+		if (_outputText.size() < str.size())
 		{
+			int currentSize = _outputText.size();
 			_outputText.resize(str.size());
-			for (int i = _str.size(); i < str.size(); ++i)
+			for (int i = currentSize; i < str.size(); ++i)
 			{
 				_outputText[i] = new DX2DObject({ 0, 0 }, 0, 0);
 				_outputText[i]->SetSprite(GetSprite(str[i]));

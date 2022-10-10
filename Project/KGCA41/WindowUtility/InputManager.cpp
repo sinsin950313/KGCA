@@ -7,12 +7,6 @@ namespace SSB
 	InputManager::~InputManager()
 	{
 		Release();
-
-		if (_instance)
-		{
-			delete _instance;
-			_instance = nullptr;
-		}
 	}
 
 	void InputManager::Set(HWND hWnd)

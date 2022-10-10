@@ -2,7 +2,7 @@
 #pragma comment(lib, "DirectXBasic.lib")
 #pragma comment(lib, "DirectXTK.lib")
 
-#include "TDXWindow.h"
+#include "DXWindow.h"
 #include "WICTextureLoader.h"
 #include <vector>
 
@@ -19,7 +19,7 @@ struct SimpleVertex
 	float v;
 };
 
-class TDXTextureWindow : public TDXWindow
+class TDXTextureWindow : public SSB::DXWindow
 {
 private:
 	std::vector<SimpleVertex> _vertice;
@@ -33,7 +33,7 @@ private:
 	ID3D11InputLayout* _vertexLayout;
 
 public:
-	TDXTextureWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : TDXWindow(name, hInstance, nCmdShow) { }
+	TDXTextureWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }
 
 public:
 	bool Init() override;

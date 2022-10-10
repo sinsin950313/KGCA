@@ -1,5 +1,6 @@
 #include "TextManager.h"
 #include "DXWindow.h"
+#include <cassert>
 
 namespace SSB
 {
@@ -24,6 +25,7 @@ namespace SSB
 			hr = g_dxWindow->GetRenderTarget2D()->CreateSolidColorBrush(color, &brush);
 			if (FAILED(hr))
 			{
+				assert(SUCCEEDED(hr));
 				return nullptr;
 			}
 			_brushes.insert(std::make_pair(colorName, brush));
@@ -41,6 +43,7 @@ namespace SSB
 				DWRITE_FONT_STRETCH_NORMAL, size, locale.c_str(), &textFormat);
 			if (FAILED(hr))
 			{
+				assert(SUCCEEDED(hr));
 				return nullptr;
 			}
 			_textFormats.insert(std::make_pair(name, textFormat));
@@ -51,9 +54,6 @@ namespace SSB
 	TextManager::~TextManager()
 	{
 		Release();
-
-		delete _instance;
-		_instance = nullptr;
 	}
 
 	bool TextManager::Init()

@@ -83,6 +83,7 @@ namespace SSB
 
 	public:
 		Terrain(int mapWidth, int mapHeight);
+		~Terrain();
 
 	private:
 		bool ShouldBeAlive(Tile* tile);

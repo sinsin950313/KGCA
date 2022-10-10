@@ -2,7 +2,7 @@
 
 bool TriangleDrawer::Init()
 {
-    if (!TDXWindow::Init())
+    if (!DXWindow::Init())
     {
         return false;
     }
@@ -77,7 +77,7 @@ bool TriangleDrawer::Init()
 
 bool TriangleDrawer::Release()
 {
-    if (!TDXWindow::Release())
+    if (!DXWindow::Release())
     {
         return false;
     }
@@ -93,7 +93,7 @@ bool TriangleDrawer::Release()
 
 bool TriangleDrawer::PreRender()
 {
-    if (!TDXWindow::PreRender())
+    if (!DXWindow::PreRender())
     {
         return false;
     }
@@ -102,7 +102,7 @@ bool TriangleDrawer::PreRender()
 
 bool TriangleDrawer::MainRender()
 {
-    if (!TDXWindow::MainRender())
+    if (!DXWindow::MainRender())
     {
         return false;
     }
@@ -120,7 +120,7 @@ bool TriangleDrawer::MainRender()
 
 bool TriangleDrawer::PostRender()
 {
-    if (!TDXWindow::PostRender())
+    if (!DXWindow::PostRender())
     {
         return false;
     }

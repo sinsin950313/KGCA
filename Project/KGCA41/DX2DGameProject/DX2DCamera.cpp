@@ -67,34 +67,6 @@ namespace SSB
 		object->GetDXObject()->Resize(object->GetDXObject()->GetWidth() * ratio, object->GetDXObject()->GetHeight() * ratio);
 	}
 
-	//void DX2DCamera::MontageForFilm(DX2DMapObject* map)
-	//{
-	//	auto center = PhysicsToDisplay(map->GetCenter());
-	//	//map->SetDXCenter(center);
-
-	//	auto vertice = map->GetPhysicsObject()->GetVolume()->GetVertexes();
-	//	float minX = FLT_MAX;
-	//	float maxX = FLT_MIN;
-	//	float minY = FLT_MAX;
-	//	float maxY = FLT_MIN;
-	//	for (auto vertex : vertice)
-	//	{
-	//		minX = std::fmin(minX, vertex->Get(0));
-	//		maxX = std::fmax(maxX, vertex->Get(0));
-	//		minY = std::fmin(minY, vertex->Get(1));
-	//		maxY = std::fmax(maxY, vertex->Get(1));
-	//	}
-
-	//	float physicsWidth = maxX - minX;
-	//	float physicsHeight = maxY - minY;
-
-	//	Rectangle* captureArea = static_cast<Rectangle*>(_captureArea->GetVolume());
-	//	float screenWidth = physicsWidth / captureArea->GetWidth() * _windowWidth;
-	//	float screenHeight = physicsHeight / captureArea->GetHeight() * _windowHeight;
-
-	//	//map->GetDXObject()->Resize(screenWidth, screenHeight);
-	//}
-
 	void DX2DCamera::Move(float x, float y)
 	{
 		Vector2D pos(Vector2DData{ x, y });

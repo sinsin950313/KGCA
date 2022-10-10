@@ -67,6 +67,7 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
+		void PreInit() override;
 	};
 
 	enum class EXAxis { STEADY = 0, LEFT, RIGHT };
@@ -117,20 +118,4 @@ namespace SSB
 		bool Release() override;
 		void PreInit() override;
 	};
-
-	//class DX2DHitEffect : public DX2DGameObject
-	//{
-	//public:
-	//	DX2DHitEffect(Position2D center, float width, float height);
-
-	//public:
-	//	void Action();
-
-	//public:
-	//	bool Init() override;
-	//	bool Frame() override;
-	//	bool Render() override;
-	//	bool Release() override;
-	//	void PreInit() override;
-	//};
 }

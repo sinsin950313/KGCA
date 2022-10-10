@@ -26,11 +26,17 @@ namespace SSB
 
     bool TextureResource::Release()
     {
-        if (_textureResource) _textureResource->Release();
-        if (_textureResourceView)_textureResourceView->Release();
+        if (_textureResource)
+        {
+            _textureResource->Release();
+			_textureResource = nullptr;
+        }
 
-        _textureResource = nullptr;
-        _textureResourceView = nullptr;
+        if (_textureResourceView)
+        {
+            _textureResourceView->Release();
+            _textureResourceView = nullptr;
+        }
 
         return true;
     }
@@ -76,22 +82,26 @@ namespace SSB
     }
     bool Sprite::Init()
     {
-        return false;
+        return true;
     }
+
     bool Sprite::Frame()
     {
-        return false;
+        return true;
     }
+
     bool Sprite::Render()
     {
-        return false;
+        return true;
     }
+
     bool Sprite::Release()
     {
         _resource = nullptr;
         _maskResource = nullptr;
         _samplerState = nullptr;
-        return false;
+
+        return true;
     }
 
     TexturePartCoordinate RtC(TexturePartRelative rel)
@@ -184,8 +194,8 @@ namespace SSB
 
 	bool SSB::SpriteAction::Release()
 	{
-        Sprite::Release();
         _actionSequence.clear();
+        Sprite::Release();
 		return true;
 	}
 }

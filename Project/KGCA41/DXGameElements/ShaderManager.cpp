@@ -5,6 +5,7 @@
 #include <d3dcompiler.h>
 #include "Shader.h"
 #include "DXWindow.h"
+#include <cassert>
 
 namespace SSB
 {
@@ -18,9 +19,6 @@ namespace SSB
     ShaderManager::~ShaderManager()
     {
         Release();
-
-        delete _instance;
-        _instance = nullptr;
     }
 
     ShaderManager& ShaderManager::GetInstance()
@@ -51,6 +49,7 @@ namespace SSB
                     OutputDebugStringA((char*)errorCode->GetBufferPointer());
                     errorCode->Release();
                 }
+                assert(SUCCEEDED(hr));
                 return nullptr;
             }
 
@@ -58,6 +57,7 @@ namespace SSB
             hr = CreateShader(code, &shader);
             if (FAILED(hr))
             {
+                assert(SUCCEEDED(hr));
                 return nullptr;
             }
 

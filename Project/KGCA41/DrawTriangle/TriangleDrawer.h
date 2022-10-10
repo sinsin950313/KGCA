@@ -1,8 +1,10 @@
 #pragma once
 #pragma comment(lib, "d3dcompiler.lib")
 
-#include "TDXWindow.h"
+#include "DXWindow.h"
 #include <d3dcompiler.h>
+
+using namespace SSB;
 
 struct SimpleVertex
 {
@@ -15,10 +17,10 @@ struct SimpleVertex
 	float a;
 };
 
-class TriangleDrawer : public TDXWindow
+class TriangleDrawer : public DXWindow
 {
 public:
-	TriangleDrawer(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : TDXWindow(name, hInstance, nCmdShow) { }
+	TriangleDrawer(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }
 private:
 	ID3D11Buffer* _vertexBuffer;
 	ID3D11InputLayout* _inputLayout;

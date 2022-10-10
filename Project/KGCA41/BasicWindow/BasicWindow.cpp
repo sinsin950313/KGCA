@@ -4,18 +4,15 @@ namespace SSB
 {
 	BasicWindow* g_Window = nullptr;
 
-	BasicWindow::BasicWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : _name(name), _hInstance(hInstance), _nCmdShow(nCmdShow)
-	{
-		g_Window = this;
-	}
-
 	LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	{
 		return g_Window->WindowProcedureCallbackFunction(hWnd, message, wParam, lParam);
 	}
 
-	bool BasicWindow::Init()
+	BasicWindow::BasicWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : _name(name), _hInstance(hInstance), _nCmdShow(nCmdShow)
 	{
+		g_Window = this;
+
 		WNDCLASSEXW wcex;
 		ZeroMemory(&wcex, sizeof(wcex));
 
@@ -34,17 +31,21 @@ namespace SSB
 		_hWnd = CreateWindowW(_name, _name, csStyle, 0, 0, rect.right - rect.left, rect.bottom - rect.top, nullptr, nullptr, _hInstance, nullptr);
 		if (!_hWnd)
 		{
-			return false;
+			return;
 		}
 
 		ShowWindow(_hWnd, _nCmdShow);
+	}
+
+	bool BasicWindow::Init()
+	{
 		GetWindowRect(_hWnd, &_windowRect);
 		GetClientRect(_hWnd, &_clientRect);
 
-		UINT iScreenWidht = GetSystemMetrics(SM_CXFULLSCREEN);
+		UINT iScreenWidth = GetSystemMetrics(SM_CXFULLSCREEN);
 		UINT iScreenHieght = GetSystemMetrics(SM_CYFULLSCREEN);
 		UINT cx, cy;
-		cx = (iScreenWidht - (_windowRect.right - _windowRect.left)) * 0.5f;
+		cx = (iScreenWidth - (_windowRect.right - _windowRect.left)) * 0.5f;
 		cy = (iScreenHieght - (_windowRect.bottom - _windowRect.top)) * 0.5f;
 		MoveWindow(_hWnd, cx, cy, _windowRect.right - _windowRect.left, _windowRect.bottom - _windowRect.top, true);
 
@@ -53,17 +54,17 @@ namespace SSB
 
 	bool BasicWindow::Frame()
 	{
-		return false;
+		return true;
 	}
 
 	bool BasicWindow::Render()
 	{
-		return false;
+		return true;
 	}
 
 	bool BasicWindow::Release()
 	{
-		return false;
+		return true;
 	}
 
 	UINT BasicWindow::GetClientWidth()

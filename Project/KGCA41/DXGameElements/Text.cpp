@@ -23,9 +23,6 @@ namespace SSB
 	bool Text::Render()
 	{
 		g_dxWindow->AddTextable(this);
-		//g_dxWindow->GetRenderTarget2D()->BeginDraw();
-		//Draw(g_dxWindow->GetRenderTarget2D());
-		//g_dxWindow->GetRenderTarget2D()->EndDraw();
 
 		return true;
 	}

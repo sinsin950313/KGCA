@@ -2,6 +2,7 @@
 
 #include "SoundManager.h"
 #include "CommonUtility.h"
+#include <cassert>
 
 namespace SSB
 {
@@ -24,9 +25,6 @@ namespace SSB
 	SoundManager::~SoundManager()
 	{
 		Release();
-
-		//delete _instance;
-		//_instance = nullptr;
 	}
 
 	bool SoundManager::LoadSound(std::wstring fileName)
@@ -38,6 +36,7 @@ namespace SSB
 			FMOD_RESULT fr = _system->createSound((wtm(fullpath)).c_str(), FMOD_DEFAULT, nullptr, &sound);
 			if (fr != FMOD_OK)
 			{
+				assert(fr == FMOD_OK);
 				return false;
 			}
 			_soundList.insert(std::make_pair(fileName, sound));
@@ -47,10 +46,7 @@ namespace SSB
 
 	Sound* SoundManager::Load(std::wstring fileName)
 	{
-		if (!LoadSound(fileName))
-		{
-			return nullptr;
-		}
+		LoadSound(fileName);
 		FMOD::Sound* sound = _soundList.find(fileName)->second;
 
 		return new Sound(sound);
@@ -58,10 +54,7 @@ namespace SSB
 
 	void SoundManager::PlayInstanceSound(std::wstring fileName)
 	{
-		if (!LoadSound(fileName))
-		{
-			return;
-		}
+		LoadSound(fileName);
 		FMOD::Sound* sound = _soundList.find(fileName)->second;
 		FMOD::Channel* channel;
 		_system->playSound(sound, nullptr, false, &channel);

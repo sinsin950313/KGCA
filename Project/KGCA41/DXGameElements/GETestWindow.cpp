@@ -136,7 +136,7 @@ namespace SSB
                 OutputDebugString(L"Button Action!");
             }
         };
-        _button = new Button({ 0, 130 }, 50, 30, new TestButtonFunctor);
+        _button = new Button(new TestButtonFunctor, { 0, 130 }, 50, 30);
         SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"DefaultButtonNormal.png", L"Normal", { 0, 0, 306, 196 });
         _button->RegisterButton("Normal", SpriteLoader::GetInstance().Load(L"DefaultButtonNormal.png", L"Normal", DXStateManager::kDefaultWrapSample));
         SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"DefaultButtonHover.png", L"Hover", { 0, 0, 306, 196 });

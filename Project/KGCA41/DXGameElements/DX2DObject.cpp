@@ -5,6 +5,7 @@
 #include "DXWindow.h"
 #include "Common.h"
 #include "DXStateManager.h"
+#include <cassert>
 
 namespace SSB
 {
@@ -16,18 +17,26 @@ namespace SSB
 	}
 }
 
+SSB::DX2DObject::DX2DObject(Position2D center, float width, float height) : _center(center), _width(width), _height(height)
+{
+    //static UINT construct = 0;
+    //++construct;
+    //std::wstring str = L"Constructor : " + std::to_wstring(construct) + L"\n";
+    //OutputDebugString(str.c_str());
+
+    CreateVertexBuffer();
+    CreateIndexBuffer();
+}
+
 void SSB::DX2DObject::Resize(float width, float height)
 {
     _width = width;
     _height = height;
-
-    UpdateBoundary();
 }
 
 bool SSB::DX2DObject::CreateVertexBuffer()
 {
     _vertexList.resize(4);
-    UpdateBoundary();
 
     D3D11_BUFFER_DESC bd;
     ZeroMemory(&bd, sizeof(bd));
@@ -42,6 +51,7 @@ bool SSB::DX2DObject::CreateVertexBuffer()
     HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_vertexBuffer);
     if (FAILED(hr))
     {
+        assert(SUCCEEDED(hr));
         return false;
     }
     return true;
@@ -68,6 +78,7 @@ bool SSB::DX2DObject::CreateIndexBuffer()
     HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_indexBuffer);
     if (FAILED(hr))
     {
+        assert(SUCCEEDED(hr));
         return false;
     }
     return true;
@@ -170,9 +181,10 @@ void SSB::DX2DObject::RotateRadian(float radian)
 
 bool SSB::DX2DObject::Init()
 {
-    CreateVertexBuffer();
-    CreateIndexBuffer();
-    UpdateBoundary();
+    //static int init = 0;
+    //++init;
+    //std::wstring str = L"Init : " + std::to_wstring(init) + L"\n";
+    //OutputDebugString(str.c_str());
 
 	D3D11_INPUT_ELEMENT_DESC ied[] =
 	{
@@ -217,7 +229,6 @@ bool SSB::DX2DObject::Frame()
 
 bool SSB::DX2DObject::Render()
 {
-    //Draw(g_dxWindow->GetDeviceContext());
     g_dxWindow->AddDrawable(this);
 
     for (auto dxObject : _childObjectList)
@@ -230,6 +241,14 @@ bool SSB::DX2DObject::Render()
 
 bool SSB::DX2DObject::Release()
 {
+    //static int release = 0;
+    //++release;
+    //std::wstring str = L"Release : " + std::to_wstring(release) + L"\n";
+    //OutputDebugString(str.c_str());
+
+    _vertexList.clear();
+    _indexList.clear();
+
     if (_vertexBuffer)
     {
         _vertexBuffer->Release();
@@ -258,6 +277,9 @@ bool SSB::DX2DObject::Release()
         delete dxObject;
     }
     _childObjectList.clear();
+
+    _vs = nullptr;
+    _ps = nullptr;
 
     return true;
 }

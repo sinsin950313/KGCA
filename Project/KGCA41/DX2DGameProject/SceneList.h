@@ -169,6 +169,7 @@ namespace SSB
 		Sound* _bgm;
 
 	public:
+		EndScene();
 		~EndScene();
 
 	public:

@@ -1,5 +1,6 @@
 #include "DXWindow.h"
 #include <math.h>
+#include <cassert>
 
 namespace SSB
 {
@@ -8,11 +9,6 @@ namespace SSB
 	DXWindow::DXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : BasicWindow(name, hInstance, nCmdShow)
 	{
 		g_dxWindow = this;
-	}
-
-	bool DXWindow::Init()
-	{
-		BasicWindow::Init();
 
 		HRESULT hResult;
 
@@ -25,13 +21,15 @@ namespace SSB
 		hResult = D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE::D3D_DRIVER_TYPE_HARDWARE, nullptr, deviceFlag, featureLevelList, 1, D3D11_SDK_VERSION, &_device, &_featureLevel, &_deviceContext);
 		if (FAILED(hResult))
 		{
-			return false;
+			assert(SUCCEEDED(hResult));
+			return;
 		}
 
 		hResult = CreateDXGIFactory(__uuidof(IDXGIFactory), (void**)&_dxgiFactory);
 		if (FAILED(hResult))
 		{
-			return false;
+			assert(SUCCEEDED(hResult));
+			return;
 		}
 
 		DXGI_MODE_DESC dxgi_mode_desc;
@@ -60,7 +58,8 @@ namespace SSB
 		hResult = _dxgiFactory->CreateSwapChain(_device, &swapChainDesc, &_swapChain);
 		if (FAILED(hResult))
 		{
-			return false;
+			assert(SUCCEEDED(hResult));
+			return;
 		}
 
 		ID3D11Texture2D* pBackBuffer = nullptr;
@@ -68,21 +67,11 @@ namespace SSB
 		_device->CreateRenderTargetView(pBackBuffer, NULL, &_renderTargetView);
 		pBackBuffer->Release();
 
-		D3D11_VIEWPORT viewPort;
-		viewPort.TopLeftX = 0;
-		viewPort.TopLeftY = 0;
-		viewPort.Width = GetClientWidth();
-		viewPort.Height = GetClientHeight();
-		viewPort.MinDepth = 0.0f;
-		viewPort.MaxDepth = 1.0f;
-		_deviceContext->RSSetViewports(1, &viewPort);
-
-		_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
-
 		hResult = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &_factory2D);
 		if (FAILED(hResult))
 		{
-			return false;
+			assert(SUCCEEDED(hResult));
+			return;
 		}
 
 		D2D1_RENDER_TARGET_PROPERTIES props;
@@ -99,15 +88,33 @@ namespace SSB
 		hResult = _factory2D->CreateDxgiSurfaceRenderTarget(dxgiSurface, &props, &_renderTarget2D);
 		if (FAILED(hResult))
 		{
-			return false;
+			assert(SUCCEEDED(hResult));
+			return;
 		}
 		dxgiSurface->Release();
 
 		hResult = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)&_writeFactory);
 		if (FAILED(hResult))
 		{
-			return false;
+			assert(SUCCEEDED(hResult));
+			return;
 		}
+
+		_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
+	}
+
+	bool DXWindow::Init()
+	{
+		BasicWindow::Init();
+
+		D3D11_VIEWPORT viewPort;
+		viewPort.TopLeftX = 0;
+		viewPort.TopLeftY = 0;
+		viewPort.Width = GetClientWidth();
+		viewPort.Height = GetClientHeight();
+		viewPort.MinDepth = 0.0f;
+		viewPort.MaxDepth = 1.0f;
+		_deviceContext->RSSetViewports(1, &viewPort);
 
 		return true;
 	}

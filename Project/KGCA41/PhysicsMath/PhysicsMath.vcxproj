@@ -78,6 +78,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\PhysicsMath</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\PhysicsMath</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -121,12 +123,21 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PostBuildEvent />
+    <Lib />
     <PostBuildEvent>
-      <Command>copy "*.h" "$(ProjectDir)\..\include"
-md "$(ProjectDir)\..\lib\"
+      <Command>if not exist "$(ProjectDir)\..\..\include\" mkdir "$(ProjectDir)\..\..\include\"
 
-copy "$(ProjectDir)\..\x64\Debug\*.lib" "$(ProjectDir)\..\lib\"</Command>
+copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
+
+if not exist "$(ProjectDir)\..\..\lib\Debug\" mkdir "$(ProjectDir)\..\..\lib\Debug"
+
+if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\Debug\"
+if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\Debug\"</Command>
     </PostBuildEvent>
+    <Lib>
+      <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

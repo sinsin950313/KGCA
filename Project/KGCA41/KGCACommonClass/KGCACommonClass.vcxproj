@@ -24,7 +24,7 @@
     <ProjectGuid>{3fd9da9f-35c6-4c3b-a463-d5e66b6c02d9}</ProjectGuid>
     <RootNamespace>KGCACommonClass</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>KGCACommon</ProjectName>
+    <ProjectName>Common</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -79,6 +79,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\Common</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\Common</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -123,7 +125,9 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy "*.h" "$(ProjectDir)\..\include"</Command>
+      <Command>if not exist "$(ProjectDir)\..\..\include\" mkdir "$(ProjectDir)\..\..\include\"
+
+copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -143,7 +147,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="CommonClass.h" />
+    <ClInclude Include="Common.h" />
+    <ClInclude Include="CommonPath.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,8 +1,11 @@
 #include "Rigidbody.h"
 #include <iostream>
 #include "CollisionTree.h"
+//#include "ObjectFactory.h"
 
 //#define QUADTREE
+
+using namespace SSB;
 
 int main()
 {

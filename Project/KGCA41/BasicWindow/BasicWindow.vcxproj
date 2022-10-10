@@ -78,10 +78,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(ProjectDir)\..\Output</OutDir>
-    <IntDir>$(ProjectDir)\..\Output\BasicWindow</IntDir>
-    <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
-    <ReferencePath>$(ProjectDir)\..\lib;$(ReferencePath)</ReferencePath>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\BasicWindow</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\BasicWindow</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -120,19 +119,26 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include;$(ProjectDir)\..\..\include\DXTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <SuppressStartupBanner>true</SuppressStartupBanner>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <PostBuildEvent>
-      <Command>copy "*.h" "$(ProjectDir)\..\include"
+      <Command>if not exist "$(ProjectDir)\..\..\include\" mkdir "$(ProjectDir)\..\..\include\"
 
-md "$(ProjectDir)\..\lib\"
+copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
 
+if not exist "$(ProjectDir)\..\..\lib\Debug\" mkdir "$(ProjectDir)\..\..\lib\Debug"
 
-copy "$(ProjectDir)\..\Output\*.lib" "$(ProjectDir)\..\lib\"</Command>
+if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\Debug\"
+if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\Debug\"</Command>
     </PostBuildEvent>
+    <Lib>
+      <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -151,16 +157,11 @@ copy "$(ProjectDir)\..\Output\*.lib" "$(ProjectDir)\..\lib\"</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="TBasicWindow.h" />
+    <ClInclude Include="BasicWindow.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TBasicWindow.cpp" />
+    <ClCompile Include="BasicWindow.cpp" />
     <ClCompile Include="main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\KGCACommonClass\KGCACommonClass.vcxproj">
-      <Project>{3fd9da9f-35c6-4c3b-a463-d5e66b6c02d9}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

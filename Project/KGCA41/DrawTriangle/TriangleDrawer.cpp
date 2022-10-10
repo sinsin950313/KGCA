@@ -2,21 +2,21 @@
 
 bool TriangleDrawer::Init()
 {
-    if (!TDXWindow::Init())
+    if (!DXWindow::Init())
     {
         return false;
     }
 
     SimpleVertex vertices[] =
     {
-        -1.0f, +1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-        +1.0f, +1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f
+        +0.0f, +0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+        +0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+        -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f
     };
 
     D3D11_BUFFER_DESC bufferDesc;
     ZeroMemory(&bufferDesc, sizeof(D3D11_BUFFER_DESC));
-    bufferDesc.ByteWidth = sizeof(D3D11_BUFFER_DESC) * 3;
+    bufferDesc.ByteWidth = sizeof(SimpleVertex) * 3;
     bufferDesc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
     bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 
@@ -77,7 +77,7 @@ bool TriangleDrawer::Init()
 
 bool TriangleDrawer::Release()
 {
-    if (!TDXWindow::Release())
+    if (!DXWindow::Release())
     {
         return false;
     }
@@ -93,7 +93,7 @@ bool TriangleDrawer::Release()
 
 bool TriangleDrawer::PreRender()
 {
-    if (!TDXWindow::PreRender())
+    if (!DXWindow::PreRender())
     {
         return false;
     }
@@ -102,7 +102,7 @@ bool TriangleDrawer::PreRender()
 
 bool TriangleDrawer::MainRender()
 {
-    if (!TDXWindow::MainRender())
+    if (!DXWindow::MainRender())
     {
         return false;
     }
@@ -120,7 +120,7 @@ bool TriangleDrawer::MainRender()
 
 bool TriangleDrawer::PostRender()
 {
-    if (!TDXWindow::PostRender())
+    if (!DXWindow::PostRender())
     {
         return false;
     }

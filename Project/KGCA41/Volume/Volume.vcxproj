@@ -33,11 +33,6 @@
     <ClInclude Include="VolumeInterface.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PhysicsMath\PhysicsMath.vcxproj">
-      <Project>{895d4eb2-1e4b-4094-8528-dcc7799f306c}</Project>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -102,6 +97,9 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
     <ReferencePath>$(ProjectDir)\..\lib;$(ReferencePath)</ReferencePath>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\Volume</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\Volume</IntDir>
+    <PostBuildEventUseInBuild>true</PostBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -148,18 +146,27 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include;$(ProjectDir)\..\..\include\DXTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>
       </SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "*.h" "$(ProjectDir)\..\include"
-md "$(ProjectDir)\..\lib\"
+      <Command>if not exist "$(ProjectDir)\..\..\include\" mkdir "$(ProjectDir)\..\..\include\"
 
-copy "$(ProjectDir)\..\x64\Debug\*.lib" "$(ProjectDir)\..\lib\"</Command>
+copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
+
+if not exist "$(ProjectDir)\..\..\lib\Debug\" mkdir "$(ProjectDir)\..\..\lib\Debug"
+
+if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\Debug\"
+if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\Debug\"</Command>
     </PostBuildEvent>
+    <Lib>
+      <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

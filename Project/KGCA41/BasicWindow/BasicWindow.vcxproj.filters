@@ -15,12 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="TBasicWindow.h">
+    <ClInclude Include="BasicWindow.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="TBasicWindow.cpp">
+    <ClCompile Include="BasicWindow.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="main.cpp">

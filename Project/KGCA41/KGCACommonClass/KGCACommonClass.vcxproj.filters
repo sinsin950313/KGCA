@@ -15,7 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="CommonClass.h">
+    <ClInclude Include="Common.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CommonPath.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

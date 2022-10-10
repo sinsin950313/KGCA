@@ -80,6 +80,8 @@
     <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(ProjectDir)\..\include;$(IncludePath)</IncludePath>
     <ReferencePath>$(ProjectDir)\..\lib;$(ReferencePath)</ReferencePath>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\Heap</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\Heap</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -118,10 +120,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include;$(ProjectDir)\..\..\include\DXTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

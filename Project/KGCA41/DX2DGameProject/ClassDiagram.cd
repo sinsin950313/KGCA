@@ -1,0 +1,389 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="SSB::DX2DGameObject">
+    <Position X="5.25" Y="5.75" Width="2" />
+    <Members>
+      <Field Name="_dxObject" Hidden="true" />
+      <Field Name="_physicsObject" Hidden="true" />
+      <Method Name="~DX2DGameObject" Hidden="true" />
+      <Method Name="DX2DGameObject" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>ABABAAAABIAAgAAAAAAAAAAAIAAAAAAJIBACIBAAAAE=</HashCode>
+      <FileName>DX2DGameObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::DX2DInGameObject">
+    <Position X="3.25" Y="8.5" Width="3" />
+    <Members>
+      <Field Name="_aimmingTime" Hidden="true" />
+      <Field Name="_currentFlightState" Hidden="true" />
+      <Field Name="_currentLayer" Hidden="true" />
+      <Field Name="_dxTargetedObject" Hidden="true" />
+      <Field Name="_flightStateChangeOrder" Hidden="true" />
+      <Field Name="_hitBox" Hidden="true" />
+      <Field Name="_hitBoxData" Hidden="true" />
+      <Field Name="_lastTargetedTime" Hidden="true" />
+      <Field Name="_stateTransitionLastTime" Hidden="true" />
+      <Field Name="_stateTransitionRequiredTime" Hidden="true" />
+      <Field Name="_targeted" Hidden="true" />
+      <Field Name="_velocity" Hidden="true" />
+      <Field Name="_xAxis" Hidden="true" />
+      <Field Name="_yAxis" Hidden="true" />
+      <Field Name="_zAxis" Hidden="true" />
+      <Method Name="DX2DInGameObject" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="PreInit" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AgQUEAAAECIQAAMIAAAAAAAABIAAAADAoBAmBRAAEQE=</HashCode>
+      <FileName>DX2DGameObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::DX2DMapObject">
+    <Position X="15" Y="2.5" Width="3" />
+    <Members>
+      <Field Name="_dynamicObjectList" Hidden="true" />
+      <Field Name="_layer" Hidden="true" />
+      <Field Name="_maxLayer" Hidden="true" />
+      <Field Name="_object" Hidden="true" />
+      <Field Name="_physicsToDX2DMatch" Hidden="true" />
+      <Field Name="_player" Hidden="true" />
+      <Field Name="_terrain" Hidden="true" />
+      <Method Name="~DX2DMapObject" Hidden="true" />
+      <Method Name="DX2DMapObject" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAAAABABAAAAAICAIAIAABAgABJBACYJGAAAE=</HashCode>
+      <FileName>DX2DMapObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::DX2DCamera">
+    <Position X="10" Y="0.5" Width="2.75" />
+    <Members>
+      <Field Name="_captureArea" Hidden="true" />
+      <Field Name="_windowHeight" Hidden="true" />
+      <Field Name="_windowWidth" Hidden="true" />
+      <Method Name="~DX2DCamera" Hidden="true" />
+      <Method Name="DX2DCamera" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>IAAAAIAAAIAAAACCAAAAAABAICAgAAAAABACAFAAAQE=</HashCode>
+      <FileName>DX2DCamera.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::DX2DHitBox">
+    <Position X="6.5" Y="8.5" Width="1.75" />
+    <Members>
+      <Field Name="_parent" Hidden="true" />
+      <Field Name="_relativePosition" Hidden="true" />
+      <Method Name="~DX2DHitBox" Hidden="true" />
+      <Method Name="DX2DHitBox" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAEEBAQAAAACAAAAFACABAAEAE=</HashCode>
+      <FileName>DX2DGameObject.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::DX2DGameObjectFactory">
+    <Position X="0.5" Y="7.25" Width="2.25" />
+    <Members>
+      <Field Name="_mapObject" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAABAAAAAEAAAAIAACAAAAAAA=</HashCode>
+      <FileName>DX2DGameObjectFactory.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::DX2DProjectController">
+    <Position X="1.5" Y="0.5" Width="1.75" />
+    <Members>
+      <Field Name="_controlledObject" Hidden="true" />
+      <Method Name="~DX2DProjectController" Hidden="true" />
+      <Method Name="DX2DProjectController" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAIAAAAAgIAAAAABAADACABAAAAE=</HashCode>
+      <FileName>DX2DProjectController.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::PlayerController">
+    <Position X="2.5" Y="2.25" Width="1.5" />
+    <Members>
+      <Method Name="~PlayerController" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="PlayerController" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAACAEAAAAAAAAADACABAAAAE=</HashCode>
+      <FileName>DX2DProjectController.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::EnemyController">
+    <Position X="0.5" Y="2.25" Width="1.5" />
+    <Members>
+      <Field Name="_decisionTime" Hidden="true" />
+      <Field Name="_enemy" Hidden="true" />
+      <Field Name="_lastDecisionTime" Hidden="true" />
+      <Field Name="_maxDecisionTime" Hidden="true" />
+      <Field Name="_offensive" Hidden="true" />
+      <Method Name="~EnemyController" Hidden="true" />
+      <Method Name="EnemyController" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIgAAAAAAAAAAABgGACADECAFABAAE=</HashCode>
+      <FileName>DX2DProjectController.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::Terrain">
+    <Position X="18.25" Y="0.5" Width="3.5" />
+    <Members>
+      <Field Name="_heightCount" Hidden="true" />
+      <Field Name="_heightUnit" Hidden="true" />
+      <Field Name="_memoryPool" Hidden="true" />
+      <Field Name="_tiles" Hidden="true" />
+      <Field Name="_widthCount" Hidden="true" />
+      <Field Name="_widthUnit" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+      <Method Name="Terrain" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="SSB::Terrain::Tile">
+        <Members>
+          <Field Name="_bottom" Hidden="true" />
+          <Field Name="_left" Hidden="true" />
+          <Field Name="_right" Hidden="true" />
+          <Field Name="_top" Hidden="true" />
+          <Field Name="_used" Hidden="true" />
+          <Method Name="Frame" Hidden="true" />
+          <Method Name="Init" Hidden="true" />
+          <Method Name="Release" Hidden="true" />
+          <Method Name="Render" Hidden="true" />
+          <Method Name="Tile" Hidden="true" />
+        </Members>
+        <TypeIdentifier>
+          <NewMemberFileName>Terrain.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="SSB::Terrain::TileMemoryPool">
+        <Members>
+          <Field Name="_heightUnit" Hidden="true" />
+          <Field Name="_tileCount" Hidden="true" />
+          <Field Name="_tileList" Hidden="true" />
+          <Field Name="_widthUnit" Hidden="true" />
+          <Method Name="~TileMemoryPool" Hidden="true" />
+          <Method Name="TileMemoryPool" Hidden="true" />
+        </Members>
+        <TypeIdentifier>
+          <NewMemberFileName>Terrain.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAABAAAAAAAAAAAAAAAAgAAACAFGCABIAABE=</HashCode>
+      <FileName>Terrain.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::TitleScene" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <Members>
+      <Field Name="_bgm" Hidden="true" />
+      <Field Name="_flight" Hidden="true" />
+      <Field Name="_mainScene" Hidden="true" />
+      <Field Name="_startButton" Hidden="true" />
+      <Field Name="_titleTextGun" Hidden="true" />
+      <Field Name="_titleTextTop" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAIIAAAAwAAIAAABACBBAAAAk=</HashCode>
+      <FileName>SceneList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::BattleScene">
+    <Position X="6.75" Y="0.5" Width="2.5" />
+    <Members>
+      <Field Name="_bgm" Hidden="true" />
+      <Field Name="_camera" Hidden="true" />
+      <Field Name="_cloudManager" Hidden="true" />
+      <Field Name="_damagedCount" Hidden="true" />
+      <Field Name="_defenseStage" Hidden="true" />
+      <Field Name="_enemyController" Hidden="true" />
+      <Field Name="_enemyObject" Hidden="true" />
+      <Field Name="_factory" Hidden="true" />
+      <Field Name="_hitCount" Hidden="true" />
+      <Field Name="_map" Hidden="true" />
+      <Field Name="_maxTime" Hidden="true" />
+      <Field Name="_playerController" Hidden="true" />
+      <Field Name="_playerObject" Hidden="true" />
+      <Field Name="_pool" Hidden="true" />
+      <Field Name="_startTime" Hidden="true" />
+      <Field Name="_text" Hidden="true" />
+      <Field Name="_timerText" Hidden="true" />
+      <Method Name="~BattleScene" Hidden="true" />
+      <Method Name="BattleScene" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <NestedTypes>
+      <Class Name="SSB::BattleScene::HitEffectMemoryPool">
+        <Members>
+          <Field Name="_camera" Hidden="true" />
+          <Field Name="_effectCount" Hidden="true" />
+          <Field Name="_effectList" Hidden="true" />
+          <Field Name="_initialEffectCount" Hidden="true" />
+          <Method Name="~HitEffectMemoryPool" Hidden="true" />
+          <Method Name="Frame" Hidden="true" />
+          <Method Name="HitEffectMemoryPool" Hidden="true" />
+          <Method Name="Init" Hidden="true" />
+          <Method Name="Release" Hidden="true" />
+          <Method Name="Render" Hidden="true" />
+        </Members>
+        <TypeIdentifier>
+          <NewMemberFileName>SceneList.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+      <Class Name="SSB::BattleScene::CloudManager">
+        <Members>
+          <Field Name="_clouds" Hidden="true" />
+          <Field Name="_interval" Hidden="true" />
+          <Field Name="_lastTime" Hidden="true" />
+          <Method Name="~CloudManager" Hidden="true" />
+          <Method Name="Frame" Hidden="true" />
+          <Method Name="Init" Hidden="true" />
+          <Method Name="Release" Hidden="true" />
+          <Method Name="Render" Hidden="true" />
+        </Members>
+        <TypeIdentifier>
+          <NewMemberFileName>SceneList.h</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>IAAgAAAQJAAAEBAEARAAAAAQAEAAAAIIAFACBDAAAEE=</HashCode>
+      <FileName>SceneList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::ChangeScene">
+    <Position X="4.75" Y="3" Width="1.5" />
+    <Members>
+      <Field Name="_enemy" Hidden="true" />
+      <Field Name="_enemyPosition" Hidden="true" />
+      <Field Name="_initSize" Hidden="true" />
+      <Field Name="_player" Hidden="true" />
+      <Field Name="_playerPosition" Hidden="true" />
+      <Field Name="_scenePlayTime" Hidden="true" />
+      <Field Name="_startTime" Hidden="true" />
+      <Field Name="_terrain" Hidden="true" />
+      <Method Name="~ChangeScene" Hidden="true" />
+      <Method Name="ChangeScene" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAgEAAAIAAAAAAAAAAACAgAAAQBQAAABBACgBAAAgE=</HashCode>
+      <FileName>SceneList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="SSB::EndScene">
+    <Position X="4.75" Y="1.5" Width="1.5" />
+    <Members>
+      <Field Name="_bgm" Hidden="true" />
+      <Field Name="_damagedCount" Hidden="true" />
+      <Field Name="_damageUI" Hidden="true" />
+      <Field Name="_hitCount" Hidden="true" />
+      <Field Name="_hitUI" Hidden="true" />
+      <Field Name="_mainScene" Hidden="true" />
+      <Method Name="~EndScene" Hidden="true" />
+      <Method Name="Frame" Hidden="true" />
+      <Method Name="Init" Hidden="true" />
+      <Method Name="Release" Hidden="true" />
+      <Method Name="Render" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>IAAAEAAAAAAAACAAQAAAAAAAAEAgAAAAABgCBBAAAAE=</HashCode>
+      <FileName>SceneList.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Struct Name="SSB::HitboxPosition">
+    <Position X="8.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAABAAAAAA=</HashCode>
+      <FileName>DX2DGameObject.h</FileName>
+    </TypeIdentifier>
+  </Struct>
+  <Enum Name="SSB::EAireplaneFlightState">
+    <Position X="10.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAAAAIAgAIABAAAAAAAAAIAAAgAAAAAAQAAIA=</HashCode>
+      <FileName>DX2DGameObject.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SSB::EXAxis">
+    <Position X="12" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAEAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>DX2DGameObject.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SSB::EYAxis">
+    <Position X="13.75" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAABAAAAEAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DX2DGameObject.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="SSB::EZAxis">
+    <Position X="15.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAEAAAAAAAAAAAAAAAAQAAA=</HashCode>
+      <FileName>DX2DGameObject.h</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="맑은 고딕" Size="9" />
+</ClassDiagram>

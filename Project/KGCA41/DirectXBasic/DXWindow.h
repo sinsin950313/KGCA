@@ -30,8 +30,20 @@ namespace SSB
 		IDWriteFactory* _writeFactory;
 		ID2D1RenderTarget* _renderTarget2D;
 
+	private:
+		HRESULT CreateDevice();
+		HRESULT CreateWindowDXGIFactory();
+		HRESULT CreateSwapChain();
+		HRESULT CreateRenderTargetView();
+		HRESULT Create2DFactory();
+		HRESULT CreateRenderTarget2D();
+		HRESULT CreateWriteFactory();
+
 	public:
 		DXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
+
+	private:
+		HRESULT UpdateResize() override;
 
 	public:
 		bool Init() override;

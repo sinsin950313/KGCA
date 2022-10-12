@@ -57,7 +57,7 @@ namespace SSB
 		float LengthSquare() const;
 		float Length() const { return sqrt(LengthSquare()); }
 		float Dot(const PhysicsVector& vec);
-		PhysicsVector Cross(const PhysicsVector& vec) = delete;
+		PhysicsVector Cross(const PhysicsVector& vec);
 
 	public:
 		PhysicsVector operator+(const PhysicsVector& vec) const;
@@ -192,6 +192,21 @@ namespace SSB
 		auto lambda = [&ret, this](int dim, float val) -> void { ret += (_coordinate[dim] * val); };
 		RepeatAction(vec, lambda);
 		return ret;
+	}
+
+	template<int dimension>
+	inline PhysicsVector<dimension> PhysicsVector<dimension>::Cross(const PhysicsVector& vec)
+	{
+		DimensionCheck(vec);
+
+		if (_dimension == 2)
+		{
+			return PhysicsVector();
+		}
+		else
+		{
+			return PhysicsVector(Vector3DData{ Get(1) * vec.Get(2) - Get(2) * vec.Get(1), Get(2) * vec.Get(0) - Get(0) * vec.Get(2), Get(0) * vec.Get(1) - Get(1) * vec.Get(0) });
+		}
 	}
 
 	template<int dimension>

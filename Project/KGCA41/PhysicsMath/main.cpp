@@ -21,4 +21,10 @@ int main()
 	vec.Clear();
 
 	SSB::Vector2D varVec(2, 1.0f, 2.0f);
+
+	SSB::Vector3DData aVecData{ 1, 1, 0 };
+	SSB::Vector3D aVec(std::move(aVecData));
+	SSB::Vector3DData bVecData{ 0, 1, 1 };
+	SSB::Vector3D bVec(std::move(bVecData));
+	auto crossResult = bVec.Cross(aVec);
 }

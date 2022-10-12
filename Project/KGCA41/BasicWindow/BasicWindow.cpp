@@ -1,4 +1,5 @@
 #include "BasicWindow.h"
+#include <cassert>
 
 namespace SSB
 {
@@ -39,8 +40,8 @@ namespace SSB
 
 	bool BasicWindow::Init()
 	{
-		GetWindowRect(_hWnd, &_windowRect);
-		GetClientRect(_hWnd, &_clientRect);
+		//GetWindowRect(_hWnd, &_windowRect);
+		//GetClientRect(_hWnd, &_clientRect);
 
 		UINT iScreenWidth = GetSystemMetrics(SM_CXFULLSCREEN);
 		UINT iScreenHieght = GetSystemMetrics(SM_CYFULLSCREEN);
@@ -99,13 +100,38 @@ namespace SSB
 	{
 		switch (message)
 		{
+		case WM_SIZE:
+		{
+			if (wParam != SIZE_MINIMIZED)
+			{
+				GetWindowRect(_hWnd, &_windowRect);
+				GetClientRect(_hWnd, &_clientRect);
+
+				HRESULT hr;
+				if (FAILED(hr = UpdateResize()))
+				{
+					assert(SUCCEEDED(hr));
+					PostQuitMessage(1);
+				}
+				break;
+			}
+		}
 		case WM_DESTROY:
+		{
 			PostQuitMessage(0);
 			break;
+		}
 		default:
+		{
 			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
 		}
 
 		return 0;
+	}
+
+	HRESULT BasicWindow::UpdateResize()
+	{
+		return S_OK;
 	}
 }

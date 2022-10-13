@@ -41,6 +41,9 @@ namespace SSB
 	class Vector2 : protected Float2, public VectorInterface<Vector2>
 	{
 	public:
+		Vector2(float xVal = 0.0f, float yVal = 0.0f) { x = xVal; y = yVal; }
+
+	public:
 		virtual float LengthSquare() const override;
 		virtual float Length() const override;
 		virtual float Dot(const Vector2 vec) override;
@@ -56,6 +59,10 @@ namespace SSB
 		virtual void operator-=(const Vector2 vec) override;
 		virtual Vector2 operator*(float scalar) const override;
 		virtual Vector2 operator/(float scalar) const override;
+
+	public:
+		float GetX() { return x; }
+		float GetY() { return y; }
 	};
 
 	struct Float3 : public Float2
@@ -72,6 +79,9 @@ namespace SSB
 	class Vector3 : protected Float3, public VectorInterface<Vector3>
 	{
 	public:
+		Vector3(float xVal = 0.0f, float yVal = 0.0f, float zVal = 0.0f) { x = xVal; y = yVal; z = zVal; }
+
+	public:
 		virtual float LengthSquare() const override;
 		virtual float Length() const override;
 		virtual float Dot(const Vector3 vec) override;
@@ -87,6 +97,11 @@ namespace SSB
 		virtual void operator-=(const Vector3 vec) override;
 		virtual Vector3 operator*(float scalar) const override;
 		virtual Vector3 operator/(float scalar) const override;
+
+	public:
+		float GetX() { return x; }
+		float GetY() { return y; }
+		float GetZ() { return z; }
 	};
 
 	struct Float4 : public Float3
@@ -102,6 +117,9 @@ namespace SSB
 
 	class Vector4 : protected Float4, public VectorInterface<Vector4>
 	{
+	public:
+		Vector4(float xVal = 0.0f, float yVal = 0.0f, float zVal = 0.0f, float wVal = 0.0f) { x = xVal; y = yVal; z = zVal; w = wVal; }
+
 	public:
 		virtual float LengthSquare() const override;
 		virtual float Length() const override;

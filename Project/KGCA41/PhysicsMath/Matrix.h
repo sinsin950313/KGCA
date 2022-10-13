@@ -46,6 +46,12 @@ namespace SSB
 	class Matrix22 : protected Float22, public MatrixInterface<Matrix22, Vector2>
 	{
 	public:
+		Matrix22();
+		Matrix22(
+			float e11, float e12, 
+			float e21, float e22);
+
+	public:
 		void Identity() override;
 		Matrix22 Transpose() override;
 		Matrix22 Inverse() override;
@@ -77,6 +83,13 @@ namespace SSB
 
 	class Matrix33 : protected Float33, public MatrixInterface<Matrix33, Vector3>
 	{
+	public:
+		Matrix33();
+		Matrix33(
+			float e11, float e12, float e13,
+			float e21, float e22, float e23,
+			float e31, float e32, float e33);
+
 	public:
 		void Identity() override;
 		Matrix33 Transpose() override;
@@ -115,6 +128,14 @@ namespace SSB
 
 	class Matrix44 : protected Float44, public MatrixInterface<Matrix44, Vector4>
 	{
+	public:
+		Matrix44();
+		Matrix44(
+			float e11, float e12, float e13, float e14,
+			float e21, float e22, float e23, float e24,
+			float e31, float e32, float e33, float e34,
+			float e41, float e42, float e43, float e44);
+
 	public:
 		void Identity() override;
 		Matrix44 Transpose() override;

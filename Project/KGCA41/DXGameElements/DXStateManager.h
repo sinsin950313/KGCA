@@ -68,7 +68,7 @@ namespace SSB
             D3D11_RASTERIZER_DESC desc;
             ZeroMemory(&desc, sizeof(D3D11_RASTERIZER_DESC));
             desc.FillMode = D3D11_FILL_SOLID;
-            desc.CullMode = D3D11_CULL_NONE;
+            desc.CullMode = D3D11_CULL_BACK;
 
             ID3D11RasterizerState* state;
             g_dxWindow->GetDevice()->CreateRasterizerState(&desc, &state);
@@ -85,7 +85,7 @@ namespace SSB
             D3D11_RASTERIZER_DESC desc;
             ZeroMemory(&desc, sizeof(D3D11_RASTERIZER_DESC));
             desc.FillMode = D3D11_FILL_WIREFRAME;
-            desc.CullMode = D3D11_CULL_NONE;
+            desc.CullMode = D3D11_CULL_BACK;
 
             ID3D11RasterizerState* state;
             g_dxWindow->GetDevice()->CreateRasterizerState(&desc, &state);

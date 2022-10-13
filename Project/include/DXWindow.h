@@ -38,6 +38,7 @@ namespace SSB
 		HRESULT Create2DFactory();
 		HRESULT CreateRenderTarget2D();
 		HRESULT CreateWriteFactory();
+		HRESULT CreateViewPort();
 
 	public:
 		DXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);

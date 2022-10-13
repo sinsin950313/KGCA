@@ -103,6 +103,8 @@ namespace SSB
 
 		_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
 
+		CreateViewPort();
+
 		return S_OK;
 	}
 
@@ -110,14 +112,7 @@ namespace SSB
 	{
 		BasicWindow::Init();
 
-		D3D11_VIEWPORT viewPort;
-		viewPort.TopLeftX = 0;
-		viewPort.TopLeftY = 0;
-		viewPort.Width = GetClientWidth();
-		viewPort.Height = GetClientHeight();
-		viewPort.MinDepth = 0.0f;
-		viewPort.MaxDepth = 1.0f;
-		_deviceContext->RSSetViewports(1, &viewPort);
+		CreateViewPort();
 
 		return true;
 	}
@@ -296,5 +291,18 @@ namespace SSB
 	HRESULT DXWindow::CreateWriteFactory()
 	{
 		return DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory), (IUnknown**)&_writeFactory);
+	}
+	HRESULT DXWindow::CreateViewPort()
+	{
+		D3D11_VIEWPORT viewPort;
+		viewPort.TopLeftX = 0;
+		viewPort.TopLeftY = 0;
+		viewPort.Width = GetClientWidth();
+		viewPort.Height = GetClientHeight();
+		viewPort.MinDepth = 0.0f;
+		viewPort.MaxDepth = 1.0f;
+		_deviceContext->RSSetViewports(1, &viewPort);
+
+		return S_OK;
 	}
 }

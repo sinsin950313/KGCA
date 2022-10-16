@@ -1,4 +1,5 @@
 #pragma once
+#include <math.h>
 
 namespace SSB
 {
@@ -11,7 +12,7 @@ namespace SSB
 		virtual float Dot(const T vec) = 0;
 		virtual T Cross(const T vec) = 0;
 		virtual void Normalize() = 0;
-		virtual T Identity() = 0;
+		virtual T Normal() = 0;
 		virtual void Clear() = 0;
 
 	public:
@@ -49,7 +50,7 @@ namespace SSB
 		virtual float Dot(const Vector2 vec) override;
 		virtual Vector2 Cross(const Vector2 vec) override;
 		virtual void Normalize() override;
-		virtual Vector2 Identity() override;
+		virtual Vector2 Normal() override;
 		virtual void Clear() override;
 
 	public:
@@ -87,7 +88,7 @@ namespace SSB
 		virtual float Dot(const Vector3 vec) override;
 		virtual Vector3 Cross(const Vector3 vec) override;
 		virtual void Normalize() override;
-		virtual Vector3 Identity() override;
+		virtual Vector3 Normal() override;
 		virtual void Clear() override;
 
 	public:
@@ -97,6 +98,40 @@ namespace SSB
 		virtual void operator-=(const Vector3 vec) override;
 		virtual Vector3 operator*(float scalar) const override;
 		virtual Vector3 operator/(float scalar) const override;
+
+	public:
+		float GetX() { return x; }
+		float GetY() { return y; }
+		float GetZ() { return z; }
+	};
+
+	class HVector3 : protected Float3, public VectorInterface<HVector3>
+	{
+	private:
+		static const float _fThreshold;
+
+	public:
+		HVector3(float xVal = 0.0f, float yVal = 0.0f, float zVal = 0.0f) { x = xVal; y = yVal; z = zVal; }
+
+	private:
+		bool IsVector() const { return abs(z) < _fThreshold; }
+
+	public:
+		virtual float LengthSquare() const override;
+		virtual float Length() const override;
+		virtual float Dot(const HVector3 vec) override;
+		virtual HVector3 Cross(const HVector3 vec) override;
+		virtual void Normalize() override;
+		virtual HVector3 Normal() override;
+		virtual void Clear() override;
+
+	public:
+		virtual HVector3 operator+(const HVector3 vec) const override;
+		virtual void operator+=(const HVector3 vec) override;
+		virtual HVector3 operator-(const HVector3 vec) const override;
+		virtual void operator-=(const HVector3 vec) override;
+		virtual HVector3 operator*(float scalar) const override;
+		virtual HVector3 operator/(float scalar) const override;
 
 	public:
 		float GetX() { return x; }
@@ -126,7 +161,7 @@ namespace SSB
 		virtual float Dot(const Vector4 vec) override;
 		virtual Vector4 Cross(const Vector4 vec) override;
 		virtual void Normalize() override;
-		virtual Vector4 Identity() override;
+		virtual Vector4 Normal() override;
 		virtual void Clear() override;
 
 	public:
@@ -136,5 +171,34 @@ namespace SSB
 		virtual void operator-=(const Vector4 vec) override;
 		virtual Vector4 operator*(float scalar) const override;
 		virtual Vector4 operator/(float scalar) const override;
+	};
+
+	class HVector4 : protected Float4, public VectorInterface<HVector4>
+	{
+	private:
+		static const float _fThreshold;
+
+	public:
+		HVector4(float xVal = 0.0f, float yVal = 0.0f, float zVal = 0.0f, float wVal = 0.0f) { x = xVal; y = yVal; z = zVal; w = wVal; }
+
+	private:
+		bool IsVector() const { return abs(w) < _fThreshold; }
+
+	public:
+		virtual float LengthSquare() const override;
+		virtual float Length() const override;
+		virtual float Dot(const HVector4 vec) override;
+		virtual HVector4 Cross(const HVector4 vec) override;
+		virtual void Normalize() override;
+		virtual HVector4 Normal() override;
+		virtual void Clear() override;
+
+	public:
+		virtual HVector4 operator+(const HVector4 vec) const override;
+		virtual void operator+=(const HVector4 vec) override;
+		virtual HVector4 operator-(const HVector4 vec) const override;
+		virtual void operator-=(const HVector4 vec) override;
+		virtual HVector4 operator*(float scalar) const override;
+		virtual HVector4 operator/(float scalar) const override;
 	};
 }

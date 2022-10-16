@@ -10,14 +10,11 @@ namespace SSB
 	public:
 		virtual void Identity() = 0;
 		virtual M Transpose() = 0;
-		//virtual M Translate(V vector) = 0;
 		virtual M Inverse() = 0;
 
 	protected:
 		virtual V GetRow(int i) = 0;
 		virtual V GetColumn(int i) = 0;
-		//	virtual M Rotate(V angleOfRotationForEachAxis) = 0;
-		//	virtual M Scale(V scaleForEachAxis) = 0;
 
 	public:
 		virtual M operator+(const M matrix) const = 0;
@@ -104,11 +101,42 @@ namespace SSB
 		void operator-=(const Matrix33 matrix) override;
 		Matrix33 operator*(float scalar) const override;
 		Matrix33 operator*(Matrix33 matrix) const override;
+	};
+
+	class HMatrix33 : protected Float33, public MatrixInterface<HMatrix33, HVector3>
+	{
+	private:
+		static const float _fThreshold;
 
 	public:
-		static Matrix33 Translate(Vector2 vector);
-		static Matrix33 Rotate(float radian);
-		static Matrix33 Scale(Vector2 data);
+		HMatrix33();
+		HMatrix33(
+			float e11, float e12,
+			float e21, float e22,
+			float e31, float e32);
+
+	private:
+		bool IsZero(float val) { return abs(val) < _fThreshold; }
+
+	public:
+		void Identity() override;
+		HMatrix33 Transpose() override;
+		HMatrix33 Inverse() override;
+		HVector3 GetRow(int i) override;
+		HVector3 GetColumn(int i) override;
+
+	public:
+		HMatrix33 operator+(const HMatrix33 matrix) const override;
+		void operator+=(const HMatrix33 matrix) override;
+		HMatrix33 operator-(const HMatrix33 matrix) const override;
+		void operator-=(const HMatrix33 matrix) override;
+		HMatrix33 operator*(float scalar) const override;
+		HMatrix33 operator*(HMatrix33 matrix) const override;
+
+	public:
+		static HMatrix33 Translate(Vector2 vector);
+		static HMatrix33 Rotate(float radian);
+		static HMatrix33 Scale(Vector2 data);
 	};
 
 	struct Float44
@@ -150,12 +178,44 @@ namespace SSB
 		void operator-=(const Matrix44 matrix) override;
 		Matrix44 operator*(float scalar) const override;
 		Matrix44 operator*(Matrix44 matrix) const override;
+	};
+
+	class HMatrix44 : protected Float44, public MatrixInterface<HMatrix44, HVector4>
+	{
+	private:
+		static const float _fThreshold;
 
 	public:
-		static Matrix44 Translate(Vector3 vector);
-		static Matrix44 RotateFromXAxis(float radian);
-		static Matrix44 RotateFromYAxis(float radian);
-		static Matrix44 RotateFromZAxis(float radian);
-		static Matrix44 Scale(Vector3 data);
+		HMatrix44();
+		HMatrix44(
+			float e11, float e12, float e13,
+			float e21, float e22, float e23,
+			float e31, float e32, float e33,
+			float e41, float e42, float e43);
+
+	private:
+		bool IsZero(float val) { return abs(val) < _fThreshold; }
+
+	public:
+		void Identity() override;
+		HMatrix44 Transpose() override;
+		HMatrix44 Inverse() override;
+		HVector4 GetRow(int i) override;
+		HVector4 GetColumn(int i) override;
+
+	public:
+		HMatrix44 operator+(const HMatrix44 matrix) const override;
+		void operator+=(const HMatrix44 matrix) override;
+		HMatrix44 operator-(const HMatrix44 matrix) const override;
+		void operator-=(const HMatrix44 matrix) override;
+		HMatrix44 operator*(float scalar) const override;
+		HMatrix44 operator*(HMatrix44 matrix) const override;
+
+	public:
+		static HMatrix44 Translate(Vector3 vector);
+		static HMatrix44 RotateFromXAxis(float radian);
+		static HMatrix44 RotateFromYAxis(float radian);
+		static HMatrix44 RotateFromZAxis(float radian);
+		static HMatrix44 Scale(Vector3 data);
 	};
 }

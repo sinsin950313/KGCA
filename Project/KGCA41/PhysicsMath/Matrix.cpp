@@ -321,7 +321,7 @@ namespace SSB
 	}
 	HMatrix33 HMatrix33::Translate(Vector2 vector)
 	{
-		 HMatrix33 m(
+		return HMatrix33(
 			1, 0,
 			0, 1,
 			vector.GetX(), vector.GetY());
@@ -577,6 +577,20 @@ namespace SSB
 		throw UnableCalculateException();
 		return HMatrix44();
 	}
+	HMatrix44 HMatrix44::LookAtMatrix(Vector3 position, Vector3 target, Vector3 up)
+	{
+		Vector3 zVector = target - position;
+		zVector.Normalize();
+		Vector3 xVector = up.Cross(zVector);
+		xVector.Normalize();
+		Vector3 yVector = zVector.Cross(xVector);
+		yVector.Normalize();
+		return HMatrix44(
+			xVector.GetX(), xVector.GetY(), xVector.GetZ(),
+			yVector.GetX(), yVector.GetY(), yVector.GetZ(),
+			zVector.GetX(), zVector.GetY(), zVector.GetZ(),
+			0, 0, 0);
+	}
 	HMatrix44 HMatrix44::operator*(HMatrix44 matrix) const
 	{
 		HMatrix44 m;
@@ -593,6 +607,22 @@ namespace SSB
 			}
 		}
 		return m;
+	}
+	HMatrix44 HMatrix44::RelativeMatrix(HMatrix44 standard)
+	{
+		HMatrix44 rotateMatrix{
+			standard.e11, standard.e12, standard.e13,
+			standard.e21, standard.e22, standard.e23,
+			standard.e31, standard.e32, standard.e33,
+			0, 0, 0
+		};
+		HMatrix44 translateMatrix{
+			1, 0, 0,
+			0, 1, 0,
+			0, 0, 1,
+			standard.e41, standard.e42, standard.e42
+		};
+		return translateMatrix.Inverse() * rotateMatrix.Inverse();;
 	}
 	HMatrix44 HMatrix44::Translate(Vector3 vector)
 	{

@@ -1,5 +1,5 @@
 #pragma once
-#include <math.h>
+#include <cmath>
 
 namespace SSB
 {
@@ -171,6 +171,12 @@ namespace SSB
 		virtual void operator-=(const Vector4 vec) override;
 		virtual Vector4 operator*(float scalar) const override;
 		virtual Vector4 operator/(float scalar) const override;
+
+	public:
+		float GetX() { return x; }
+		float GetY() { return y; }
+		float GetZ() { return z; }
+		float GetW() { return w; }
 	};
 
 	class HVector4 : protected Float4, public VectorInterface<HVector4>
@@ -200,5 +206,11 @@ namespace SSB
 		virtual void operator-=(const HVector4 vec) override;
 		virtual HVector4 operator*(float scalar) const override;
 		virtual HVector4 operator/(float scalar) const override;
+
+	public:
+		float GetX() { return x; }
+		float GetY() { return y; }
+		float GetZ() { return z; }
+		float GetW() { return w; }
 	};
 }

@@ -217,5 +217,7 @@ namespace SSB
 		static HMatrix44 RotateFromYAxis(float radian);
 		static HMatrix44 RotateFromZAxis(float radian);
 		static HMatrix44 Scale(Vector3 data);
+		static HMatrix44 LookAtMatrix(Vector3 position, Vector3 target, Vector3 up);
+		static HMatrix44 RelativeMatrix(HMatrix44 standard);
 	};
 }

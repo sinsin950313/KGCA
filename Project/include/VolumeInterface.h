@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Volume.h"
+#include <vector>
 
 namespace SSB
 {

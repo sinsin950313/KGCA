@@ -24,13 +24,16 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Volume.cpp" />
+    <ClCompile Include="Volume1.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Box.h" />
     <ClInclude Include="Circle.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Volume.h" />
+    <ClInclude Include="Volume1.h" />
     <ClInclude Include="VolumeInterface.h" />
+    <ClInclude Include="VolumeInterface1.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

@@ -452,10 +452,10 @@ namespace SSB
 	}
 	HMatrix44::HMatrix44(float e11, float e12, float e13, float e21, float e22, float e23, float e31, float e32, float e33, float e41, float e42, float e43)
 	{
-		row[0].x = e11; row[0].y = e12; row[0].z = e13;
-		row[1].x = e21; row[1].y = e22; row[1].z = e23;
-		row[2].x = e31; row[2].y = e32; row[2].z = e33;
-		row[3].x = e41; row[3].y = e42; row[3].z = e43;
+		row[0].x = e11; row[0].y = e12; row[0].z = e13; row[0].w = 0.0f;
+		row[1].x = e21; row[1].y = e22; row[1].z = e23; row[1].w = 0.0f;
+		row[2].x = e31; row[2].y = e32; row[2].z = e33; row[2].w = 0.0f;
+		row[3].x = e41; row[3].y = e42; row[3].z = e43; row[3].w = 1.0f;
 	}
 	void HMatrix44::Identity()
 	{

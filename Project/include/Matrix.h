@@ -38,6 +38,7 @@ namespace SSB
 			};
 			Float2 row[2];
 		};
+		Float22() { }
 	};
 
 	class Matrix22 : protected Float22, public MatrixInterface<Matrix22, Vector2>
@@ -76,6 +77,7 @@ namespace SSB
 			};
 			Float3 row[3];
 		};
+		Float33() { }
 	};
 
 	class Matrix33 : protected Float33, public MatrixInterface<Matrix33, Vector3>
@@ -152,6 +154,7 @@ namespace SSB
 			};
 			Float4 row[4];
 		};
+		Float44() { }
 	};
 
 	class Matrix44 : protected Float44, public MatrixInterface<Matrix44, Vector4>

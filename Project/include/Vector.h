@@ -37,6 +37,7 @@ namespace SSB
 			};
 			float e[2];
 		};
+		Float2(float xVal = 0.0f, float yVal = 0.0f) { x = xVal; y = yVal; }
 	};
 
 	class Vector2 : protected Float2, public VectorInterface<Vector2>
@@ -75,6 +76,7 @@ namespace SSB
 				float z;
 			};
 		};
+		Float3(float xVal = 0.0f, float yVal = 0.0f, float zVal = 0.0f, float wVal = 0.0f) { x = xVal; y = yVal; z = zVal; }
 	};
 
 	class Vector3 : protected Float3, public VectorInterface<Vector3>
@@ -148,6 +150,7 @@ namespace SSB
 				float w;
 			};
 		};
+		Float4(float xVal = 0.0f, float yVal = 0.0f, float zVal = 0.0f, float wVal = 0.0f) { x = xVal; y = yVal; z = zVal; w = wVal; }
 	};
 
 	class Vector4 : protected Float4, public VectorInterface<Vector4>

@@ -30,11 +30,11 @@ namespace SSB
 			e22, -e12,
 			-e21, e11).operator*(1 / (e11 * e22 - e12 * e21));
 	}
-	Vector2 Matrix22::GetRow(int i)
+	Vector2 Matrix22::GetRow(int i) const
 	{
 		return Vector2(row[i].x, row[i].y);
 	}
-	Vector2 Matrix22::GetColumn(int i)
+	Vector2 Matrix22::GetColumn(int i) const
 	{
 		return Vector2(row[0].e[i], row[1].e[i]);
 	}
@@ -118,11 +118,11 @@ namespace SSB
 		throw UnableCalculateException();
 		return Matrix33();
 	}
-	Vector3 Matrix33::GetRow(int i)
+	Vector3 Matrix33::GetRow(int i) const
 	{
 		return Vector3(row[i].x, row[i].y, row[i].z);
 	}
-	Vector3 Matrix33::GetColumn(int i)
+	Vector3 Matrix33::GetColumn(int i) const
 	{
 		return Vector3(row[0].e[i], row[1].e[i], row[2].e[i]);
 	}
@@ -227,11 +227,11 @@ namespace SSB
 			return m;
 		}
 	}
-	HVector3 HMatrix33::GetRow(int i)
+	HVector3 HMatrix33::GetRow(int i) const
 	{
 		return HVector3(row[i].x, row[i].y, row[i].z);
 	}
-	HVector3 HMatrix33::GetColumn(int i)
+	HVector3 HMatrix33::GetColumn(int i) const
 	{
 		return HVector3(row[0].e[i], row[1].e[i], row[2].e[i]);
 	}
@@ -381,11 +381,11 @@ namespace SSB
 		throw UnableCalculateException();
 		return Matrix44();
 	}
-	Vector4 Matrix44::GetRow(int i)
+	Vector4 Matrix44::GetRow(int i) const
 	{
 		return Vector4(row[i].x, row[i].y, row[i].z, row[i].w);
 	}
-	Vector4 Matrix44::GetColumn(int i)
+	Vector4 Matrix44::GetColumn(int i) const
 	{
 		return Vector4(row[0].e[i], row[1].e[i], row[2].e[i], row[3].e[i]);
 	}
@@ -475,37 +475,54 @@ namespace SSB
 	}
 	HMatrix44 HMatrix44::Inverse()
 	{
-		if ((!(IsZero(e11) && IsZero(e12) && IsZero(e13) &&
-			IsZero(e21) && IsZero(e22) &&  IsZero(e23) &&
-			IsZero(e31) && IsZero(e32) &&  IsZero(e33))) &&
-			(!(IsZero(e41) && IsZero(e42) && IsZero(e43))))
+		HMatrix44 r
 		{
-			class MixedHMatrixInverseException : public std::exception
-			{
-			public:
-				const char* what() const noexcept override
-				{
-					return "HMatrix44 Is Mixed State";
-				}
-			};
+			e11, e12, e13,
+			e21, e22, e23,
+			e31, e32, e33,
+			0, 0, 0
+		};
+		r = r.Transpose();
+		HMatrix44 t
+		{
+			1, 0, 0,
+			0, 1, 0,
+			0, 0, 1,
+			-e41, -e42, -e43
+		};
+		//t = t.Transpose();
+		return t * r;
+		//if ((!(IsZero(e11) && IsZero(e12) && IsZero(e13) &&
+		//	IsZero(e21) && IsZero(e22) &&  IsZero(e23) &&
+		//	IsZero(e31) && IsZero(e32) &&  IsZero(e33))) &&
+		//	(!(IsZero(e41) && IsZero(e42) && IsZero(e43))))
+		//{
+		//	class MixedHMatrixInverseException : public std::exception
+		//	{
+		//	public:
+		//		const char* what() const noexcept override
+		//		{
+		//			return "HMatrix44 Is Mixed State";
+		//		}
+		//	};
 
-			throw MixedHMatrixInverseException();
-		}
-		else
-		{
-			HMatrix44 m;
-			m.e11 = e11; m.e12 = e21; m.e13 = e31;
-			m.e21 = e12; m.e22 = e22; m.e23 = e32;
-			m.e31 = e13; m.e32 = e23; m.e33 = e33;
-			m.e41 = -e41; m.e42 = -e42; m.e43 = -e43;
-			return m;
-		}
+		//	throw MixedHMatrixInverseException();
+		//}
+		//else
+		//{
+		//	HMatrix44 m;
+		//	m.e11 = e11; m.e12 = e21; m.e13 = e31;
+		//	m.e21 = e12; m.e22 = e22; m.e23 = e32;
+		//	m.e31 = e13; m.e32 = e23; m.e33 = e33;
+		//	m.e41 = -e41; m.e42 = -e42; m.e43 = -e43;
+		//	return m;
+		//}
 	}
-	HVector4 HMatrix44::GetRow(int i)
+	HVector4 HMatrix44::GetRow(int i) const
 	{
 		return HVector4(row[i].x, row[i].y, row[i].z, row[i].w);
 	}
-	HVector4 HMatrix44::GetColumn(int i)
+	HVector4 HMatrix44::GetColumn(int i) const
 	{
 		return HVector4(row[0].e[i], row[1].e[i], row[2].e[i], row[3].e[i]);
 	}
@@ -589,7 +606,7 @@ namespace SSB
 			xVector.GetX(), xVector.GetY(), xVector.GetZ(),
 			yVector.GetX(), yVector.GetY(), yVector.GetZ(),
 			zVector.GetX(), zVector.GetY(), zVector.GetZ(),
-			0, 0, 0);
+			position.GetX(), position.GetY(), position.GetZ());
 	}
 	HMatrix44 HMatrix44::operator*(HMatrix44 matrix) const
 	{
@@ -603,7 +620,8 @@ namespace SSB
 		{
 			for (int j = 0; j < 4; ++j)
 			{
-				m.row[i].e[j] += (row[i].e[j] * matrix.row[j].e[i]);
+				//m.row[i].e[j] += (row[i].e[j] * matrix.row[j].e[i]);
+				m.row[i].e[j] = GetRow(i).Dot(matrix.GetColumn(j));
 			}
 		}
 		return m;

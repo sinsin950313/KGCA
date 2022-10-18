@@ -349,7 +349,7 @@ namespace SSB
 	}
 	float HVector4::Dot(const HVector4 vec)
 	{
-		return x * vec.x + y * vec.y + z * vec.z;
+		return x * vec.x + y * vec.y + z * vec.z + w * vec.w;
 	}
 	HVector4 HVector4::Cross(const HVector4 vec)
 	{

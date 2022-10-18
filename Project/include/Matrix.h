@@ -13,8 +13,8 @@ namespace SSB
 		virtual M Inverse() = 0;
 
 	protected:
-		virtual V GetRow(int i) = 0;
-		virtual V GetColumn(int i) = 0;
+		virtual V GetRow(int i) const = 0;
+		virtual V GetColumn(int i) const = 0;
 
 	public:
 		virtual M operator+(const M matrix) const = 0;
@@ -53,8 +53,8 @@ namespace SSB
 		void Identity() override;
 		Matrix22 Transpose() override;
 		Matrix22 Inverse() override;
-		Vector2 GetRow(int i) override;
-		Vector2 GetColumn(int i) override;
+		Vector2 GetRow(int i) const override;
+		Vector2 GetColumn(int i) const override;
 
 	public:
 		Matrix22 operator+(const Matrix22 matrix) const override;
@@ -93,8 +93,8 @@ namespace SSB
 		void Identity() override;
 		Matrix33 Transpose() override;
 		Matrix33 Inverse() override;
-		Vector3 GetRow(int i) override;
-		Vector3 GetColumn(int i) override;
+		Vector3 GetRow(int i) const override;
+		Vector3 GetColumn(int i) const override;
 
 	public:
 		Matrix33 operator+(const Matrix33 matrix) const override;
@@ -124,8 +124,8 @@ namespace SSB
 		void Identity() override;
 		HMatrix33 Transpose() override;
 		HMatrix33 Inverse() override;
-		HVector3 GetRow(int i) override;
-		HVector3 GetColumn(int i) override;
+		HVector3 GetRow(int i) const override;
+		HVector3 GetColumn(int i) const override;
 
 	public:
 		HMatrix33 operator+(const HMatrix33 matrix) const override;
@@ -171,8 +171,8 @@ namespace SSB
 		void Identity() override;
 		Matrix44 Transpose() override;
 		Matrix44 Inverse() override;
-		Vector4 GetRow(int i) override;
-		Vector4 GetColumn(int i) override;
+		Vector4 GetRow(int i) const override;
+		Vector4 GetColumn(int i) const override;
 
 	public:
 		Matrix44 operator+(const Matrix44 matrix) const override;
@@ -203,8 +203,8 @@ namespace SSB
 		void Identity() override;
 		HMatrix44 Transpose() override;
 		HMatrix44 Inverse() override;
-		HVector4 GetRow(int i) override;
-		HVector4 GetColumn(int i) override;
+		HVector4 GetRow(int i) const override;
+		HVector4 GetColumn(int i) const override;
 
 	public:
 		HMatrix44 operator+(const HMatrix44 matrix) const override;

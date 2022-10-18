@@ -7,6 +7,10 @@ namespace SSB
 {
 	//class Object1
 	//{
+	//	class Model
+	//	{
+
+	//	};
 	//};
 
 	//class Object3D : public Object1

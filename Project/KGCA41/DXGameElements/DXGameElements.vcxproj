@@ -120,6 +120,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include;$(ProjectDir)\..\..\include\DXTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -157,6 +158,7 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="GETestWindow.cpp" />
     <ClCompile Include="Sample.cpp" />
@@ -170,6 +172,7 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
     <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Model.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="GETestWindow.h" />
     <ClInclude Include="DX2DAnimation.h" />

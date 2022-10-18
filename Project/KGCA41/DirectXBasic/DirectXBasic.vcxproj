@@ -178,10 +178,12 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DXDrawableInterface.h" />
+    <ClInclude Include="DXStateManager.h" />
     <ClInclude Include="DXTextableInterface.h" />
     <ClInclude Include="DXWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DXStateManager.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DXWindow.cpp" />
   </ItemGroup>

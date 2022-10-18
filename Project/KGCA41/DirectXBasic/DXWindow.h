@@ -25,6 +25,7 @@ namespace SSB
 		ID3D11DeviceContext* _deviceContext = nullptr;
 		IDXGISwapChain* _swapChain = nullptr;
 		ID3D11RenderTargetView* _renderTargetView = nullptr;
+		ID3D11DepthStencilView* _depthStencilView = nullptr;
 
 		ID2D1Factory* _factory2D;
 		IDWriteFactory* _writeFactory;
@@ -39,6 +40,7 @@ namespace SSB
 		HRESULT CreateRenderTarget2D();
 		HRESULT CreateWriteFactory();
 		HRESULT CreateViewPort();
+		HRESULT CreateDepthStencilView();
 
 	public:
 		DXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);

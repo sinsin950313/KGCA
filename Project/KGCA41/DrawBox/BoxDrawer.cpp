@@ -20,44 +20,45 @@ bool BoxDrawer::Init()
       // ¾Õ¸é
 
     //_vertexList.resize(3);
-    //_vertexList[0] = SimpleVertex{ Float4(+0.0f, +0.5f, 0.5f), Float4(1.0f, 0.0f, 0.0f, 0.0f), Float2(0, 0) };
-    //_vertexList[1] = SimpleVertex{ Float4(+0.5f, -0.5f, 0.5f), Float4(0.0f, 1.0f, 0.0f, 0.0f), Float2(0, 0) };
-    //_vertexList[2] = SimpleVertex{ Float4(-0.5f, -0.5f, 0.5f), Float4(0.0f, 0.0f, 1.0f, 0.0f), Float4(0, 0) };
+    //_vertexList[0] = SimpleVertex{ Float4{+0.0f, +0.5f, 0.5f}, Float4{1.0f, 0.0f, 0.0f, 0.0f}, Float2(0, 0) };
+    //_vertexList[1] = SimpleVertex{ Float4{+0.5f, -0.5f, 0.5f}, Float4{0.0f, 1.0f, 0.0f, 0.0f}, Float2(0, 0) };
+    //_vertexList[2] = SimpleVertex{ Float4{-0.5f, -0.5f, 0.5f}, Float4{0.0f, 0.0f, 1.0f, 0.0f}, Float4{0, 0) };
 
+    // over c++17
     _vertexList.resize(24);
-    _vertexList[0] = SimpleVertex{Float4(-0.5f, 0.5f, -0.5f, 1.0f), Float4(0.5f, 0.0f, 0.0f, 0.5f), Float2{0.0f, 0.0f}};
-    _vertexList[1] = SimpleVertex{Float4(0.5f, 0.5f, -0.5f, 1.0f), Float4(0.5f, 0.0f, 0.0f, 0.5f), Float2{0.5f, 0.0f}};
-    _vertexList[2] = SimpleVertex{Float4(0.5f, -0.5f, -0.5f, 1.0f), Float4(0.5f, 0.0f, 0.0f, 0.5f), Float2{0.5f, 0.5f}};
-    _vertexList[3] = SimpleVertex{Float4(-0.5f, -0.5f, -0.5f, 1.0f), Float4(0.5f, 0.0f, 0.0f, 0.5f), Float2{0.0f, 0.5f}};
+    _vertexList[0] = SimpleVertex{Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 0.5f}, Float2{0.0f, 0.0f}};
+    _vertexList[1] = SimpleVertex{Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 0.5f}, Float2{0.5f, 0.0f}};
+    _vertexList[2] = SimpleVertex{Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 0.5f}, Float2{0.5f, 0.5f}};
+    _vertexList[3] = SimpleVertex{Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 0.5f}, Float2{0.0f, 0.5f}};
     // µÞ¸é
-    _vertexList[4] = SimpleVertex{Float4(0.5f, 0.5f, 0.5f, 1.0f), Float4(0.0f, 0.0f, 0.0f, 0.5f), Float2{0.0f, 0.0f}};
-    _vertexList[5] = SimpleVertex{Float4(-0.5f, 0.5f, 0.5f, 1.0f), Float4(0.0f, 0.5f, 0.0f, 0.5f), Float2{0.5f, 0.0f}};
-    _vertexList[6] = SimpleVertex{Float4(-0.5f, -0.5f, 0.5f, 1.0f), Float4(0.0f, 0.5f, 0.0f, 0.5f), Float2{0.5f, 0.5f}};
-    _vertexList[7] = SimpleVertex{Float4(0.5f, -0.5f, 0.5f, 1.0f), Float4(0.0f, 0.5f, 0.0f, 0.5f), Float2{0.0f, 0.5f}};
+    _vertexList[4] = SimpleVertex{Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.0f, 0.5f}, Float2{0.0f, 0.0f}};
+    _vertexList[5] = SimpleVertex{Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 0.5f}, Float2{0.5f, 0.0f}};
+    _vertexList[6] = SimpleVertex{Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 0.5f}, Float2{0.5f, 0.5f}};
+    _vertexList[7] = SimpleVertex{Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 0.5f}, Float2{0.0f, 0.5f}};
 
     // ¿À¸¥ÂÊ
-    _vertexList[8] = SimpleVertex{Float4(0.5f, 0.5f, -0.5f, 1.0f), Float4(0.0f, 0.0f, 0.5f, 0.5f), Float2{0.0f, 0.0f}};
-    _vertexList[9] = SimpleVertex{Float4(0.5f, 0.5f, 0.5f, 1.0f), Float4(0.0f, 0.0f, 0.5f, 0.5f), Float2{0.5f, 0.0f}};
-    _vertexList[10] = SimpleVertex{Float4(0.5f, -0.5f, 0.5f, 1.0f), Float4(0.0f, 0.0f, 0.5f, 0.5f), Float2{0.5f, 0.5f}};
-    _vertexList[11] = SimpleVertex{Float4(0.5f, -0.5f, -0.5f, 1.0f), Float4(0.0f, 0.0f, 0.5f, 0.5f), Float2{0.0f, 0.5f}};
+    _vertexList[8] = SimpleVertex{Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 0.5f}, Float2{0.0f, 0.0f}};
+    _vertexList[9] = SimpleVertex{Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 0.5f}, Float2{0.5f, 0.0f}};
+    _vertexList[10] = SimpleVertex{Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 0.5f}, Float2{0.5f, 0.5f}};
+    _vertexList[11] = SimpleVertex{Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 0.5f}, Float2{0.0f, 0.5f}};
 
     // ¿ÞÂÊ
-    _vertexList[12] = SimpleVertex{Float4(-0.5f, 0.5f, 0.5f, 1.0f), Float4(0.5f, 0.5f, 0.0f, 0.5f), Float2{0.0f, 0.0f}};
-    _vertexList[13] = SimpleVertex{Float4(-0.5f, 0.5f, -0.5f, 1.0f), Float4(0.5f, 0.5f, 0.0f, 0.5f), Float2{0.5f, 0.0f}};
-    _vertexList[14] = SimpleVertex{Float4(-0.5f, -0.5f, -0.5f, 1.0f), Float4(0.5f, 0.5f, 0.0f, 0.5f), Float2{0.5f, 0.5f}};
-    _vertexList[15] = SimpleVertex{Float4(-0.5f, -0.5f, 0.5f, 1.0f), Float4(0.5f, 0.5f, 0.0f, 0.5f), Float2{0.0f, 0.5f}};
+    _vertexList[12] = SimpleVertex{Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 0.5f}, Float2{0.0f, 0.0f}};
+    _vertexList[13] = SimpleVertex{Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 0.5f}, Float2{0.5f, 0.0f}};
+    _vertexList[14] = SimpleVertex{Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 0.5f}, Float2{0.5f, 0.5f}};
+    _vertexList[15] = SimpleVertex{Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 0.5f}, Float2{0.0f, 0.5f}};
 
     // À­¸é
-    _vertexList[16] = SimpleVertex{Float4(-0.5f, 0.5f, 0.5f, 1.0f), Float4(0.5f, 0.5f, 0.5f, 0.5f), Float2{0.0f, 0.0f}};
-    _vertexList[17] = SimpleVertex{Float4(0.5f, 0.5f, 0.5f, 1.0f), Float4(0.5f, 0.5f, 0.5f, 0.5f), Float2{0.5f, 0.0f}};
-    _vertexList[18] = SimpleVertex{Float4(0.5f, 0.5f, -0.5f, 1.0f), Float4(0.5f, 0.5f, 0.5f, 0.5f), Float2{0.5f, 0.5f}};
-    _vertexList[19] = SimpleVertex{Float4(-0.5f, 0.5f, -0.5f, 1.0f), Float4(0.5f, 0.5f, 0.5f, 0.5f), Float2{0.0f, 0.5f}};
+    _vertexList[16] = SimpleVertex{Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 0.5f}, Float2{0.0f, 0.0f}};
+    _vertexList[17] = SimpleVertex{Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 0.5f}, Float2{0.5f, 0.0f}};
+    _vertexList[18] = SimpleVertex{Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 0.5f}, Float2{0.5f, 0.5f}};
+    _vertexList[19] = SimpleVertex{Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 0.5f}, Float2{0.0f, 0.5f}};
 
     // ¾Æ·§¸é
-    _vertexList[20] = SimpleVertex{Float4(-0.5f, -0.5f, -0.5f, 1.0f), Float4(0.0f, 0.5f, 0.5f, 0.5f), Float2{0.0f, 0.0f}};
-    _vertexList[21] = SimpleVertex{Float4(0.5f, -0.5f, -0.5f, 1.0f), Float4(0.0f, 0.5f, 0.5f, 0.5f), Float2{0.5f, 0.0f}};
-    _vertexList[22] = SimpleVertex{Float4(0.5f, -0.5f, 0.5f, 1.0f), Float4(0.0f, 0.5f, 0.5f, 0.5f), Float2{0.5f, 0.5f}};
-    _vertexList[23] = SimpleVertex{Float4(-0.5f, -0.5f, 0.5f, 1.0f), Float4(0.0f, 0.5f, 0.5f, 0.5f), Float2{0.0f, 0.5f}};
+    _vertexList[20] = SimpleVertex{Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 0.5f}, Float2{0.0f, 0.0f}};
+    _vertexList[21] = SimpleVertex{Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 0.5f}, Float2{0.5f, 0.0f}};
+    _vertexList[22] = SimpleVertex{Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 0.5f}, Float2{0.5f, 0.5f}};
+    _vertexList[23] = SimpleVertex{Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 0.5f}, Float2{0.0f, 0.5f}};
 
     HRESULT hr;
     {
@@ -121,6 +122,12 @@ bool BoxDrawer::Init()
         return false;
     }
 
+    //_indexList.resize(3);
+    //int iIndex = 0;
+    //_indexList[iIndex++] = 0;
+    //_indexList[iIndex++] = 1;
+    //_indexList[iIndex++] = 2;
+
     _indexList.resize(36);
     int iIndex = 0;
     _indexList[iIndex++] = 0; 	_indexList[iIndex++] = 1; 	_indexList[iIndex++] = 2; 	_indexList[iIndex++] = 0;	_indexList[iIndex++] = 2; 	_indexList[iIndex++] = 3;
@@ -129,11 +136,6 @@ bool BoxDrawer::Init()
     _indexList[iIndex++] = 12; _indexList[iIndex++] = 13; _indexList[iIndex++] = 14; _indexList[iIndex++] = 12;	_indexList[iIndex++] = 14; _indexList[iIndex++] = 15;
     _indexList[iIndex++] = 16; _indexList[iIndex++] = 17; _indexList[iIndex++] = 18; _indexList[iIndex++] = 16;	_indexList[iIndex++] = 18; _indexList[iIndex++] = 19;
     _indexList[iIndex++] = 20; _indexList[iIndex++] = 21; _indexList[iIndex++] = 22; _indexList[iIndex++] = 20;	_indexList[iIndex++] = 22; _indexList[iIndex++] = 23;
-    //_indexList.resize(3);
-    //int iIndex = 0;
-    //_indexList[iIndex++] = 0;
-    //_indexList[iIndex++] = 1;
-    //_indexList[iIndex++] = 2;
 
     {
         D3D11_BUFFER_DESC bd;
@@ -155,6 +157,90 @@ bool BoxDrawer::Init()
 
     GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+    // DepthStencil Test
+    {
+        _vertexList1.resize(24);
+        _vertexList1[0] = SimpleVertex{ Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 0.5f}, Float2{0.0f, 0.0f} };
+        _vertexList1[1] = SimpleVertex{ Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 0.5f}, Float2{0.5f, 0.0f} };
+        _vertexList1[2] = SimpleVertex{ Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 0.5f}, Float2{0.5f, 0.5f} };
+        _vertexList1[3] = SimpleVertex{ Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 0.5f}, Float2{0.0f, 0.5f} };
+        // µÞ¸é
+        _vertexList1[4] = SimpleVertex{ Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.0f, 0.5f}, Float2{0.0f, 0.0f} };
+        _vertexList1[5] = SimpleVertex{ Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 0.5f}, Float2{0.5f, 0.0f} };
+        _vertexList1[6] = SimpleVertex{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 0.5f}, Float2{0.5f, 0.5f} };
+        _vertexList1[7] = SimpleVertex{ Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 0.5f}, Float2{0.0f, 0.5f} };
+
+        // ¿À¸¥ÂÊ
+        _vertexList1[8] = SimpleVertex{ Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 0.5f}, Float2{0.0f, 0.0f} };
+        _vertexList1[9] = SimpleVertex{ Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 0.5f}, Float2{0.5f, 0.0f} };
+        _vertexList1[10] = SimpleVertex{ Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 0.5f}, Float2{0.5f, 0.5f} };
+        _vertexList1[11] = SimpleVertex{ Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 0.5f}, Float2{0.0f, 0.5f} };
+
+        // ¿ÞÂÊ
+        _vertexList1[12] = SimpleVertex{ Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 0.5f}, Float2{0.0f, 0.0f} };
+        _vertexList1[13] = SimpleVertex{ Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 0.5f}, Float2{0.5f, 0.0f} };
+        _vertexList1[14] = SimpleVertex{ Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 0.5f}, Float2{0.5f, 0.5f} };
+        _vertexList1[15] = SimpleVertex{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 0.5f}, Float2{0.0f, 0.5f} };
+
+        // À­¸é
+        _vertexList1[16] = SimpleVertex{ Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 0.5f}, Float2{0.0f, 0.0f} };
+        _vertexList1[17] = SimpleVertex{ Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 0.5f}, Float2{0.5f, 0.0f} };
+        _vertexList1[18] = SimpleVertex{ Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 0.5f}, Float2{0.5f, 0.5f} };
+        _vertexList1[19] = SimpleVertex{ Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 0.5f}, Float2{0.0f, 0.5f} };
+
+        // ¾Æ·§¸é
+        _vertexList1[20] = SimpleVertex{ Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 0.5f}, Float2{0.0f, 0.0f} };
+        _vertexList1[21] = SimpleVertex{ Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 0.5f}, Float2{0.5f, 0.0f} };
+        _vertexList1[22] = SimpleVertex{ Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 0.5f}, Float2{0.5f, 0.5f} };
+        _vertexList1[23] = SimpleVertex{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 0.5f}, Float2{0.0f, 0.5f} };
+
+        HRESULT hr;
+        {
+            D3D11_BUFFER_DESC bd;
+            ZeroMemory(&bd, sizeof(bd));
+            bd.ByteWidth = sizeof(SimpleVertex) * _vertexList1.size();
+            bd.Usage = D3D11_USAGE_DEFAULT;
+            bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+            D3D11_SUBRESOURCE_DATA sd;
+            ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+            sd.pSysMem = &_vertexList1.at(0);
+            HRESULT hr = GetDevice()->CreateBuffer(&bd, &sd, &_vertexBuffer1);
+            if (FAILED(hr))
+            {
+                assert(SUCCEEDED(hr));
+                return false;
+            }
+        }
+
+        _indexList1.resize(36);
+        int iIndex = 0;
+        _indexList1[iIndex++] = 0; 	_indexList1[iIndex++] = 1; 	_indexList1[iIndex++] = 2; 	_indexList1[iIndex++] = 0;	_indexList1[iIndex++] = 2; 	_indexList1[iIndex++] = 3;
+        _indexList1[iIndex++] = 4; 	_indexList1[iIndex++] = 5; 	_indexList1[iIndex++] = 6; 	_indexList1[iIndex++] = 4;	_indexList1[iIndex++] = 6; 	_indexList1[iIndex++] = 7;
+        _indexList1[iIndex++] = 8; 	_indexList1[iIndex++] = 9; 	_indexList1[iIndex++] = 10; _indexList1[iIndex++] = 8;	_indexList1[iIndex++] = 10; _indexList1[iIndex++] = 11;
+        _indexList1[iIndex++] = 12; _indexList1[iIndex++] = 13; _indexList1[iIndex++] = 14; _indexList1[iIndex++] = 12;	_indexList1[iIndex++] = 14; _indexList1[iIndex++] = 15;
+        _indexList1[iIndex++] = 16; _indexList1[iIndex++] = 17; _indexList1[iIndex++] = 18; _indexList1[iIndex++] = 16;	_indexList1[iIndex++] = 18; _indexList1[iIndex++] = 19;
+        _indexList1[iIndex++] = 20; _indexList1[iIndex++] = 21; _indexList1[iIndex++] = 22; _indexList1[iIndex++] = 20;	_indexList1[iIndex++] = 22; _indexList1[iIndex++] = 23;
+
+        {
+            D3D11_BUFFER_DESC bd;
+            ZeroMemory(&bd, sizeof(bd));
+            bd.ByteWidth = sizeof(DWORD) * _indexList1.size();
+            bd.Usage = D3D11_USAGE_DEFAULT;
+            bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+            D3D11_SUBRESOURCE_DATA sd;
+            ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+            sd.pSysMem = &_indexList1.at(0);
+            HRESULT hr = GetDevice()->CreateBuffer(&bd, &sd, &_indexBuffer1);
+            if (FAILED(hr))
+            {
+                assert(SUCCEEDED(hr));
+                return false;
+            }
+        }
+    }
+
     return true;
 }
 
@@ -163,7 +249,7 @@ Float4 operator*(Float4 f, Matrix44 m)
     Float4 ret;
     for (int i = 0; i < 4; ++i)
     {
-        Float4 col (m.GetColumn(i).GetX(), m.GetColumn(i).GetY(), m.GetColumn(i).GetZ(), m.GetColumn(i).GetW());
+        Float4 col {m.GetColumn(i).GetX(), m.GetColumn(i).GetY(), m.GetColumn(i).GetZ(), m.GetColumn(i).GetW()};
         float val = 0;
         for (int j = 0; j < 4; ++j)
         {
@@ -179,7 +265,7 @@ Float4 operator*(Float4 f, HMatrix44 m)
     Float4 ret;
     for (int i = 0; i < 4; ++i)
     {
-        Float4 col (m.GetColumn(i).GetX(), m.GetColumn(i).GetY(), m.GetColumn(i).GetZ(), m.GetColumn(i).GetW());
+        Float4 col {m.GetColumn(i).GetX(), m.GetColumn(i).GetY(), m.GetColumn(i).GetZ(), m.GetColumn(i).GetW()};
         float val = 0;
         for (int j = 0; j < 4; ++j)
         {
@@ -276,6 +362,30 @@ bool BoxDrawer::Frame()
     }
     GetDeviceContext()->UpdateSubresource(_vertexBuffer, NULL, NULL, &update.at(0), 0, 0);
 
+    {
+        std::vector<SimpleVertex> update1;
+        for (int i = 0; i < _vertexList1.size(); ++i)
+        {
+            SimpleVertex vertex = _vertexList1[i];
+            vertex.position = vertex.position * HMatrix44(
+                1, 0, 0,
+                0, 1, 0,
+                0, 0, 1,
+                0, 1, 5
+            );
+            vertex.position = vertex.position * view;
+            vertex.position = vertex.position * perspective;
+            vertex.position.x /= vertex.position.w;
+            vertex.position.y /= vertex.position.w;
+            vertex.position.z /= vertex.position.w;
+            vertex.position.w /= vertex.position.w;
+            //vertex.position.e[3] = 1;
+            vertex.color.e[3] = 1;
+            update1.push_back(vertex);
+        }
+        GetDeviceContext()->UpdateSubresource(_vertexBuffer1, NULL, NULL, &update1.at(0), 0, 0);
+    }
+
     return true;
 }
 
@@ -292,6 +402,9 @@ bool BoxDrawer::Release()
     Common::Release(_vs);
     Common::Release(_ps);
     Common::Release(_indexBuffer);
+
+    Common::Release(_vertexBuffer1);
+    Common::Release(_indexBuffer1);
 
     return true;
 }
@@ -310,9 +423,17 @@ bool BoxDrawer::PreRender()
     GetDeviceContext()->IASetInputLayout(_inputLayout);
     GetDeviceContext()->VSSetShader(_vs, NULL, 0);
     GetDeviceContext()->PSSetShader(_ps, NULL, 0);
-
     //GetDeviceContext()->Draw(_vertexList.size(), 0);
 	GetDeviceContext()->DrawIndexed(_indexList.size(), 0, 0);
+
+    {
+        GetDeviceContext()->IASetVertexBuffers(0, 1, &_vertexBuffer1, &stride, &offset);
+        GetDeviceContext()->IASetIndexBuffer(_indexBuffer1, DXGI_FORMAT_R32_UINT, 0);
+        GetDeviceContext()->IASetInputLayout(_inputLayout);
+        GetDeviceContext()->VSSetShader(_vs, NULL, 0);
+        GetDeviceContext()->PSSetShader(_ps, NULL, 0);
+        GetDeviceContext()->DrawIndexed(_indexList.size(), 0, 0);
+    }
 
     return true;
 }

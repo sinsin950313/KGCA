@@ -10,6 +10,29 @@ namespace SSB
 {
 	extern DXWindow* g_dxWindow;
 
+    class DepthStencilStateFactoryInterface
+    {
+    public:
+        virtual ID3D11DepthStencilState* Create() = 0;
+    };
+
+    class DefaultDepthStencilStateFactory : public DepthStencilStateFactoryInterface
+    {
+    public:
+        ID3D11DepthStencilState* Create()
+        {
+			D3D11_DEPTH_STENCIL_DESC dsDesc;
+			ZeroMemory(&dsDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+			dsDesc.DepthEnable = TRUE;
+			dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+			dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+            ID3D11DepthStencilState* state;
+			g_dxWindow->GetDevice()->CreateDepthStencilState(&dsDesc, &state);
+            return state;
+        }
+    };
+
     class SamplerStateFactoryInterface
     {
     public:
@@ -138,10 +161,12 @@ namespace SSB
         std::map<std::string, SamplerStateFactoryInterface*> _samplerStateFactory;
         std::map<std::string, RasterizerStateFactoryInterface*> _rasterizerStateFactory;
         std::map<std::string, BlendStateFactoryInterface*> _blendStateFactory;
+        std::map<std::string, DepthStencilStateFactoryInterface*> _depthStencilStateFactory;
 
         std::map<std::string, ID3D11SamplerState*> _samplerStateList;
         std::map<std::string, ID3D11RasterizerState*> _rasterizerList;
         std::map<std::string, ID3D11BlendState*> _blendStateList;
+        std::map<std::string, ID3D11DepthStencilState*> _depthStencilStateList;
 
     public:
         const static std::string kDefaultWrapSample;
@@ -149,6 +174,7 @@ namespace SSB
 		const static std::string kDefaultSolidRasterizer;
 		const static std::string kDefaultWireFrameRasterizer;
         const static std::string kDefaultBlend;
+        const static std::string kDefaultDepthStencil;
 
     private:
         static DXStateManager* _instance;
@@ -162,10 +188,12 @@ namespace SSB
         void AddSamplerState(std::string name, SamplerStateFactoryInterface* factory);
         void AddRasterizerState(std::string name, RasterizerStateFactoryInterface* factory);
         void AddBlendState(std::string name, BlendStateFactoryInterface* factory);
+        void AddDepthStencilState(std::string name, DepthStencilStateFactoryInterface* factory);
 
         ID3D11SamplerState* GetSamplerState(std::string name);
         ID3D11RasterizerState* GetRasterizerState(std::string name);
         ID3D11BlendState* GetBlendState(std::string name);
+        ID3D11DepthStencilState* GetDepthStencilState(std::string name);
 
     public:
 		bool Init() override;

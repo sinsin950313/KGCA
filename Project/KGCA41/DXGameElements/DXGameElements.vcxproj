@@ -158,7 +158,6 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="UI.cpp" />
-    <ClCompile Include="DXStateManager.cpp" />
     <ClCompile Include="GETestWindow.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="DX2DAnimation.cpp" />
@@ -172,7 +171,6 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UI.h" />
-    <ClInclude Include="DXStateManager.h" />
     <ClInclude Include="GETestWindow.h" />
     <ClInclude Include="DX2DAnimation.h" />
     <ClInclude Include="DX2DObject.h" />

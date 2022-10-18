@@ -3,7 +3,7 @@
 #include "DXCore.h"
 #include "Timer.h"
 #include "InputManager.h"
-#include "DXStateManager.h"
+//#include "DXStateManager.h"
 #include "ShaderManager.h"
 #include "TextManager.h"
 #include "TextureManager.h"
@@ -18,7 +18,7 @@ namespace SSB
 		g_DXCore = this;
 
 		InputManager::GetInstance();
-        DXStateManager::GetInstance();
+        //DXStateManager::GetInstance();
 		ShaderManager::GetInstance();
 		TextManager::GetInstance();
 		TextureResourceManager::GetInstance();
@@ -47,7 +47,7 @@ namespace SSB
 		InputManager::GetInstance().Set(GetWindowHandle());
 		InputManager::GetInstance().Init();
 
-        DXStateManager::GetInstance().Init();
+        //DXStateManager::GetInstance().Init();
 
 		ShaderManager::GetInstance().Init();
 
@@ -72,7 +72,7 @@ namespace SSB
 
 		_timer->Frame();
 		InputManager::GetInstance().Frame();
-        DXStateManager::GetInstance().Frame();
+        //DXStateManager::GetInstance().Frame();
 		ShaderManager::GetInstance().Frame();
 		TextManager::GetInstance().Frame();
 		TextureResourceManager::GetInstance().Frame();
@@ -109,7 +109,7 @@ namespace SSB
 		}
 
 		InputManager::GetInstance().Release();
-        DXStateManager::GetInstance().Release();
+        //DXStateManager::GetInstance().Release();
 		ShaderManager::GetInstance().Release();
 		TextManager::GetInstance().Release();
 		TextureResourceManager::GetInstance().Release();
@@ -141,7 +141,7 @@ namespace SSB
 		_timer->Render();
 		_timerText->Render();
 		InputManager::GetInstance().Render();
-        DXStateManager::GetInstance().Render();
+        //DXStateManager::GetInstance().Render();
 		ShaderManager::GetInstance().Render();
 		TextManager::GetInstance().Render();
 		TextureResourceManager::GetInstance().Render();

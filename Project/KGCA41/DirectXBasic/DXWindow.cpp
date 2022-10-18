@@ -1,6 +1,7 @@
 #include "DXWindow.h"
 #include <math.h>
 #include <cassert>
+#include "DXStateManager.h"
 
 namespace SSB
 {
@@ -33,21 +34,7 @@ namespace SSB
 			return;
 		}
 
-		hResult = CreateRenderTargetView();
-		if (FAILED(hResult))
-		{
-			assert(SUCCEEDED(hResult));
-			return;
-		}
-
 		hResult = Create2DFactory();
-		if (FAILED(hResult))
-		{
-			assert(SUCCEEDED(hResult));
-			return;
-		}
-
-		hResult = CreateRenderTarget2D();
 		if (FAILED(hResult))
 		{
 			assert(SUCCEEDED(hResult));
@@ -60,8 +47,6 @@ namespace SSB
 			assert(SUCCEEDED(hResult));
 			return;
 		}
-
-		_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
 	}
 
 	HRESULT DXWindow::UpdateResize()
@@ -75,8 +60,9 @@ namespace SSB
 
 		_deviceContext->OMSetRenderTargets(0, nullptr, NULL);
 
-		_renderTargetView->Release();
-		_renderTarget2D->Release();
+		if (_renderTargetView)_renderTargetView->Release();
+		if (_renderTarget2D)_renderTarget2D->Release();
+		if (_depthStencilView)_depthStencilView->Release();
 
 		DXGI_SWAP_CHAIN_DESC currDesc, AfterDesc;
 		_swapChain->GetDesc(&currDesc);
@@ -101,7 +87,14 @@ namespace SSB
 			return hr;
 		}
 
-		_deviceContext->OMSetRenderTargets(1, &_renderTargetView, NULL);
+		hr = CreateDepthStencilView();
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+
+		_deviceContext->OMSetRenderTargets(1, &_renderTargetView, _depthStencilView);
 
 		CreateViewPort();
 
@@ -112,7 +105,9 @@ namespace SSB
 	{
 		BasicWindow::Init();
 
-		CreateViewPort();
+		DXStateManager::GetInstance().Init();
+
+		UpdateResize();
 
 		return true;
 	}
@@ -121,6 +116,7 @@ namespace SSB
 	{
 		_textList.clear();
 		_objectList.clear();
+		_deviceContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 		return true;
 	}
@@ -154,6 +150,9 @@ namespace SSB
 		if (_factory2D) _factory2D->Release();
 		if (_writeFactory) _writeFactory->Release();
 		if (_renderTarget2D) _renderTarget2D->Release();
+		if (_depthStencilView) _depthStencilView->Release();
+
+		DXStateManager::GetInstance().Release();
 
 		return true;
 	}
@@ -302,6 +301,47 @@ namespace SSB
 		viewPort.MinDepth = 0.0f;
 		viewPort.MaxDepth = 1.0f;
 		_deviceContext->RSSetViewports(1, &viewPort);
+
+		return S_OK;
+	}
+	HRESULT DXWindow::CreateDepthStencilView()
+	{
+		DXGI_SWAP_CHAIN_DESC swapChainDesc;
+		_swapChain->GetDesc(&swapChainDesc);
+
+		ID3D11Texture2D* texture;
+		D3D11_TEXTURE2D_DESC textureDesc;
+		ZeroMemory(&textureDesc, sizeof(D3D11_TEXTURE2D_DESC));
+		textureDesc.Width = swapChainDesc.BufferDesc.Width;
+		textureDesc.Height = swapChainDesc.BufferDesc.Height;
+		textureDesc.MipLevels = 1;
+		textureDesc.ArraySize = 1;
+		textureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+		textureDesc.SampleDesc.Count = 1;
+		textureDesc.Usage = D3D11_USAGE_DEFAULT;
+		textureDesc.CPUAccessFlags = 0;
+		textureDesc.MiscFlags = 0;
+		textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		HRESULT hr = _device->CreateTexture2D(&textureDesc, NULL, &texture);
+		if (FAILED(hr))
+		{
+			return hr;
+		}
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+		ZeroMemory(&dsvDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+		dsvDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+		hr = _device->CreateDepthStencilView(texture, &dsvDesc, &_depthStencilView);
+		texture->Release();
+		if (FAILED(hr))
+		{
+			return hr;
+		}
+
+		auto state = DXStateManager::GetInstance().GetDepthStencilState(DXStateManager::kDefaultDepthStencil);
+
+		_deviceContext->OMSetDepthStencilState(state, 0xff);
 
 		return S_OK;
 	}

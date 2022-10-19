@@ -244,22 +244,6 @@ bool BoxDrawer::Init()
     return true;
 }
 
-Float4 operator*(Float4 f, Matrix44 m)
-{
-    Float4 ret;
-    for (int i = 0; i < 4; ++i)
-    {
-        Float4 col {m.GetColumn(i).GetX(), m.GetColumn(i).GetY(), m.GetColumn(i).GetZ(), m.GetColumn(i).GetW()};
-        float val = 0;
-        for (int j = 0; j < 4; ++j)
-        {
-            val += f.e[j] * col.e[j];
-        }
-        ret.e[i] = val;
-    }
-    return ret;
-}
-
 Float4 operator*(Float4 f, HMatrix44 m)
 {
     Float4 ret;
@@ -322,7 +306,7 @@ bool BoxDrawer::Frame()
     HMatrix44 view = HMatrix44::LookAtMatrix(pos, target, up);
     view = view.Inverse();
 
-    Matrix44 perspective;
+    HMatrix44 perspective;
     {
         float    h, w, Q;
         float fNearPlane = 1.0f;
@@ -335,7 +319,7 @@ bool BoxDrawer::Frame()
 
         Q = fFarPlane / (fFarPlane - fNearPlane);
 
-        Matrix44 ret
+        HMatrix44 ret
         {
             w, 0, 0, 0,
             0, h, 0, 0,
@@ -343,7 +327,7 @@ bool BoxDrawer::Frame()
             0, 0, -Q * fNearPlane, 0
         };
 
-        memcpy(&perspective, &ret, sizeof(Matrix44));
+        memcpy(&perspective, &ret, sizeof(HMatrix44));
     }
 
     std::vector<SimpleVertex> update;
@@ -368,10 +352,10 @@ bool BoxDrawer::Frame()
         {
             SimpleVertex vertex = _vertexList1[i];
             vertex.position = vertex.position * HMatrix44(
-                1, 0, 0,
-                0, 1, 0,
-                0, 0, 1,
-                0, 1, 5
+                1, 0, 0, 0,
+                0, 1, 0, 0,
+                0, 0, 1, 0,
+                0, 1, 5, 1
             );
             vertex.position = vertex.position * view;
             vertex.position = vertex.position * perspective;

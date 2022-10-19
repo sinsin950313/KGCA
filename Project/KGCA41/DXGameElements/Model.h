@@ -7,7 +7,7 @@ namespace SSB
 {
 	struct Vertex
 	{
-		Float4 position;
+		Float3 position;
 		Float4 color;
 		Float2 texture;
 	};

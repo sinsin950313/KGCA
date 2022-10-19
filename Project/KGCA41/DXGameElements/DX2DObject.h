@@ -4,6 +4,8 @@
 #include "DXDrawableInterface.h"
 #include <vector>
 #include "Texture.h"
+#include "Model.h"
+#include "Matrix.h"
 
 namespace SSB
 {
@@ -24,6 +26,36 @@ namespace SSB
 		Position2D pos;
 		ColorRGBA col;
 		TextureParam texParam;
+	};
+
+	class DXObject : public DXDrawableInterface
+	{
+	private:
+		ID3D11Buffer* _vertexBuffer;
+		ID3D11Buffer* _indexBuffer;
+		Shader* _vs;
+		Shader* _ps;
+		ID3D11InputLayout* _vertexLayout;
+		Model* _model;
+		HMatrix44 _matrix;
+
+	private:
+		bool CreateVertexBuffer();
+		bool CreateIndexBuffer();
+		bool CreateVertexLayout();
+
+	public:
+		void SetModel(Model* model) { _model = model; }
+		void SetVertexShader(Shader* shader) { _vs = shader; }
+		void SetPixelShader(Shader* shader) { _ps = shader; }
+
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Render() override;
+		bool Release() override;
+		void Draw(ID3D11DeviceContext* dc) override;
+		void UpdateParentData(Position2D parentCenter, float parentRadian) override { }
 	};
 
 	class DX2DObject : public DXDrawableInterface

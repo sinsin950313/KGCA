@@ -21,9 +21,9 @@ bool BoxDrawer::Init()
       // ¾Õ¸é
 
     //_vertexList.resize(3);
-    //_vertexList[0] = SimpleVertex{ Float4{+0.0f, +0.5f, 0.5f}, Float4{1.0f, 0.0f, 0.0f, 0.0f}, Float2(0, 0) };
-    //_vertexList[1] = SimpleVertex{ Float4{+0.5f, -0.5f, 0.5f}, Float4{0.0f, 1.0f, 0.0f, 0.0f}, Float2(0, 0) };
-    //_vertexList[2] = SimpleVertex{ Float4{-0.5f, -0.5f, 0.5f}, Float4{0.0f, 0.0f, 1.0f, 0.0f}, Float4{0, 0) };
+    //_vertexList[0] = SimpleVertex{ Float4{+0.0f, +0.5f, 0.5f}, Float4{1.0f, 0.0f, 0.0f, 0.0f}, Float2{0, 0} };
+    //_vertexList[1] = SimpleVertex{ Float4{+0.5f, -0.5f, 0.5f}, Float4{0.0f, 1.0f, 0.0f, 0.0f}, Float2{0, 0} };
+    //_vertexList[2] = SimpleVertex{ Float4{-0.5f, -0.5f, 0.5f}, Float4{0.0f, 0.0f, 1.0f, 0.0f}, Float4{0, 0} };
 
     // over c++17
     _vertexList.resize(24);

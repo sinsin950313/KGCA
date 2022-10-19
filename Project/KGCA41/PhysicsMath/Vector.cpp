@@ -5,7 +5,7 @@ namespace SSB
 {
 	float SSB::Vector2::LengthSquare() const
 	{
-		return x * x + y * y;
+		return _f.x * _f.x + _f.y * _f.y;
 	}
 
 	float SSB::Vector2::Length() const
@@ -15,66 +15,66 @@ namespace SSB
 
 	float SSB::Vector2::Dot(const Vector2 vec)
 	{
-		return x * vec.x + y * vec.y;
+		return _f.x * vec._f.x + _f.y * vec._f.y;
 	}
 
-	SSB::Vector2 SSB::Vector2::Cross(const Vector2 vec)
-	{
-		class UnableCrossException : public std::exception
-		{
-		public:
-			const char* what() const noexcept override
-			{
-				return "Require Vector2 Cross Operation";
-			}
-		};
+	//SSB::Vector2 SSB::Vector2::Cross(const Vector2 vec)
+	//{
+	//	class UnableOperationE_f.xception : public std::e_f.xception
+	//	{
+	//	public:
+	//		const char* _f.what() const noe_f.xcept override
+	//		{
+	//			return "Require Vector2 Cross Operation";
+	//		}
+	//	};
 
-		throw UnableCrossException();
+	//	thro_f.w UnableOperationE_f.xception();
 
-		return Vector2();
-	}
+	//	return Vector2();
+	//}
 
 	void SSB::Vector2::Normalize()
 	{
 		float invLength = 1.0f / Length();
-		x = x * invLength;
-		y = y * invLength;
+		_f.x = _f.x * invLength;
+		_f.y = _f.y * invLength;
 	}
 
 	SSB::Vector2 SSB::Vector2::Normal()
 	{
 		float invLength = 1.0f / Length();
-		return Vector2(x * invLength, y * invLength);
+		return Vector2(_f.x * invLength, _f.y * invLength);
 	}
 
 	void SSB::Vector2::Clear()
 	{
-		x = y = 0;
+		_f.x = _f.y = 0;
 	}
 
 	SSB::Vector2 SSB::Vector2::operator+(const Vector2 vec) const
 	{
-		return Vector2(x + vec.x, y + vec.y);
+		return Vector2(_f.x + vec._f.x, _f.y + vec._f.y);
 	}
 
 	void SSB::Vector2::operator+=(const Vector2 vec)
 	{
-		x += vec.x;
-		y += vec.y;
+		_f.x += vec._f.x;
+		_f.y += vec._f.y;
 	}
 
 	SSB::Vector2 SSB::Vector2::operator-(const Vector2 vec) const
 	{
-		return Vector2(x - vec.x, y - vec.y);
+		return Vector2(_f.x - vec._f.x, _f.y - vec._f.y);
 	}
 	void Vector2::operator-=(const Vector2 vec)
 	{
-		x = x - vec.x;
-		y = y - vec.y;
+		_f.x = _f.x - vec._f.x;
+		_f.y = _f.y - vec._f.y;
 	}
 	Vector2 Vector2::operator*(float scalar) const
 	{
-		return Vector2(x * scalar, y * scalar);
+		return Vector2(_f.x * scalar, _f.y * scalar);
 	}
 	Vector2 Vector2::operator/(float scalar) const
 	{
@@ -84,7 +84,7 @@ namespace SSB
 
 	float Vector3::LengthSquare() const
 	{
-		return x * x + y * y + z * z;
+		return _f.x * _f.x + _f.y * _f.y + _f.z * _f.z;
 	}
 	float Vector3::Length() const
 	{
@@ -92,51 +92,51 @@ namespace SSB
 	}
 	float Vector3::Dot(const Vector3 vec)
 	{
-		return x * vec.x + y * vec.y + z * vec.z;
+		return _f.x * vec._f.x + _f.y * vec._f.y + _f.z * vec._f.z;
 	}
 	Vector3 Vector3::Cross(const Vector3 vec)
 	{
-		return Vector3(y * vec.z - vec.y * z, z * vec.x - x * vec.z, x * vec.y - vec.x * y);
+		return Vector3(_f.y * vec._f.z - vec._f.y * _f.z, _f.z * vec._f.x - _f.x * vec._f.z, _f.x * vec._f.y - vec._f.x * _f.y);
 	}
 	void Vector3::Normalize()
 	{
 		float invLength = 1.0f / Length();
-		x = x * invLength;
-		y = y * invLength;
-		z = z * invLength;
+		_f.x = _f.x * invLength;
+		_f.y = _f.y * invLength;
+		_f.z = _f.z * invLength;
 	}
 	Vector3 Vector3::Normal()
 	{
 		float invLength = 1.0f / Length();
-		return Vector3(x * invLength, y * invLength, z * invLength);
+		return Vector3(_f.x * invLength, _f.y * invLength, _f.z * invLength);
 	}
 	void Vector3::Clear()
 	{
-		x = y = z = 0.0f;
+		_f.x = _f.y = _f.z = 0.0f;
 	}
 	Vector3 Vector3::operator+(const Vector3 vec) const
 	{
-		return Vector3(x + vec.x, y + vec.y, z + vec.z);
+		return Vector3(_f.x + vec._f.x, _f.y + vec._f.y, _f.z + vec._f.z);
 	}
 	void Vector3::operator+=(const Vector3 vec)
 	{
-		x += vec.x;
-		y += vec.y;
-		z += vec.z;
+		_f.x += vec._f.x;
+		_f.y += vec._f.y;
+		_f.z += vec._f.z;
 	}
 	Vector3 Vector3::operator-(const Vector3 vec) const
 	{
-		return Vector3(x - vec.x, y - vec.y, z - vec.z);
+		return Vector3(_f.x - vec._f.x, _f.y - vec._f.y, _f.z - vec._f.z);
 	}
 	void Vector3::operator-=(const Vector3 vec)
 	{
-		x = x - vec.x;
-		y = y - vec.y;
-		z = z - vec.z;
+		_f.x = _f.x - vec._f.x;
+		_f.y = _f.y - vec._f.y;
+		_f.z = _f.z - vec._f.z;
 	}
 	Vector3 Vector3::operator*(float scalar) const
 	{
-		return Vector3(x * scalar, y * scalar, z * scalar);
+		return Vector3(_f.x * scalar, _f.y * scalar, _f.z * scalar);
 	}
 	Vector3 Vector3::operator/(float scalar) const
 	{
@@ -146,322 +146,346 @@ namespace SSB
 
 	const float HVector3::_fThreshold = 0.0001f;
 
-	float HVector3::LengthSquare() const
-	{
-		return x * x + y * y;
-	}
-	float HVector3::Length() const
-	{
-		return sqrt(LengthSquare());
-	}
+	//float HVector3::LengthSquare() const
+	//{
+	//	return _f.x * _f.x + _f.y * _f.y;
+	//}
+	//float HVector3::Length() const
+	//{
+	//	return sqrt(LengthSquare());
+	//}
 	float HVector3::Dot(const HVector3 vec)
 	{
-		return x * vec.x + y * vec.y + z * vec.z;
+		return _f.x * vec._f.x + _f.y * vec._f.y + _f.z * vec._f.z;
 	}
-	HVector3 HVector3::Cross(const HVector3 vec)
-	{
-		class UnableCrossException : public std::exception
-		{
-		public:
-			const char* what() const noexcept override
-			{
-				return "Require HVector3 Cross Operation";
-			}
-		};
+	//HVector3 HVector3::Cross(const HVector3 vec)
+	//{
+	//	class UnableOperationE_f.xception : public std::e_f.xception
+	//	{
+	//	public:
+	//		const char* _f.what() const noe_f.xcept override
+	//		{
+	//			return "Require HVector3 Cross Operation";
+	//		}
+	//	};
 
-		throw UnableCrossException();
+	//	thro_f.w UnableOperationE_f.xception();
 
-		return HVector3();
-	}
+	//	return HVector3();
+	//}
 	void HVector3::Normalize()
 	{
-		float invLength = 1.0f / Length();
-		x = x * invLength;
-		y = y * invLength;
 		if (IsVector())
 		{
-			z = 1.0f;
+			Vector2 v = *this;
+			float invLength = 1.0f / v.Length();
+			_f.x *= invLength;
+			_f.y *= invLength;
+			_f.z = 0.0f;
 		}
 		else
 		{
-			z = 0.0f;
+			_f.x /= _f.z;
+			_f.y /= _f.z;
+			_f.z = 1.0f;
 		}
 	}
 	HVector3 HVector3::Normal()
 	{
-		float invLength = 1.0f / Length();
-		return HVector3(x * invLength, y * invLength, IsVector() ? 0.0f : 1.0f);
-	}
-	void HVector3::Clear()
-	{
-		x = y = 0.0f;
-		z = IsVector() ? 0.0f : 1.0f;
-	}
-	HVector3 HVector3::operator+(const HVector3 vec) const
-	{
-		if (!IsVector() && !vec.IsVector())
+		float xVal, yVal, zVal;
+		if (IsVector())
 		{
-			class UnableVertexAddVertexException : public std::exception
-			{
-			public:
-				const char* what() const noexcept override
-				{
-					return "Require HVector3 Vertex Add Vertex Operation";
-				}
-			};
-
-			throw UnableVertexAddVertexException();
-
-			return HVector3();
+			Vector2 v = *this;
+			float invLength = 1.0f / v.Length();
+			xVal = _f.x * invLength;
+			yVal = _f.y * invLength;
+			zVal = 0.0f;
 		}
 		else
 		{
-			return HVector3(x + vec.x, y + vec.y, z + vec.z);
+			xVal = _f.x / _f.z;
+			yVal = _f.y / _f.z;
+			zVal = 1.0f;
 		}
+		return HVector3(xVal, yVal, zVal);
 	}
-	void HVector3::operator+=(const HVector3 vec)
-	{
-		if (!IsVector() && !vec.IsVector())
-		{
-			class UnableVertexAddVertexException : public std::exception
-			{
-			public:
-				const char* what() const noexcept override
-				{
-					return "Require HVector3 Vertex Add Vertex Operation";
-				}
-			};
+	//void HVector3::Clear()
+	//{
+	//	_f.x = _f.y = 0.0f;
+	//	_f.z = IsVector() ? 0.0f : 1.0f;
+	//}
+	//HVector3 HVector3::operator+(const HVector3 vec) const
+	//{
+	//	if (!IsVector() && !vec.IsVector())
+	//	{
+	//		class UnableVerte_f.xAddVerte_f.xE_f.xception : public std::e_f.xception
+	//		{
+	//		public:
+	//			const char* _f.what() const noe_f.xcept override
+	//			{
+	//				return "Require HVector3 Verte_f.x Add Verte_f.x Operation";
+	//			}
+	//		};
 
-			throw UnableVertexAddVertexException();
-		}
-		else
-		{
-			x += vec.x;
-			y += vec.y;
-			z += vec.z;
-		}
-	}
-	HVector3 HVector3::operator-(const HVector3 vec) const
-	{
-		return HVector3(x - vec.x, y - vec.y, z - vec.z);
-	}
-	void HVector3::operator-=(const HVector3 vec)
-	{
-		x = x - vec.x;
-		y = y - vec.y;
-		z = z - vec.z;
-	}
-	HVector3 HVector3::operator*(float scalar) const
-	{
-		return HVector3(x * scalar, y * scalar, z * scalar);
-	}
-	HVector3 HVector3::operator/(float scalar) const
-	{
-		float invScalar = 1.0f / scalar;
-		return operator*(invScalar);
-	}
+	//		thro_f.w UnableVerte_f.xAddVerte_f.xE_f.xception();
 
-	float Vector4::LengthSquare() const
-	{
-		return x * x + y * y + z * z + w * w;
-	}
-	float Vector4::Length() const
-	{
-		return sqrt(LengthSquare());
-	}
-	float Vector4::Dot(const Vector4 vec)
-	{
-		return x * vec.x + y * vec.y + z * vec.z + w * vec.w;
-	}
-	Vector4 Vector4::Cross(const Vector4 vec)
-	{
-		class UnableCrossException : public std::exception
-		{
-		public:
-			const char* what() const noexcept override
-			{
-				return "Require Vector4 Cross Operation";
-			}
-		};
+	//		return HVector3();
+	//	}
+	//	else
+	//	{
+	//		return HVector3(_f.x + vec._f.x, _f.y + vec._f.y, _f.z + vec._f.z);
+	//	}
+	//}
+	//void HVector3::operator+=(const HVector3 vec)
+	//{
+	//	if (!IsVector() && !vec.IsVector())
+	//	{
+	//		class UnableVerte_f.xAddVerte_f.xE_f.xception : public std::e_f.xception
+	//		{
+	//		public:
+	//			const char* _f.what() const noe_f.xcept override
+	//			{
+	//				return "Require HVector3 Verte_f.x Add Verte_f.x Operation";
+	//			}
+	//		};
 
-		throw UnableCrossException();
+	//		thro_f.w UnableVerte_f.xAddVerte_f.xE_f.xception();
+	//	}
+	//	else
+	//	{
+	//		_f.x += vec._f.x;
+	//		_f.y += vec._f.y;
+	//		_f.z += vec._f.z;
+	//	}
+	//}
+	//HVector3 HVector3::operator-(const HVector3 vec) const
+	//{
+	//	return HVector3(_f.x - vec._f.x, _f.y - vec._f.y, _f.z - vec._f.z);
+	//}
+	//void HVector3::operator-=(const HVector3 vec)
+	//{
+	//	_f.x = _f.x - vec._f.x;
+	//	_f.y = _f.y - vec._f.y;
+	//	_f.z = _f.z - vec._f.z;
+	//}
+	//HVector3 HVector3::operator*(float scalar) const
+	//{
+	//	return HVector3(_f.x * scalar, _f.y * scalar, _f.z * scalar);
+	//}
+	//HVector3 HVector3::operator/(float scalar) const
+	//{
+	//	float invScalar = 1.0f / scalar;
+	//	return operator*(invScalar);
+	//}
 
-		return Vector4();
-	}
-	void Vector4::Normalize()
-	{
-		float invLength = 1.0f / Length();
-		x /= invLength;
-		y /= invLength;
-		z /= invLength;
-		w /= invLength;
-	}
-	Vector4 Vector4::Normal()
-	{
-		float invLength = 1.0f / Length();
-		return Vector4(x * invLength, y * invLength, z * invLength, w * invLength);
-	}
-	void Vector4::Clear()
-	{
-		x = y = z = w = 0.0f;
-	}
-	Vector4 Vector4::operator+(const Vector4 vec) const
-	{
-		return Vector4(x + vec.x, y + vec.y, z + vec.z, w + vec.w);
-	}
-	void Vector4::operator+=(const Vector4 vec)
-	{
-		x += vec.x;
-		y += vec.y;
-		z += vec.z;
-		w += vec.w;
-	}
-	Vector4 Vector4::operator-(const Vector4 vec) const
-	{
-		return Vector4(x - vec.x, y - vec.y, z - vec.z, w - vec.w);
-	}
-	void Vector4::operator-=(const Vector4 vec)
-	{
-		x = x - vec.x;
-		y = y - vec.y;
-		z = z - vec.z;
-		w = w - vec.w;
-	}
-	Vector4 Vector4::operator*(float scalar) const
-	{
-		return Vector4(x * scalar, y * scalar, z * scalar, w * scalar);
-	}
-	Vector4 Vector4::operator/(float scalar) const
-	{
-		float invScalar = 1.0f / scalar;
-		return operator*(invScalar);
-	}
+	//float Vector4::LengthSquare() const
+	//{
+	//	return _f.x * _f.x + _f.y * _f.y + _f.z * _f.z + _f.w * _f.w;
+	//}
+	//float Vector4::Length() const
+	//{
+	//	return sqrt(LengthSquare());
+	//}
+	//float Vector4::Dot(const Vector4 vec)
+	//{
+	//	return _f.x * vec._f.x + _f.y * vec._f.y + _f.z * vec._f.z + _f.w * vec._f.w;
+	//}
+	//Vector4 Vector4::Cross(const Vector4 vec)
+	//{
+	//	class UnableOperationE_f.xception : public std::e_f.xception
+	//	{
+	//	public:
+	//		const char* _f.what() const noe_f.xcept override
+	//		{
+	//			return "Require Vector4 Cross Operation";
+	//		}
+	//	};
+
+	//	thro_f.w UnableOperationE_f.xception();
+
+	//	return Vector4();
+	//}
+	//void Vector4::Normali_f.ze()
+	//{
+	//	float invLength = 1.0f / Length();
+	//	_f.x /= invLength;
+	//	_f.y /= invLength;
+	//	_f.z /= invLength;
+	//	_f.w /= invLength;
+	//}
+	//Vector4 Vector4::Normal()
+	//{
+	//	float invLength = 1.0f / Length();
+	//	return Vector4(_f.x * invLength, _f.y * invLength, _f.z * invLength, _f.w * invLength);
+	//}
+	//void Vector4::Clear()
+	//{
+	//	_f.x = _f.y = _f.z = _f.w = 0.0f;
+	//}
+	//Vector4 Vector4::operator+(const Vector4 vec) const
+	//{
+	//	return Vector4(_f.x + vec._f.x, _f.y + vec._f.y, _f.z + vec._f.z, _f.w + vec._f.w);
+	//}
+	//void Vector4::operator+=(const Vector4 vec)
+	//{
+	//	_f.x += vec._f.x;
+	//	_f.y += vec._f.y;
+	//	_f.z += vec._f.z;
+	//	_f.w += vec._f.w;
+	//}
+	//Vector4 Vector4::operator-(const Vector4 vec) const
+	//{
+	//	return Vector4(_f.x - vec._f.x, _f.y - vec._f.y, _f.z - vec._f.z, _f.w - vec._f.w);
+	//}
+	//void Vector4::operator-=(const Vector4 vec)
+	//{
+	//	_f.x = _f.x - vec._f.x;
+	//	_f.y = _f.y - vec._f.y;
+	//	_f.z = _f.z - vec._f.z;
+	//	_f.w = _f.w - vec._f.w;
+	//}
+	//Vector4 Vector4::operator*(float scalar) const
+	//{
+	//	return Vector4(_f.x * scalar, _f.y * scalar, _f.z * scalar, _f.w * scalar);
+	//}
+	//Vector4 Vector4::operator/(float scalar) const
+	//{
+	//	float invScalar = 1.0f / scalar;
+	//	return operator*(invScalar);
+	//}
 
 	const float HVector4::_fThreshold = 0.0001f;
 
-	float HVector4::LengthSquare() const
-	{
-		return x * x + y * y + z * z;
-	}
-	float HVector4::Length() const
-	{
-		return sqrt(LengthSquare());
-	}
+	//float HVector4::LengthSquare() const
+	//{
+	//	return _f.x * _f.x + _f.y * _f.y + _f.z * _f.z;
+	//}
+	//float HVector4::Length() const
+	//{
+	//	return sqrt(LengthSquare());
+	//}
 	float HVector4::Dot(const HVector4 vec)
 	{
-		return x * vec.x + y * vec.y + z * vec.z + w * vec.w;
+		return _f.x * vec._f.x + _f.y * vec._f.y + _f.z * vec._f.z + _f.w * vec._f.w;
 	}
-	HVector4 HVector4::Cross(const HVector4 vec)
-	{
-		return HVector4(y * vec.z - vec.y * z, z * vec.x - x * vec.z, x * vec.y - vec.x * y, 0);
-	}
+	//HVector4 HVector4::Cross(const HVector4 vec)
+	//{
+	//	return HVector4(_f.y * vec._f.z - vec._f.y * _f.z, _f.z * vec._f.x - _f.x * vec._f.z, _f.x * vec._f.y - vec._f.x * _f.y, 0);
+	//}
 	void HVector4::Normalize()
 	{
 		if (IsVector())
 		{
-			float invLength = 1.0f / Length();
-			x = x * invLength;
-			y = y * invLength;
-			z = z * invLength;
-			w = 0.0f;
+			Vector3 v = *this;
+			float invLength = 1.0f / v.Length();
+			_f.x *= invLength;
+			_f.y *= invLength;
+			_f.z *= invLength;
+			_f.w = 0.0f;
 		}
 		else
 		{
-			w = 0.0f;
-			Normalize();
-			w = 1.0f;
+			_f.x /= _f.w;
+			_f.y /= _f.w;
+			_f.z /= _f.w;
+			_f.w = 1.0f;
 		}
 	}
 	HVector4 HVector4::Normal()
 	{
+		float xVal, yVal, zVal, wVal;
 		if (IsVector())
 		{
-			float invLength = 1.0f / Length();
-			return HVector4(x * invLength, y * invLength, z * invLength, w);
+			Vector3 v = *this;
+			float invLength = 1.0f / v.Length();
+			xVal = _f.x * invLength;
+			yVal = _f.y * invLength;
+			zVal = _f.z * invLength;
+			wVal = 0.0f;
 		}
 		else
 		{
-			HVector4 v = *this;
-			v.w = 0.0f;
-			v = v.Normal();
-			v.w = 1.0f;
-			return v;
+			xVal = _f.x / _f.w;
+			yVal = _f.y / _f.w;
+			zVal = _f.z / _f.w;
+			wVal = 1.0f;
 		}
+		return HVector4(xVal, yVal, zVal, wVal);
 	}
-	void HVector4::Clear()
-	{
-		x = y = z = 0.0f;
-		if (IsVector())
-		{
-			w = 0.0f;
-		}
-		else
-		{
-			w = 1.0f;
-		}
-	}
-	HVector4 HVector4::operator+(const HVector4 vec) const
-	{
-		class DotAddDotException : public std::exception
-		{
-		public:
-			const char* what() const noexcept override
-			{
-				return "Require Dot Add Dot Operation";
-			}
-		};
+	//void HVector4::Clear()
+	//{
+	//	_f.x = _f.y = _f.z = 0.0f;
+	//	if (IsVector())
+	//	{
+	//		_f.w = 0.0f;
+	//	}
+	//	else
+	//	{
+	//		_f.w = 1.0f;
+	//	}
+	//}
+	//HVector4 HVector4::operator+(const HVector4 vec) const
+	//{
+	//	class DotAddDotE_f.xception : public std::e_f.xception
+	//	{
+	//	public:
+	//		const char* _f.what() const noe_f.xcept override
+	//		{
+	//			return "Require Dot Add Dot Operation";
+	//		}
+	//	};
 
-		if (!IsVector() && !vec.IsVector())
-		{
-			throw DotAddDotException();
-			return HVector4();
-		}
-		else
-		{
-			return HVector4(x + vec.x, y + vec.y, z + vec.z, w + vec.w);
-		}
-	}
-	void HVector4::operator+=(const HVector4 vec)
-	{
-		class DotAddDotException : public std::exception
-		{
-		public:
-			const char* what() const noexcept override
-			{
-				return "Require Dot Add Dot Operation";
-			}
-		};
+	//	if (!IsVector() && !vec.IsVector())
+	//	{
+	//		thro_f.w DotAddDotE_f.xception();
+	//		return HVector4();
+	//	}
+	//	else
+	//	{
+	//		return HVector4(_f.x + vec._f.x, _f.y + vec._f.y, _f.z + vec._f.z, _f.w + vec._f.w);
+	//	}
+	//}
+	//void HVector4::operator+=(const HVector4 vec)
+	//{
+	//	class DotAddDotE_f.xception : public std::e_f.xception
+	//	{
+	//	public:
+	//		const char* _f.what() const noe_f.xcept override
+	//		{
+	//			return "Require Dot Add Dot Operation";
+	//		}
+	//	};
 
-		if (!IsVector() && !vec.IsVector())
-		{
-			throw DotAddDotException();
-		}
-		else
-		{
-			x += vec.x;
-			y += vec.y;
-			z += vec.z;
-			w += vec.w;
-		}
-	}
-	HVector4 HVector4::operator-(const HVector4 vec) const
-	{
-		return HVector4(x - vec.x, y - vec.y, z - vec.z, 0.0f);
-	}
-	void HVector4::operator-=(const HVector4 vec)
-	{
-		x = x - vec.x;
-		y = y - vec.y;
-		z = z - vec.z;
-		w = 0.0f;
-	}
-	HVector4 HVector4::operator*(float scalar) const
-	{
-		return HVector4(x * scalar, y * scalar, z * scalar, w * scalar);
-	}
-	HVector4 HVector4::operator/(float scalar) const
-	{
-		float invScalar = 1.0f / scalar;
-		return operator*(invScalar);
-	}
+	//	if (!IsVector() && !vec.IsVector())
+	//	{
+	//		thro_f.w DotAddDotE_f.xception();
+	//	}
+	//	else
+	//	{
+	//		_f.x += vec._f.x;
+	//		_f.y += vec._f.y;
+	//		_f.z += vec._f.z;
+	//		_f.w += vec._f.w;
+	//	}
+	//}
+	//HVector4 HVector4::operator-(const HVector4 vec) const
+	//{
+	//	return HVector4(_f.x - vec._f.x, _f.y - vec._f.y, _f.z - vec._f.z, 0.0f);
+	//}
+	//void HVector4::operator-=(const HVector4 vec)
+	//{
+	//	_f.x = _f.x - vec._f.x;
+	//	_f.y = _f.y - vec._f.y;
+	//	_f.z = _f.z - vec._f.z;
+	//	_f.w = 0.0f;
+	//}
+	//HVector4 HVector4::operator*(float scalar) const
+	//{
+	//	return HVector4(_f.x * scalar, _f.y * scalar, _f.z * scalar, _f.w * scalar);
+	//}
+	//HVector4 HVector4::operator/(float scalar) const
+	//{
+	//	float invScalar = 1.0f / scalar;
+	//	return operator*(invScalar);
+	//}
 }

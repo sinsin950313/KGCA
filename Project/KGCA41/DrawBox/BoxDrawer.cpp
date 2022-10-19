@@ -1,6 +1,7 @@
 #include "BoxDrawer.h"
 #include <cassert>
 #include "InputManager.h"
+#include "HCCalculator.h"
 
 bool BoxDrawer::Init()
 {
@@ -244,65 +245,49 @@ bool BoxDrawer::Init()
     return true;
 }
 
-Float4 operator*(Float4 f, HMatrix44 m)
-{
-    Float4 ret;
-    for (int i = 0; i < 4; ++i)
-    {
-        Float4 col {m.GetColumn(i).GetX(), m.GetColumn(i).GetY(), m.GetColumn(i).GetZ(), m.GetColumn(i).GetW()};
-        float val = 0;
-        for (int j = 0; j < 4; ++j)
-        {
-            val += f.e[j] * col.e[j];
-        }
-        ret.e[i] = val;
-    }
-    return ret;
-}
-
 bool BoxDrawer::Frame()
 {
     DXWindow::Frame();
 
     InputManager::GetInstance().Frame();
     static Float3 vPos{ 0, 0, 0 };
-    //static Float3 vTarget{ 0, 0, 0 };
+    static Float3 vTarget{ 0, 0, 0 };
     float coeff = 0.0001f;
     if (InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
     {
         vPos.z += 10.0f * coeff;
-        //vTarget.z += 10.0f * coeff;
+        vTarget.z += 10.0f * coeff;
     }
     if (InputManager::GetInstance().GetKeyState('S') == EKeyState::KEY_HOLD)
     {
         vPos.z -= 10.0f * coeff;
-        //vTarget.z -= 10.0f * coeff;
+        vTarget.z -= 10.0f * coeff;
     }
     if (InputManager::GetInstance().GetKeyState('A') == EKeyState::KEY_HOLD)
     {
         vPos.x -= 10.0f * coeff;
-        //vTarget.x -= 10.0f * coeff;
+        vTarget.x -= 10.0f * coeff;
     }
     if (InputManager::GetInstance().GetKeyState('D') == EKeyState::KEY_HOLD)
     {
         vPos.x += 10.0f * coeff;
-        //vTarget.x += 10.0f * coeff;
+        vTarget.x += 10.0f * coeff;
     }
     if (InputManager::GetInstance().GetKeyState('Q') == EKeyState::KEY_HOLD)
     {
         vPos.y += 10.0f * coeff;
-        //vTarget.y += 10.0f * coeff;
+        vTarget.y += 10.0f * coeff;
     }
     if (InputManager::GetInstance().GetKeyState('E') == EKeyState::KEY_HOLD)
     {
         vPos.y -= 10.0f * coeff;
-        //vTarget.y -= 10.0f * coeff;
+        vTarget.y -= 10.0f * coeff;
     }
 
     Vector3 up{ 0, 1, 0 };
     Vector3 pos{ vPos.x, vPos.y, vPos.z - 10 };
-    //Vector3 target{ vTarget.x, vTarget.y, vTarget.z };
-    Vector3 target{ 0, 0, 0 };
+    Vector3 target{ vTarget.x, vTarget.y, vTarget.z };
+    //Vector3 target{ 0, 0, 0 };
     HMatrix44 view = HMatrix44::LookAtMatrix(pos, target, up);
     view = view.Inverse();
 
@@ -333,15 +318,13 @@ bool BoxDrawer::Frame()
     std::vector<SimpleVertex> update;
     for (int i = 0; i < _vertexList.size(); ++i)
     {
+        HVector4 position {_vertexList[i].position, 1.0f};
+        position = position * view;
+        position = position * perspective;
+        position.Normalize();
+
         SimpleVertex vertex = _vertexList[i];
-        vertex.position = vertex.position * view;
-        vertex.position = vertex.position * perspective;
-        vertex.position.x /= vertex.position.w;
-        vertex.position.y /= vertex.position.w;
-        vertex.position.z /= vertex.position.w;
-        vertex.position.w /= vertex.position.w;
-        //vertex.position.e[3] = 1;
-        vertex.color.e[3] = 1;
+        memcpy(&vertex.position, &position, sizeof(Float4));
         update.push_back(vertex);
     }
     GetDeviceContext()->UpdateSubresource(_vertexBuffer, NULL, NULL, &update.at(0), 0, 0);
@@ -350,22 +333,20 @@ bool BoxDrawer::Frame()
         std::vector<SimpleVertex> update1;
         for (int i = 0; i < _vertexList1.size(); ++i)
         {
-            SimpleVertex vertex = _vertexList1[i];
-            vertex.position = vertex.position * HMatrix44(
-                1, 0, 0, 0,
-                0, 1, 0, 0,
-                0, 0, 1, 0,
-                0, 1, 5, 1
-            );
-            vertex.position = vertex.position * view;
-            vertex.position = vertex.position * perspective;
-            vertex.position.x /= vertex.position.w;
-            vertex.position.y /= vertex.position.w;
-            vertex.position.z /= vertex.position.w;
-            vertex.position.w /= vertex.position.w;
-            //vertex.position.e[3] = 1;
-            vertex.color.e[3] = 1;
-            update1.push_back(vertex);
+			HVector4 position{ _vertexList1[i].position, 1.0f };
+			position = position * HMatrix44(
+				1, 0, 0, 0,
+				0, 1, 0, 0,
+				0, 0, 1, 0,
+				0, 1, 5, 1
+			);
+			position = position * view;
+			position = position * perspective;
+			position.Normalize();
+
+			SimpleVertex vertex = _vertexList1[i];
+			memcpy(&vertex.position, &position, sizeof(Float4));
+			update1.push_back(vertex);
         }
         GetDeviceContext()->UpdateSubresource(_vertexBuffer1, NULL, NULL, &update1.at(0), 0, 0);
     }

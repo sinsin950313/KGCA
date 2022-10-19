@@ -13,7 +13,6 @@ struct SimpleVertex
 	Float4 position;
 	Float4 color;
 	Float2 texture;
-	//SimpleVertex(Float4 pos, Float4 col, Float2 tex) { position = pos; color = col; texture = tex; }
 };
 
 class BoxDrawer : public DXWindow

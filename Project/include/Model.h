@@ -53,7 +53,7 @@ namespace SSB
 	class Terrain : public Model
 	{
 	private:
-		float _cellDistance = 10.0f;
+		float _cellDistance = 1.0f;
 		float tileX = 10.0f;
 		float tileY = 10.0f;
 		//std::vector<Vertex> _vertexList;
@@ -63,6 +63,6 @@ namespace SSB
 		void Make(unsigned int widthVertexCount, unsigned int heightVertexCount);
 		
 	public:
-		void Build() override { Make(2 + 1, 2 + 1); }
+		void Build() override { Make(16 + 1, 16 + 1); }
 	};
 }

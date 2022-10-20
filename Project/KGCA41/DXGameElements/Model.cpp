@@ -18,7 +18,7 @@ namespace SSB
 			{
 				int index = row * widthVertexCount + col;
 				_vertexList[index].position = { (float)(col - hWidthVertexCount) * _cellDistance, 0.0f, (float)(hHeightVertexCount - row) * _cellDistance, 1.0f };
-				_vertexList[index].color = { 1.0f, 0.0f, 0.0f, 1.0f };
+				_vertexList[index].color = { (rand() % 10) / 10.0f, (rand() % 10) / 10.0f, (rand() % 10) / 10.0f, 1.0f };
 				_vertexList[index].texture = { ((float)col / (float)(widthVertexCount - 1.0f)) * tileX, ((float)row / (float)(heightVertexCount - 1.0f)) * tileY };
 			}
 		}

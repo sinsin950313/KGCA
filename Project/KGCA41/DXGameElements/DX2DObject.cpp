@@ -95,7 +95,7 @@ namespace SSB
     }
     bool DXObject::Frame()
     {
-		static Float3 vPos{ 0, 0, 0 };
+		static Float3 vPos{ 0, 10, 0 };
 		static Float3 vTarget{ 0, 0, 0 };
 		float coeff = 0.0001f;
 		if (InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)

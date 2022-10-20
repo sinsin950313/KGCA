@@ -63,6 +63,6 @@ namespace SSB
 		void Make(unsigned int widthVertexCount, unsigned int heightVertexCount);
 		
 	public:
-		void Build() override { Make(2 + 1, 2 + 1); }
+		void Build() override { Make(16 + 1, 16 + 1); }
 	};
 }

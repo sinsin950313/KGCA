@@ -12,6 +12,7 @@
 #include <vector>
 #include "DXDrawableInterface.h"
 #include "DXTextableInterface.h"
+#include "Camera.h"
 
 namespace SSB
 {
@@ -27,9 +28,12 @@ namespace SSB
 		ID3D11RenderTargetView* _renderTargetView = nullptr;
 		ID3D11DepthStencilView* _depthStencilView = nullptr;
 
-		ID2D1Factory* _factory2D;
-		IDWriteFactory* _writeFactory;
-		ID2D1RenderTarget* _renderTarget2D;
+		ID2D1Factory* _factory2D = nullptr;
+		IDWriteFactory* _writeFactory = nullptr;
+		ID2D1RenderTarget* _renderTarget2D = nullptr;
+
+		Camera _defaultCamera;
+		Camera* _mainCamera = nullptr;
 
 	private:
 		HRESULT CreateDevice();
@@ -68,12 +72,12 @@ namespace SSB
 	public:
 		void AddDrawable(DXDrawableInterface* drawable);
 		void AddTextable(DXTextableInterface* textable);
-
-	public:
 		ID3D11Device* GetDevice() { return _device; }
 		ID3D11DeviceContext* GetDeviceContext() { return _deviceContext; }
 		IDXGISwapChain* GetSwapChain() { return _swapChain; }
 		ID2D1RenderTarget* GetRenderTarget2D() { return _renderTarget2D; }
 		IDWriteFactory* GetWriteFactory() { return _writeFactory; }
+		void ChangeMainCamera(Camera* camera) { _mainCamera = camera; }
+		Camera* GetMainCamera() { return _mainCamera; }
 	};
 }

@@ -76,7 +76,7 @@ namespace SSB
 		TextureParam _dTile;
 
 	public:
-		Sprite(TextureResource* resource, TextureResource* maskResource = nullptr);
+		Sprite(TextureResource* resource, TextureResource* maskResource);
 
 	public:
 		TextureResource* GetResource() { return _resource; }
@@ -111,7 +111,7 @@ namespace SSB
 		float _lastTime = 0.0f;
 
 	public:
-		SpriteAction(TextureResource* resource, TextureResource* maskResource = nullptr);
+		SpriteAction(TextureResource* resource, TextureResource* maskResource);
 
 	public:
 		void SetLoop(bool loop) { _loop = loop; }

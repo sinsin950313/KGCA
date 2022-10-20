@@ -47,6 +47,8 @@ namespace SSB
 			assert(SUCCEEDED(hResult));
 			return;
 		}
+
+		_mainCamera = &_defaultCamera;
 	}
 
 	HRESULT DXWindow::UpdateResize()
@@ -118,6 +120,8 @@ namespace SSB
 		_objectList.clear();
 		_deviceContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
+		_mainCamera->Frame();
+
 		return true;
 	}
 
@@ -151,6 +155,8 @@ namespace SSB
 		if (_writeFactory) _writeFactory->Release();
 		if (_renderTarget2D) _renderTarget2D->Release();
 		if (_depthStencilView) _depthStencilView->Release();
+
+		_mainCamera = nullptr;
 
 		DXStateManager::GetInstance().Release();
 

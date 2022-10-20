@@ -4,6 +4,7 @@
 #include <vector>
 #include "Vector.h"
 #include "Texture.h"
+#include "TextureManager.h"
 
 namespace SSB
 {
@@ -14,7 +15,7 @@ namespace SSB
 		Float2 texture;
 	};
 
-	class Model/* : public Common*/
+	class Model : public Common
 	{
 	protected:
 		std::vector<Vertex> _vertexList;
@@ -22,16 +23,27 @@ namespace SSB
 		Sprite* _sprite;
 
 	public:
+		Model() : _sprite(SpriteLoader::GetInstance().GetDefaultSprite()) { }
+
+	public:
 		virtual void Build() = 0;
+
+	public:
 		std::vector<Vertex>& GetVertexList() { return _vertexList; }
 		std::vector<DWORD>& GetIndexList() { return _indexList; }
 		Sprite* GetSprite() { return _sprite; }
 
-	//public:
-	//	bool Init() override;
-	//	bool Frame() override;
-	//	bool Render() override;
-	//	bool Release() override;
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Render() override;
+		bool Release() override;
+	};
+
+	class Direction : public Model
+	{
+	public:
+		void Build() override;
 	};
 
 	class Triangle : public Model
@@ -39,7 +51,7 @@ namespace SSB
 	private:
 
 	public:
-		void Build();
+		void Build() override;
 	};
 
 	class Box : public Model
@@ -47,7 +59,7 @@ namespace SSB
 	private:
 
 	public:
-		void Build();
+		void Build() override;
 	};
 
 	class Terrain : public Model
@@ -56,8 +68,6 @@ namespace SSB
 		float _cellDistance = 1.0f;
 		float tileX = 10.0f;
 		float tileY = 10.0f;
-		//std::vector<Vertex> _vertexList;
-		//std::vector<int> _indexList;
 
 	public:
 		void Make(unsigned int widthVertexCount, unsigned int heightVertexCount);

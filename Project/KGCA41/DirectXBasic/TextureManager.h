@@ -17,10 +17,11 @@ namespace SSB
 	private:
 		std::map<std::wstring, TextureResource*> _resourceData;
 		std::wstring _path = kTextureResourcePath;
+		TextureResource _defaultTextureResource;
 
 	private:
 		static TextureResourceManager* _instance;
-		TextureResourceManager() { }
+		TextureResourceManager() : _defaultTextureResource(nullptr, nullptr) { }
 
 	public:
 		~TextureResourceManager();
@@ -31,10 +32,10 @@ namespace SSB
 	public:
 		void ChangePath(std::wstring path) { _path = path; }
 		TextureResource* Load(std::wstring resourceFileName);
+		TextureResource* GetDefaultTextureResource() { return &_defaultTextureResource; }
 
 	private:
 		std::wstring GetPath(std::wstring resourceFileName) { return _path + resourceFileName; }
-
 
 	public:
 		bool Init() override;
@@ -56,10 +57,11 @@ namespace SSB
 	private:
 		std::map<std::wstring, SpriteData> _spriteDatas;
 		std::wstring _path = kSpritePath;
+		Sprite _defaultSprite;
 
 	private:
 		static SpriteLoader* _instance;
-		SpriteLoader() { }
+		SpriteLoader() : _defaultSprite(TextureResourceManager::GetInstance().GetDefaultTextureResource(), TextureResourceManager::GetInstance().GetDefaultTextureResource()) { }
 
 	public:
 		static SpriteLoader& GetInstance();
@@ -76,6 +78,7 @@ namespace SSB
 		void RegisterSpriteWithCoordinateValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartCoordinate part);
 		Sprite* Load(std::wstring resourceFileName, std::wstring spriteName, std::string samplerName);
 		TexturePartRelative GetTexturePart(std::wstring resourceFileName, std::wstring spriteName);
+		Sprite* GetDefaultSprite() { return &_defaultSprite; }
 
 	private:
 		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".SpriteInfo"; }
@@ -101,10 +104,11 @@ namespace SSB
 	private:
 		std::map<std::wstring, SpriteActionData> _spriteActionDatas;
 		std::wstring _path = kSpriteActionPath;
+		SpriteAction _defaultSpriteAction;
 
 	private:
 		static SpriteActionLoader* _instance;
-		SpriteActionLoader() { }
+		SpriteActionLoader() : _defaultSpriteAction(TextureResourceManager::GetInstance().GetDefaultTextureResource(), TextureResourceManager::GetInstance().GetDefaultTextureResource()) { }
 
 	public:
 		static SpriteActionLoader& GetInstance();
@@ -123,6 +127,7 @@ namespace SSB
 		void RegisterSpriteActionWithCoordinateValue(std::wstring resourceFileName, std::wstring actionName, std::vector<TexturePartCoordinate> sequenceCoord);
 		SpriteAction* Load(std::wstring resourceFileName, std::wstring actionName, std::string samplerName);
 		std::vector<TexturePartRelative> GetSpriteAction(std::wstring resourceFileName, std::wstring actionName);
+		SpriteAction* GetDefaultSpriteAction() { return &_defaultSpriteAction; }
 
 	private:
 		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".spriteActionInfo"; }

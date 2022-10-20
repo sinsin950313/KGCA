@@ -158,31 +158,21 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Model.cpp" />
     <ClCompile Include="UI.cpp" />
     <ClCompile Include="GETestWindow.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="DX2DAnimation.cpp" />
     <ClCompile Include="DX2DObject.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TextManager.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Model.h" />
     <ClInclude Include="UI.h" />
     <ClInclude Include="GETestWindow.h" />
     <ClInclude Include="DX2DAnimation.h" />
     <ClInclude Include="DX2DObject.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="TextManager.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

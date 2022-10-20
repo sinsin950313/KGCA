@@ -11,17 +11,17 @@ namespace SSB
 	class GETestWindow : public DXWindow
 	{
 	private:
-		//Text* _text;
-		//DX2DObject* _background;
-		//DX2DObject* _object;
-		//DX2DObject* _spriteObject;
-		//DX2DObject* _objectWithFile;
-		//DX2DObject* _spriteObjectWithFile;
-		//DX2DObject* _animationObject;
-		//Button* _button;
-		//TextUI* _textUI;
-		//DX2DObject* _dialog;
-		DXObject* _object;
+		Text* _text;
+		DX2DObject* _background;
+		DX2DObject* _object;
+		DX2DObject* _spriteObject;
+		DX2DObject* _objectWithFile;
+		DX2DObject* _spriteObjectWithFile;
+		DX2DObject* _animationObject;
+		Button* _button;
+		TextUI* _textUI;
+		DX2DObject* _dialog;
+		DXObject* _terrain;
 
 	ID3D11InputLayout* _inputLayout;
 	ID3DBlob* _vsCode;

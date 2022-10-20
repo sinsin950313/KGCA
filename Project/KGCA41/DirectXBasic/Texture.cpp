@@ -6,7 +6,10 @@ namespace SSB
     TextureResource::TextureResource(ID3D11Resource* textureResource, ID3D11ShaderResourceView* textureResourceView)
         : _textureResource(textureResource), _textureResourceView(textureResourceView)
     {
-        static_cast<ID3D11Texture2D*>(_textureResource)->GetDesc(&_desc);
+        if (_textureResource != nullptr)
+        {
+            static_cast<ID3D11Texture2D*>(_textureResource)->GetDesc(&_desc);
+        }
     }
 
     bool TextureResource::Init()

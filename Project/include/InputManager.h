@@ -18,6 +18,7 @@ namespace SSB
 	private:
 		static InputManager* _instance;
 		EKeyState _keyState[256];
+		POINT _delta;
 		POINT _mousePosition;
 		HWND _hWnd;
 
@@ -30,6 +31,7 @@ namespace SSB
 		static InputManager& GetInstance();
 		EKeyState GetKeyState(DWORD key);
 		POINT GetMousePosition() { return _mousePosition; }
+		POINT GetDeltaPosition() { return _delta; }
 
 	public:
 		bool Init() override;

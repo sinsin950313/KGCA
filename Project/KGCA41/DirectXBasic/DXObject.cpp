@@ -189,39 +189,39 @@ namespace SSB
 		UINT stride = sizeof(Vertex);
 		UINT offset = 0;
 
-		{
-			// Move to Model Frame
-			HMatrix44 view = g_dxWindow->GetMainCamera()->GetViewMatrix();
-			HMatrix44 projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix();
+		//{
+		//	// Move to Model Frame
+		//	HMatrix44 view = g_dxWindow->GetMainCamera()->GetViewMatrix();
+		//	HMatrix44 projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix();
 
-			// Use Constant Buffer instead
-			auto& vertexList = _direction->GetVertexList();
-			std::vector<Vertex> update;
-			for (int i = 0; i < vertexList.size(); ++i)
-			{
-				HVector4 position{ vertexList[i].position, 1.0f };
-				position = position * view;
-				position = position * projection;
-				position.Normalize();
+		//	// Use Constant Buffer instead
+		//	auto& vertexList = _direction->GetVertexList();
+		//	std::vector<Vertex> update;
+		//	for (int i = 0; i < vertexList.size(); ++i)
+		//	{
+		//		HVector4 position{ vertexList[i].position, 1.0f };
+		//		position = position * view;
+		//		position = position * projection;
+		//		position.Normalize();
 
-				Vertex vertex = vertexList[i];
-				memcpy(&vertex.position, &position, sizeof(Float4));
-				update.push_back(vertex);
-			}
-			g_dxWindow->GetDeviceContext()->UpdateSubresource(_directionVertexBuffer, NULL, NULL, &update.at(0), 0, 0);
+		//		Vertex vertex = vertexList[i];
+		//		memcpy(&vertex.position, &position, sizeof(Float4));
+		//		update.push_back(vertex);
+		//	}
+		//	g_dxWindow->GetDeviceContext()->UpdateSubresource(_directionVertexBuffer, NULL, NULL, &update.at(0), 0, 0);
 
-			dc->IASetVertexBuffers(0, 1, &_directionVertexBuffer, &stride, &offset);
-			dc->IASetIndexBuffer(_directionIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-			dc->IASetInputLayout(_vertexLayout);
-			dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
-			dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
-			dc->PSSetShaderResources(0, 1, _direction->GetSprite()->GetResource()->GetShaderResourceView());
-			ID3D11SamplerState* ss = _direction->GetSprite()->GetSamplerState();
-			dc->PSSetSamplers(0, 1, &ss);
-			dc->PSSetShaderResources(1, 1, _direction->GetSprite()->GetMaskResource()->GetShaderResourceView());
-			dc->DrawIndexed(_direction->GetIndexList().size(), 0, 0);
-			dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
-		}
+		//	dc->IASetVertexBuffers(0, 1, &_directionVertexBuffer, &stride, &offset);
+		//	dc->IASetIndexBuffer(_directionIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		//	dc->IASetInputLayout(_vertexLayout);
+		//	dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
+		//	dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
+		//	dc->PSSetShaderResources(0, 1, _direction->GetSprite()->GetResource()->GetShaderResourceView());
+		//	ID3D11SamplerState* ss = _direction->GetSprite()->GetSamplerState();
+		//	dc->PSSetSamplers(0, 1, &ss);
+		//	dc->PSSetShaderResources(1, 1, _direction->GetSprite()->GetMaskResource()->GetShaderResourceView());
+		//	dc->DrawIndexed(_direction->GetIndexList().size(), 0, 0);
+		//	dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
+		//}
 
 		// Move to Model Frame
 		HMatrix44 view = g_dxWindow->GetMainCamera()->GetViewMatrix();

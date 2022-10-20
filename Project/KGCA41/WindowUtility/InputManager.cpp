@@ -31,13 +31,20 @@ namespace SSB
 	bool InputManager::Init()
 	{
 		ZeroMemory(_keyState, sizeof(_keyState));
+
+		GetCursorPos(&_mousePosition);
+		ScreenToClient(_hWnd, &_mousePosition);
+
 		return true;
 	}
 
 	bool InputManager::Frame()
 	{
+		POINT tmp = _mousePosition;
 		GetCursorPos(&_mousePosition);
 		ScreenToClient(_hWnd, &_mousePosition);
+		_delta.x = _mousePosition.x - tmp.x;
+		_delta.y = _mousePosition.y - tmp.y;
 
 		// I think PRESS and RELEASE need time check, so just HOLD and FREE
 		int keyCount = sizeof(_keyState) / sizeof(_keyState[0]);

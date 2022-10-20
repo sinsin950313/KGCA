@@ -40,7 +40,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -129,7 +129,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PhysicsMath.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent />
@@ -179,6 +179,7 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="DXBasicTest.h" />
     <ClInclude Include="DXDrawableInterface.h" />
     <ClInclude Include="DXObject.h" />
     <ClInclude Include="DXStateManager.h" />
@@ -192,6 +193,7 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="DXBasicTest.cpp" />
     <ClCompile Include="DXObject.cpp" />
     <ClCompile Include="DXStateManager.cpp" />
     <ClCompile Include="main.cpp" />

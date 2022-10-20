@@ -10,9 +10,9 @@ namespace SSB
 	class DXObject : public DXDrawableInterface
 	{
 	private:
-		Model* _direction;
-		ID3D11Buffer* _directionVertexBuffer;
-		ID3D11Buffer* _directionIndexBuffer;
+		//Model* _direction;
+		//ID3D11Buffer* _directionVertexBuffer;
+		//ID3D11Buffer* _directionIndexBuffer;
 
 		Model* _model;
 		ID3D11Buffer* _vertexBuffer;
@@ -21,7 +21,6 @@ namespace SSB
 		Shader* _ps;
 		ID3D11InputLayout* _vertexLayout;
 		HMatrix44 _matrix;
-		HMatrix44 _view;
 
 	public:
 		DXObject() { }
@@ -35,7 +34,6 @@ namespace SSB
 		void SetModel(Model* model) { _model = model; }
 		void SetVertexShader(Shader* shader) { _vs = shader; }
 		void SetPixelShader(Shader* shader) { _ps = shader; }
-		void SetViewMatrix(HMatrix44 view) { _view = view; }
 
 	public:
 		bool Init() override;

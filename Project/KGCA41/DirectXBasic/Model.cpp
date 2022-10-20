@@ -105,4 +105,21 @@ namespace SSB
 		_indexList[iIndex++] = 1;
 		_indexList[iIndex++] = 2;
 	}
+	bool Model::Init()
+	{
+		Build();
+		return false;
+	}
+	bool Model::Frame()
+	{
+		return false;
+	}
+	bool Model::Render()
+	{
+		return false;
+	}
+	bool Model::Release()
+	{
+		return false;
+	}
 }

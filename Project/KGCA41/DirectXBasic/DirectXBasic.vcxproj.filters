@@ -48,6 +48,9 @@
     <ClInclude Include="TextureManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="DXBasicTest.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXWindow.cpp">
@@ -78,6 +81,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TextureManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="DXBasicTest.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

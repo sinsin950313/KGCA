@@ -150,6 +150,8 @@ namespace SSB
 		//}
 
 		//_model->Frame();
+		static float val = 0.001f;
+		_matrix = _matrix * HMatrix44::RotateFromYAxis(val);
 
 		return true;
 	}
@@ -233,6 +235,7 @@ namespace SSB
 		for (int i = 0; i < vertexList.size(); ++i)
 		{
 			HVector4 position{ vertexList[i].position, 1.0f };
+			position = position * _matrix;
 			position = position * view;
 			position = position * projection;
 			position.Normalize();

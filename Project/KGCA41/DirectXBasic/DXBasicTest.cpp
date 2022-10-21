@@ -13,7 +13,15 @@ namespace SSB
         DXStateManager::GetInstance().Init();
         TextureResourceManager::GetInstance().Init();
         SpriteLoader::GetInstance().Init();
+        InputManager::GetInstance().Set(g_dxWindow->GetWindowHandle());
         InputManager::GetInstance().Init();
+
+		_timer = new Timer();
+		_timer->Init();
+		_timer->Start();
+		_beforeTime = _timer->GetElapseTime();
+		_frames = 0;
+		_fps = 0.0f;
         
         _object = new DXObject();
         _object->SetModel(new Box);
@@ -32,44 +40,17 @@ namespace SSB
     {
         DXWindow::Frame();
         InputManager::GetInstance().Frame();
+        GetMainCamera()->Frame();
 
-		Float3 vPos{ 0, 10, 0 };
-        float rotX = 0;
-        float rotY = 0;
-		float coeff = 0.0001f;
-		if (InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
+		_timer->Frame();
+		++_frames;
+		if (1000.0f < _timer->GetElapseTime() - _beforeTime)
 		{
-			vPos.z += 10.0f * coeff;
+			_fps = _frames * 1000.0f / (_timer->GetElapseTime() - _beforeTime);
+			_frames = 0;
+			_beforeTime = _timer->GetElapseTime();
+		OutputDebugString((L"Time : " + std::to_wstring(_timer->GetElapseTime() / 1000.0f) + L" FPS : " + std::to_wstring(_fps) + L"\n").c_str());
 		}
-		if (InputManager::GetInstance().GetKeyState('S') == EKeyState::KEY_HOLD)
-		{
-			vPos.z -= 10.0f * coeff;
-		}
-		if (InputManager::GetInstance().GetKeyState('A') == EKeyState::KEY_HOLD)
-		{
-			vPos.x -= 10.0f * coeff;
-		}
-		if (InputManager::GetInstance().GetKeyState('D') == EKeyState::KEY_HOLD)
-		{
-			vPos.x += 10.0f * coeff;
-		}
-		if (InputManager::GetInstance().GetKeyState('Q') == EKeyState::KEY_HOLD)
-		{
-			vPos.y += 10.0f * coeff;
-		}
-		if (InputManager::GetInstance().GetKeyState('E') == EKeyState::KEY_HOLD)
-		{
-			vPos.y -= 10.0f * coeff;
-		}
-        if (InputManager::GetInstance().GetKeyState(VK_RBUTTON) == EKeyState::KEY_HOLD)
-        {
-            POINT delta = InputManager::GetInstance().GetDeltaPosition();
-            rotX += delta.x * 0.1f;
-            rotY += delta.y * 0.1f;
-        }
-        _dCamera->Move(vPos.z, vPos.x);
-        _dCamera->Rotate(rotY, rotX);
-
         _object->Frame();
 
         return false;

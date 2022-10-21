@@ -10,6 +10,11 @@ namespace SSB
 		DXObject* _object;
 		DebugCamera* _dCamera;
 
+		Timer* _timer;
+		int _frames;
+		DWORD _beforeTime;
+		float _fps;
+
 	public:
 		DXBasicTest(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }
 

@@ -1,4 +1,5 @@
 #include "InputManager.h"
+#include <string>
 
 namespace SSB
 {
@@ -34,17 +35,19 @@ namespace SSB
 
 		GetCursorPos(&_mousePosition);
 		ScreenToClient(_hWnd, &_mousePosition);
+		_mousePrePosition = _mousePosition;
 
 		return true;
 	}
 
 	bool InputManager::Frame()
 	{
-		POINT tmp = _mousePosition;
 		GetCursorPos(&_mousePosition);
 		ScreenToClient(_hWnd, &_mousePosition);
-		_delta.x = _mousePosition.x - tmp.x;
-		_delta.y = _mousePosition.y - tmp.y;
+		_delta.x = _mousePosition.x - _mousePrePosition.x;
+		_delta.y = _mousePosition.y - _mousePrePosition.y;
+		//if(_delta.x != 0 || _delta.y != 0)
+		//OutputDebugString((std::to_wstring(_delta.x) + L", " + std::to_wstring(_delta.y) + L"\n").c_str());
 
 		// I think PRESS and RELEASE need time check, so just HOLD and FREE
 		int keyCount = sizeof(_keyState) / sizeof(_keyState[0]);
@@ -74,6 +77,7 @@ namespace SSB
 				}
 			}
 		}
+		_mousePrePosition = _mousePosition;
 
 		return true;
 	}

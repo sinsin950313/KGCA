@@ -150,8 +150,8 @@ namespace SSB
 		float GetX() { return _f.x; }
 		float GetY() { return _f.y; }
 		float GetZ() { return _f.z; }
-		operator Float2() { return Float2{ _f.x / _f.z, _f.y / _f.z }; }
-		operator Vector2() { return Vector2(_f.x / _f.z, _f.y / _f.z); }
+		operator Float2() const;
+		operator Vector2() const;
 	};
 
 	struct Float4 : public Float3
@@ -231,7 +231,7 @@ namespace SSB
 		float GetY() const { return _f.y; }
 		float GetZ() const { return _f.z; }
 		float GetW() const { return _f.w; }
-		operator Float3() const { return Float3{ _f.x / _f.w, _f.y / _f.w, _f.z / _f.w }; }
-		operator Vector3() const { return Vector3{ _f.x / _f.w, _f.y / _f.w, _f.z / _f.w }; }
+		operator Float3() const;
+		operator Vector3() const;
 	};
 }

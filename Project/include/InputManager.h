@@ -18,8 +18,9 @@ namespace SSB
 	private:
 		static InputManager* _instance;
 		EKeyState _keyState[256];
-		POINT _delta;
 		POINT _mousePosition;
+		POINT _mousePrePosition;
+		POINT _delta;
 		HWND _hWnd;
 
 	private:

@@ -1,5 +1,6 @@
 #include "Camera.h"
 #include "BasicWindow.h"
+#include "InputManager.h"
 
 namespace SSB
 {
@@ -68,11 +69,16 @@ namespace SSB
 
 	void DebugCamera::Move(float deltaZ, float deltaX)
 	{
-		Camera::Move(Vector3(deltaX, 0, deltaZ));
+		Vector3 xVector = _matrix.GetRow(0);
+		Vector3 zVector = _matrix.GetRow(2);
+		auto dir = (xVector * deltaX) + (zVector * deltaZ);
+		Camera::Move(dir);
 	}
 	void DebugCamera::Rotate(float yaw, float pitch)
 	{
-		_matrix = _matrix * HMatrix44::RotateFromYAxis(yaw);
+		HMatrix44 tMatrix;
+		tMatrix = tMatrix.Translate(_matrix.GetRow(3));
+		_matrix = _matrix * tMatrix.Inverse() * HMatrix44::RotateFromYAxis(yaw) * tMatrix;
 	}
 	bool DebugCamera::Init()
 	{
@@ -80,7 +86,45 @@ namespace SSB
 	}
 	bool DebugCamera::Frame()
 	{
-		return false;
+		Float3 vPos{ 0, 10, 0 };
+        float rotX = 0;
+        float rotY = 0;
+		float coeff = 0.0001f;
+		if (InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
+		{
+			vPos.z += 10.0f * coeff;
+		}
+		if (InputManager::GetInstance().GetKeyState('S') == EKeyState::KEY_HOLD)
+		{
+			vPos.z -= 10.0f * coeff;
+		}
+		if (InputManager::GetInstance().GetKeyState('A') == EKeyState::KEY_HOLD)
+		{
+			vPos.x -= 10.0f * coeff;
+		}
+		if (InputManager::GetInstance().GetKeyState('D') == EKeyState::KEY_HOLD)
+		{
+			vPos.x += 10.0f * coeff;
+		}
+		if (InputManager::GetInstance().GetKeyState('Q') == EKeyState::KEY_HOLD)
+		{
+			vPos.y += 10.0f * coeff;
+		}
+		if (InputManager::GetInstance().GetKeyState('E') == EKeyState::KEY_HOLD)
+		{
+			vPos.y -= 10.0f * coeff;
+		}
+        if (InputManager::GetInstance().GetKeyState(VK_LBUTTON) == EKeyState::KEY_HOLD)
+        {
+            POINT delta = InputManager::GetInstance().GetDeltaPosition();
+			rotX += ((float)delta.x * 0.01f);
+            rotY += ((float)delta.y * 0.01f);
+        }
+        Move(vPos.z, vPos.x);
+        Rotate(rotY, rotX);
+        //Rotate(0.0001f, rotX);
+
+		return true;
 	}
 	bool DebugCamera::Render()
 	{

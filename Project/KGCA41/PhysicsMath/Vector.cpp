@@ -209,6 +209,14 @@ namespace SSB
 		}
 		return HVector3(xVal, yVal, zVal);
 	}
+	HVector3::operator Float2() const
+	{
+		return IsVector() ? (Float2)(Vector2{ _f.x, _f.y }.Normal()) : Float2{ _f.x / _f.z, _f.y / _f.z };
+	}
+	HVector3::operator Vector2() const
+	{
+		return IsVector() ? Vector2{ _f.x, _f.y }.Normal() : Vector2{ _f.x / _f.z, _f.y / _f.z };
+	}
 	//void HVector3::Clear()
 	//{
 	//	_f.x = _f.y = 0.0f;
@@ -488,4 +496,13 @@ namespace SSB
 	//	float invScalar = 1.0f / scalar;
 	//	return operator*(invScalar);
 	//}
+
+	HVector4::operator Float3() const
+	{
+		return IsVector() ? (Float3)(Vector3{ _f.x, _f.y, _f.z }.Normal()) : Float3{ _f.x / _f.w, _f.y / _f.w, _f.z / _f.w };
+	}
+	HVector4::operator Vector3() const
+	{
+		return IsVector() ? Vector3{ _f.x, _f.y, _f.z }.Normal() : Vector3{ _f.x / _f.w, _f.y / _f.w, _f.z / _f.w };
+	}
 }

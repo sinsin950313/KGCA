@@ -10,6 +10,13 @@ namespace SSB
 	class DXObject : public DXDrawableInterface
 	{
 	private:
+		struct ConstantData
+		{
+			Float44 World;
+			Float44 View;
+			Float44 Projection;
+		};
+	private:
 		//Model* _direction;
 		//ID3D11Buffer* _directionVertexBuffer;
 		//ID3D11Buffer* _directionIndexBuffer;
@@ -21,6 +28,8 @@ namespace SSB
 		Shader* _ps;
 		ID3D11InputLayout* _vertexLayout;
 		HMatrix44 _matrix;
+		ID3D11Buffer* _constantBuffer;
+		ConstantData _constantData;
 
 	public:
 		DXObject() { }
@@ -29,6 +38,8 @@ namespace SSB
 		bool CreateVertexBuffer();
 		bool CreateIndexBuffer();
 		bool CreateVertexLayout();
+		bool CreateConstantBuffer();
+		void UpdateConstantBuffer();
 
 	public:
 		void SetModel(Model* model) { _model = model; }

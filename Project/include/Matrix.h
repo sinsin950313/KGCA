@@ -136,7 +136,7 @@ namespace SSB
 
 	public:
 		void Identity();
-		//HMatrix33 Transpose();
+		HMatrix33 Transpose();
 		HMatrix33 Inverse();
 		HVector3 GetRow(int i) const;
 		HVector3 GetColumn(int i) const;
@@ -152,6 +152,7 @@ namespace SSB
 	public:
 		operator Float22();
 		operator Matrix22();
+		operator Float33();
 		operator Float2();
 		operator Vector2();
 
@@ -222,7 +223,7 @@ namespace SSB
 
 	public:
 		void Identity();
-		//HMatrix44 Transpose();
+		HMatrix44 Transpose();
 		HMatrix44 Inverse();
 		HVector4 GetRow(int i) const;
 		HVector4 GetColumn(int i) const;
@@ -247,6 +248,7 @@ namespace SSB
 	public:
 		operator Float33();
 		operator Matrix33();
+		operator Float44();
 		operator Float3();
 		operator Vector3();
 	};

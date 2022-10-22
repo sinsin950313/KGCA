@@ -12,12 +12,23 @@ struct VS_out
 	float2 t : TEXCOORD0;
 };
 
+cbuffer ConstantData : register(b0)
+{
+	matrix g_World : packoffset(c0);
+	matrix g_View : packoffset(c4);
+	matrix g_Projection : packoffset(c8);
+};
+
 VS_out Main(VS_in input)
 {
 	VS_out output = (VS_out)0;
 
-	output.p = input.p;
-	output.p.w = 1.0f;
+	float4 local = input.p;
+	float4 world = mul(local, g_World);
+	float4 view = mul(world, g_View);
+	float4 proj = mul(view, g_Projection);
+
+	output.p = proj;
 	output.c = input.c;
 	output.t = input.t;
 

@@ -43,7 +43,7 @@ namespace SSB
         _mCamera = new ModelViewCamera();
         _mCamera->SetTarget(_object);
         ChangeMainCamera(_mCamera);
-        GetMainCamera()->Move({ 0, 5, -5 });
+        GetMainCamera()->Move({ 0, 10, -5 });
 
         return false;
     }
@@ -80,7 +80,7 @@ namespace SSB
     {
         DXWindow::PreRender();
         _object->Render();
-        _terrain->Render();
+        //_terrain->Render();
         return true;
     }
 }

@@ -71,6 +71,32 @@ namespace SSB
 		//}
 		return true;
     }
+	bool DXObject::CreateConstantBuffer()
+	{
+		D3D11_BUFFER_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
+		desc.ByteWidth = sizeof(ConstantData);
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+		sd.pSysMem = &_constantData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_constantBuffer);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+		return true;
+	}
+	void DXObject::UpdateConstantBuffer()
+	{
+		_constantData.World = GetMatrix().Transpose();
+		_constantData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
+		_constantData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_constantBuffer, 0, nullptr, &_constantData, 0, 0);
+	}
 	void DXObject::Move(Vector3 vec)
 	{
 		HMatrix44 trans{
@@ -93,82 +119,18 @@ namespace SSB
         CreateVertexBuffer();
         CreateIndexBuffer();
         CreateVertexLayout();
+		CreateConstantBuffer();
 
         return true;
     }
     bool DXObject::Frame()
     {
-		//static Float3 vPos{ 0, 10, 0 };
-		//static Float3 vTarget{ 0, 0, 0 };
-		//float coeff = 0.0001f;
-		//if (InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
-		//{
-		//	vPos.z += 10.0f * coeff;
-		//	vTarget.z += 10.0f * coeff;
-		//}
-		//if (InputManager::GetInstance().GetKeyState('S') == EKeyState::KEY_HOLD)
-		//{
-		//	vPos.z -= 10.0f * coeff;
-		//	vTarget.z -= 10.0f * coeff;
-		//}
-		//if (InputManager::GetInstance().GetKeyState('A') == EKeyState::KEY_HOLD)
-		//{
-		//	vPos.x -= 10.0f * coeff;
-		//	vTarget.x -= 10.0f * coeff;
-		//}
-		//if (InputManager::GetInstance().GetKeyState('D') == EKeyState::KEY_HOLD)
-		//{
-		//	vPos.x += 10.0f * coeff;
-		//	vTarget.x += 10.0f * coeff;
-		//}
-		//if (InputManager::GetInstance().GetKeyState('Q') == EKeyState::KEY_HOLD)
-		//{
-		//	vPos.y += 10.0f * coeff;
-		//	vTarget.y += 10.0f * coeff;
-		//}
-		//if (InputManager::GetInstance().GetKeyState('E') == EKeyState::KEY_HOLD)
-		//{
-		//	vPos.y -= 10.0f * coeff;
-		//	vTarget.y -= 10.0f * coeff;
-		//}
-
-		//Vector3 up{ 0, 1, 0 };
-		//Vector3 pos{ vPos.x, vPos.y, vPos.z - 10 };
-		//Vector3 target{ vTarget.x, vTarget.y, vTarget.z };
-		////Vector3 target{ 0, 0, 0 };
-		//HMatrix44 view = HMatrix44::LookAtMatrix(pos, target, up);
-		//view = view.Inverse();
-
-		//HMatrix44 perspective;
-		//{
-		//	float    h, w, Q;
-		//	float fNearPlane = 1.0f;
-		//	float fFarPlane = 100.0f;
-		//	float fovy = 3.141592f * 0.5f;
-		//	float Aspect = 800.0f / 600.0f;
-
-		//	h = 1 / tan(fovy * 0.5f);  // 1/tans(x) = cot(x)
-		//	w = h / Aspect;
-
-		//	Q = fFarPlane / (fFarPlane - fNearPlane);
-
-		//	HMatrix44 ret
-		//	{
-		//		w, 0, 0, 0,
-		//		0, h, 0, 0,
-		//		0, 0, Q, 1,
-		//		0, 0, -Q * fNearPlane, 0
-		//	};
-
-		//	memcpy(&perspective, &ret, sizeof(HMatrix44));
-		//}
-
-		//_model->Frame();
 
 		return true;
 	}
 	bool DXObject::Render()
 	{
+		UpdateConstantBuffer();
 		g_dxWindow->AddDrawable(this);
 
 		return true;
@@ -247,10 +209,10 @@ namespace SSB
 		for (int i = 0; i < vertexList.size(); ++i)
 		{
 			HVector4 position{ vertexList[i].position, 1.0f };
-			position = position * _matrix;
-			position = position * view;
-			position = position * projection;
-			position.Normalize();
+			//position = position * _matrix;
+			//position = position * view;
+			//position = position * projection;
+			//position.Normalize();
 
 			Vertex vertex = vertexList[i];
 			memcpy(&vertex.position, &position, sizeof(Float4));
@@ -269,5 +231,6 @@ namespace SSB
 		dc->PSSetShaderResources(1, 1, _model->GetSprite()->GetMaskResource()->GetShaderResourceView());
 		dc->DrawIndexed(_model->GetIndexList().size(), 0, 0);
 		dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
+		dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
     }
 }

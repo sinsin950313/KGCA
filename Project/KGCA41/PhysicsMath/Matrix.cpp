@@ -222,14 +222,14 @@ namespace SSB
 		_f.e21 = 0; _f.e22 = 1; _f.e23 = 0;
 		_f.e31 = 0; _f.e32 = 0; _f.e33 = 1;
 	}
-	//HMatrix33 HMatrix33::Transpose()
-	//{
-	//	HMatrix33 m;
-	//	m._f.e11 = _f.e11; m._f.e12 = _f.e21; m._f.e13 = _f.e31;
-	//	m._f.e21 = _f.e12; m._f.e22 = _f.e22; m._f.e23 = _f.e32;
-	//	m._f.e31 = _f.e13; m._f.e32 = _f.e23; m._f.e33 = _f.e33;
-	//	return m;
-	//}
+	HMatrix33 HMatrix33::Transpose()
+	{
+		HMatrix33 m;
+		m._f.e11 = _f.e11; m._f.e12 = _f.e21; m._f.e13 = _f.e31;
+		m._f.e21 = _f.e12; m._f.e22 = _f.e22; m._f.e23 = _f.e32;
+		m._f.e31 = _f.e13; m._f.e32 = _f.e23; m._f.e33 = _f.e33;
+		return m;
+	}
 	HMatrix33 HMatrix33::Inverse()
 	{
 		HMatrix33 srInverse
@@ -346,6 +346,14 @@ namespace SSB
 		return Matrix22{
 			_f.e11, _f.e12,
 			_f.e21, _f.e22
+		};
+	}
+	HMatrix33::operator Float33()
+	{
+		return Matrix33{
+			_f.e11, _f.e12, _f.e13,
+			_f.e21, _f.e22, _f.e23,
+			_f.e31, _f.e32, _f.e33
 		};
 	}
 	HMatrix33::operator Float2()
@@ -526,15 +534,15 @@ namespace SSB
 		_f.e31 = 0; _f.e32 = 0; _f.e33 = 1; _f.e34 = 0;
 		_f.e41 = 0; _f.e42 = 0; _f.e43 = 0; _f.e44 = 1;
 	}
-	//HMatrix44 HMatrix44::Transpose()
-	//{
-	//	HMatrix44 m;
-	//	m._f.e11 = _f.e11; m._f.e12 = _f.e21; m._f.e13 = _f.e31; m._f.e14 = _f.e41;
-	//	m._f.e21 = _f.e12; m._f.e22 = _f.e22; m._f.e23 = _f.e32; m._f.e24 = _f.e42;
-	//	m._f.e31 = _f.e13; m._f.e32 = _f.e23; m._f.e33 = _f.e33; m._f.e34 = _f.e43;
-	//	m._f.e41 = _f.e14; m._f.e42 = _f.e24; m._f.e43 = _f.e34; m._f.e44 = _f.e44;
-	//	return m;
-	//}
+	HMatrix44 HMatrix44::Transpose()
+	{
+		HMatrix44 m;
+		m._f.e11 = _f.e11; m._f.e12 = _f.e21; m._f.e13 = _f.e31; m._f.e14 = _f.e41;
+		m._f.e21 = _f.e12; m._f.e22 = _f.e22; m._f.e23 = _f.e32; m._f.e24 = _f.e42;
+		m._f.e31 = _f.e13; m._f.e32 = _f.e23; m._f.e33 = _f.e33; m._f.e34 = _f.e43;
+		m._f.e41 = _f.e14; m._f.e42 = _f.e24; m._f.e43 = _f.e34; m._f.e44 = _f.e44;
+		return m;
+	}
 	HMatrix44 HMatrix44::Inverse()
 	{
 		HMatrix44 srInverse
@@ -719,6 +727,15 @@ namespace SSB
 			_f.e31, _f.e32, _f.e33,
 		};
 	}
+	HMatrix44::operator Float44()
+	{
+		return Float44{
+			_f.e11, _f.e12, _f.e13, _f.e14,
+			_f.e21, _f.e22, _f.e23, _f.e24,
+			_f.e31, _f.e32, _f.e33, _f.e34,
+			_f.e41, _f.e42, _f.e43, _f.e44
+		};
+	}
 	HMatrix44::operator Matrix33()
 	{
 		return Matrix33{
@@ -730,9 +747,5 @@ namespace SSB
 	HMatrix44::operator Float3()
 	{
 		return Float3{ _f.e41 / _f.e44, _f.e42 / _f.e44, _f.e43 / _f.e44 };
-	}
-	HMatrix44::operator Vector3()
-	{
-		return Vector3{ _f.e41 / _f.e44, _f.e42 / _f.e44, _f.e43 / _f.e44 };
 	}
 }

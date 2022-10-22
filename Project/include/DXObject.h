@@ -34,6 +34,9 @@ namespace SSB
 		void SetModel(Model* model) { _model = model; }
 		void SetVertexShader(Shader* shader) { _vs = shader; }
 		void SetPixelShader(Shader* shader) { _ps = shader; }
+		HMatrix44 GetMatrix() { return _matrix; }
+		void Move(Vector3 vec);
+		void Rotate(float pitch, float yaw);
 
 	public:
 		bool Init() override;

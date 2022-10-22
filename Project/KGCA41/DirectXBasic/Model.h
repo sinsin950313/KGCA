@@ -31,6 +31,7 @@ namespace SSB
 	public:
 		std::vector<Vertex>& GetVertexList() { return _vertexList; }
 		std::vector<DWORD>& GetIndexList() { return _indexList; }
+		void SetSprite(Sprite* sprite) { _sprite = sprite; }
 		Sprite* GetSprite() { return _sprite; }
 
 	public:
@@ -66,8 +67,10 @@ namespace SSB
 	{
 	private:
 		float _cellDistance = 1.0f;
-		float tileX = 10.0f;
-		float tileY = 10.0f;
+		//float tileX = 10.0f;
+		//float tileY = 10.0f;
+		float tileX = 1.0f;
+		float tileY = 1.0f;
 
 	public:
 		void Make(unsigned int widthVertexCount, unsigned int heightVertexCount);

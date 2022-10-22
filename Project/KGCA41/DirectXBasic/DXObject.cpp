@@ -71,7 +71,21 @@ namespace SSB
 		//}
 		return true;
     }
-    bool DXObject::Init()
+	void DXObject::Move(Vector3 vec)
+	{
+		HMatrix44 trans{
+			1, 0, 0, 0,
+			0, 1, 0, 0,
+			0, 0, 1, 0,
+			vec.GetX(), vec.GetY(), vec.GetZ(), 1
+		};
+		_matrix = _matrix * trans;
+	}
+	void DXObject::Rotate(float pitch, float yaw)
+	{
+		_matrix = _matrix * HMatrix44::RotateFromXAxis(pitch) * HMatrix44::RotateFromYAxis(yaw);
+	}
+	bool DXObject::Init()
     {
         _model->Init();
         //_model->Build();
@@ -150,8 +164,6 @@ namespace SSB
 		//}
 
 		//_model->Frame();
-		static float val = 0.001f;
-		_matrix = _matrix * HMatrix44::RotateFromYAxis(val);
 
 		return true;
 	}

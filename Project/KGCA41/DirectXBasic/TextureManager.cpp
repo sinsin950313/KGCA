@@ -47,7 +47,8 @@ namespace SSB
                 hr = DirectX::CreateDDSTextureFromFile(g_dxWindow->GetDevice(), g_dxWindow->GetDeviceContext(), path.c_str(), &textureResource, &textureResourceView);
                 if (FAILED(hr))
                 {
-                    return nullptr;
+                    OutputDebugString((resourceFileName + L"is not exist. Defualt Texture Resource replaced").c_str());
+                    return GetDefaultTextureResource();
                 }
             }
 

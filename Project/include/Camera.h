@@ -14,8 +14,6 @@ namespace SSB
 		float _aspect;
 		float _near;
 		float _far;
-		DXObject _vTarget;
-		DXObject* _target;
 
 	protected:
 		HMatrix44 _matrix;
@@ -24,16 +22,17 @@ namespace SSB
 		Camera();
 
 	public:
-		HMatrix44 GetViewMatrix();
 		HMatrix44 GetProjectionMatrix();
 		//void LookAt(Vector3 target);
 		//void LookAt(DXObject* target);
 		//// Wait for Quaternion
 		////void LookAt(float yaw = 0.0f, float pitch = 0.0f, float roll = 0.0f);
-		void Move(Vector3 to);
 		//void SetPosition(Vector3 position);
-		DXObject* GetTarget() { return _target; }
 		HMatrix44 GetMatrix() { return _matrix; }
+
+	public:
+		virtual HMatrix44 GetViewMatrix();
+		virtual void Move(Vector3 to);
 
 	public:
 		bool Init() override;
@@ -55,12 +54,26 @@ namespace SSB
 		bool Release() override;
 	};
 
-	//class ModelViewCamera : public Camera
-	//{
-	//public:
-	//	bool Init() override;
-	//	bool Frame() override;
-	//	bool Render() override;
-	//	bool Release() override;
-	//};
+	class ModelViewCamera : public Camera
+	{
+	private:
+		DXObject _vTarget;
+		DXObject* _target;
+
+	public:
+		ModelViewCamera();
+
+	public:
+		//void Move(float deltaZ, float deltaX);
+		void Rotate(float yaw, float pitch = 0.0f);
+		void SetTarget(DXObject* target);
+
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Render() override;
+		bool Release() override;
+		void Move(Vector3 to) override;
+		HMatrix44 GetViewMatrix() override;
+	};
 }

@@ -21,4 +21,11 @@ namespace SSB
 	{
 		return HVector4(vec.Dot(mat.GetColumn(0)), vec.Dot(mat.GetColumn(1)), vec.Dot(mat.GetColumn(2)), vec.Dot(mat.GetColumn(3)));
 	}
+	Vector3 operator*(Vector3 vec, Quaternion quat)
+	{
+		vec.Normalize();
+		Quaternion tmp{ vec.GetX(), vec.GetY(), vec.GetZ(), 0 };
+		Quaternion result = tmp * quat;
+		return result;
+	}
 }

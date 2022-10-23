@@ -11,4 +11,6 @@ namespace SSB
 	HVector3 operator*(HVector3 vec, HMatrix33 mat);
 	HVector4 operator*(HVector4 vec, HMatrix44 mat);
 	Vector3 operator*(Vector3 vec, Quaternion quat);
+	Vector3 operator*(Quaternion quat, Vector3 vec);
+	Vector3 Rotate(Vector3 vec, Vector3 axis, float radian);
 }

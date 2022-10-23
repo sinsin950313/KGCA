@@ -181,4 +181,12 @@ int main()
 		auto hv4hm44 = HVector4(1, 2, 3, 4) * HMatrix44(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16);
 		int i = 0;
 	}
+	{
+		Vector3 xVector{ 10, 0, 0 };
+		Vector3 zVector = Rotate(xVector, { 0, 10, 0 }, 3.14f / 2.0f);
+
+		Vector3 vec{ 1, 0, 1 };
+		Vector3 newVec = Rotate(vec, { 0, 1, 0 }, 3.14f / 2.0f);
+		int i = 0;
+	}
 }

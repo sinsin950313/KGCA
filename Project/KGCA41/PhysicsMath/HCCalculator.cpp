@@ -23,9 +23,18 @@ namespace SSB
 	}
 	Vector3 operator*(Vector3 vec, Quaternion quat)
 	{
-		vec.Normalize();
 		Quaternion tmp{ vec.GetX(), vec.GetY(), vec.GetZ(), 0 };
-		Quaternion result = tmp * quat;
+		Vector3 result = tmp * quat;
 		return result;
+	}
+	Vector3 operator*(Quaternion quat, Vector3 vec)
+	{
+		Quaternion qVec{ vec.GetX(), vec.GetY(),vec.GetZ(), 0 };
+		return quat * qVec;
+	}
+	Vector3 Rotate(Vector3 vec, Vector3 axis, float radian)
+	{
+		Quaternion q = Quaternion::GetRotateQuaternion(axis, radian);
+		return q * vec * q.Conjugate();
 	}
 }

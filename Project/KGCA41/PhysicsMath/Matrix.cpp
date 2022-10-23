@@ -727,6 +727,10 @@ namespace SSB
 			_f.e31, _f.e32, _f.e33,
 		};
 	}
+	HMatrix44::operator Vector3()
+	{
+		return Vector3{ _f.e41 / _f.e44, _f.e42 / _f.e44, _f.e43 / _f.e44 };
+	}
 	HMatrix44::operator Float44()
 	{
 		return Float44{

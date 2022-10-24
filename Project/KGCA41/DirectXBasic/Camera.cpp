@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "BasicWindow.h"
 #include "InputManager.h"
+#include "HCCalculator.h"
 
 namespace SSB
 {
@@ -60,6 +61,71 @@ namespace SSB
 	bool Camera::Release()
 	{
 		return false;
+	}
+	bool Camera::IsRender(DXObject* object)
+	{
+		float dx[8] = { -1.0f, -1.0f, 1.0f, 1.0f, -50.0f, -50.0f, 50.0f, 50.0f };
+		float dy[8] = { -1.0f, 1.0f, -1.0f, 1.0f, -50.0f, 50.0f, -50.0f, 50.0f };
+		float dz[8] = { 0.0f, 0.0f, 0.0f, 0.0f, 100.0f, 100.0f, 100.0f, 100.0f };
+		//float dx[8] = { -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f };
+		//float dy[8] = { -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f };
+		//float dz[8] = { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+
+		HVector4 frustum[8];
+		for (int i = 0; i < 8; ++i)
+		{
+			frustum[i] = { dx[i], dy[i], dz[i] ,1.0f };
+			//frustum[i] = frustum[i] * GetProjectionMatrix().Inverse() * GetViewMatrix().Inverse();
+			frustum[i] = frustum[i] * GetViewMatrix().Inverse();
+		}
+
+		auto makePlane = [](HVector4 a, HVector4 b, HVector4 c) -> Float4
+		{
+			Vector3 v1 = { b.GetX() - a.GetX(), b.GetY() - a.GetY(), b.GetZ() - a.GetZ() };
+			v1.Normalize();
+			Vector3 v2 = { c.GetX() - a.GetX(), c.GetY() - a.GetY(), c.GetZ() - a.GetZ() };
+			v2.Normalize();
+			Vector3 normal = v1.Cross(v2);
+			normal.Normalize();
+			float d = -(normal.GetX() * a.GetX() + normal.GetY() * a.GetY() + normal.GetZ() * a.GetZ());
+			return { normal.GetX(), normal.GetY(), normal.GetZ(), d };
+		};
+		Float4 planes[6];
+		{
+			planes[0] = makePlane(frustum[0], frustum[1], frustum[2]);
+			planes[1] = makePlane(frustum[4], frustum[5], frustum[0]);
+			planes[2] = makePlane(frustum[6], frustum[7], frustum[4]);
+			planes[3] = makePlane(frustum[2], frustum[3], frustum[6]);
+			planes[4] = makePlane(frustum[1], frustum[5], frustum[3]);
+			planes[5] = makePlane(frustum[4], frustum[0], frustum[6]);
+		}
+
+		OBB obbData = object->GetOBB();
+		for (int i = 0; i < 6; ++i)
+		{
+			float distance = 0.0f;
+			Vector3 tmp = obbData.Matrix.GetRow(0);
+			Vector3 dir = tmp * obbData.Width / 2.0f;
+			distance += abs(dir.GetX() * planes[i].x + dir.GetY() * planes[i].y + dir.GetZ() * planes[i].z);
+
+			tmp = obbData.Matrix.GetRow(1);
+			dir = tmp * obbData.Height / 2.0f;
+			distance += abs(dir.GetX() * planes[i].x + dir.GetY() * planes[i].y + dir.GetZ() * planes[i].z);
+
+			tmp = obbData.Matrix.GetRow(2);
+			dir = tmp * obbData.Depth / 2.0f;
+			distance += abs(dir.GetX() * planes[i].x + dir.GetY() * planes[i].y + dir.GetZ() * planes[i].z);
+
+			Vector3 center = obbData.Matrix.GetRow(3);
+			float cDistance = center.GetX() * planes[i].x + center.GetY() * planes[i].y + center.GetZ() * planes[i].z + planes[i].w;
+
+			if (cDistance - distance > 0)
+			{
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	void DebugCamera::Move(float deltaZ, float deltaX)

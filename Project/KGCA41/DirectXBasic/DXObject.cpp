@@ -111,6 +111,15 @@ namespace SSB
 	{
 		_matrix = _matrix * HMatrix44::RotateFromXAxis(pitch) * HMatrix44::RotateFromYAxis(yaw);
 	}
+	OBB DXObject::GetOBB()
+	{
+		OBB ret;
+		ret.Width = 1.0f;
+		ret.Height = 1.0f;
+		ret.Depth = 1.0f;
+		ret.Matrix = _matrix;
+		return ret;
+	}
 	bool DXObject::Init()
     {
         _model->Init();
@@ -130,8 +139,15 @@ namespace SSB
 	}
 	bool DXObject::Render()
 	{
-		UpdateConstantBuffer();
-		g_dxWindow->AddDrawable(this);
+		if (g_dxWindow->GetMainCamera()->IsRender(this))
+		{
+			UpdateConstantBuffer();
+			g_dxWindow->AddDrawable(this);
+		}
+		else
+		{
+			OutputDebugString(L"Invisible\n");
+		}
 
 		return true;
 	}

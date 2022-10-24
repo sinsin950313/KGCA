@@ -7,6 +7,14 @@
 
 namespace SSB
 {
+	struct OBB
+	{
+		HMatrix44 Matrix;
+		float Width;
+		float Height;
+		float Depth;
+	};
+
 	class DXObject : public DXDrawableInterface
 	{
 	private:
@@ -48,6 +56,7 @@ namespace SSB
 		HMatrix44 GetMatrix() { return _matrix; }
 		void Move(Vector3 vec);
 		void Rotate(float pitch, float yaw);
+		OBB GetOBB();
 
 	public:
 		bool Init() override;

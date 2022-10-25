@@ -48,6 +48,8 @@ namespace SSB
 			return;
 		}
 
+		_renderTarget = new RenderTarget();
+
 		_mainCamera = &_defaultCamera;
 	}
 
@@ -65,6 +67,12 @@ namespace SSB
 		if (_renderTargetView)_renderTargetView->Release();
 		if (_renderTarget2D)_renderTarget2D->Release();
 		if (_depthStencilView)_depthStencilView->Release();
+
+		if (_renderTarget)
+		{
+			_renderTarget->Release();
+		}
+		_screen.Release();
 
 		DXGI_SWAP_CHAIN_DESC currDesc, AfterDesc;
 		_swapChain->GetDesc(&currDesc);
@@ -96,6 +104,11 @@ namespace SSB
 			return hr;
 		}
 
+		_renderTarget->Init();
+		_screen.SetRenderTargetTexture(_renderTarget->GetRenderTargetTexture());
+		_screen.SetDepthStencilTexture(_renderTarget->GetDepthStencilTexture());
+		_screen.Init();
+
 		_deviceContext->OMSetRenderTargets(1, &_renderTargetView, _depthStencilView);
 
 		CreateViewPort();
@@ -121,6 +134,9 @@ namespace SSB
 		_deviceContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 		_mainCamera->Frame();
+
+		_renderTarget->Frame();
+		_screen.Frame();
 
 		return true;
 	}
@@ -160,6 +176,9 @@ namespace SSB
 
 		DXStateManager::GetInstance().Release();
 
+		if(_renderTarget)_renderTarget->Release();
+		_screen.Release();
+
 		return true;
 	}
 
@@ -167,6 +186,10 @@ namespace SSB
 	{
 		float color[4] = { 1, 1, 1, 1.0f };
 		_deviceContext->ClearRenderTargetView(_renderTargetView, color);
+
+		auto renderTargetView = _renderTarget->GetRenderTargetView();
+		GetDeviceContext()->OMSetRenderTargets(1, &renderTargetView, _renderTarget->GetDepthStencilView());
+		_renderTarget->Clear();
 
 		return true;
 	}
@@ -184,6 +207,10 @@ namespace SSB
 
 	bool DXWindow::PostRender()
 	{
+		GetDeviceContext()->OMSetRenderTargets(1, &_renderTargetView, _depthStencilView);
+
+		_screen.Render();
+
 		_swapChain->Present(0, 0);
 
 		return true;
@@ -350,5 +377,257 @@ namespace SSB
 		_deviceContext->OMSetDepthStencilState(state, 0xff);
 
 		return S_OK;
+	}
+	RenderTarget::RenderTarget()
+	{
+	}
+	HRESULT RenderTarget::CreateRenderTarget()
+	{
+		HRESULT hr = S_OK;
+
+		D3D11_TEXTURE2D_DESC renderTargetTextureDesc;
+		renderTargetTextureDesc.Width = g_dxWindow->GetClientWidth();
+		renderTargetTextureDesc.Height = g_dxWindow->GetClientHeight();
+		renderTargetTextureDesc.MipLevels = 1;
+		renderTargetTextureDesc.ArraySize = 1;
+		renderTargetTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+		renderTargetTextureDesc.SampleDesc.Count = 1;
+		renderTargetTextureDesc.SampleDesc.Quality = 0;
+		renderTargetTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+		renderTargetTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+		renderTargetTextureDesc.CPUAccessFlags = 0;
+		renderTargetTextureDesc.MiscFlags = 0;
+
+		hr = g_dxWindow->GetDevice()->CreateTexture2D(&renderTargetTextureDesc, NULL, &_renderTargetTexture);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+
+		hr = g_dxWindow->GetDevice()->CreateRenderTargetView(_renderTargetTexture, NULL, &_renderTargetView);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+
+		return hr;
+	}
+	HRESULT RenderTarget::CreateDepthStencil()
+	{
+		HRESULT hr = S_OK;
+
+		D3D11_TEXTURE2D_DESC depthStencilTextureDesc;
+		depthStencilTextureDesc.Width = g_dxWindow->GetClientWidth();
+		depthStencilTextureDesc.Height = g_dxWindow->GetClientHeight();
+		depthStencilTextureDesc.MipLevels = 1;
+		depthStencilTextureDesc.ArraySize = 1;
+		depthStencilTextureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+		depthStencilTextureDesc.SampleDesc.Count = 1;
+		depthStencilTextureDesc.SampleDesc.Quality = 0;
+		depthStencilTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+		depthStencilTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+		depthStencilTextureDesc.CPUAccessFlags = 0;
+		depthStencilTextureDesc.MiscFlags = 0;
+
+		hr = g_dxWindow->GetDevice()->CreateTexture2D(&depthStencilTextureDesc, NULL, &_depthStencilTexture);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+
+		D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+		ZeroMemory(&depthStencilViewDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+		depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+		hr = g_dxWindow->GetDevice()->CreateDepthStencilView(_depthStencilTexture, &depthStencilViewDesc, &_depthStencilView);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+
+		return hr;
+	}
+	void RenderTarget::Clear()
+	{
+		float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		g_dxWindow->GetDeviceContext()->ClearRenderTargetView(_renderTargetView, color);
+		g_dxWindow->GetDeviceContext()->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	}
+	bool RenderTarget::Init()
+	{
+		HRESULT hr;
+
+		hr = CreateRenderTarget();
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+
+		hr = CreateDepthStencil();
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+
+		return true;
+	}
+	bool RenderTarget::Frame()
+	{
+		return true;
+	}
+	bool RenderTarget::Render()
+	{
+		return true;
+	}
+	bool RenderTarget::Release()
+	{
+		if (_renderTargetTexture)
+		{
+			_renderTargetTexture->Release();
+			_renderTargetTexture = nullptr;
+		}
+
+		if (_renderTargetTexture)
+		{
+			_renderTargetTexture->Release();
+			_renderTargetView = nullptr;
+		}
+
+		if (_depthStencilTexture)
+		{
+			_depthStencilTexture->Release();
+			_depthStencilTexture = nullptr;
+		}
+
+		if (_depthStencilView)
+		{
+			_depthStencilTexture->Release();
+			_depthStencilView = nullptr;
+		}
+
+		return true;
+	}
+	DXWindow::Screen::Screen()
+	{
+	}
+	HRESULT DXWindow::Screen::CreateRenderTargetView()
+	{
+		HRESULT hr = S_OK;
+		hr = g_dxWindow->GetDevice()->CreateShaderResourceView(_renderTargetTexture, NULL, &_renderedTargetView);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+	}
+	HRESULT DXWindow::Screen::CreateDepthStencilView()
+	{
+		HRESULT hr = S_OK;
+		D3D11_SHADER_RESOURCE_VIEW_DESC desc;
+		desc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		desc.Texture2D.MipLevels = 1;
+
+		hr = g_dxWindow->GetDevice()->CreateShaderResourceView(_renderedDepthStencilTexture, &desc, &_renderedDepthStencilView);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+	}
+	bool DXWindow::Screen::Init()
+	{
+		HRESULT hr;
+
+		hr = CreateVertexBuffer();
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+
+		hr = CreateIndexBuffer();
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+
+		hr = CreateRenderTargetView();
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+
+		hr = CreateDepthStencilView();
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+
+		return true;
+	}
+	bool DXWindow::Screen::Frame()
+	{
+		return true;
+	}
+	bool DXWindow::Screen::Render()
+	{
+		g_dxWindow->GetDeviceContext()->IASetVertexBuffers();
+		g_dxWindow->GetDeviceContext()->IASetIndexBuffer();
+		g_dxWindow->GetDeviceContext()->IASetInputLayout();
+		g_dxWindow->GetDeviceContext()->VSSetShader();
+		g_dxWindow->GetDeviceContext()->PSSetShader();
+		g_dxWindow->GetDeviceContext()->DrawIndexed();
+		return true;
+	}
+	bool DXWindow::Screen::Release()
+	{
+		if (_vertexBuffer)
+		{
+			_vertexBuffer->Release();
+			_vertexBuffer = nullptr;
+		}
+		if (_indexBuffer)
+		{
+			_indexBuffer->Release();
+			_indexBuffer = nullptr;
+		}
+		if (_renderTargetTexture)
+		{
+			_renderTargetTexture = nullptr;
+		}
+		if (_renderedTargetView)
+		{
+			_renderedTargetView->Release();
+		}
+		if (_renderedDepthStencilTexture)
+		{
+			_renderedDepthStencilTexture = nullptr;
+		}
+		if (_renderedDepthStencilView)
+		{
+			_renderedDepthStencilView->Release();
+			_renderedDepthStencilView = nullptr;
+		}
+		{
+			_vs._code->Release();
+			_vs._shader->Release();
+		}
+		{
+			_ps._code->Release();
+			_ps._shader->Release();
+		}
+
+		return true;
 	}
 }

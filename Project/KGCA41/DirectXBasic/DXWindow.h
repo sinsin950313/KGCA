@@ -16,8 +16,80 @@
 
 namespace SSB
 {
+	class RenderTarget : public Common
+	{
+	private:
+		ID3D11Texture2D* _renderTargetTexture;
+		ID3D11RenderTargetView* _renderTargetView;
+		ID3D11Texture2D* _depthStencilTexture;
+		ID3D11DepthStencilView* _depthStencilView;
+
+	public:
+		RenderTarget();
+
+	private:
+		HRESULT CreateRenderTarget();
+		HRESULT CreateDepthStencil();
+
+	public:
+		ID3D11Texture2D* GetRenderTargetTexture() { return _renderTargetTexture; }
+		ID3D11RenderTargetView* GetRenderTargetView() { return _renderTargetView; }
+		ID3D11Texture2D* GetDepthStencilTexture() { return _depthStencilTexture; }
+		ID3D11DepthStencilView* GetDepthStencilView() { return _depthStencilView; }
+		void Clear();
+
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Render() override;
+		bool Release() override;
+	};
+
 	class DXWindow : public BasicWindow
 	{
+		class Screen : public Common
+		{
+			struct Vertex
+			{
+				Float2 Position;
+				Float4 Color;
+				Float2 Texture;
+			};
+			struct Shader
+			{
+				ID3D11DeviceChild* _shader;
+				ID3DBlob* _code;
+			};
+			ID3D11Buffer* _vertexBuffer;
+			ID3D11Buffer* _indexBuffer;
+			ID3D11Texture2D* _renderTargetTexture;
+			ID3D11ShaderResourceView* _renderedTargetView;
+			ID3D11Texture2D* _renderedDepthStencilTexture;
+			ID3D11ShaderResourceView* _renderedDepthStencilView;
+			Shader _vs;
+			Shader _ps;
+
+		public:
+			Screen();
+
+		public:
+			void SetRenderTargetTexture(ID3D11Texture2D* texture) { _renderTargetTexture = texture; }
+			void SetDepthStencilTexture(ID3D11Texture2D* texture) { _renderedDepthStencilTexture = texture; }
+
+		private:
+			HRESULT CreateVertexBuffer();
+			HRESULT CreateIndexBuffer();
+			HRESULT CreateVertexShader();
+			HRESULT CreatePixelShader();
+			HRESULT CreateRenderTargetView();
+			HRESULT CreateDepthStencilView();
+
+		public:
+			bool Init() override;
+			bool Frame() override;
+			bool Render() override;
+			bool Release() override;
+		};
 	private:
 		IDXGIFactory* _dxgiFactory = nullptr;
 
@@ -34,6 +106,9 @@ namespace SSB
 
 		Camera _defaultCamera;
 		Camera* _mainCamera = nullptr;
+
+		RenderTarget* _renderTarget;
+		Screen _screen;
 
 	private:
 		HRESULT CreateDevice();

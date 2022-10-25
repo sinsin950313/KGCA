@@ -19,8 +19,8 @@ namespace SSB
 	{
 		float    h, w, Q;
 		float fNearPlane = 1.0f;
-		float fFarPlane = 100.0f;
-		float fovy = 3.141592f * 0.5f;
+		float fFarPlane = 1000.0f;
+		float fovy = 3.141592f * 0.25;
 		float Aspect = ((float)g_Window->GetClientWidth()) / g_Window->GetClientHeight();
 
 		h = 1 / tan(fovy * 0.5f);  // 1/tans(x) = cot(x)

@@ -2,6 +2,7 @@
 #include <math.h>
 #include <cassert>
 #include "DXStateManager.h"
+#include "CommonPath.h"
 
 namespace SSB
 {
@@ -184,12 +185,10 @@ namespace SSB
 
 	bool DXWindow::PreRender()
 	{
-		float color[4] = { 1, 1, 1, 1.0f };
-		_deviceContext->ClearRenderTargetView(_renderTargetView, color);
-
 		auto renderTargetView = _renderTarget->GetRenderTargetView();
 		GetDeviceContext()->OMSetRenderTargets(1, &renderTargetView, _renderTarget->GetDepthStencilView());
 		_renderTarget->Clear();
+		CreateViewPort();
 
 		return true;
 	}
@@ -208,6 +207,9 @@ namespace SSB
 	bool DXWindow::PostRender()
 	{
 		GetDeviceContext()->OMSetRenderTargets(1, &_renderTargetView, _depthStencilView);
+		float color[4] = { 1, 1, 1, 1.0f };
+		_deviceContext->ClearRenderTargetView(_renderTargetView, color);
+		CreateViewPort();
 
 		_screen.Render();
 
@@ -508,7 +510,7 @@ namespace SSB
 
 		if (_depthStencilView)
 		{
-			_depthStencilTexture->Release();
+			_depthStencilView->Release();
 			_depthStencilView = nullptr;
 		}
 
@@ -516,6 +518,143 @@ namespace SSB
 	}
 	DXWindow::Screen::Screen()
 	{
+	}
+	HRESULT DXWindow::Screen::CreateVertexBuffer()
+	{
+		HRESULT hr = S_OK;
+
+		std::vector<Vertex> vertexList;
+		vertexList.resize(4);
+		vertexList[0] = { {-1, 1}, {1, 1, 1, 1}, {0, 0} };
+		vertexList[1] = { {-1, -1}, {1, 1, 1, 1}, {0, 1} };
+		vertexList[2] = { {1, 1}, {1, 1, 1, 1}, {1, 0} };
+		vertexList[3] = { {1, -1}, {1, 1, 1, 1}, {1, 1} };
+
+		D3D11_BUFFER_DESC desc;
+		desc.ByteWidth = sizeof(Vertex);
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		desc.CPUAccessFlags = 0;
+		desc.MiscFlags = 0;
+		desc.StructureByteStride = 0;
+
+		D3D11_SUBRESOURCE_DATA subresource;
+		subresource.pSysMem = &vertexList.at(0);
+		hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &subresource, &_vertexBuffer);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+		return hr;
+	}
+	HRESULT DXWindow::Screen::CreateInputLayout()
+	{
+		HRESULT hr = S_OK;
+
+		D3D11_INPUT_ELEMENT_DESC desc[]
+		{
+			{ "Position", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 8, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		};
+
+		hr = g_dxWindow->GetDevice()->CreateInputLayout(desc, 3, _vsCode->GetBufferPointer(), _vsCode->GetBufferSize(), &_inputLayout);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+		return hr;
+	}
+	HRESULT DXWindow::Screen::CreateIndexBuffer()
+	{
+		HRESULT hr = S_OK;
+
+		std::vector<UINT> indexList;
+		indexList.resize(6);
+		indexList[0] = 0;
+		indexList[1] = 2;
+		indexList[2] = 1;
+		indexList[3] = 1;
+		indexList[4] = 2;
+		indexList[5] = 3;
+
+		D3D11_BUFFER_DESC desc;
+		desc.ByteWidth = sizeof(Vertex);
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+		desc.CPUAccessFlags = 0;
+		desc.MiscFlags = 0;
+		desc.StructureByteStride = 0;
+
+		D3D11_SUBRESOURCE_DATA subresource;
+		subresource.pSysMem = &indexList.at(0);
+		hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &subresource, &_indexBuffer);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+		return hr;
+	}
+	HRESULT DXWindow::Screen::CreateVertexShader()
+	{
+		HRESULT hr = S_OK;
+
+		ID3DBlob* code = nullptr;
+		ID3DBlob* errorcode = nullptr;
+
+		hr = D3DCompileFromFile((kShaderPath + L"Default2DVertexShader.hlsl").c_str(), NULL, NULL, "Main", "vs_5_0", 0, 0, &code, &errorcode);
+		if (FAILED(hr))
+		{
+			if (errorcode)
+			{
+				OutputDebugStringA((char*)errorcode->GetBufferPointer());
+				errorcode->Release();
+			}
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+
+		hr = g_dxWindow->GetDevice()->CreateVertexShader(code->GetBufferPointer(), code->GetBufferSize(), NULL, &_vertexShader);
+		_vsCode = code;
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+
+		return hr;
+	}
+	HRESULT DXWindow::Screen::CreatePixelShader()
+	{
+		HRESULT hr = S_OK;
+
+		ID3DBlob* code = nullptr;
+		ID3DBlob* errorcode = nullptr;
+
+		hr = D3DCompileFromFile((kShaderPath + L"Default2DPixelShader.hlsl").c_str(), NULL, NULL, "WithoutMask", "ps_5_0", 0, 0, &code, &errorcode);
+		if (FAILED(hr))
+		{
+			if (errorcode)
+			{
+				OutputDebugStringA((char*)errorcode->GetBufferPointer());
+				errorcode->Release();
+			}
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+
+		hr = g_dxWindow->GetDevice()->CreatePixelShader(code->GetBufferPointer(), code->GetBufferSize(), NULL, &_pixelShader);
+		_psCode = code;
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+
+		return hr;
 	}
 	HRESULT DXWindow::Screen::CreateRenderTargetView()
 	{
@@ -526,11 +665,13 @@ namespace SSB
 			assert(SUCCEEDED(hr));
 			return hr;
 		}
+		return hr;
 	}
 	HRESULT DXWindow::Screen::CreateDepthStencilView()
 	{
 		HRESULT hr = S_OK;
 		D3D11_SHADER_RESOURCE_VIEW_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 		desc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 		desc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		desc.Texture2D.MipLevels = 1;
@@ -541,6 +682,26 @@ namespace SSB
 			assert(SUCCEEDED(hr));
 			return hr;
 		}
+		return hr;
+	}
+	HRESULT DXWindow::Screen::CreateSampler()
+	{
+		HRESULT hr = S_OK;
+
+		D3D11_SAMPLER_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_SAMPLER_DESC));
+		desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+		desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+		desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+		hr = g_dxWindow->GetDevice()->CreateSamplerState(&desc, &_sampler);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return hr;
+		}
+		return hr;
 	}
 	bool DXWindow::Screen::Init()
 	{
@@ -574,6 +735,34 @@ namespace SSB
 			return false;
 		}
 
+		hr = CreateVertexShader();
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+
+		hr = CreatePixelShader();
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+
+		hr = CreateInputLayout();
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+
+		hr = CreateSampler();
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+
 		return true;
 	}
 	bool DXWindow::Screen::Frame()
@@ -582,12 +771,18 @@ namespace SSB
 	}
 	bool DXWindow::Screen::Render()
 	{
-		g_dxWindow->GetDeviceContext()->IASetVertexBuffers();
-		g_dxWindow->GetDeviceContext()->IASetIndexBuffer();
-		g_dxWindow->GetDeviceContext()->IASetInputLayout();
-		g_dxWindow->GetDeviceContext()->VSSetShader();
-		g_dxWindow->GetDeviceContext()->PSSetShader();
-		g_dxWindow->GetDeviceContext()->DrawIndexed();
+		UINT stride = sizeof(Vertex);
+		UINT offset = 0;
+		g_dxWindow->GetDeviceContext()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
+		g_dxWindow->GetDeviceContext()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		g_dxWindow->GetDeviceContext()->IASetInputLayout(_inputLayout);
+		g_dxWindow->GetDeviceContext()->VSSetShader(_vertexShader, NULL, 0);
+		g_dxWindow->GetDeviceContext()->PSSetShader(_pixelShader, NULL, 0);
+		g_dxWindow->GetDeviceContext()->PSSetSamplers(0, 1, &_sampler);
+		g_dxWindow->GetDeviceContext()->PSSetShaderResources(0, 1, &_renderedTargetView);
+		g_dxWindow->GetDeviceContext()->DrawIndexed(6, 0, 0);
+		ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+		g_dxWindow->GetDeviceContext()->PSSetShaderResources(0, 1, nullSRV);
 		return true;
 	}
 	bool DXWindow::Screen::Release()
@@ -619,13 +814,25 @@ namespace SSB
 			_renderedDepthStencilView->Release();
 			_renderedDepthStencilView = nullptr;
 		}
+		if (_vertexShader)
 		{
-			_vs._code->Release();
-			_vs._shader->Release();
+			_vertexShader->Release();
+			_vertexShader = nullptr;
 		}
+		if (_vsCode)
 		{
-			_ps._code->Release();
-			_ps._shader->Release();
+			_vsCode->Release();
+			_vsCode = nullptr;
+		}
+		if (_pixelShader)
+		{
+			_pixelShader->Release();
+			_pixelShader = nullptr;
+		}
+		if (_psCode)
+		{
+			_psCode->Release();
+			_psCode = nullptr;
 		}
 
 		return true;

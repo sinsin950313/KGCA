@@ -55,19 +55,18 @@ namespace SSB
 				Float4 Color;
 				Float2 Texture;
 			};
-			struct Shader
-			{
-				ID3D11DeviceChild* _shader;
-				ID3DBlob* _code;
-			};
+			ID3D11InputLayout* _inputLayout;
 			ID3D11Buffer* _vertexBuffer;
 			ID3D11Buffer* _indexBuffer;
 			ID3D11Texture2D* _renderTargetTexture;
 			ID3D11ShaderResourceView* _renderedTargetView;
 			ID3D11Texture2D* _renderedDepthStencilTexture;
 			ID3D11ShaderResourceView* _renderedDepthStencilView;
-			Shader _vs;
-			Shader _ps;
+			ID3D11VertexShader* _vertexShader;
+			ID3DBlob* _vsCode;
+			ID3D11PixelShader* _pixelShader;
+			ID3DBlob* _psCode;
+			ID3D11SamplerState* _sampler;
 
 		public:
 			Screen();
@@ -78,11 +77,13 @@ namespace SSB
 
 		private:
 			HRESULT CreateVertexBuffer();
+			HRESULT CreateInputLayout();
 			HRESULT CreateIndexBuffer();
 			HRESULT CreateVertexShader();
 			HRESULT CreatePixelShader();
 			HRESULT CreateRenderTargetView();
 			HRESULT CreateDepthStencilView();
+			HRESULT CreateSampler();
 
 		public:
 			bool Init() override;

@@ -14,7 +14,7 @@ namespace SSB
 		Quaternion(float x, float y, float z, float w);
 
 	public:
-		HMatrix33 GetRotateMatrix();
+		Matrix33 GetRotateMatrix();
 		Quaternion Conjugate();
 		float Length();
 		void Normalize();
@@ -27,6 +27,7 @@ namespace SSB
 
 	public:
 		static Quaternion GetRotateQuaternion(Vector3 axis, float radian);
+		static Quaternion GetRotateQuaternion(Vector3 from, Vector3 to);
 
 	public:
 		operator Float3();

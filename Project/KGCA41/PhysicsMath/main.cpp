@@ -189,4 +189,9 @@ int main()
 		Vector3 newVec = Rotate(vec, { 0, 1, 0 }, 3.14f / 2.0f);
 		int i = 0;
 	}
+	{
+		Quaternion quaternion = Quaternion::GetRotateQuaternion({ 1, 0, 0 }, { 0, 1, 0 });
+		auto to = quaternion * Vector3{ 1, 0, 0 } * quaternion.Conjugate();
+		int i = 0;
+	}
 }

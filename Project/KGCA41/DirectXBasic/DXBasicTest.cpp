@@ -54,8 +54,8 @@ namespace SSB
 
         _mCamera = new ModelViewCamera();
         _mCamera->Init();
-        //_mCamera->SetTarget(_object);
-        ChangeMainCamera(_dCamera);
+        _mCamera->SetTarget(_object);
+        ChangeMainCamera(_mCamera);
         GetMainCamera()->Move({ 0, 5, -10 });
 
         return false;
@@ -75,9 +75,9 @@ namespace SSB
 			_beforeTime = _timer->GetElapseTime();
 		//OutputDebugString((L"Time : " + std::to_wstring(_timer->GetElapseTime() / 1000.0f) + L" FPS : " + std::to_wstring(_fps) + L"\n").c_str());
 		}
-        _object->Rotate(0, 0.001f);
         _object->Frame();
         _terrain->Frame();
+        _objectBack->Rotate(0, 0.001f);
         _objectBack->Frame();
 
         return false;

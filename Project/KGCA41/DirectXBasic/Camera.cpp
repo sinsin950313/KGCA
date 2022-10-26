@@ -265,23 +265,35 @@ namespace SSB
         float rotX = 0;
         float rotY = 0;
 		float coeff = 0.0001f;
-		if (InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
+		//if (InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
+		//{
+		//	rotX += 10.0f * coeff;
+		//}
+		//if (InputManager::GetInstance().GetKeyState('S') == EKeyState::KEY_HOLD)
+		//{
+		//	rotX -= 10.0f * coeff;
+		//}
+		//if (InputManager::GetInstance().GetKeyState('A') == EKeyState::KEY_HOLD)
+		//{
+		//	rotY -= 10.0f * coeff;
+		//}
+		//if (InputManager::GetInstance().GetKeyState('D') == EKeyState::KEY_HOLD)
+		//{
+		//	rotY += 10.0f * coeff;
+		//}
+		if (InputManager::GetInstance().GetKeyState(VK_LBUTTON) == EKeyState::KEY_HOLD)
 		{
-			rotX += 10.0f * coeff;
+			rotY += InputManager::GetInstance().GetDeltaPosition().x * coeff * 10;
+			//rotX += InputManager::GetInstance().GetDeltaPosition().y * coeff * 10;
 		}
-		if (InputManager::GetInstance().GetKeyState('S') == EKeyState::KEY_HOLD)
+		if (rotX != 0 || rotY != 0)
 		{
-			rotX -= 10.0f * coeff;
+			Vector3 rotVector = HVector4{ 0, 0, -1 } * HMatrix44::RotateFromYAxis(rotY) * HMatrix44::RotateFromXAxis(rotX);
+			Quaternion quat = Quaternion::GetRotateQuaternion({ 0, 0, -1 }, rotVector);
+			Matrix33 mat = quat.GetRotateMatrix();
+			_matrix = _matrix * HMatrix44{ mat, Vector3{0, 0, 0} };
 		}
-		if (InputManager::GetInstance().GetKeyState('A') == EKeyState::KEY_HOLD)
-		{
-			rotY -= 10.0f * coeff;
-		}
-		if (InputManager::GetInstance().GetKeyState('D') == EKeyState::KEY_HOLD)
-		{
-			rotY += 10.0f * coeff;
-		}
-		Rotate(rotY, rotX);
+		//Rotate(rotY, rotX);
 		return false;
 	}
 	bool ModelViewCamera::Render()

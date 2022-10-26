@@ -9,13 +9,13 @@ namespace SSB
 		_f.z = z;
 		_f.w = w;
 	}
-	HMatrix33 SSB::Quaternion::GetRotateMatrix()
+	Matrix33 SSB::Quaternion::GetRotateMatrix()
 	{
 		float q1 = _f.e[0];
 		float q2 = _f.e[1];
 		float q3 = _f.e[2];
 		float q4 = _f.e[3];
-		return HMatrix33{
+		return Matrix33{
 			1 - 2 * q2 * q2 - 2 * q3 * q3, 2 * q1 * q2 + 2 * q3 * q4, 2 * q1 * q3 - 2 * q2 * q4,
 			2 * q1 * q2 - 2 * q3 * q4, 1 - 2 * q1 * q1 - 2 * q3 * q3, 2 * q2 * q3 + 2 * q1 * q4,
 			2 * q1 * q3 + 2 * q2 * q4, 2 * q2 * q3 - 2 * q1 * q4, 1 - 2 * q1 * q1 - 2 * q2 * q2
@@ -80,6 +80,12 @@ namespace SSB
 		float sinVal = sin(radian);
 		float cosVal = cos(radian);
 		return Quaternion{ axis.GetX() * sinVal, axis.GetY() * sinVal, axis.GetZ() * sinVal, cosVal };
+	}
+	Quaternion Quaternion::GetRotateQuaternion(Vector3 from, Vector3 to)
+	{
+		float radian = acos(from.Dot(to));
+		Vector3 axis = from.Cross(to);
+		return GetRotateQuaternion(axis, radian);
 	}
 	Quaternion::operator Float3()
 	{

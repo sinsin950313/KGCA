@@ -124,6 +124,7 @@ namespace SSB
 
 	public:
 		DXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
+		~DXWindow();
 
 	private:
 		HRESULT UpdateResize() override;

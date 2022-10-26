@@ -120,6 +120,12 @@ namespace SSB
 	}
 	bool Model::Release()
 	{
+		_vertexList.clear();
+		_indexList.clear();
+		if (_sprite)
+		{
+			_sprite = nullptr;
+		}
 		return false;
 	}
 }

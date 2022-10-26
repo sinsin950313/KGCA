@@ -96,12 +96,6 @@ namespace SSB
 		_constantData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
 		_constantData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
 
-		//auto matrix = HMatrix44();
-		//matrix.Identity();
-		//_constantData.World = matrix;
-		//_constantData.View = matrix;
-		//_constantData.Projection = matrix;
-
 		g_dxWindow->GetDeviceContext()->UpdateSubresource(_constantBuffer, 0, nullptr, &_constantData, 0, 0);
 	}
 	void DXObject::Move(Vector3 vec)
@@ -130,7 +124,6 @@ namespace SSB
 	bool DXObject::Init()
     {
         _model->Init();
-        //_model->Build();
 
         CreateVertexBuffer();
         CreateIndexBuffer();
@@ -163,14 +156,17 @@ namespace SSB
 		if (_vertexBuffer)
         {
             _vertexBuffer->Release();
+			_vertexBuffer = nullptr;
         }
         if (_indexBuffer)
         {
             _indexBuffer->Release();
+			_indexBuffer = nullptr;
         }
         if (_vertexLayout)
         {
             _vertexLayout->Release();
+			_vertexLayout = nullptr;
         }
 		_vs = nullptr;
 		_ps = nullptr;
@@ -180,6 +176,11 @@ namespace SSB
             delete _model;
             _model = nullptr;
         }
+		if (_constantBuffer)
+		{
+			_constantBuffer->Release();
+			_constantBuffer = nullptr;
+		}
 
         return true;
     }
@@ -222,38 +223,40 @@ namespace SSB
 		//	dc->DrawIndexed(_direction->GetIndexList().size(), 0, 0);
 		//}
 
-		// Move to Model Frame
-		//HMatrix44 view = g_dxWindow->GetMainCamera()->GetViewMatrix();
-		//HMatrix44 projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix();
-
-		// Use Constant Buffer instead
-		auto& vertexList = _model->GetVertexList();
-		std::vector<Vertex> update;
-		for (int i = 0; i < vertexList.size(); ++i)
 		{
-			HVector4 position{ vertexList[i].position, 1.0f };
-			//position = position * _matrix;
-			//position = position * view;
-			//position = position * projection;
-			//position.Normalize();
+			// Move to Model Frame
+			//HMatrix44 view = g_dxWindow->GetMainCamera()->GetViewMatrix();
+			//HMatrix44 projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix();
 
-			Vertex vertex = vertexList[i];
-			memcpy(&vertex.position, &position, sizeof(Float4));
-			update.push_back(vertex);
+			// Use Constant Buffer instead
+			auto& vertexList = _model->GetVertexList();
+			std::vector<Vertex> update;
+			for (int i = 0; i < vertexList.size(); ++i)
+			{
+				HVector4 position{ vertexList[i].position, 1.0f };
+				//position = position * _matrix;
+				//position = position * view;
+				//position = position * projection;
+				//position.Normalize();
+
+				Vertex vertex = vertexList[i];
+				memcpy(&vertex.position, &position, sizeof(Float4));
+				update.push_back(vertex);
+			}
+			g_dxWindow->GetDeviceContext()->UpdateSubresource(_vertexBuffer, NULL, NULL, &update.at(0), 0, 0);
+
+			dc->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
+			dc->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+			dc->IASetInputLayout(_vertexLayout);
+			dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
+			dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
+			dc->PSSetShaderResources(0, 1, _model->GetSprite()->GetResource()->GetShaderResourceView());
+			ID3D11SamplerState* ss = _model->GetSprite()->GetSamplerState();
+			dc->PSSetSamplers(0, 1, &ss);
+			dc->PSSetShaderResources(1, 1, _model->GetSprite()->GetMaskResource()->GetShaderResourceView());
+			dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
+			dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
+			dc->DrawIndexed(_model->GetIndexList().size(), 0, 0);
 		}
-		g_dxWindow->GetDeviceContext()->UpdateSubresource(_vertexBuffer, NULL, NULL, &update.at(0), 0, 0);
-
-		dc->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
-		dc->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		dc->IASetInputLayout(_vertexLayout);
-		dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
-		dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
-		dc->PSSetShaderResources(0, 1, _model->GetSprite()->GetResource()->GetShaderResourceView());
-		ID3D11SamplerState* ss = _model->GetSprite()->GetSamplerState();
-		dc->PSSetSamplers(0, 1, &ss);
-		dc->PSSetShaderResources(1, 1, _model->GetSprite()->GetMaskResource()->GetShaderResourceView());
-		dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
-		dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
-		dc->DrawIndexed(_model->GetIndexList().size(), 0, 0);
     }
 }

@@ -54,6 +54,11 @@ namespace SSB
 		_mainCamera = &_defaultCamera;
 	}
 
+	DXWindow::~DXWindow()
+	{
+		Release();
+	}
+
 	HRESULT DXWindow::UpdateResize()
 	{
 		if (_device == nullptr)
@@ -163,23 +168,64 @@ namespace SSB
 
 	bool DXWindow::Release()
 	{
-		if (_dxgiFactory) _dxgiFactory->Release();
+		if (_dxgiFactory)
+		{
+			_dxgiFactory->Release();
+			_dxgiFactory = nullptr;
+		}
 
-		if (_device) _device->Release();
-		if (_deviceContext) _deviceContext->Release();
-		if (_swapChain) _swapChain->Release();
-		if (_renderTargetView) _renderTargetView->Release();
+		if (_device)
+		{
+			_device->Release();
+			_device = nullptr;
+		}
+		if (_deviceContext)
+		{
+			_deviceContext->Release();
+			_deviceContext = nullptr;
+		}
+		if (_swapChain)
+		{
+			_swapChain->Release();
+			_swapChain = nullptr;
+		}
+		if (_renderTargetView)
+		{
+			_renderTargetView->Release();
+			_renderTargetView = nullptr;
+		}
 
-		if (_factory2D) _factory2D->Release();
-		if (_writeFactory) _writeFactory->Release();
-		if (_renderTarget2D) _renderTarget2D->Release();
-		if (_depthStencilView) _depthStencilView->Release();
+		if (_factory2D)
+		{
+			_factory2D->Release();
+			_factory2D = nullptr;
+		}
+		if (_writeFactory)
+		{
+			_writeFactory->Release();
+			_writeFactory = nullptr;
+		}
+		if (_renderTarget2D)
+		{
+			_renderTarget2D->Release();
+			_renderTarget2D = nullptr;
+		}
+		if (_depthStencilView)
+		{
+			_depthStencilView->Release();
+			_depthStencilView = nullptr;
+		}
 
 		_mainCamera = nullptr;
 
 		DXStateManager::GetInstance().Release();
 
-		if(_renderTarget)_renderTarget->Release();
+		if (_renderTarget)
+		{
+			_renderTarget->Release();
+			delete _renderTarget;
+			_renderTarget = nullptr;
+		}
 		_screen.Release();
 
 		return true;
@@ -497,9 +543,9 @@ namespace SSB
 			_renderTargetTexture = nullptr;
 		}
 
-		if (_renderTargetTexture)
+		if (_renderTargetView)
 		{
-			_renderTargetTexture->Release();
+			_renderTargetView->Release();
 			_renderTargetView = nullptr;
 		}
 
@@ -808,6 +854,7 @@ namespace SSB
 		if (_renderedTargetView)
 		{
 			_renderedTargetView->Release();
+			_renderedTargetView = nullptr;
 		}
 		if (_renderedDepthStencilTexture)
 		{
@@ -837,6 +884,16 @@ namespace SSB
 		{
 			_psCode->Release();
 			_psCode = nullptr;
+		}
+		if (_inputLayout)
+		{
+			_inputLayout->Release();
+			_inputLayout = nullptr;
+		}
+		if (_sampler)
+		{
+			_sampler->Release();
+			_sampler = nullptr;
 		}
 
 		return true;

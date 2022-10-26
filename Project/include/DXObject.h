@@ -41,6 +41,7 @@ namespace SSB
 
 	public:
 		DXObject() { }
+		~DXObject() { Release(); }
 
 	private:
 		bool CreateVertexBuffer();

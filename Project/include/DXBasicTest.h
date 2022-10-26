@@ -20,6 +20,7 @@ namespace SSB
 
 	public:
 		DXBasicTest(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }
+		~DXBasicTest();
 
 	public:
 		bool Init() override;

@@ -24,6 +24,7 @@ namespace SSB
 
 	public:
 		Model() : _sprite(SpriteLoader::GetInstance().GetDefaultSprite()) { }
+		~Model() { Release(); }
 
 	public:
 		virtual void Build() = 0;

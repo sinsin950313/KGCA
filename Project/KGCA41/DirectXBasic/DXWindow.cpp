@@ -125,6 +125,8 @@ namespace SSB
 
 		UpdateResize();
 
+		_mainCamera->Init();
+
 		return true;
 	}
 
@@ -185,10 +187,12 @@ namespace SSB
 
 	bool DXWindow::PreRender()
 	{
+		float color[4] = { 1, 1, 1, 1.0f };
+		_deviceContext->ClearRenderTargetView(_renderTargetView, color);
+
 		auto renderTargetView = _renderTarget->GetRenderTargetView();
 		GetDeviceContext()->OMSetRenderTargets(1, &renderTargetView, _renderTarget->GetDepthStencilView());
 		_renderTarget->Clear();
-		CreateViewPort();
 
 		return true;
 	}
@@ -207,9 +211,6 @@ namespace SSB
 	bool DXWindow::PostRender()
 	{
 		GetDeviceContext()->OMSetRenderTargets(1, &_renderTargetView, _depthStencilView);
-		float color[4] = { 1, 1, 1, 1.0f };
-		_deviceContext->ClearRenderTargetView(_renderTargetView, color);
-		CreateViewPort();
 
 		_screen.Render();
 
@@ -531,7 +532,7 @@ namespace SSB
 		vertexList[3] = { {1, -1}, {1, 1, 1, 1}, {1, 1} };
 
 		D3D11_BUFFER_DESC desc;
-		desc.ByteWidth = sizeof(Vertex);
+		desc.ByteWidth = sizeof(Vertex) * 4;
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 		desc.CPUAccessFlags = 0;
@@ -575,10 +576,10 @@ namespace SSB
 		indexList.resize(6);
 		indexList[0] = 0;
 		indexList[1] = 2;
-		indexList[2] = 1;
-		indexList[3] = 1;
-		indexList[4] = 2;
-		indexList[5] = 3;
+		indexList[2] = 3;
+		indexList[3] = 0;
+		indexList[4] = 3;
+		indexList[5] = 1;
 
 		D3D11_BUFFER_DESC desc;
 		desc.ByteWidth = sizeof(Vertex);
@@ -781,8 +782,11 @@ namespace SSB
 		g_dxWindow->GetDeviceContext()->PSSetSamplers(0, 1, &_sampler);
 		g_dxWindow->GetDeviceContext()->PSSetShaderResources(0, 1, &_renderedTargetView);
 		g_dxWindow->GetDeviceContext()->DrawIndexed(6, 0, 0);
+
+		// It is Ok to clear PSShaderResourceView after draw
 		ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
 		g_dxWindow->GetDeviceContext()->PSSetShaderResources(0, 1, nullSRV);
+
 		return true;
 	}
 	bool DXWindow::Screen::Release()

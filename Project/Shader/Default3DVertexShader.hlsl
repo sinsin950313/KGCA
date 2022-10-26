@@ -12,7 +12,7 @@ struct VS_out
 	float2 t : TEXCOORD0;
 };
 
-cbuffer ConstantData : register(b0)
+cbuffer Camera : register(b0)
 {
 	matrix g_World : packoffset(c0);
 	matrix g_View : packoffset(c4);

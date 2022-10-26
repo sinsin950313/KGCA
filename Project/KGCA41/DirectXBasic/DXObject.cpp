@@ -95,6 +95,13 @@ namespace SSB
 		_constantData.World = GetMatrix().Transpose();
 		_constantData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
 		_constantData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
+
+		//auto matrix = HMatrix44();
+		//matrix.Identity();
+		//_constantData.World = matrix;
+		//_constantData.View = matrix;
+		//_constantData.Projection = matrix;
+
 		g_dxWindow->GetDeviceContext()->UpdateSubresource(_constantBuffer, 0, nullptr, &_constantData, 0, 0);
 	}
 	void DXObject::Move(Vector3 vec)
@@ -211,13 +218,13 @@ namespace SSB
 		//	ID3D11SamplerState* ss = _direction->GetSprite()->GetSamplerState();
 		//	dc->PSSetSamplers(0, 1, &ss);
 		//	dc->PSSetShaderResources(1, 1, _direction->GetSprite()->GetMaskResource()->GetShaderResourceView());
-		//	dc->DrawIndexed(_direction->GetIndexList().size(), 0, 0);
 		//	dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
+		//	dc->DrawIndexed(_direction->GetIndexList().size(), 0, 0);
 		//}
 
 		// Move to Model Frame
-		HMatrix44 view = g_dxWindow->GetMainCamera()->GetViewMatrix();
-		HMatrix44 projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix();
+		//HMatrix44 view = g_dxWindow->GetMainCamera()->GetViewMatrix();
+		//HMatrix44 projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix();
 
 		// Use Constant Buffer instead
 		auto& vertexList = _model->GetVertexList();
@@ -245,8 +252,8 @@ namespace SSB
 		ID3D11SamplerState* ss = _model->GetSprite()->GetSamplerState();
 		dc->PSSetSamplers(0, 1, &ss);
 		dc->PSSetShaderResources(1, 1, _model->GetSprite()->GetMaskResource()->GetShaderResourceView());
-		dc->DrawIndexed(_model->GetIndexList().size(), 0, 0);
 		dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
 		dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
+		dc->DrawIndexed(_model->GetIndexList().size(), 0, 0);
     }
 }

@@ -48,11 +48,11 @@ namespace SSB
 	}
 	bool Camera::Init()
 	{
-		return false;
+		return true;
 	}
 	bool Camera::Frame()
 	{
-		return false;
+		return true;
 	}
 	bool Camera::Render()
 	{
@@ -148,10 +148,12 @@ namespace SSB
 	}
 	bool DebugCamera::Init()
 	{
+		Camera::Init();
 		return false;
 	}
 	bool DebugCamera::Frame()
 	{
+		Camera::Frame();
 		Float3 vPos{ 0, 10, 0 };
         float rotX = 0;
         float rotY = 0;
@@ -207,10 +209,12 @@ namespace SSB
 	}
 	bool DebugCamera::Render()
 	{
+		Camera::Render();
 		return false;
 	}
 	bool DebugCamera::Release()
 	{
+		Camera::Release();
 		return false;
 	}
 
@@ -252,10 +256,12 @@ namespace SSB
 	}
 	bool ModelViewCamera::Init()
 	{
+		Camera::Init();
 		return false;
 	}
 	bool ModelViewCamera::Frame()
 	{
+		Camera::Frame();
         float rotX = 0;
         float rotY = 0;
 		float coeff = 0.0001f;
@@ -280,10 +286,12 @@ namespace SSB
 	}
 	bool ModelViewCamera::Render()
 	{
+		Camera::Render();
 		return false;
 	}
 	bool ModelViewCamera::Release()
 	{
+		Camera::Release();
 		return false;
 	}
 }

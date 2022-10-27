@@ -3,6 +3,7 @@
 #include <cassert>
 #include "DXStateManager.h"
 #include "CommonPath.h"
+#include "InputManager.h"
 
 namespace SSB
 {
@@ -146,6 +147,11 @@ namespace SSB
 		_renderTarget->Frame();
 		_screen.Frame();
 
+		if (InputManager::GetInstance().GetKeyState('V') == EKeyState::KEY_PRESSED)
+		{
+			_showWire = !_showWire;
+		}
+
 		return true;
 	}
 
@@ -240,6 +246,11 @@ namespace SSB
 		GetDeviceContext()->OMSetRenderTargets(1, &renderTargetView, _renderTarget->GetDepthStencilView());
 		_renderTarget->Clear();
 
+		if(_showWire)
+		{
+			_deviceContext->RSSetState(DXStateManager::GetInstance().GetRasterizerState(DXStateManager::kDefaultWireFrameRasterizer));
+		}
+
 		return true;
 	}
 
@@ -256,6 +267,11 @@ namespace SSB
 
 	bool DXWindow::PostRender()
 	{
+		if (_showWire)
+		{
+			_deviceContext->RSSetState(DXStateManager::GetInstance().GetRasterizerState(DXStateManager::kDefaultSolidRasterizer));
+		}
+
 		GetDeviceContext()->OMSetRenderTargets(1, &_renderTargetView, _depthStencilView);
 
 		_screen.Render();

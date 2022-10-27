@@ -55,7 +55,7 @@ namespace SSB
         _mCamera = new ModelViewCamera();
         _mCamera->Init();
         _mCamera->SetTarget(_object);
-        ChangeMainCamera(_mCamera);
+        ChangeMainCamera(_dCamera);
         GetMainCamera()->Move({ 0, 5, -10 });
 
         return false;

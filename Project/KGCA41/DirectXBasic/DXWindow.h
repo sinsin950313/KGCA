@@ -110,6 +110,7 @@ namespace SSB
 
 		RenderTarget* _renderTarget;
 		Screen _screen;
+		bool _showWire = false;
 
 	private:
 		HRESULT CreateDevice();

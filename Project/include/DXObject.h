@@ -41,7 +41,7 @@ namespace SSB
 
 	public:
 		DXObject() { }
-		~DXObject() { Release(); }
+		virtual ~DXObject() { Release(); }
 
 	private:
 		bool CreateVertexBuffer();
@@ -66,5 +66,10 @@ namespace SSB
 		bool Release() override;
 		void Draw(ID3D11DeviceContext* dc) override;
 		void UpdateParentData(Position2D parentCenter, float parentRadian) override { }
+	};
+
+	class Map : public DXObject
+	{
+
 	};
 }

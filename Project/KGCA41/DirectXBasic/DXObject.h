@@ -41,7 +41,7 @@ namespace SSB
 
 	public:
 		DXObject() { }
-		~DXObject() { Release(); }
+		virtual ~DXObject() { Release(); }
 
 	private:
 		bool CreateVertexBuffer();
@@ -49,6 +49,9 @@ namespace SSB
 		bool CreateVertexLayout();
 		bool CreateConstantBuffer();
 		void UpdateConstantBuffer();
+
+	protected:
+		Model* GetModel() { return _model; }
 
 	public:
 		void SetModel(Model* model) { _model = model; }

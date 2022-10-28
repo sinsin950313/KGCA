@@ -50,6 +50,9 @@ namespace SSB
 		bool CreateConstantBuffer();
 		void UpdateConstantBuffer();
 
+	protected:
+		Model* GetModel() { return _model; }
+
 	public:
 		void SetModel(Model* model) { _model = model; }
 		void SetVertexShader(Shader* shader) { _vs = shader; }
@@ -66,10 +69,5 @@ namespace SSB
 		bool Release() override;
 		void Draw(ID3D11DeviceContext* dc) override;
 		void UpdateParentData(Position2D parentCenter, float parentRadian) override { }
-	};
-
-	class Map : public DXObject
-	{
-
 	};
 }

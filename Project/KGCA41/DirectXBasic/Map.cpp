@@ -27,5 +27,6 @@ namespace SSB
 		//{
 		//	node->Render();
 		//}
+		return true;
 	}
 }

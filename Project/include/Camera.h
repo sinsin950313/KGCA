@@ -23,7 +23,6 @@ namespace SSB
 
 	private:
 		void GetPlane(Float4 ret[6]);
-		bool IsVisible(OBB data);
 
 	public:
 		HMatrix44 GetProjectionMatrix();
@@ -34,7 +33,7 @@ namespace SSB
 		//void SetPosition(Vector3 position);
 		HMatrix44 GetMatrix() { return _matrix; }
 		bool IsRender(DXObject* object);
-		bool IsRender(Map* map);
+		bool GetCollideState(OBB data);
 
 	public:
 		virtual HMatrix44 GetViewMatrix();

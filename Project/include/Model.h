@@ -72,11 +72,16 @@ namespace SSB
 		//float tileY = 10.0f;
 		float tileX = 1.0f;
 		float tileY = 1.0f;
+		unsigned int _widthVertexCount = 16;
+		unsigned int _heightVertexCount = 16;
+
+	private:
+		void Make(unsigned int widthVertexCount, unsigned int heightVertexCount);
 
 	public:
-		void Make(unsigned int widthVertexCount, unsigned int heightVertexCount);
+		void SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount) { _widthVertexCount = widthVertexCount; _heightVertexCount = heightVertexCount; }
 		
 	public:
-		void Build() override { Make(16 + 1, 16 + 1); }
+		void Build() override { Make(_widthVertexCount + 1, _heightVertexCount + 1); }
 	};
 }

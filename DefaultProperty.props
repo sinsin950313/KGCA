@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\$(ProjectName)</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\$(ProjectName)</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include;$(ProjectDir)\..\..\include\DXTK;$(ProjectDir)\..\..\include\FBX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Lib>
+      <OutputFile>$(ProjectDir)$(TargetName)$(TargetExt)</OutputFile>
+    </Lib>
+    <Link>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib\Debug;$(ProjectDir)\..\..\lib\Debug\FBX;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>PhysicsMath.lib;Volume.lib;BasicWindow.lib;fmod_vc.lib;WindowUtility.lib;DirectXBasic.lib;DirectXTK.lib;d3dcompiler.lib;DXGameElements.lib;DXCore.lib;libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+    <PostBuildEvent>
+      <Command>if not exist "$(ProjectDir)\..\..\include\" mkdir "$(ProjectDir)\..\..\include\"
+
+copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
+
+if not exist "$(ProjectDir)\..\..\lib\Debug\" mkdir "$(ProjectDir)\..\..\lib\Debug"
+
+if exist "$(ProjectDir)\$(ProjectName).lib" copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\..\lib\Debug\"
+if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(ProjectDir)\..\..\lib\Debug\"</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup />
+</Project>

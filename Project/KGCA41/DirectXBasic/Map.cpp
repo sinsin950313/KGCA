@@ -22,10 +22,10 @@ namespace SSB
 	}
 	bool Map::Render()
 	{
-		std::vector<Node*> drawNodeList = _root->GetDrawNodeList();
-		for (auto node : drawNodeList)
-		{
-			node->Render();
-		}
+		//std::vector<Node*> drawNodeList = _root->GetDrawNodeList();
+		//for (auto node : drawNodeList)
+		//{
+		//	node->Render();
+		//}
 	}
 }

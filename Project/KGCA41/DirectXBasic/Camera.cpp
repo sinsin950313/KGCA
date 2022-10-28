@@ -44,7 +44,7 @@ namespace SSB
 			ret[5] = makePlane(frustum[4], frustum[0], frustum[6]);
 		}
 	}
-	bool Camera::IsCollide(OBB data)
+	bool Camera::GetCollideState(OBB data)
 	{
 		Float4 planes[6];
 		GetPlane(planes);
@@ -138,7 +138,7 @@ namespace SSB
 	bool Camera::IsRender(DXObject* object)
 	{
 		OBB obbData = object->GetOBB();
-		return IsCollide(obbData);
+		return GetCollideState(obbData);
 	}
 
 	void DebugCamera::Move(float deltaZ, float deltaX)

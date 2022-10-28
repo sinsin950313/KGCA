@@ -39,15 +39,15 @@ namespace SSB
         //_objectBack->Init();
         //_objectBack->Move({ 0, 0, 5 });
 
-        _terrain = new Map();
-        Terrain* terrain = new Terrain;
-        SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"KGCABK.bmp", L"Background", { 0, 0, 1024, 768 });
-        terrain->SetSprite(SpriteLoader::GetInstance().Load(L"KGCABK.bmp", L"Background", DXStateManager::kDefaultWrapSample));
-        _terrain->SetModel(terrain);
-        _terrain->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
-        _terrain->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Main", "ps_5_0"));
-        _terrain->Init();
-        _terrain->Move({ 0, 0, 0 });
+        //_terrain = new Map();
+        //Terrain* terrain = new Terrain;
+        //SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"KGCABK.bmp", L"Background", { 0, 0, 1024, 768 });
+        //terrain->SetSprite(SpriteLoader::GetInstance().Load(L"KGCABK.bmp", L"Background", DXStateManager::kDefaultWrapSample));
+        //_terrain->SetModel(terrain);
+        //_terrain->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+        //_terrain->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Main", "ps_5_0"));
+        //_terrain->Init();
+        //_terrain->Move({ 0, 0, 0 });
 
         _dCamera = new DebugCamera();
         _dCamera->Init();
@@ -76,7 +76,7 @@ namespace SSB
 		//OutputDebugString((L"Time : " + std::to_wstring(_timer->GetElapseTime() / 1000.0f) + L" FPS : " + std::to_wstring(_fps) + L"\n").c_str());
 		}
         //_object->Frame();
-        _terrain->Frame();
+        //_terrain->Frame();
         //_objectBack->Rotate(0, 0.001f);
         //_objectBack->Frame();
 
@@ -97,12 +97,12 @@ namespace SSB
         //    delete _objectBack;
         //    _objectBack = nullptr;
         //}
-        if (_terrain)
-        {
-            _terrain->Release();
-            delete _terrain;
-            _terrain = nullptr;
-        }
+        //if (_terrain)
+        //{
+        //    _terrain->Release();
+        //    delete _terrain;
+        //    _terrain = nullptr;
+        //}
         if(_dCamera)
         {
             _dCamera->Release();
@@ -131,7 +131,7 @@ namespace SSB
     {
         DXWindow::PreRender();
         //_object->Render();
-        _terrain->Render();
+        //_terrain->Render();
         //_objectBack->Render();
         return true;
     }

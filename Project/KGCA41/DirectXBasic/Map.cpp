@@ -143,10 +143,12 @@ namespace SSB
 	bool Map::Init()
     {
 		CreateVertex();
-		_root = new Node(*this, 0, , , _indexList.size(), 0);
+		_root = new Node(*this, 0, _widthVertexCount - 1, _widthVertexCount * (_heightVertexCount - 1), _widthVertexCount * _heightVertexCount - 1, 0);
         CreateVertexBuffer();
         CreateVertexLayout();
 		CreateConstantBuffer();
+
+		_root->Init();
 
         return true;
     }
@@ -182,6 +184,13 @@ namespace SSB
 			_constantBuffer = nullptr;
 		}
 
+		if (_root)
+		{
+			_root->Release();
+			delete _root;
+			_root = nullptr;
+		}
+
         return true;
     }
     void Map::Draw(ID3D11DeviceContext* dc)
@@ -209,6 +218,56 @@ namespace SSB
 		}
 		_drawingNodeList.clear();
 	}
+	Map::Node::Node(Map& map, int leftTop, int rightTop, int leftBottom, int rightBottom, int depth) 
+		: _map(map), _leftTop(leftTop), _leftBottom(leftBottom), _rightTop(rightTop), _rightBottom(rightBottom), _depth(depth)
+	{
+		_center = (leftTop + leftBottom + rightTop + rightBottom) / 4;
+
+		if (depth  + 1< map._layerDepth && 2 < rightTop - leftTop)
+		{
+			int leftCenter = (leftTop + leftBottom) / 2;
+			int rightCenter = (rightTop + rightBottom) / 2;
+			int topCenter = (leftTop + rightTop) / 2;
+			int bottomCenter = (leftBottom + rightBottom) / 2;
+
+			_nodes.resize(4);
+			_nodes[0] = new Node(map, leftTop, topCenter, leftCenter, _center, depth + 1);
+			_nodes[1] = new Node(map, topCenter, rightTop, _center, rightCenter, depth + 1);
+			_nodes[2] = new Node(map, leftCenter, _center, leftBottom, bottomCenter, depth + 1);
+			_nodes[3] = new Node(map, _center, rightCenter, bottomCenter, rightBottom, depth + 1);
+		}
+
+		_indexList.resize(6);
+		_indexList[0] = leftTop;
+		_indexList[1] = rightTop;
+		_indexList[2] = leftBottom;
+
+		_indexList[3] = leftBottom;
+		_indexList[4] = rightTop;
+		_indexList[5] = rightBottom;
+
+		auto vLeftTop = _map._vertexList[leftTop];
+		auto vRightBottom = _map._vertexList[rightBottom];
+		auto vLeftBottom = _map._vertexList[leftBottom];
+		auto vRightTop = _map._vertexList[rightTop];
+		_width = vRightBottom.position.x - vLeftTop.position.x;
+		_height = vRightBottom.position.y - vLeftTop.position.y;
+		_depth = vLeftTop.position.z - vRightBottom.position.z;
+	}
+	Map::Node::operator OBB()
+	{
+		HMatrix44 matrix = _map.GetMatrix();
+		matrix = matrix.Translate(_map._vertexList[_center].position);
+		OBB data
+		{
+			matrix,
+			_width,
+			_height,
+			_depth
+		};
+
+		return data;
+	}
 	bool Map::Node::CreateIndexBuffer()
 	{
 		D3D11_BUFFER_DESC bd;
@@ -228,9 +287,41 @@ namespace SSB
 		}
         return true;
 	}
+	void Map::Node::Check(std::vector<Node*>& drawingNodeList, Camera* camera)
+	{
+		auto state = camera->GetCollideState(*this);
+		if (state != ECollideState::Out)
+		{
+			if (state == ECollideState::Cross)
+			{
+				if (!_nodes.empty())
+				{
+					for (auto node : _nodes)
+					{
+						node->Check(drawingNodeList, camera);
+					}
+				}
+				else
+				{
+					drawingNodeList.push_back(this);
+				}
+			}
+			else
+			{
+				drawingNodeList.push_back(this);
+			}
+		}
+	}
 	bool Map::Node::Init()
 	{
 		CreateIndexBuffer();
+		if (!_nodes.empty())
+		{
+			for (auto node : _nodes)
+			{
+				node->Init();
+			}
+		}
 		return true;
 	}
 	bool Map::Node::Frame()
@@ -243,6 +334,19 @@ namespace SSB
 	}
 	bool Map::Node::Release()
 	{
-		return false;
+		if (_indexBuffer)
+		{
+			_indexBuffer->Release();
+			_indexBuffer = nullptr;
+		}
+
+		for (auto node : _nodes)
+		{
+			node->Release();
+			delete node;
+		}
+		_nodes.clear();
+
+		return true;
 	}
 }

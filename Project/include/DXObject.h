@@ -14,16 +14,15 @@ namespace SSB
 		float Height;
 		float Depth;
 	};
+	struct ConstantData
+	{
+		Float44 World;
+		Float44 View;
+		Float44 Projection;
+	};
 
 	class DXObject : public DXDrawableInterface
 	{
-	private:
-		struct ConstantData
-		{
-			Float44 World;
-			Float44 View;
-			Float44 Projection;
-		};
 	private:
 		//Model* _direction;
 		//ID3D11Buffer* _directionVertexBuffer;
@@ -50,6 +49,9 @@ namespace SSB
 		bool CreateConstantBuffer();
 		void UpdateConstantBuffer();
 
+	protected:
+		Model* GetModel() { return _model; }
+
 	public:
 		void SetModel(Model* model) { _model = model; }
 		void SetVertexShader(Shader* shader) { _vs = shader; }
@@ -66,10 +68,5 @@ namespace SSB
 		bool Release() override;
 		void Draw(ID3D11DeviceContext* dc) override;
 		void UpdateParentData(Position2D parentCenter, float parentRadian) override { }
-	};
-
-	class Map : public DXObject
-	{
-
 	};
 }

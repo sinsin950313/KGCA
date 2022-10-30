@@ -7,6 +7,7 @@
 
 namespace SSB
 {
+	enum class ECollideState { In, Cross, Out };
 	class Camera : public Common
 	{
 	private:
@@ -33,7 +34,7 @@ namespace SSB
 		//void SetPosition(Vector3 position);
 		HMatrix44 GetMatrix() { return _matrix; }
 		bool IsRender(DXObject* object);
-		bool GetCollideState(OBB data);
+		ECollideState GetCollideState(OBB data);
 
 	public:
 		virtual HMatrix44 GetViewMatrix();

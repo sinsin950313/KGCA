@@ -177,31 +177,31 @@ namespace SSB
 		};
 	};
 
-	//class Matrix44 : protected Float44, public MatrixInterface<Matrix44, Vector4>
-	//{
-	//public:
-	//	Matrix44();
-	//	Matrix44(
-	//		float e11, float e12, float e13, float e14,
-	//		float e21, float e22, float e23, float e24,
-	//		float e31, float e32, float e33, float e34,
-	//		float e41, float e42, float e43, float e44);
+	class Matrix44 : protected Float44
+	{
+	public:
+		Matrix44();
+		Matrix44(
+			float e11, float e12, float e13, float e14,
+			float e21, float e22, float e23, float e24,
+			float e31, float e32, float e33, float e34,
+			float e41, float e42, float e43, float e44);
 
-	//public:
-	//	void Identity();
-	//	Matrix44 Transpose();
-	//	Matrix44 Inverse();
-	//	Vector4 GetRow(int i) const;
-	//	Vector4 GetColumn(int i) const;
+	public:
+		void Identity();
+		Matrix44 Transpose();
+		Matrix44 Inverse();
+		Vector4 GetRow(int i) const;
+		Vector4 GetColumn(int i) const;
 
-	//public:
-	//	Matrix44 operator+(const Matrix44 matrix) const;
-	//	void operator+=(const Matrix44 matrix);
-	//	Matrix44 operator-(const Matrix44 matrix) const;
-	//	void operator-=(const Matrix44 matrix);
-	//	Matrix44 operator*(float scalar) const;
-	//	Matrix44 operator*(Matrix44 matrix) const;
-	//};
+	public:
+		Matrix44 operator+(const Matrix44 matrix) const;
+		void operator+=(const Matrix44 matrix);
+		Matrix44 operator-(const Matrix44 matrix) const;
+		void operator-=(const Matrix44 matrix);
+		Matrix44 operator*(float scalar) const;
+		Matrix44 operator*(Matrix44 matrix) const;
+	};
 
 	class HMatrix44/*, public MatrixInterface<HMatrix44, HVector4>*/
 	{

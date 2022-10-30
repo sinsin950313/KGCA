@@ -12,16 +12,26 @@ namespace SSB
 	}
 	void Camera::GetPlane(Float4 ret[6])
 	{
-		float dx[8] = { -1.0f, -1.0f, 1.0f, 1.0f, -100.0f, -100.0f, 100.0f, 100.0f };
-		float dy[8] = { -1.0f, 1.0f, -1.0f, 1.0f, -100.0f, 100.0f, -100.0f, 100.0f };
-		float dz[8] = { 1.0f, 1.0f, 1.0f, 1.0f, 100.0f, 100.0f, 100.0f, 100.0f };
+		//float dx[8] = { -1.0f, -1.0f, 1.0f, 1.0f, -100.0f, -100.0f, 100.0f, 100.0f };
+		//float dy[8] = { -1.0f, 1.0f, -1.0f, 1.0f, -100.0f, 100.0f, -100.0f, 100.0f };
+		//float dz[8] = { 1.0f, 1.0f, 1.0f, 1.0f, 100.0f, 100.0f, 100.0f, 100.0f };
+
+		float dx[8] = { -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f };
+		float dy[8] = { -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f, -1.0f, 1.0f };
+		float dz[8] = { 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, 1.0f };
+
+		HMatrix44 projectionMatrix = GetProjectionMatrix();
+		Matrix44* matrix = (Matrix44*)&projectionMatrix;
+		Matrix44 invMatrix = matrix->Inverse();
+		HMatrix44 invProjMatrix = *(HMatrix44*)&invMatrix;
 
 		HVector4 frustum[8];
 		for (int i = 0; i < 8; ++i)
 		{
 			frustum[i] = { dx[i], dy[i], dz[i] ,1.0f };
-			//frustum[i] = frustum[i] * GetProjectionMatrix().Inverse() * GetViewMatrix().Inverse();
-			frustum[i] = frustum[i] * GetViewMatrix().Inverse();
+			frustum[i] = frustum[i] * invProjMatrix * GetViewMatrix().Inverse();
+			frustum[i].Normalize();
+			//frustum[i] = frustum[i] * GetViewMatrix().Inverse();
 		}
 
 		auto makePlane = [](HVector4 a, HVector4 b, HVector4 c) -> Float4
@@ -44,7 +54,7 @@ namespace SSB
 			ret[5] = makePlane(frustum[4], frustum[0], frustum[6]);
 		}
 	}
-	bool Camera::IsCollide(OBB data)
+	ECollideState Camera::GetCollideState(OBB data)
 	{
 		Float4 planes[6];
 		GetPlane(planes);
@@ -70,18 +80,23 @@ namespace SSB
 			if (cDistance < 0)
 			{
 				// In State
+				if (cDistance + distance > 0)
+				{
+					return ECollideState::Cross;
+				}
 			}
 			else
 			{
 				// Out State
-				if (cDistance - distance > 0)
+				if (cDistance - distance < 0)
 				{
-					return false;
+					return ECollideState::Cross;
 				}
+				return ECollideState::Out;
 			}
 		}
 
-		return true;
+		return ECollideState::In;
 	}
 	HMatrix44 Camera::GetViewMatrix()
 	{
@@ -138,7 +153,11 @@ namespace SSB
 	bool Camera::IsRender(DXObject* object)
 	{
 		OBB obbData = object->GetOBB();
-		return IsCollide(obbData);
+		if (GetCollideState(obbData) == ECollideState::Out)
+		{
+			return false;
+		}
+		return true;
 	}
 
 	void DebugCamera::Move(float deltaZ, float deltaX)

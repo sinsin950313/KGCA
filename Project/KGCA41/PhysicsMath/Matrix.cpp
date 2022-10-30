@@ -1,5 +1,6 @@
 #include "Matrix.h"
 #include <exception>
+#include <DirectXMath.h>
 
 namespace SSB
 {
@@ -386,126 +387,116 @@ namespace SSB
 			0, 0, 1);
 	}
 
-	//Matrix44::Matrix44()
-	//{
-	//	Identity();
-	//}
-	//Matrix44::Matrix44(float _f.e11, float _f.e12, float _f.e13, float _f.e14, float _f.e21, float _f.e22, float _f.e23, float _f.e24, float _f.e31, float _f.e32, float _f.e33, float _f.e34, float _f.e41, float _f.e42, float _f.e43, float _f.e44)
-	//{
-	//	_f.row[0].x = _f.e11; _f.row[0].y = _f.e12; _f.row[0].z = _f.e13; _f.row[0].w = _f.e14;
-	//	_f.row[1].x = _f.e21; _f.row[1].y = _f.e22; _f.row[1].z = _f.e23; _f.row[1].w = _f.e24;
-	//	_f.row[2].x = _f.e31; _f.row[2].y = _f.e32; _f.row[2].z = _f.e33; _f.row[2].w = _f.e34;
-	//	_f.row[3].x = _f.e41; _f.row[3].y = _f.e42; _f.row[3].z = _f.e43; _f.row[3].w = _f.e44;
-	//}
-	//void Matrix44::Identity()
-	//{
-	//	_f.e11 = 1; _f.e12 = 0; _f.e13 = 0; _f.e14 = 0;
-	//	_f.e21 = 0; _f.e22 = 1; _f.e23 = 0; _f.e24 = 0;
-	//	_f.e31 = 0; _f.e32 = 0; _f.e33 = 1; _f.e34 = 0;
-	//	_f.e41 = 0; _f.e42 = 0; _f.e43 = 0; _f.e44 = 1;
-	//}
-	//Matrix44::HMatrix44()
-	//{
-	//}
-	//Matrix44::HMatrix44(float _f.e11, float _f.e12, float _f.e13, float _f.e21, float _f.e14, float _f.e22, float _f.e23, float _f.e31, float _f.e32, float _f.e24, float _f.e33, float _f.e41, float _f.e42, float _f.e43, float _f.e34, float _f.e44)
-	//{
-	//}
-	//Matrix44 Matrix44::Transpose()
-	//{
-	//	return Matrix44(
-	//		_f.e11, _f.e21, _f.e31, _f.e41,
-	//		_f.e12, _f.e22, _f.e32, _f.e42,
-	//		_f.e13, _f.e23, _f.e33, _f.e43,
-	//		_f.e14, _f.e24, _f.e34, _f.e44);
-	//}
-	//Matrix44 Matrix44::Inverse()
-	//{
-	//	class UnableCalculateException : public std::exception
-	//	{
-	//	public:
-	//		const char* what() const noexcept override
-	//		{
-	//			return "Require Matrix44 Inverse Operation";
-	//		}
-	//	};
-
-	//	th_f.row UnableCalculateException();
-	//	return Matrix44();
-	//}
-	//Matrix44::operator Float33()
-	//{
-	//}
-	//Matrix44::operator Matrix33()
-	//{
-	//}
-	//Matrix44::operator Float3()
-	//{
-	//}
-	//Matrix44::operator Vector3()
-	//{
-	//}
-	//Vector4 Matrix44::Get_f.row(int i) const
-	//{
-	//	return Vector4(_f.row[i].x, _f.row[i].y, _f.row[i].z, _f.row[i].w);
-	//}
-	//Vector4 Matrix44::GetColumn(int i) const
-	//{
-	//	return Vector4(_f.row[0].e[i], _f.row[1].e[i], _f.row[2].e[i], _f.row[3].e[i]);
-	//}
-	//Matrix44 Matrix44::operator+(const Matrix44 matrix) const
-	//{
-	//	return Matrix44(
-	//		_f.e11 + matrix._f.e11, _f.e12 + matrix._f.e12, _f.e13 + matrix._f.e13, _f.e14 + matrix._f.e14,
-	//		_f.e21 + matrix._f.e21, _f.e22 + matrix._f.e22, _f.e23 + matrix._f.e23, _f.e24 + matrix._f.e24,
-	//		_f.e31 + matrix._f.e31, _f.e32 + matrix._f.e32, _f.e33 + matrix._f.e33, _f.e34 + matrix._f.e34,
-	//		_f.e41 + matrix._f.e41, _f.e42 + matrix._f.e42, _f.e43 + matrix._f.e43, _f.e44 + matrix._f.e44);
-	//}
-	//void Matrix44::operator+=(const Matrix44 matrix)
-	//{
-	//	_f.e11 += matrix._f.e11; _f.e12 += matrix._f.e12; _f.e13 += matrix._f.e13; _f.e14 += matrix._f.e14;
-	//	_f.e21 += matrix._f.e21; _f.e22 += matrix._f.e22; _f.e23 += matrix._f.e23; _f.e24 += matrix._f.e24;
-	//	_f.e31 += matrix._f.e31; _f.e32 += matrix._f.e32; _f.e33 += matrix._f.e33; _f.e34 += matrix._f.e34;
-	//	_f.e41 += matrix._f.e41; _f.e42 += matrix._f.e42; _f.e43 += matrix._f.e43; _f.e44 += matrix._f.e44;
-	//}
-	//Matrix44 Matrix44::operator-(const Matrix44 matrix) const
-	//{
-	//	return Matrix44(
-	//		_f.e11 - matrix._f.e11, _f.e12 - matrix._f.e12, _f.e13 - matrix._f.e13, _f.e14 - matrix._f.e14,
-	//		_f.e21 - matrix._f.e21, _f.e22 - matrix._f.e22, _f.e23 - matrix._f.e23, _f.e24 - matrix._f.e24,
-	//		_f.e31 - matrix._f.e31, _f.e32 - matrix._f.e32, _f.e33 - matrix._f.e33, _f.e34 - matrix._f.e34,
-	//		_f.e41 - matrix._f.e41, _f.e42 - matrix._f.e42, _f.e43 - matrix._f.e43, _f.e44 - matrix._f.e44);
-	//}
-	//void Matrix44::operator-=(const Matrix44 matrix)
-	//{
-	//	_f.e11 -= matrix._f.e11; _f.e12 -= matrix._f.e12; _f.e13 -= matrix._f.e13; _f.e14 -= matrix._f.e14;
-	//	_f.e21 -= matrix._f.e21; _f.e22 -= matrix._f.e22; _f.e23 -= matrix._f.e23; _f.e24 -= matrix._f.e24;
-	//	_f.e31 -= matrix._f.e31; _f.e32 -= matrix._f.e32; _f.e33 -= matrix._f.e33; _f.e34 -= matrix._f.e34;
-	//	_f.e41 -= matrix._f.e41; _f.e42 -= matrix._f.e42; _f.e43 -= matrix._f.e43; _f.e44 -= matrix._f.e44;
-	//}
-	//Matrix44 Matrix44::operator*(float scalar) const
-	//{
-	//	return Matrix44(
-	//		_f.e11 * scalar, _f.e12 * scalar, _f.e13 * scalar, _f.e14 * scalar,
-	//		_f.e21 * scalar, _f.e22 * scalar, _f.e23 * scalar, _f.e24 * scalar,
-	//		_f.e31 * scalar, _f.e32 * scalar, _f.e33 * scalar, _f.e34 * scalar,
-	//		_f.e41 * scalar, _f.e42 * scalar, _f.e43 * scalar, _f.e44 * scalar);
-	//}
-	//Matrix44 Matrix44::operator*(Matrix44 matrix) const
-	//{
-	//	Matrix44 m{
-	//		0, 0, 0, 0,
-	//		0, 0, 0, 0,
-	//		0, 0, 0, 0,
-	//		0, 0, 0, 0};
-	//	for (int i = 0; i < 4; ++i)
-	//	{
-	//		for (int j = 0; j < 4; ++j)
-	//		{
-	//			m._f.row[i].e[j] += (_f.row[i].e[j] * matrix._f.row[j].e[i]);
-	//		}
-	//	}
-	//	return m;
-	//}
+	Matrix44::Matrix44()
+	{
+		Identity();
+	}
+	Matrix44::Matrix44(float e11, float e12, float e13, float e14, float e21, float e22, float e23, float e24, float e31, float e32, float e33, float e34, float e41, float e42, float e43, float e44)
+	{
+		row[0].x = e11; row[0].y = e12; row[0].z = e13; row[0].w = e14;
+		row[1].x = e21; row[1].y = e22; row[1].z = e23; row[1].w = e24;
+		row[2].x = e31; row[2].y = e32; row[2].z = e33; row[2].w = e34;
+		row[3].x = e41; row[3].y = e42; row[3].z = e43; row[3].w = e44;
+	}
+	void Matrix44::Identity()
+	{
+		e11 = 1; e12 = 0; e13 = 0; e14 = 0;
+		e21 = 0; e22 = 1; e23 = 0; e24 = 0;
+		e31 = 0; e32 = 0; e33 = 1; e34 = 0;
+		e41 = 0; e42 = 0; e43 = 0; e44 = 1;
+	}
+	Matrix44 Matrix44::Transpose()
+	{
+		return Matrix44(
+			e11, e21, e31, e41,
+			e12, e22, e32, e42,
+			e13, e23, e33, e43,
+			e14, e24, e34, e44);
+	}
+	Matrix44 Matrix44::Inverse()
+	{
+		DirectX::XMVECTOR det;
+		DirectX::XMMATRIX mat
+		{
+			e11, e12, e13, e14,
+			e21, e22, e23, e24,
+			e31, e32, e33, e34,
+			e41, e42, e43, e44
+		};
+		DirectX::XMMATRIX inverse = DirectX::XMMatrixInverse(&det, mat);
+		DirectX::XMFLOAT4X4 data;
+		DirectX::XMStoreFloat4x4(&data, inverse);
+		Matrix44 ret
+		{
+			data._11, data._12, data._13, data._14,
+			data._21, data._22, data._23, data._24,
+			data._31, data._32, data._33, data._34,
+			data._41, data._42, data._43, data._44
+		};
+		return ret;
+	}
+	Vector4 Matrix44::GetRow(int i) const
+	{
+		return Vector4(row[i].x, row[i].y, row[i].z, row[i].w);
+	}
+	Vector4 Matrix44::GetColumn(int i) const
+	{
+		return Vector4(row[0].e[i], row[1].e[i], row[2].e[i], row[3].e[i]);
+	}
+	Matrix44 Matrix44::operator+(const Matrix44 matrix) const
+	{
+		return Matrix44(
+			e11 + matrix.e11, e12 + matrix.e12, e13 + matrix.e13, e14 + matrix.e14,
+			e21 + matrix.e21, e22 + matrix.e22, e23 + matrix.e23, e24 + matrix.e24,
+			e31 + matrix.e31, e32 + matrix.e32, e33 + matrix.e33, e34 + matrix.e34,
+			e41 + matrix.e41, e42 + matrix.e42, e43 + matrix.e43, e44 + matrix.e44);
+	}
+	void Matrix44::operator+=(const Matrix44 matrix)
+	{
+		e11 += matrix.e11; e12 += matrix.e12; e13 += matrix.e13; e14 += matrix.e14;
+		e21 += matrix.e21; e22 += matrix.e22; e23 += matrix.e23; e24 += matrix.e24;
+		e31 += matrix.e31; e32 += matrix.e32; e33 += matrix.e33; e34 += matrix.e34;
+		e41 += matrix.e41; e42 += matrix.e42; e43 += matrix.e43; e44 += matrix.e44;
+	}
+	Matrix44 Matrix44::operator-(const Matrix44 matrix) const
+	{
+		return Matrix44(
+			e11 - matrix.e11, e12 - matrix.e12, e13 - matrix.e13, e14 - matrix.e14,
+			e21 - matrix.e21, e22 - matrix.e22, e23 - matrix.e23, e24 - matrix.e24,
+			e31 - matrix.e31, e32 - matrix.e32, e33 - matrix.e33, e34 - matrix.e34,
+			e41 - matrix.e41, e42 - matrix.e42, e43 - matrix.e43, e44 - matrix.e44);
+	}
+	void Matrix44::operator-=(const Matrix44 matrix)
+	{
+		e11 -= matrix.e11; e12 -= matrix.e12; e13 -= matrix.e13; e14 -= matrix.e14;
+		e21 -= matrix.e21; e22 -= matrix.e22; e23 -= matrix.e23; e24 -= matrix.e24;
+		e31 -= matrix.e31; e32 -= matrix.e32; e33 -= matrix.e33; e34 -= matrix.e34;
+		e41 -= matrix.e41; e42 -= matrix.e42; e43 -= matrix.e43; e44 -= matrix.e44;
+	}
+	Matrix44 Matrix44::operator*(float scalar) const
+	{
+		return Matrix44(
+			e11 * scalar, e12 * scalar, e13 * scalar, e14 * scalar,
+			e21 * scalar, e22 * scalar, e23 * scalar, e24 * scalar,
+			e31 * scalar, e32 * scalar, e33 * scalar, e34 * scalar,
+			e41 * scalar, e42 * scalar, e43 * scalar, e44 * scalar);
+	}
+	Matrix44 Matrix44::operator*(Matrix44 matrix) const
+	{
+		Matrix44 m{
+			0, 0, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0,
+			0, 0, 0, 0};
+		for (int i = 0; i < 4; ++i)
+		{
+			for (int j = 0; j < 4; ++j)
+			{
+				m.row[i].e[j] += (row[i].e[j] * matrix.row[j].e[i]);
+			}
+		}
+		return m;
+	}
 
 	const float HMatrix44::_fThreshold = 0.0001f;
 

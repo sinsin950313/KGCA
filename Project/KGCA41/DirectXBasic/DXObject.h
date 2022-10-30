@@ -14,16 +14,15 @@ namespace SSB
 		float Height;
 		float Depth;
 	};
+	struct ConstantData
+	{
+		Float44 World;
+		Float44 View;
+		Float44 Projection;
+	};
 
 	class DXObject : public DXDrawableInterface
 	{
-	private:
-		struct ConstantData
-		{
-			Float44 World;
-			Float44 View;
-			Float44 Projection;
-		};
 	private:
 		//Model* _direction;
 		//ID3D11Buffer* _directionVertexBuffer;

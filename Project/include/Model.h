@@ -64,24 +64,24 @@ namespace SSB
 		void Build() override;
 	};
 
-	class Terrain : public Model
-	{
-	private:
-		float _cellDistance = 1.0f;
-		//float tileX = 10.0f;
-		//float tileY = 10.0f;
-		float tileX = 1.0f;
-		float tileY = 1.0f;
-		unsigned int _widthVertexCount = 16;
-		unsigned int _heightVertexCount = 16;
+	//class Terrain : public Model
+	//{
+	//private:
+	//	float _cellDistance = 1.0f;
+	//	//float tileX = 10.0f;
+	//	//float tileY = 10.0f;
+	//	float tileX = 1.0f;
+	//	float tileY = 1.0f;
+	//	unsigned int _widthVertexCount = 16;
+	//	unsigned int _heightVertexCount = 16;
 
-	private:
-		void Make(unsigned int widthVertexCount, unsigned int heightVertexCount);
+	//private:
+	//	void Make(unsigned int widthVertexCount, unsigned int heightVertexCount);
 
-	public:
-		void SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount) { _widthVertexCount = widthVertexCount; _heightVertexCount = heightVertexCount; }
-		
-	public:
-		void Build() override { Make(_widthVertexCount + 1, _heightVertexCount + 1); }
-	};
+	//public:
+	//	void SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount) { _widthVertexCount = widthVertexCount; _heightVertexCount = heightVertexCount; }
+	//	
+	//public:
+	//	void Build() override { Make(_widthVertexCount + 1, _heightVertexCount + 1); }
+	//};
 }

@@ -165,35 +165,37 @@ namespace SSB
 		};
 	};
 
-	//class Vector4 : protected Float4, public VectorInterface<Vector4>
-	//{
-	//public:
-	//	Vector4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) : Float4{ x, y, z, w } { }
-	//	Vector4(Float4 data) : Float4{ data.x, data.y, data.z, data.w } { }
+	class Vector4
+	{
+	private:
+		Float4 _f;
 
-	//public:
-	//	float LengthSquare() const;
-	//	float Length() const;
-	//	float Dot(const Vector4 vec);
-	//	Vector4 Cross(const Vector4 vec);
-	//	void Normalize();
-	//	Vector4 Normal();
-	//	void Clear();
+	public:
+		Vector4(float x = 0.0f, float y = 0.0f, float z = 0.0f, float w = 0.0f) : _f{ x, y, z, w } { }
+		Vector4(Float4 data) : _f{ data.x, data.y, data.z, data.w } { }
 
-	//public:
-	//	Vector4 operator+(const Vector4 vec) const;
-	//	void operator+=(const Vector4 vec);
-	//	Vector4 operator-(const Vector4 vec) const;
-	//	void operator-=(const Vector4 vec);
-	//	Vector4 operator*(float scalar) const;
-	//	Vector4 operator/(float scalar) const;
+	public:
+		float LengthSquare() const;
+		float Length() const;
+		//float Dot(const Vector4 vec);
+		void Normalize();
+		Vector4 Normal();
+		void Clear();
 
-	//public:
-	//	float GetX() { return x; }
-	//	float GetY() { return y; }
-	//	float GetZ() { return z; }
-	//	float GetW() { return w; }
-	//};
+	public:
+		Vector4 operator+(const Vector4 vec) const;
+		void operator+=(const Vector4 vec);
+		Vector4 operator-(const Vector4 vec) const;
+		void operator-=(const Vector4 vec);
+		Vector4 operator*(float scalar) const;
+		Vector4 operator/(float scalar) const;
+
+	public:
+		float GetX() { return _f.x; }
+		float GetY() { return _f.y; }
+		float GetZ() { return _f.z; }
+		float GetW() { return _f.w; }
+	};
 
 	class HVector4/*, public VectorInterface<HVector4>*/
 	{

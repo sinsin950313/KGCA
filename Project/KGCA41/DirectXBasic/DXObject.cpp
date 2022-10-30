@@ -146,7 +146,7 @@ namespace SSB
 		}
 		else
 		{
-			OutputDebugString(L"Invisible\n");
+			//OutputDebugString(L"Invisible\n");
 		}
 
 		return true;

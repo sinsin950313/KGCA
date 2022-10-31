@@ -12,12 +12,12 @@ bool SSB::FBXLoaderTest::Init()
 
 	DXWindow::Init();
 	_loader = new FBXLoader();
-	_loader->SetFileName("../../Resource/FBX/box.FBX");
+	_loader->SetFileName("../../Resource/FBX/MultiCameras.FBX");
 	_loader->Init();
 
-	//ModelViewCamera* camera = new ModelViewCamera();
-	//camera->SetTarget(_loader->_objectList[0]);
-	DebugCamera* camera = new DebugCamera();
+	ModelViewCamera* camera = new ModelViewCamera();
+	camera->SetTarget(_loader->_objectList[0]);
+	//DebugCamera* camera = new DebugCamera();
 	ChangeMainCamera(camera);
 	GetMainCamera()->Move({0, 10, -100});
 

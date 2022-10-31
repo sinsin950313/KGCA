@@ -73,9 +73,9 @@ void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
 	CustomModel* customModel = new CustomModel();
 
 	FbxNode* node = mesh->GetNode();
-	//for(int iMaterial = 0; iMaterial < node->GetMaterialCount(); ++iMaterial)
+	for(int iMaterial = 0; iMaterial < node->GetMaterialCount(); ++iMaterial)
 	{
-		FbxSurfaceMaterial* surface = node->GetMaterial(0);
+		FbxSurfaceMaterial* surface = node->GetMaterial(iMaterial);
 		if (surface)
 		{
 			auto prop = surface->FindProperty(FbxSurfaceMaterial::sDiffuse);
@@ -116,14 +116,14 @@ void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
 				int vertexIndex = iCornerIndex[iIndex];
 				FbxVector4 v = vertexPosition[vertexIndex];
 
-				FbxColor c = { 1, 1, 1, 1 };
+				FbxColor c = { 0, 0, 0, 1 };
 				FbxLayerElementVertexColor* vertexColorSet = mesh->GetElementVertexColor();
 				if (vertexColorSet)
 				{
 					c = ReadColor(vertexColorSet, iCornerIndex[iIndex], iBasePolyIndex + vertexColor[iIndex]);
 				}
 
-				FbxVector2 texture;
+				FbxVector2 texture{ 0, 0 };
 				FbxLayerElementUV* uv = mesh->GetElementUV();
 				if (uv)
 				{
@@ -145,7 +145,7 @@ void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
 	DXObject* object = new DXObject();
 	object->SetModel(customModel);
 	object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
-	object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
+	object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Main", "ps_5_0"));
 	object->Init();
 	_objectList.push_back(object);
 }
@@ -176,11 +176,14 @@ FbxVector2 SSB::FBXLoader::ReadTextureCoordinate(FbxLayerElementUV* texture, int
 	}
 	case FbxLayerElementUV::eByPolygonVertex:
 	{
+		switch (texture->GetReferenceMode())
+		{
 		case FbxLayerElementUV::eDirect:
 		case FbxLayerElementUV::eIndexToDirect:
 		{
 			t = texture->GetDirectArray().GetAt(uvIndex);
 			break;
+		}
 		}
 		break;
 	}
@@ -233,6 +236,37 @@ FbxColor SSB::FBXLoader::ReadColor(FbxLayerElementVertexColor* vertexColor, int 
 	}
 	return color;
 }
+
+int SSB::FBXLoader::GetSubMaterialIndex(int iPoly, FbxLayerElementMaterial* pMaterialSetList)
+{
+	int iSubMtrl = 0;
+	if (pMaterialSetList != nullptr)
+	{
+		switch (pMaterialSetList->GetMappingMode())
+		{
+		case FbxLayerElement::eByPolygon:
+		{
+			switch (pMaterialSetList->GetReferenceMode())
+			{
+			case FbxLayerElement::eIndex:
+			{
+				iSubMtrl = iPoly;
+			}break;
+			case FbxLayerElement::eIndexToDirect:
+			{
+				iSubMtrl = pMaterialSetList->GetIndexArray().GetAt(iPoly);
+			}break;
+			}
+		}
+		default:
+		{
+			break;
+		}
+		}
+	}
+	return iSubMtrl;
+}
+
 
 bool SSB::FBXLoader::Init()
 {

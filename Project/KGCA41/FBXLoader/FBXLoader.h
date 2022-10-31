@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Common.h"
-#include "fbxsdk.h"
+#include <fbxsdk.h>
 #include <vector>
 #include "DXObject.h"
 
@@ -28,6 +28,8 @@ namespace SSB
 		void Load();
 		void PreProcess(FbxNode* node);
 		void ParseMesh(FbxMesh* mesh);
+		FbxVector2 ReadTextureCoordinate(FbxLayerElementUV* texture, int posIndex, int uvIndex);
+		FbxColor ReadColor(FbxLayerElementVertexColor* vertexColor, int posIndex, int colorIndex);
 
 	public:
 		void SetFileName(std::string fileName) { _fileName = fileName; }

@@ -77,6 +77,7 @@ namespace SSB
 		void RegisterSpriteWithRelativeValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartRelative part);
 		void RegisterSpriteWithCoordinateValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartCoordinate part);
 		Sprite* Load(std::wstring resourceFileName, std::wstring spriteName, std::string samplerName);
+		Sprite* Load(std::wstring resourceFileName, std::string samplerName);
 		TexturePartRelative GetTexturePart(std::wstring resourceFileName, std::wstring spriteName);
 		Sprite* GetDefaultSprite() { return &_defaultSprite; }
 

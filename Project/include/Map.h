@@ -48,8 +48,6 @@ namespace SSB
 			bool Frame() override;
 			bool Render() override;
 			bool Release() override;
-			void Draw(ID3D11DeviceContext* dc) override;
-			void UpdateParentData(Position2D parentCenter, float parentRadian) override { }
 		};
 		std::vector<Vertex> _vertexList;
 		std::vector<int> _indexList;

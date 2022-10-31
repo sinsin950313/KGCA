@@ -15,10 +15,11 @@ bool SSB::FBXLoaderTest::Init()
 	_loader->SetFileName("../../Resource/FBX/box.FBX");
 	_loader->Init();
 
-	ModelViewCamera* camera = new ModelViewCamera();
+	//ModelViewCamera* camera = new ModelViewCamera();
+	//camera->SetTarget(_loader->_objectList[0]);
+	DebugCamera* camera = new DebugCamera();
 	ChangeMainCamera(camera);
 	GetMainCamera()->Move({0, 10, -100});
-	camera->SetTarget(_loader->_objectList[0]);
 
 	return false;
 }

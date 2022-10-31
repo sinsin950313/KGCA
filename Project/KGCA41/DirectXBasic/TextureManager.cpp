@@ -185,6 +185,30 @@ namespace SSB
         return sprite;
     }
 
+    Sprite* SpriteLoader::Load(std::wstring resourceFileName, std::string samplerName)
+    {
+        if (_spriteDatas.find(resourceFileName) == _spriteDatas.end())
+        {
+            TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
+            TextureResource* maskResource = TextureResourceManager::GetInstance().Load(GetMaskFileName(resourceFileName));
+
+            SpriteData data;
+            data.resource = resource;
+            data.maskResource = maskResource;
+            _spriteDatas.insert(std::make_pair(resourceFileName, data));
+        }
+
+        auto iter = _spriteDatas.find(resourceFileName);
+        TextureResource* resource = iter->second.resource;
+        TextureResource* maskResource = iter->second.maskResource;
+
+        Sprite* sprite = new Sprite(resource, maskResource);
+        sprite->SetCurrentSprite(TexturePartCoordinate{0, 0, resource->GetWidth(), resource->GetHeight()});
+        sprite->SetSamplerState(DXStateManager::GetInstance().GetSamplerState(samplerName));
+
+        return sprite;
+    }
+
     TexturePartRelative SpriteLoader::GetTexturePart(std::wstring resourceFileName, std::wstring spriteName)
     {
         return _spriteDatas.find(resourceFileName)->second.textureParts.find(wtm(spriteName))->second;

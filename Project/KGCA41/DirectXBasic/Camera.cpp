@@ -59,6 +59,7 @@ namespace SSB
 		Float4 planes[6];
 		GetPlane(planes);
 
+		ECollideState state = ECollideState::In;
 		for (int i = 0; i < 6; ++i)
 		{
 			float distance = 0.0f;
@@ -82,21 +83,24 @@ namespace SSB
 				// In State
 				if (cDistance + distance > 0)
 				{
-					return ECollideState::Cross;
+					state = ECollideState::Cross;
 				}
 			}
 			else
 			{
 				// Out State
-				if (cDistance - distance < 0)
+				if (cDistance - distance <= 0)
 				{
-					return ECollideState::Cross;
+					state = ECollideState::Cross;
 				}
-				return ECollideState::Out;
+				else
+				{
+					return ECollideState::Out;
+				}
 			}
 		}
 
-		return ECollideState::In;
+		return state;
 	}
 	HMatrix44 Camera::GetViewMatrix()
 	{

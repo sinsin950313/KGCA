@@ -70,11 +70,12 @@ void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
 		}
 	};
 
-	CustomModel* customModel = new CustomModel();
-
 	FbxNode* node = mesh->GetNode();
+	std::vector<CustomModel*> models;
+	models.resize(node->GetMaterialCount());
 	for(int iMaterial = 0; iMaterial < node->GetMaterialCount(); ++iMaterial)
 	{
+		CustomModel* customModel = new CustomModel();
 		FbxSurfaceMaterial* surface = node->GetMaterial(iMaterial);
 		if (surface)
 		{
@@ -88,6 +89,12 @@ void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
 				customModel->SetSprite(SpriteLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
 			}
 		}
+		models[iMaterial] = customModel;
+	}
+	if (models.empty())
+	{
+		models.resize(1);
+		models[0] = new CustomModel;
 	}
 
 	FbxAMatrix geometricMatrix;
@@ -146,6 +153,13 @@ void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
 			iUVIndex[1] = mesh->GetTextureUVIndex(iPoly, iFace + 2);
 			iUVIndex[2] = mesh->GetTextureUVIndex(iPoly, iFace + 1);
 
+			FbxLayerElementMaterial* MaterialSet = mesh->GetLayer(0)->GetMaterials();
+			int iSubMtrl = 0;
+			if (MaterialSet)
+			{
+				iSubMtrl = GetSubMaterialIndex(iPoly, MaterialSet);
+			}
+
 			for (int iIndex = 0; iIndex < 3; ++iIndex)
 			{
 				int vertexIndex = iCornerIndex[iIndex];
@@ -183,14 +197,17 @@ void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
 					{ c.mRed, c.mGreen, c.mBlue, c.mAlpha },
 					{ texture.mData[0], texture.mData[1] }
 				};
-				customModel->_tmpVertexList.push_back(vertex);
+				models[iSubMtrl]->_tmpVertexList.push_back(vertex);
 			}
 		}
 		iBasePolyIndex += mesh->GetPolygonSize(iPoly);
 	}
 
 	DXObject* object = new DXObject();
-	object->SetModel(customModel);
+	for (auto model : models)
+	{
+		object->SetAdditionalModel(model);
+	}
 	object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
 	object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Main", "ps_5_0"));
 	object->Init();

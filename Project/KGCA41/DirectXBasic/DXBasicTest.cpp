@@ -26,14 +26,14 @@ namespace SSB
 		_fps = 0.0f;
         
         _object = new DXObject();
-        _object->SetModel(new Box);
+        _object->SetAdditionalModel(new Box);
         _object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
         _object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
         _object->Init();
         _object->Move({ 0, 5, 0 });
         
         _objectBack = new DXObject();
-        _objectBack->SetModel(new Box);
+        _objectBack->SetAdditionalModel(new Box);
         _objectBack->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
         _objectBack->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
         _objectBack->Init();

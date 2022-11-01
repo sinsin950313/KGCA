@@ -28,9 +28,9 @@ namespace SSB
 		//ID3D11Buffer* _directionVertexBuffer;
 		//ID3D11Buffer* _directionIndexBuffer;
 
-		Model* _model;
-		ID3D11Buffer* _vertexBuffer;
-		ID3D11Buffer* _indexBuffer;
+		std::vector<Model*> _models;
+		std::vector<ID3D11Buffer*> _vertexBuffers;
+		std::vector<ID3D11Buffer*> _indexBuffers;
 		Shader* _vs;
 		Shader* _ps;
 		ID3D11InputLayout* _vertexLayout;
@@ -50,10 +50,10 @@ namespace SSB
 		void UpdateConstantBuffer();
 
 	protected:
-		Model* GetModel() { return _model; }
+		std::vector<Model*> GetModel() { return _models; }
 
 	public:
-		void SetModel(Model* model) { _model = model; }
+		void SetAdditionalModel(Model* model) { _models.push_back(model); }
 		void SetVertexShader(Shader* shader) { _vs = shader; }
 		void SetPixelShader(Shader* shader) { _ps = shader; }
 		HMatrix44 GetMatrix() { return _matrix; }

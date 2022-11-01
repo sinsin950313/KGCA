@@ -10,41 +10,49 @@ namespace SSB
 
     bool DXObject::CreateVertexBuffer()
     {
-        auto& vertexList = _model->GetVertexList();
-		D3D11_BUFFER_DESC bd;
-		ZeroMemory(&bd, sizeof(bd));
-		bd.ByteWidth = sizeof(decltype(vertexList[0])) * vertexList.size();
-		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-		D3D11_SUBRESOURCE_DATA sd;
-		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		sd.pSysMem = &vertexList.at(0);
-		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_vertexBuffer);
-		if (FAILED(hr))
+		_vertexBuffers.resize(_models.size());
+		for (int i = 0; i < _models.size(); ++i)
 		{
-			assert(SUCCEEDED(hr));
-			return false;
+			auto& vertexList = _models[i]->GetVertexList();
+			D3D11_BUFFER_DESC bd;
+			ZeroMemory(&bd, sizeof(bd));
+			bd.ByteWidth = sizeof(decltype(vertexList[0])) * vertexList.size();
+			bd.Usage = D3D11_USAGE_DEFAULT;
+			bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+			D3D11_SUBRESOURCE_DATA sd;
+			ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+			sd.pSysMem = &vertexList.at(0);
+			HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_vertexBuffers[i]);
+			if (FAILED(hr))
+			{
+				assert(SUCCEEDED(hr));
+				return false;
+			}
 		}
 		return true;
     }
 	bool DXObject::CreateIndexBuffer()
 	{
-        auto indexList = _model->GetIndexList();
-		D3D11_BUFFER_DESC bd;
-		ZeroMemory(&bd, sizeof(bd));
-		bd.ByteWidth = sizeof(decltype(indexList[0])) * indexList.size();
-		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-
-		D3D11_SUBRESOURCE_DATA sd;
-		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		sd.pSysMem = &indexList.at(0);
-		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_indexBuffer);
-		if (FAILED(hr))
+		_indexBuffers.resize(_models.size());
+		for (int i = 0; i < _models.size(); ++i)
 		{
-			assert(SUCCEEDED(hr));
-			return false;
+			auto indexList = _models[i]->GetIndexList();
+			D3D11_BUFFER_DESC bd;
+			ZeroMemory(&bd, sizeof(bd));
+			bd.ByteWidth = sizeof(decltype(indexList[0])) * indexList.size();
+			bd.Usage = D3D11_USAGE_DEFAULT;
+			bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+			D3D11_SUBRESOURCE_DATA sd;
+			ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+			sd.pSysMem = &indexList.at(0);
+			HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_indexBuffers[i]);
+			if (FAILED(hr))
+			{
+				assert(SUCCEEDED(hr));
+				return false;
+			}
 		}
         return true;
     }
@@ -124,7 +132,10 @@ namespace SSB
 	}
 	bool DXObject::Init()
     {
-        _model->Init();
+		for (auto model : _models)
+		{
+			model->Init();
+		}
 
         CreateVertexBuffer();
         CreateIndexBuffer();
@@ -154,15 +165,23 @@ namespace SSB
 	}
 	bool DXObject::Release()
 	{
-		if (_vertexBuffer)
+		if (!_vertexBuffers.empty())
         {
-            _vertexBuffer->Release();
-			_vertexBuffer = nullptr;
+			for (auto vertexBuffer : _vertexBuffers)
+			{
+				vertexBuffer->Release();
+				vertexBuffer = nullptr;
+			}
+			_vertexBuffers.clear();
         }
-        if (_indexBuffer)
+        if (!_indexBuffers.empty())
         {
-            _indexBuffer->Release();
-			_indexBuffer = nullptr;
+			for (auto indexBuffer : _indexBuffers)
+			{
+				indexBuffer->Release();
+				indexBuffer = nullptr;
+			}
+			_indexBuffers.clear();
         }
         if (_vertexLayout)
         {
@@ -171,11 +190,15 @@ namespace SSB
         }
 		_vs = nullptr;
 		_ps = nullptr;
-        if (_model)
+        if (!_models.empty())
         {
-            _model->Release();
-            delete _model;
-            _model = nullptr;
+			for (auto model : _models)
+			{
+				model->Release();
+				delete model;
+				model = nullptr;
+			}
+			_models.clear();
         }
 		if (_constantBuffer)
 		{
@@ -230,34 +253,37 @@ namespace SSB
 			//HMatrix44 projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix();
 
 			// Use Constant Buffer instead
-			auto& vertexList = _model->GetVertexList();
-			std::vector<Vertex_PNCT> update;
-			for (int i = 0; i < vertexList.size(); ++i)
+			for(int i = 0; i < _models.size(); ++i)
 			{
-				HVector4 position{ vertexList[i].position, 1.0f };
-				//position = position * _matrix;
-				//position = position * view;
-				//position = position * projection;
-				//position.Normalize();
+				auto& vertexList = _models[i]->GetVertexList();
+				std::vector<Vertex_PNCT> update;
+				for (int i = 0; i < vertexList.size(); ++i)
+				{
+					HVector4 position{ vertexList[i].position, 1.0f };
+					//position = position * _matrix;
+					//position = position * view;
+					//position = position * projection;
+					//position.Normalize();
 
-				Vertex_PNCT vertex = vertexList[i];
-				memcpy(&vertex.position, &position, sizeof(Float4));
-				update.push_back(vertex);
+					Vertex_PNCT vertex = vertexList[i];
+					memcpy(&vertex.position, &position, sizeof(Float4));
+					update.push_back(vertex);
+				}
+				g_dxWindow->GetDeviceContext()->UpdateSubresource(_vertexBuffers[i], NULL, NULL, &update.at(0), 0, 0);
+
+				dc->IASetVertexBuffers(0, 1, &_vertexBuffers[i], &stride, &offset);
+				dc->IASetIndexBuffer(_indexBuffers[i], DXGI_FORMAT_R32_UINT, 0);
+				dc->IASetInputLayout(_vertexLayout);
+				dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
+				dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
+				dc->PSSetShaderResources(0, 1, _models[i]->GetSprite()->GetResource()->GetShaderResourceView());
+				ID3D11SamplerState* ss = _models[i]->GetSprite()->GetSamplerState();
+				dc->PSSetSamplers(0, 1, &ss);
+				dc->PSSetShaderResources(1, 1, _models[i]->GetSprite()->GetMaskResource()->GetShaderResourceView());
+				dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
+				dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
+				dc->DrawIndexed(_models[i]->GetIndexList().size(), 0, 0);
 			}
-			g_dxWindow->GetDeviceContext()->UpdateSubresource(_vertexBuffer, NULL, NULL, &update.at(0), 0, 0);
-
-			dc->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
-			dc->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-			dc->IASetInputLayout(_vertexLayout);
-			dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
-			dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
-			dc->PSSetShaderResources(0, 1, _model->GetSprite()->GetResource()->GetShaderResourceView());
-			ID3D11SamplerState* ss = _model->GetSprite()->GetSamplerState();
-			dc->PSSetSamplers(0, 1, &ss);
-			dc->PSSetShaderResources(1, 1, _model->GetSprite()->GetMaskResource()->GetShaderResourceView());
-			dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
-			dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
-			dc->DrawIndexed(_model->GetIndexList().size(), 0, 0);
 		}
     }
 }

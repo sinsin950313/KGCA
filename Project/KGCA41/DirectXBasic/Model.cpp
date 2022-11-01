@@ -49,39 +49,40 @@ namespace SSB
 	void Box::Build()
 	{
 		_vertexList.resize(24);
-		_vertexList[0] = Vertex{ Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
-		_vertexList[1] = Vertex{ Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
-		_vertexList[2] = Vertex{ Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
-		_vertexList[3] = Vertex{ Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
+		// ¾Õ¸é
+		_vertexList[0] = Vertex_PNCT{ Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
+		_vertexList[1] = Vertex_PNCT{ Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
+		_vertexList[2] = Vertex_PNCT{ Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
+		_vertexList[3] = Vertex_PNCT{ Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
 		// µÞ¸é
-		_vertexList[4] = Vertex{ Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
-		_vertexList[5] = Vertex{ Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
-		_vertexList[6] = Vertex{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
-		_vertexList[7] = Vertex{ Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
+		_vertexList[4] = Vertex_PNCT{ Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
+		_vertexList[5] = Vertex_PNCT{ Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
+		_vertexList[6] = Vertex_PNCT{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
+		_vertexList[7] = Vertex_PNCT{ Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
 
 		// ¿À¸¥ÂÊ
-		_vertexList[8] = Vertex{ Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
-		_vertexList[9] = Vertex{ Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
-		_vertexList[10] = Vertex{ Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
-		_vertexList[11] = Vertex{ Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
+		_vertexList[8] = Vertex_PNCT{ Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
+		_vertexList[9] = Vertex_PNCT{ Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
+		_vertexList[10] = Vertex_PNCT{ Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
+		_vertexList[11] = Vertex_PNCT{ Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
 
 		// ¿ÞÂÊ
-		_vertexList[12] = Vertex{ Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
-		_vertexList[13] = Vertex{ Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
-		_vertexList[14] = Vertex{ Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
-		_vertexList[15] = Vertex{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
+		_vertexList[12] = Vertex_PNCT{ Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
+		_vertexList[13] = Vertex_PNCT{ Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
+		_vertexList[14] = Vertex_PNCT{ Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
+		_vertexList[15] = Vertex_PNCT{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
 
 		// À­¸é
-		_vertexList[16] = Vertex{ Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
-		_vertexList[17] = Vertex{ Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
-		_vertexList[18] = Vertex{ Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
-		_vertexList[19] = Vertex{ Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
+		_vertexList[16] = Vertex_PNCT{ Float4{-0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
+		_vertexList[17] = Vertex_PNCT{ Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
+		_vertexList[18] = Vertex_PNCT{ Float4{0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
+		_vertexList[19] = Vertex_PNCT{ Float4{-0.5f, 0.5f, -0.5f, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
 
 		// ¾Æ·§¸é
-		_vertexList[20] = Vertex{ Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
-		_vertexList[21] = Vertex{ Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
-		_vertexList[22] = Vertex{ Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
-		_vertexList[23] = Vertex{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
+		_vertexList[20] = Vertex_PNCT{ Float4{-0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
+		_vertexList[21] = Vertex_PNCT{ Float4{0.5f, -0.5f, -0.5f, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
+		_vertexList[22] = Vertex_PNCT{ Float4{0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
+		_vertexList[23] = Vertex_PNCT{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
 
 		_indexList.resize(36);
 		int iIndex = 0;
@@ -95,9 +96,9 @@ namespace SSB
 	void Triangle::Build()
 	{
 		_vertexList.resize(3);
-		_vertexList[0] = Vertex{ Float4{+0.0f, +0.5f, 0.5f, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 0.0f}, Float2{0, 0} };
-		_vertexList[1] = Vertex{ Float4{+0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 0.0f}, Float2{0, 0} };
-		_vertexList[2] = Vertex{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 0.0f}, Float4{0, 0} };
+		_vertexList[0] = Vertex_PNCT{ Float4{+0.0f, +0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 0.0f}, Float2{0, 0} };
+		_vertexList[1] = Vertex_PNCT{ Float4{+0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 0.0f}, Float2{0, 0} };
+		_vertexList[2] = Vertex_PNCT{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 0.0f}, Float4{0, 0} };
 
 		_indexList.resize(3);
 		int iIndex = 0;

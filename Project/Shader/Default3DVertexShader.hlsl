@@ -1,6 +1,7 @@
 struct VS_in
 {
 	float4 p : Position;
+	float4 n : Normal;
 	float4 c : Color;
 	float2 t : Texture;
 };
@@ -8,6 +9,7 @@ struct VS_in
 struct VS_out
 {
 	float4 p : SV_POSITION;
+	float4 n : NORMAL;
 	float4 c : COLOR0;
 	float2 t : TEXCOORD0;
 };
@@ -29,6 +31,7 @@ VS_out Main(VS_in input)
 	float4 proj = mul(view, g_Projection);
 
 	output.p = proj;
+	output.n = input.n;
 	output.c = input.c;
 	output.t = input.t;
 

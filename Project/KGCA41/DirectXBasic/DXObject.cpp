@@ -53,8 +53,9 @@ namespace SSB
 		D3D11_INPUT_ELEMENT_DESC ied[] =
 		{
 			{ "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{ "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		};
 		UINT iedCount = sizeof(ied) / sizeof(ied[0]);
 		HRESULT hr = g_dxWindow->GetDevice()->CreateInputLayout(ied, iedCount, _vs->GetCode()->GetBufferPointer(), _vs->GetCode()->GetBufferSize(), &_vertexLayout);
@@ -186,7 +187,7 @@ namespace SSB
     }
     void DXObject::Draw(ID3D11DeviceContext* dc)
     {
-		UINT stride = sizeof(Vertex);
+		UINT stride = sizeof(Vertex_PNCT);
 		UINT offset = 0;
 
 		//{
@@ -230,7 +231,7 @@ namespace SSB
 
 			// Use Constant Buffer instead
 			auto& vertexList = _model->GetVertexList();
-			std::vector<Vertex> update;
+			std::vector<Vertex_PNCT> update;
 			for (int i = 0; i < vertexList.size(); ++i)
 			{
 				HVector4 position{ vertexList[i].position, 1.0f };
@@ -239,7 +240,7 @@ namespace SSB
 				//position = position * projection;
 				//position.Normalize();
 
-				Vertex vertex = vertexList[i];
+				Vertex_PNCT vertex = vertexList[i];
 				memcpy(&vertex.position, &position, sizeof(Float4));
 				update.push_back(vertex);
 			}

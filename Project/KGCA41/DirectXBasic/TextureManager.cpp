@@ -47,7 +47,7 @@ namespace SSB
                 hr = DirectX::CreateDDSTextureFromFile(g_dxWindow->GetDevice(), g_dxWindow->GetDeviceContext(), path.c_str(), &textureResource, &textureResourceView);
                 if (FAILED(hr))
                 {
-                    OutputDebugString((resourceFileName + L"is not exist. Defualt Texture Resource replaced\n").c_str());
+                    OutputDebugString((resourceFileName + L" is not exist. Defualt Texture Resource replaced\n").c_str());
                     return GetDefaultTextureResource();
                 }
             }
@@ -96,6 +96,13 @@ namespace SSB
             _instance = new SpriteLoader();
         }
         return *_instance;
+    }
+
+
+	SpriteLoader::SpriteLoader() 
+        : _defaultSprite(TextureResourceManager::GetInstance().GetDefaultTextureResource(), TextureResourceManager::GetInstance().GetDefaultTextureResource())
+    {
+        _defaultSprite.SetSamplerState(DXStateManager::GetInstance().GetSamplerState(DXStateManager::kDefaultWrapSample));
     }
 
     SpriteLoader::~SpriteLoader()

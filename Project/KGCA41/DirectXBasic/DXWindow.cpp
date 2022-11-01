@@ -138,6 +138,7 @@ namespace SSB
 
 	bool DXWindow::Frame()
 	{
+		ClearD3D11DeviceContext();
 		_textList.clear();
 		_objectList.clear();
 		_deviceContext->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -442,6 +443,55 @@ namespace SSB
 		_deviceContext->OMSetDepthStencilState(state, 0xff);
 
 		return S_OK;
+	}
+	void DXWindow::ClearD3D11DeviceContext()
+	{
+		if (!_deviceContext)
+		{
+			return;
+		}
+
+		ID3D11ShaderResourceView* pSRVs[16]{ 0, };
+		ID3D11RenderTargetView* pRTVs[16] = { 0, };
+		ID3D11DepthStencilView* pDSV = NULL;
+		ID3D11Buffer* pBuffers[16] = { 0, };
+		ID3D11SamplerState* pSamplers[16] = { 0, };
+		UINT strideOffset[16] = { 0, };
+
+		_deviceContext->VSSetShader(NULL, NULL, 0);
+		_deviceContext->HSSetShader(NULL, NULL, 0);
+		_deviceContext->DSSetShader(NULL, NULL, 0);
+		_deviceContext->GSSetShader(NULL, NULL, 0);
+		_deviceContext->PSSetShader(NULL, NULL, 0);
+
+		_deviceContext->IASetVertexBuffers(0, 16, pBuffers, strideOffset, strideOffset);
+		_deviceContext->IASetIndexBuffer(NULL, DXGI_FORMAT_R16_UINT, 0);
+		_deviceContext->IASetInputLayout(NULL);
+
+		_deviceContext->VSSetConstantBuffers(0, 14, pBuffers);
+		_deviceContext->HSSetConstantBuffers(0, 14, pBuffers);
+		_deviceContext->DSSetConstantBuffers(0, 14, pBuffers);
+		_deviceContext->GSSetConstantBuffers(0, 14, pBuffers);
+		_deviceContext->PSSetConstantBuffers(0, 14, pBuffers);
+
+		_deviceContext->VSSetShaderResources(0, 16, pSRVs);
+		_deviceContext->HSSetShaderResources(0, 16, pSRVs);
+		_deviceContext->DSSetShaderResources(0, 16, pSRVs);
+		_deviceContext->GSSetShaderResources(0, 16, pSRVs);
+		_deviceContext->PSSetShaderResources(0, 16, pSRVs);
+
+		_deviceContext->VSSetSamplers(0,16, pSamplers);
+		_deviceContext->HSSetSamplers(0,16, pSamplers);
+		_deviceContext->DSSetSamplers(0,16, pSamplers);
+		_deviceContext->GSSetSamplers(0,16, pSamplers);
+		_deviceContext->PSSetSamplers(0,16, pSamplers);
+
+		_deviceContext->OMSetRenderTargets(8, pRTVs, pDSV);
+
+		FLOAT blendFactor[4] = { 0, 0, 0, 0 };
+		_deviceContext->OMSetBlendState(NULL, blendFactor, 0xFFFFFFFF);
+		_deviceContext->OMSetDepthStencilState(NULL, 0);
+		_deviceContext->RSSetState(NULL);
 	}
 	RenderTarget::RenderTarget()
 	{

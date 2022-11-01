@@ -49,7 +49,7 @@ namespace SSB
 			bool Render() override;
 			bool Release() override;
 		};
-		std::vector<Vertex> _vertexList;
+		std::vector<Vertex_PNCT> _vertexList;
 		std::vector<int> _indexList;
 		Sprite* _sprite;
 		ID3D11Buffer* _vertexBuffer;

@@ -195,7 +195,7 @@ namespace SSB
     }
     void Map::Draw(ID3D11DeviceContext* dc)
 	{
-		UINT stride = sizeof(Vertex);
+		UINT stride = sizeof(Vertex_PNCT);
 		UINT offset = 0;
 
 		g_dxWindow->GetDeviceContext()->UpdateSubresource(_vertexBuffer, NULL, NULL, &_vertexList.at(0), 0, 0);

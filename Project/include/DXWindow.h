@@ -122,6 +122,7 @@ namespace SSB
 		HRESULT CreateWriteFactory();
 		HRESULT CreateViewPort();
 		HRESULT CreateDepthStencilView();
+		void ClearD3D11DeviceContext();
 
 	public:
 		DXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);

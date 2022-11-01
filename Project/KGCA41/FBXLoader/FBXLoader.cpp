@@ -57,7 +57,7 @@ void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
 	class CustomModel : public Model
 	{
 	public:
-		std::vector<Vertex> _tmpVertexList;
+		std::vector<Vertex_PNCT> _tmpVertexList;
 
 	public:
 		void Build()
@@ -90,6 +90,41 @@ void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
 		}
 	}
 
+	FbxAMatrix geometricMatrix;
+	FbxVector4 trans = node->GetGeometricTranslation(FbxNode::eSourcePivot);
+	FbxVector4 rot = node->GetGeometricRotation(FbxNode::eSourcePivot);
+	FbxVector4 sca = node->GetGeometricScaling(FbxNode::eSourcePivot);
+	geometricMatrix.SetT(trans);
+	geometricMatrix.SetR(rot);
+	geometricMatrix.SetS(sca);
+
+	FbxAMatrix normalLocalMatrix = geometricMatrix;
+	normalLocalMatrix = normalLocalMatrix.Inverse();
+	normalLocalMatrix = normalLocalMatrix.Transpose();
+
+	FbxVector4 translation;
+	if (node->LclTranslation.IsValid())
+	{
+		translation = node->LclTranslation.Get();
+	}
+
+	FbxVector4 rotation;
+	if (node->LclRotation.IsValid())
+	{
+		rotation = node->LclRotation.Get();
+	}
+
+	FbxVector4 scale;
+	if (node->LclScaling.IsValid())
+	{
+		scale = node->LclScaling.Get();
+	}
+
+	FbxAMatrix matWorldTransform(translation, rotation, scale);
+	FbxAMatrix normalWorldMatrix = matWorldTransform;
+	normalWorldMatrix = normalWorldMatrix.Inverse();
+	normalWorldMatrix = normalWorldMatrix.Transpose();
+
 	int polygonCount = mesh->GetPolygonCount();
 	int iBasePolyIndex = 0;
 	FbxVector4* vertexPosition = mesh->GetControlPoints();
@@ -115,6 +150,8 @@ void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
 			{
 				int vertexIndex = iCornerIndex[iIndex];
 				FbxVector4 v = vertexPosition[vertexIndex];
+				v = geometricMatrix.MultT(v);
+				v = matWorldTransform.MultT(v);
 
 				FbxColor c = { 0, 0, 0, 1 };
 				FbxLayerElementVertexColor* vertexColorSet = mesh->GetElementVertexColor();
@@ -130,9 +167,19 @@ void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
 					texture = ReadTextureCoordinate(uv, iCornerIndex[iIndex], iUVIndex[iIndex]);
 				}
 
-				Vertex vertex
+				FbxVector4 n{ 0, 0, 0, 0 };
+				FbxLayerElementNormal* normal = mesh->GetLayer(0)->GetNormals();// ->GetElementNormal();
+				if (normal)
+				{
+					n = ReadNormal(normal, iCornerIndex[iIndex], iBasePolyIndex + vertexColor[iIndex]);
+					n = normalLocalMatrix.MultT(n);
+					n = normalWorldMatrix.MultT(n);
+				}
+
+				Vertex_PNCT vertex
 				{
 					{ v.mData[0], v.mData[2], v.mData[1], 1 },
+					{ n.mData[0], n.mData[2], n.mData[1], 1 },
 					{ c.mRed, c.mGreen, c.mBlue, c.mAlpha },
 					{ texture.mData[0], texture.mData[1] }
 				};
@@ -267,6 +314,52 @@ int SSB::FBXLoader::GetSubMaterialIndex(int iPoly, FbxLayerElementMaterial* pMat
 	return iSubMtrl;
 }
 
+FbxVector4 SSB::FBXLoader::ReadNormal(FbxLayerElementNormal* normalSet, int posIndex, int colorIndex)
+{
+	FbxVector4 normal{ 1, 1, 1, 1 };
+	FbxLayerElement::EMappingMode mode = normalSet->GetMappingMode();
+	switch (mode)
+	{
+	case FbxLayerElementNormal::eByControlPoint:
+	{
+		switch (normalSet->GetReferenceMode())
+		{
+		case FbxLayerElementNormal::eDirect:
+		{
+			normal = normalSet->GetDirectArray().GetAt(posIndex);
+			break;
+		}
+		case FbxLayerElementNormal::eIndexToDirect:
+		{
+			int index = normalSet->GetIndexArray().GetAt(posIndex);
+			normal = normalSet->GetDirectArray().GetAt(index);
+			break;
+		}
+		}
+		break;
+	}
+	case FbxLayerElementNormal::eByPolygonVertex:
+	{
+		switch (normalSet->GetReferenceMode())
+		{
+		case FbxLayerElementNormal::eDirect:
+		{
+			normal = normalSet->GetDirectArray().GetAt(colorIndex);
+			break;
+		}
+		case FbxLayerElementNormal::eIndexToDirect:
+		{
+			int index = normalSet->GetIndexArray().GetAt(colorIndex);
+			normal = normalSet->GetDirectArray().GetAt(index);
+			break;
+		}
+		}
+		break;
+	}
+	}
+	return normal;
+}
+
 
 bool SSB::FBXLoader::Init()
 {
@@ -278,6 +371,10 @@ bool SSB::FBXLoader::Init()
 	{
 		OutputDebugStringA(_importer->GetStatus().GetErrorString());
 	}
+
+	FbxSystemUnit::cm.ConvertScene(_scene);
+	FbxAxisSystem::MayaZUp.ConvertScene(_scene);
+
 	Load();
 
 	return true;

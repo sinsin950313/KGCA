@@ -8,9 +8,17 @@
 
 namespace SSB
 {
-	struct Vertex
+	struct Vertex_PCT
 	{
 		Float4 position;
+		Float4 color;
+		Float2 texture;
+	};
+
+	struct Vertex_PNCT
+	{
+		Float4 position;
+		Float4 normal;
 		Float4 color;
 		Float2 texture;
 	};
@@ -18,7 +26,7 @@ namespace SSB
 	class Model : public Common
 	{
 	protected:
-		std::vector<Vertex> _vertexList;
+		std::vector<Vertex_PNCT> _vertexList;
 		std::vector<DWORD> _indexList;
 		Sprite* _sprite;
 
@@ -30,7 +38,7 @@ namespace SSB
 		virtual void Build() = 0;
 
 	public:
-		std::vector<Vertex>& GetVertexList() { return _vertexList; }
+		std::vector<Vertex_PNCT>& GetVertexList() { return _vertexList; }
 		std::vector<DWORD>& GetIndexList() { return _indexList; }
 		void SetSprite(Sprite* sprite) { _sprite = sprite; }
 		Sprite* GetSprite() { return _sprite; }

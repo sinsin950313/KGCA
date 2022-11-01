@@ -30,6 +30,8 @@ namespace SSB
 		void ParseMesh(FbxMesh* mesh);
 		FbxVector2 ReadTextureCoordinate(FbxLayerElementUV* texture, int posIndex, int uvIndex);
 		FbxColor ReadColor(FbxLayerElementVertexColor* vertexColor, int posIndex, int colorIndex);
+		int GetSubMaterialIndex(int iPoly, FbxLayerElementMaterial* pMaterialSetList);
+		FbxVector4 ReadNormal(FbxLayerElementNormal* normalSet, int posIndex, int colorIndex);
 
 	public:
 		void SetFileName(std::string fileName) { _fileName = fileName; }

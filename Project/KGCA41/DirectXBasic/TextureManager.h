@@ -61,7 +61,7 @@ namespace SSB
 
 	private:
 		static SpriteLoader* _instance;
-		SpriteLoader() : _defaultSprite(TextureResourceManager::GetInstance().GetDefaultTextureResource(), TextureResourceManager::GetInstance().GetDefaultTextureResource()) { }
+		SpriteLoader();
 
 	public:
 		static SpriteLoader& GetInstance();

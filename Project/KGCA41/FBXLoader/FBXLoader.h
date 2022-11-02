@@ -7,6 +7,17 @@
 
 namespace SSB
 {
+	class FBXModel : public Model
+	{
+	private:
+		std::vector<Vertex_PNCT> _tmpVertexList;
+
+	public:
+		void Build();
+
+		friend class FBXLoader;
+	};
+
 	class FBXLoader : public Common
 	{
 	private:
@@ -28,10 +39,12 @@ namespace SSB
 		void Load();
 		void PreProcess(FbxNode* node);
 		void ParseMesh(FbxMesh* mesh);
-		FbxVector2 ReadTextureCoordinate(FbxLayerElementUV* texture, int posIndex, int uvIndex);
-		FbxColor ReadColor(FbxLayerElementVertexColor* vertexColor, int posIndex, int colorIndex);
+		FbxVector2 Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex);
 		int GetSubMaterialIndex(int iPoly, FbxLayerElementMaterial* pMaterialSetList);
-		FbxVector4 ReadNormal(FbxLayerElementNormal* normalSet, int posIndex, int colorIndex);
+
+	private:
+		template<typename T>
+		T Read(FbxLayerElementTemplate<T>* element, int position, int index);
 
 	public:
 		void SetFileName(std::string fileName) { _fileName = fileName; }
@@ -42,4 +55,49 @@ namespace SSB
 		bool Render() override;
 		bool Release() override;
 	};
+	template<typename T>
+	inline T FBXLoader::Read(FbxLayerElementTemplate<T>* element, int pointIndex, int polygonIndex)
+	{
+		T t;
+		switch (element->GetMappingMode())
+		{
+		case FbxLayerElement::eByControlPoint:
+		{
+			switch (element->GetReferenceMode())
+			{
+			case FbxLayerElement::eDirect:
+			{
+				t = element->GetDirectArray().GetAt(pointIndex);
+				break;
+			}
+			case FbxLayerElement::eIndexToDirect:
+			{
+				int index = element->GetIndexArray().GetAt(pointIndex);
+				t = element->GetDirectArray().GetAt(index);
+				break;
+			}
+			}
+			break;
+		}
+		case FbxLayerElement::eByPolygonVertex:
+		{
+			switch (element->GetReferenceMode())
+			{
+			case FbxLayerElement::eDirect:
+			{
+				t = element->GetDirectArray().GetAt(polygonIndex);
+				break;
+			}
+			case FbxLayerElement::eIndexToDirect:
+			{
+				int index = element->GetIndexArray().GetAt(polygonIndex);
+				t = element->GetDirectArray().GetAt(index);
+				break;
+			}
+			}
+			break;
+		}
+		}
+		return t;
+	}
 }

@@ -19,7 +19,7 @@ bool SSB::FBXLoaderTest::Init()
 	camera->SetTarget(_loader->_objectList[0]);
 	//DebugCamera* camera = new DebugCamera();
 	ChangeMainCamera(camera);
-	GetMainCamera()->Move({0, 10, -100});
+	GetMainCamera()->Move({0, 10, -200});
 
 	return false;
 }

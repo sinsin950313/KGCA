@@ -21,7 +21,7 @@ namespace SSB
 		Button* _button;
 		TextUI* _textUI;
 		DX2DObject* _dialog;
-		DXObject* _terrain;
+		//DXObject* _terrain;
 
 	ID3D11InputLayout* _inputLayout;
 	ID3DBlob* _vsCode;
@@ -29,7 +29,7 @@ namespace SSB
 	ID3D11VertexShader* _vs;
 	ID3D11PixelShader* _ps;
 	ID3D11Buffer* _vertexBuffer;
-	std::vector<Vertex> _vertexList;
+	std::vector<Vertex_PNCT> _vertexList;
 	std::vector<int> _indexList;
 	ID3D11Buffer* _indexBuffer;
 

@@ -153,13 +153,13 @@ namespace SSB
         _dialog->AddChild(_textUI);
         _dialog->Init();
 
-        _terrain = new DXObject();
+        //_terrain = new DXObject();
         //_terrain->SetModel(new Box);
-        _terrain->SetModel(new Terrain);
+        //_terrain->SetAdditionalModel(new Terrain);
         //_terrain->SetModel(new Triangle);
-        _terrain->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
-        _terrain->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
-        _terrain->Init();
+        //_terrain->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+        //_terrain->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
+        //_terrain->Init();
 
         return true;
     }
@@ -181,7 +181,7 @@ namespace SSB
         _dialog->Move({ _dialog->GetCenter().x + 0.01f, _dialog->GetCenter().y + 0.01f });
         _dialog->RotateDegree(0.1f);
         _dialog->Frame();
-        _terrain->Frame();
+        //_terrain->Frame();
 
         return true;
     }
@@ -201,7 +201,7 @@ namespace SSB
         _textUI->Release();
         _text->Release();
         _dialog->Release();
-        _terrain->Release();
+        //_terrain->Release();
 
         TextManager::GetInstance().Release();
         ShaderManager::GetInstance().Release();
@@ -225,7 +225,7 @@ namespace SSB
         DXWindow::AddDrawable(_textUI);
         DXWindow::AddTextable(_text);
         _dialog->Render();
-        DXWindow::AddDrawable(_terrain);
+        //DXWindow::AddDrawable(_terrain);
 
         return true;
     }

@@ -38,6 +38,9 @@ namespace SSB
 		ID3D11Buffer* _constantBuffer;
 		ConstantData _constantData;
 
+		DXObject* _parent = nullptr;
+		std::vector<DXObject*> _childObjectList;
+
 	public:
 		DXObject() { }
 		virtual ~DXObject() { Release(); }
@@ -54,6 +57,7 @@ namespace SSB
 
 	public:
 		void SetAdditionalModel(Model* model) { _models.push_back(model); }
+		void SetAdditionalChildObject(DXObject* child) { _childObjectList.push_back(child); child->_parent = this; }
 		void SetVertexShader(Shader* shader) { _vs = shader; }
 		void SetPixelShader(Shader* shader) { _ps = shader; }
 		HMatrix44 GetMatrix() { return _matrix; }

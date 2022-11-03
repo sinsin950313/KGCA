@@ -29,60 +29,41 @@ namespace SSB
 		_importer->Import(_scene);
 		_root = _scene->GetRootNode();
 
-		PreProcess(_root);
-
-		for (auto mesh : _meshList)
+		if (_root)
 		{
-			ParseMesh(mesh);
+			_rootObject = new DXObject();
+			ParseNode(_root, _rootObject);
 		}
 	}
 
-	void SSB::FBXLoader::PreProcess(FbxNode* node)
+	void SSB::FBXLoader::ParseNode(FbxNode* node, DXObject* object)
 	{
-		if (node)
-		{
-			FbxMesh* mesh;
-			if ((mesh = node->GetMesh()) != nullptr)
-			{
-				_meshList.push_back(mesh);
-			}
+		object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
+		object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
 
-			for (int i = 0; i < node->GetChildCount(); ++i)
+		FbxMesh* mesh = node->GetMesh();
+		if(mesh)
+		{
+			ParseMesh(node, mesh, object);
+		}
+
+		for (int i = 0; i < node->GetChildCount(); ++i)
+		{
+			FbxNodeAttribute::EType attribute = node->GetChild(i)->GetNodeAttribute()->GetAttributeType();
+			if (attribute == FbxNodeAttribute::eNull ||
+				attribute == FbxNodeAttribute::eMesh ||
+				attribute == FbxNodeAttribute::eSkeleton)
 			{
-				PreProcess(node->GetChild(i));
+				DXObject* childObject = new DXObject;
+				object->SetAdditionalChildObject(childObject);
+				ParseNode(node->GetChild(i), childObject);
 			}
 		}
 	}
 
-	void SSB::FBXLoader::ParseMesh(FbxMesh* mesh)
+	void SSB::FBXLoader::ParseMesh(FbxNode* node, FbxMesh* mesh, DXObject* object)
 	{
-		FbxNode* node = mesh->GetNode();
-
-		std::vector<FBXModel*> models;
-		models.resize(node->GetMaterialCount());
-		for (int iMaterial = 0; iMaterial < node->GetMaterialCount(); ++iMaterial)
-		{
-			FBXModel* model = new FBXModel();
-			FbxSurfaceMaterial* surface = node->GetMaterial(iMaterial);
-			if (surface)
-			{
-				auto prop = surface->FindProperty(FbxSurfaceMaterial::sDiffuse);
-				if (prop.IsValid())
-				{
-					const FbxFileTexture* tex = prop.GetSrcObject<FbxFileTexture>(0);
-					auto filePath = tex->GetFileName();
-					auto splitedPath = SplitPath(std::wstring(mtw(filePath)));
-					std::wstring fileName = splitedPath[2] + splitedPath[3];
-					model->SetSprite(SpriteLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
-				}
-			}
-			models[iMaterial] = model;
-		}
-		if (models.empty())
-		{
-			models.resize(1);
-			models[0] = new FBXModel;
-		}
+		std::map<int, FBXModel*> modelMap;
 
 		for (int iLayer = 0; iLayer < mesh->GetLayerCount(); ++iLayer)
 		{
@@ -186,22 +167,50 @@ namespace SSB
 						{
 							iSubMtrl = GetSubMaterialIndex(iPoly, MaterialSet);
 						}
-						models[iSubMtrl]->_tmpVertexList.push_back(vertex);
+
+						auto iter = modelMap.find(iSubMtrl);
+						if (iter == modelMap.end())
+						{
+							NewModel(node, iLayer, iSubMtrl, modelMap);
+							iter = modelMap.find(iSubMtrl);
+						}
+						iter->second->_tmpVertexList.push_back(vertex);
 					}
 				}
 				iBasePolyIndex += mesh->GetPolygonSize(iPoly);
 			}
 
-			DXObject* object = new DXObject();
-			for (auto model : models)
+			for (auto model : modelMap)
 			{
-				object->SetAdditionalModel(model);
+				object->SetAdditionalModel(model.second);
 			}
-			object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
-			object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
-			object->Init();
-			_objectList.push_back(object);
 		}
+	}
+
+	void FBXLoader::NewModel(FbxNode* node, int layerIndex, int materialIndex, std::map<int, FBXModel*>& modelMap)
+	{
+		FBXModel* model = new FBXModel;
+		FbxSurfaceMaterial* surface = node->GetMaterial(materialIndex);
+		if (surface)
+		{
+			auto prop = surface->FindProperty(FbxSurfaceMaterial::sDiffuse);
+			if (prop.IsValid())
+			{
+				const FbxFileTexture* tex = prop.GetSrcObject<FbxFileTexture>(layerIndex);
+				if (tex)
+				{
+					auto filePath = tex->GetFileName();
+					auto splitedPath = SplitPath(std::wstring(mtw(filePath)));
+					if (splitedPath[3] == L".tga" || splitedPath[3] == L".TGA")
+					{
+						splitedPath[3] = L".DDS";
+					}
+					std::wstring fileName = splitedPath[2] + splitedPath[3];
+					model->SetSprite(SpriteLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
+				}
+			}
+		}
+		modelMap.insert(std::make_pair(materialIndex, model));
 	}
 
 	FbxVector2 SSB::FBXLoader::Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex)
@@ -292,25 +301,21 @@ namespace SSB
 
 		Load();
 
+		_rootObject->Init();
+
 		return true;
 	}
 
 	bool SSB::FBXLoader::Frame()
 	{
-		for (auto object : _objectList)
-		{
-			object->Frame();
-		}
+		_rootObject->Frame();
 
 		return true;
 	}
 
 	bool SSB::FBXLoader::Render()
 	{
-		for (auto object : _objectList)
-		{
-			object->Render();
-		}
+		_rootObject->Render();
 
 		return true;
 	}
@@ -347,12 +352,13 @@ namespace SSB
 		//	mesh->Destroy();
 		//}
 		//_meshList.clear();
-		for (auto object : _objectList)
+
+		if (_rootObject)
 		{
-			object->Release();
-			delete object;
+			_rootObject->Release();
+			delete _rootObject;
+			_rootObject = nullptr;
 		}
-		_objectList.clear();
 
 		TextureResourceManager::GetInstance().Release();
 		DXStateManager::GetInstance().Release();

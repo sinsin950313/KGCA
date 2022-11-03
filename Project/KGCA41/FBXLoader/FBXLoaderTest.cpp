@@ -12,14 +12,17 @@ bool SSB::FBXLoaderTest::Init()
 
 	DXWindow::Init();
 	_loader = new FBXLoader();
-	_loader->SetFileName("../../Resource/FBX/MultiCameras.FBX");
+	//_loader->SetFileName("../../Resource/FBX/box.FBX");
+	//_loader->SetFileName("../../Resource/FBX/MultiCameras.FBX");
+	//_loader->SetFileName("../../Resource/FBX/ship.FBX");
+	_loader->SetFileName("../../Resource/FBX/Turret_Deploy1.FBX");
 	_loader->Init();
 
 	ModelViewCamera* camera = new ModelViewCamera();
-	camera->SetTarget(_loader->_objectList[0]);
+	camera->SetTarget(_loader->_rootObject);
 	//DebugCamera* camera = new DebugCamera();
 	ChangeMainCamera(camera);
-	GetMainCamera()->Move({0, 10, -200});
+	GetMainCamera()->Move({0, 10, -100});
 
 	return false;
 }

@@ -137,6 +137,11 @@ namespace SSB
 			model->Init();
 		}
 
+		for (auto child : _childObjectList)
+		{
+			child->Init();
+		}
+
         CreateVertexBuffer();
         CreateIndexBuffer();
         CreateVertexLayout();
@@ -146,6 +151,10 @@ namespace SSB
     }
     bool DXObject::Frame()
     {
+		for (auto child : _childObjectList)
+		{
+			child->Frame();
+		}
 
 		return true;
 	}
@@ -159,6 +168,11 @@ namespace SSB
 		else
 		{
 			//OutputDebugString(L"Invisible\n");
+		}
+
+		for (auto child : _childObjectList)
+		{
+			child->Render();
 		}
 
 		return true;
@@ -204,6 +218,11 @@ namespace SSB
 		{
 			_constantBuffer->Release();
 			_constantBuffer = nullptr;
+		}
+
+		for (auto child : _childObjectList)
+		{
+			child->Release();
 		}
 
         return true;

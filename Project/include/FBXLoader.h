@@ -26,10 +26,11 @@ namespace SSB
 		FbxImporter* _importer;
 		FbxScene* _scene;
 		FbxNode* _root;
-		std::vector<FbxMesh*> _meshList;
+		//std::vector<FbxMesh*> _meshList;
 
 	public:
-		std::vector<DXObject*> _objectList;
+		//std::vector<DXObject*> _objectList;
+		DXObject* _rootObject;
 
 	public:
 		FBXLoader();
@@ -37,8 +38,9 @@ namespace SSB
 
 	private:
 		void Load();
-		void PreProcess(FbxNode* node);
-		void ParseMesh(FbxMesh* mesh);
+		void ParseNode(FbxNode* node, DXObject* object);
+		void ParseMesh(FbxNode* node, FbxMesh* mesh, DXObject* object);
+		void NewModel(FbxNode* node, int layerIndex, int materialIndex, std::map<int, FBXModel*>& modelMap);
 		FbxVector2 Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex);
 		int GetSubMaterialIndex(int iPoly, FbxLayerElementMaterial* pMaterialSetList);
 

@@ -38,10 +38,15 @@ namespace SSB
         {
             HRESULT hr;
 
+            DWORD shaderFlag = D3DCOMPILE_SKIP_OPTIMIZATION;
+#if defined(_DEBUG)
+            shaderFlag |= D3DCOMPILE_DEBUG;
+#endif
+
             auto path = GetPath(fileName);
             ID3DBlob* code = nullptr;
             ID3DBlob* errorCode = nullptr;
-            hr = D3DCompileFromFile(path.c_str(), NULL, NULL, entryPoint.c_str(), target.c_str(), 0, 0, &code, &errorCode);
+            hr = D3DCompileFromFile(path.c_str(), NULL, NULL, entryPoint.c_str(), target.c_str(), shaderFlag, 0, &code, &errorCode);
             if (FAILED(hr))
             {
                 if (errorCode != nullptr)

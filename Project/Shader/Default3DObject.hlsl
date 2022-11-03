@@ -21,7 +21,7 @@ cbuffer Camera : register(b0)
 	matrix g_Projection : packoffset(c8);
 };
 
-VS_out VertexShader(VS_in input)
+VS_out VS(VS_in input)
 {
 	VS_out output = (VS_out)0;
 
@@ -50,7 +50,7 @@ struct PS_input
 	float2 t : TEXCOORD0;
 };
 
-float4 PixelShader(PS_input input) : SV_TARGET
+float4 PS(PS_input input) : SV_TARGET
 {
 	return g_txTextureA.Sample(g_sampleA, input.t);
 	//return input.n;

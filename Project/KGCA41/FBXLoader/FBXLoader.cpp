@@ -27,12 +27,58 @@ namespace SSB
 	void SSB::FBXLoader::Load()
 	{
 		_importer->Import(_scene);
+
+		FbxSystemUnit::m.ConvertScene(_scene);
+		FbxAxisSystem::MayaZUp.ConvertScene(_scene);
+
 		_root = _scene->GetRootNode();
 
 		if (_root)
 		{
 			_rootObject = new DXObject();
 			ParseNode(_root, _rootObject);
+		}
+	}
+
+	HMatrix44 FBXLoader::Convert(FbxAMatrix matrix)
+	{
+		HMatrix44 ret
+		{
+			(float)matrix.Get(0, 0), (float)matrix.Get(0, 2), (float)matrix.Get(0, 1), 0,
+			(float)matrix.Get(2, 0), (float)matrix.Get(2, 2), (float)matrix.Get(2, 1), 0,
+			(float)matrix.Get(1, 0), (float)matrix.Get(1, 2), (float)matrix.Get(1, 1), 0,
+			(float)matrix.Get(3, 0), (float)matrix.Get(3, 2), (float)matrix.Get(3, 1), 1,
+		};
+
+		return ret;
+	}
+
+	void FBXLoader::LoadAnimation(FbxAnimStack* animStack, FbxNode* node, DXObject* object)
+	{
+		FbxString animationName = animStack->GetName();
+
+		FbxTakeInfo* info = _scene->GetTakeInfo(animationName);
+
+		FbxTimeSpan timeSpan = info->mLocalTimeSpan;
+		FbxTime startTime = timeSpan.GetStart();
+		FbxTime endTime = timeSpan.GetStop();
+		FbxTime duration = timeSpan.GetDirection();
+
+		FbxLongLong start = startTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
+		FbxLongLong	end = endTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
+
+		for (FbxLongLong i = start; i <= end; ++i)
+		{
+			AnimationInfo info;
+			info.StartFrame = start;
+			info.EndFrame = end;
+			info.CurrentFrame = i;
+
+			FbxTime time;
+			time.SetFrame(i, FbxTime::GetGlobalTimeMode());
+			info.Matrix = Convert(node->EvaluateGlobalTransform(time));
+
+			object->AddAnimation(info);
 		}
 	}
 
@@ -45,6 +91,12 @@ namespace SSB
 		if(mesh)
 		{
 			ParseMesh(node, mesh, object);
+		}
+
+		FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
+		if (animStack)
+		{
+			LoadAnimation(animStack, node, object);
 		}
 
 		for (int i = 0; i < node->GetChildCount(); ++i)
@@ -81,26 +133,26 @@ namespace SSB
 			normalLocalMatrix = normalLocalMatrix.Inverse();
 			normalLocalMatrix = normalLocalMatrix.Transpose();
 
-			FbxVector4 translation;
-			if (node->LclTranslation.IsValid())
-			{
-				translation = node->LclTranslation.Get();
-			}
-			FbxVector4 rotation;
-			if (node->LclRotation.IsValid())
-			{
-				rotation = node->LclRotation.Get();
-			}
-			FbxVector4 scale;
-			if (node->LclScaling.IsValid())
-			{
-				scale = node->LclScaling.Get();
-			}
+			//FbxVector4 translation;
+			//if (node->LclTranslation.IsValid())
+			//{
+			//	translation = node->LclTranslation.Get();
+			//}
+			//FbxVector4 rotation;
+			//if (node->LclRotation.IsValid())
+			//{
+			//	rotation = node->LclRotation.Get();
+			//}
+			//FbxVector4 scale;
+			//if (node->LclScaling.IsValid())
+			//{
+			//	scale = node->LclScaling.Get();
+			//}
 
-			FbxAMatrix matWorldTransform(translation, rotation, scale);
-			FbxAMatrix normalWorldMatrix = matWorldTransform;
-			normalWorldMatrix = normalWorldMatrix.Inverse();
-			normalWorldMatrix = normalWorldMatrix.Transpose();
+			//FbxAMatrix matWorldTransform(translation, rotation, scale);
+			//FbxAMatrix normalWorldMatrix = matWorldTransform;
+			//normalWorldMatrix = normalWorldMatrix.Inverse();
+			//normalWorldMatrix = normalWorldMatrix.Transpose();
 
 			int polygonCount = mesh->GetPolygonCount();
 			int iBasePolyIndex = 0;
@@ -128,7 +180,7 @@ namespace SSB
 						int vertexIndex = iCornerIndex[iIndex];
 						FbxVector4 v = vertexPosition[vertexIndex];
 						v = geometricMatrix.MultT(v);
-						v = matWorldTransform.MultT(v);
+						//v = matWorldTransform.MultT(v);
 
 						FbxColor c = { 0, 0, 0, 1 };
 						FbxLayerElementVertexColor* vertexColorSet = mesh->GetElementVertexColor();
@@ -150,7 +202,7 @@ namespace SSB
 						{
 							n = Read<FbxVector4>(normal, iCornerIndex[iIndex], iBasePolyIndex + vertexColor[iIndex]);
 							n = normalLocalMatrix.MultT(n);
-							n = normalWorldMatrix.MultT(n);
+							//n = normalWorldMatrix.MultT(n);
 						}
 
 						Vertex_PNCT vertex
@@ -295,9 +347,8 @@ namespace SSB
 		{
 			OutputDebugStringA(_importer->GetStatus().GetErrorString());
 		}
-
-		FbxSystemUnit::cm.ConvertScene(_scene);
-		FbxAxisSystem::MayaZUp.ConvertScene(_scene);
+		FbxTime::EMode timeMode;
+		FbxTime::SetGlobalTimeMode(FbxTime::eFrames30);
 
 		Load();
 

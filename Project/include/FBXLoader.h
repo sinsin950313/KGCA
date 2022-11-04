@@ -38,6 +38,8 @@ namespace SSB
 
 	private:
 		void Load();
+		HMatrix44 Convert(FbxAMatrix matrix);
+		void LoadAnimation(FbxAnimStack* animStack, FbxNode* node, DXObject* object);
 		void ParseNode(FbxNode* node, DXObject* object);
 		void ParseMesh(FbxNode* node, FbxMesh* mesh, DXObject* object);
 		void NewModel(FbxNode* node, int layerIndex, int materialIndex, std::map<int, FBXModel*>& modelMap);

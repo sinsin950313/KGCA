@@ -20,6 +20,15 @@ namespace SSB
 		Float44 View;
 		Float44 Projection;
 	};
+	struct AnimationInfo
+	{
+		int StartFrame;
+		int EndFrame;
+		float TickPerFrame = 160;
+		float FrameSpeed = 30;
+		int CurrentFrame;
+		HMatrix44 Matrix;
+	};
 
 	class DXObject : public DXDrawableInterface
 	{
@@ -41,6 +50,10 @@ namespace SSB
 		DXObject* _parent = nullptr;
 		std::vector<DXObject*> _childObjectList;
 
+		std::vector<AnimationInfo> _animationInfos;
+		int _currentAnimationFrame = 0;
+		unsigned long long _count = 0u;
+
 	public:
 		DXObject() { }
 		virtual ~DXObject() { Release(); }
@@ -60,10 +73,11 @@ namespace SSB
 		void SetAdditionalChildObject(DXObject* child) { _childObjectList.push_back(child); child->_parent = this; }
 		void SetVertexShader(Shader* shader) { _vs = shader; }
 		void SetPixelShader(Shader* shader) { _ps = shader; }
-		HMatrix44 GetMatrix() { return _matrix; }
+		HMatrix44 GetMatrix();
 		void Move(Vector3 vec);
 		void Rotate(float pitch, float yaw);
 		OBB GetOBB();
+		void AddAnimation(AnimationInfo info);
 
 	public:
 		bool Init() override;

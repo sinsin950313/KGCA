@@ -107,6 +107,28 @@ namespace SSB
 
 		g_dxWindow->GetDeviceContext()->UpdateSubresource(_constantBuffer, 0, nullptr, &_constantData, 0, 0);
 	}
+	HMatrix44 DXObject::GetMatrix()
+	{
+		if (_animationInfos.empty())
+		{
+			return _matrix;
+		}
+		else
+		{
+			++_count;
+
+			AnimationInfo info = _animationInfos[_currentAnimationFrame];
+			if (_count % 17 == 0)
+			{
+				++_currentAnimationFrame;
+			}
+			if (info.EndFrame < _currentAnimationFrame)
+			{
+				_currentAnimationFrame = info.StartFrame;
+			}
+			return _matrix * _animationInfos[_currentAnimationFrame].Matrix;
+		}
+	}
 	void DXObject::Move(Vector3 vec)
 	{
 		HMatrix44 trans{
@@ -129,6 +151,10 @@ namespace SSB
 		ret.Depth = 1.0f;
 		ret.Matrix = _matrix;
 		return ret;
+	}
+	void DXObject::AddAnimation(AnimationInfo info)
+	{
+		_animationInfos.push_back(info);
 	}
 	bool DXObject::Init()
     {

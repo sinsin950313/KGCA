@@ -115,16 +115,12 @@ namespace SSB
 		}
 		else
 		{
-			++_count;
-
-			AnimationInfo info = _animationInfos[_currentAnimationFrame];
-			if (_count % 17 == 0)
-			{
-				++_currentAnimationFrame;
-			}
+			AnimationInfo info = _animationInfos[0];
+			_currentAnimationFrame = (float)(_animationTimer.GetElapseTime() / 1000.0f) * info.FrameSpeed;
 			if (info.EndFrame < _currentAnimationFrame)
 			{
 				_currentAnimationFrame = info.StartFrame;
+				_animationTimer.Init();
 			}
 			return _matrix * _animationInfos[_currentAnimationFrame].Matrix;
 		}
@@ -173,10 +169,13 @@ namespace SSB
         CreateVertexLayout();
 		CreateConstantBuffer();
 
+		_animationTimer.Init();
+
         return true;
     }
     bool DXObject::Frame()
     {
+		_animationTimer.Frame();
 		for (auto child : _childObjectList)
 		{
 			child->Frame();

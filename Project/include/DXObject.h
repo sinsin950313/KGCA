@@ -52,7 +52,7 @@ namespace SSB
 
 		std::vector<AnimationInfo> _animationInfos;
 		int _currentAnimationFrame = 0;
-		unsigned long long _count = 0u;
+		Timer _animationTimer;
 
 	public:
 		DXObject() { }

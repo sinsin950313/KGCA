@@ -156,7 +156,7 @@ namespace SSB
 		{
 			ret = _animationInfos[beforeIndex].Matrix;
 		}
-		else if (beforeIndex == info.EndFrame)
+		else if (info.EndFrame <= beforeIndex)
 		{
 			_animationTimer.Init();
 			ret = _animationInfos[info.StartFrame].Matrix;

@@ -4,6 +4,7 @@
 #include "Matrix.h"
 #include "Model.h"
 #include "Shader.h"
+#include "Quaternion.h"
 
 namespace SSB
 {
@@ -28,6 +29,9 @@ namespace SSB
 		float FrameSpeed = 30;
 		int CurrentFrame;
 		HMatrix44 Matrix;
+		Vector3 Translate;
+		Vector3 Scale;
+		Quaternion Rotate;
 	};
 
 	class DXObject : public DXDrawableInterface

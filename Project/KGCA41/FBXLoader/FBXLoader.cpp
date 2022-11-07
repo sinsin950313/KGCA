@@ -3,6 +3,8 @@
 #include "TextureManager.h"
 #include "CommonUtility.h"
 #include "DXStateManager.h"
+#include "HCCalculator.h"
+#include "DXObject.h"
 
 namespace SSB
 {
@@ -92,12 +94,12 @@ namespace SSB
 		if(mesh)
 		{
 			ParseMesh(node, mesh, object);
-		}
 
-		FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
-		if (animStack)
-		{
-			LoadAnimation(animStack, node, object);
+			FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
+			if (animStack)
+			{
+				LoadAnimation(animStack, node, object);
+			}
 		}
 
 		for (int i = 0; i < node->GetChildCount(); ++i)

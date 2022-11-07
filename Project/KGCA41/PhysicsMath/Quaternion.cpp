@@ -9,6 +9,16 @@ namespace SSB
 		_f.z = z;
 		_f.w = w;
 	}
+	Quaternion::Quaternion(DirectX::FXMVECTOR vector)
+	{
+		DirectX::XMFLOAT4 tmp;
+		DirectX::XMStoreFloat4(&tmp, vector);
+
+		_f.x = tmp.x;
+		_f.y = tmp.y;
+		_f.z = tmp.z;
+		_f.w = tmp.w;
+	}
 	Matrix33 SSB::Quaternion::GetRotateMatrix()
 	{
 		float q1 = _f.e[0];

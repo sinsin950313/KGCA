@@ -1,5 +1,6 @@
 #pragma once
 #include <cmath>
+#include <DirectXMath.h>
 
 namespace SSB
 {
@@ -90,6 +91,7 @@ namespace SSB
 	public:
 		Vector3(float x = 0.0f, float y = 0.0f, float z = 0.0f) : _f{ x, y, z }{ }
 		Vector3(Float3 data) : _f{ data.x, data.y, data.z } { }
+		Vector3(DirectX::XMFLOAT3 data);
 
 	public:
 		float LengthSquare() const;
@@ -113,6 +115,7 @@ namespace SSB
 		float GetY() const { return _f.y; }
 		float GetZ() const { return _f.z; }
 		operator Float3() const { return _f; }
+		operator DirectX::XMFLOAT3();
 	};
 
 	class HVector3/*, public VectorInterface<HVector3>*/
@@ -163,6 +166,7 @@ namespace SSB
 				float w;
 			};
 		};
+		operator DirectX::FXMVECTOR();
 	};
 
 	class Vector4

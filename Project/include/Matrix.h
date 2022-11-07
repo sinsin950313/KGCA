@@ -251,5 +251,6 @@ namespace SSB
 		operator Float44();
 		operator Float3();
 		operator Vector3();
+		operator DirectX::FXMMATRIX();
 	};
 }

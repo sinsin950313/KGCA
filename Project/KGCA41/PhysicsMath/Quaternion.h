@@ -7,10 +7,12 @@ namespace SSB
 {
 	class Quaternion
 	{
-	private:
+	//private:
+	public:
 		Float4 _f;
 
 	public:
+		Quaternion() { }
 		Quaternion(float x, float y, float z, float w);
 		Quaternion(DirectX::FXMVECTOR vector);
 

@@ -64,14 +64,20 @@ namespace SSB
 
 		return Quaternion(res);
 	}
-	void Decompose(HMatrix44 matrix, Vector3& scale, Quaternion& rotation, Vector3 translation)
+	void Decompose(HMatrix44 matrix, Vector3& scale, Quaternion& rotation, Vector3& translation)
 	{
 		DirectX::XMVECTOR s, r, t;
 		DirectX::FXMMATRIX mat = matrix;
 		DirectX::XMMatrixDecompose(&s, &r, &t, mat);
 
-		scale = s;
+		DirectX::XMFLOAT4 sData;
+		DirectX::XMStoreFloat4(&sData, s);
+		scale = Vector3(sData.x, sData.y, sData.z);
+
 		rotation = r;
-		translation = t;
+
+		DirectX::XMFLOAT4 tData;
+		DirectX::XMStoreFloat4(&tData, t);
+		translation = Vector3(tData.x, tData.y, tData.z);
 	}
 }

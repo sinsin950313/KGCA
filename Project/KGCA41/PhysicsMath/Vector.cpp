@@ -82,6 +82,13 @@ namespace SSB
 		return operator*(invScalar);
 	}
 
+	Vector3::Vector3(DirectX::XMFLOAT3 data)
+	{
+		_f.x = data.x;
+		_f.y = data.y;
+		_f.z = data.z;
+	}
+
 	float Vector3::LengthSquare() const
 	{
 		return _f.x * _f.x + _f.y * _f.y + _f.z * _f.z;
@@ -142,6 +149,11 @@ namespace SSB
 	{
 		float invScalar = 1.0f / scalar;
 		return operator*(invScalar);
+	}
+
+	Vector3::operator DirectX::XMFLOAT3()
+	{
+		return DirectX::XMFLOAT3(_f.x, _f.y, _f.z);
 	}
 
 	const float HVector3::_fThreshold = 0.0001f;
@@ -489,5 +501,10 @@ namespace SSB
 	HVector4::operator Vector3() const
 	{
 		return IsVector() ? Vector3{ _f.x, _f.y, _f.z }.Normal() : Vector3{ _f.x / _f.w, _f.y / _f.w, _f.z / _f.w };
+	}
+	Float4::operator DirectX::FXMVECTOR()
+	{
+		DirectX::XMFLOAT4 tmp(x, y, z, w);
+		return DirectX::XMLoadFloat4(&tmp);
 	}
 }

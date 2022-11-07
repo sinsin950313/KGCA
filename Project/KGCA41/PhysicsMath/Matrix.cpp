@@ -722,6 +722,16 @@ namespace SSB
 	{
 		return Vector3{ _f.e41 / _f.e44, _f.e42 / _f.e44, _f.e43 / _f.e44 };
 	}
+	HMatrix44::operator DirectX::FXMMATRIX()
+	{
+		DirectX::XMFLOAT4X4 tmp(
+			_f.e11, _f.e12, _f.e13, _f.e14,
+			_f.e21, _f.e22, _f.e23, _f.e24,
+			_f.e31, _f.e32, _f.e33, _f.e34,
+			_f.e41, _f.e42, _f.e43, _f.e44
+		);
+		return DirectX::XMLoadFloat4x4(&tmp);
+	}
 	HMatrix44::operator Float44()
 	{
 		return Float44{

@@ -95,4 +95,12 @@ namespace SSB
 	{
 		return Vector3{ _f.x, _f.y, _f.z };
 	}
+	Quaternion::operator Float4()
+	{
+		return Float4{ _f.x, _f.y, _f.z, _f.w };
+	}
+	Quaternion::operator Vector4()
+	{
+		return Vector4{ _f.x, _f.y, _f.z, _f.w };
+	}
 }

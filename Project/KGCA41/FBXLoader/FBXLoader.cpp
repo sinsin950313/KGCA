@@ -77,6 +77,7 @@ namespace SSB
 			FbxTime time;
 			time.SetFrame(i, FbxTime::GetGlobalTimeMode());
 			info.Matrix = Convert(node->EvaluateGlobalTransform(time));
+			Decompose(info.Matrix, info.Scale, info.Rotate, info.Translate);
 
 			object->AddAnimation(info);
 		}

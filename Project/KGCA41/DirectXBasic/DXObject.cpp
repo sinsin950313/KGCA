@@ -116,13 +116,7 @@ namespace SSB
 		else
 		{
 			AnimationInfo info = _animationInfos[0];
-			_currentAnimationFrame = (float)(_animationTimer.GetElapseTime() / 1000.0f) * info.FrameSpeed;
-			if (info.EndFrame < _currentAnimationFrame)
-			{
-				_currentAnimationFrame = info.StartFrame;
-				_animationTimer.Init();
-			}
-			return _matrix * _animationInfos[_currentAnimationFrame].Matrix;
+			return _matrix * GetInterpolate(info);
 		}
 	}
 	void DXObject::Move(Vector3 vec)
@@ -151,6 +145,39 @@ namespace SSB
 	void DXObject::AddAnimation(AnimationInfo info)
 	{
 		_animationInfos.push_back(info);
+	}
+	HMatrix44 DXObject::GetInterpolate(AnimationInfo info)
+	{
+		HMatrix44 ret;
+		float animationElapseTime = (float)(_animationTimer.GetElapseTime() / 1000.0f);
+		int beforeIndex = animationElapseTime * info.FrameSpeed;
+		int afterIndex = beforeIndex + 1;
+		if (afterIndex == info.EndFrame)
+		{
+			ret = _animationInfos[beforeIndex].Matrix;
+		}
+		else if (beforeIndex == info.EndFrame)
+		{
+			_animationTimer.Init();
+			ret = _animationInfos[info.StartFrame].Matrix;
+		}
+		else
+		{
+			float beforeTime = beforeIndex / info.FrameSpeed;
+			float afterTime = afterIndex / info.FrameSpeed;
+			float t = (animationElapseTime - beforeTime) / (afterTime - beforeTime);
+			
+			AnimationInfo beforeInfo = _animationInfos[beforeIndex];
+			AnimationInfo afterInfo = _animationInfos[afterIndex];
+
+			Vector3 pos = Lerp(beforeInfo.Translate, afterInfo.Translate, t);
+			Vector3 scale = Lerp(beforeInfo.Scale, afterInfo.Scale, t);
+			Quaternion rotate = SLerp(beforeInfo.Rotate, afterInfo.Rotate, t);
+
+			ret = HMatrix44::Scale(scale) * HMatrix44(rotate.GetRotateMatrix(), { 0, 0, 0 }) * HMatrix44::Translate(pos);
+		}
+
+		return ret;
 	}
 	bool DXObject::Init()
     {

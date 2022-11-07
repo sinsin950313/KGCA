@@ -1,4 +1,5 @@
 #include "HCCalculator.h"
+#include <DirectXMath.h>
 
 namespace SSB
 {
@@ -36,5 +37,41 @@ namespace SSB
 	{
 		Quaternion q = Quaternion::GetRotateQuaternion(axis, radian);
 		return q * vec * q.Conjugate();
+	}
+	Vector3 Lerp(Vector3 a, Vector3 b, float t)
+	{
+		DirectX::XMFLOAT3 aXmData = a;
+		DirectX::XMFLOAT3 bXmData = b;
+
+		DirectX::XMVECTOR aVec = DirectX::XMLoadFloat3(&aXmData);
+		DirectX::XMVECTOR bVec = DirectX::XMLoadFloat3(&bXmData);
+		DirectX::XMVECTOR x = DirectX::XMVectorLerp(aVec, bVec, t);
+
+		DirectX::XMFLOAT3 resXm;
+		DirectX::XMStoreFloat3(&resXm, x);
+
+		return Vector3(resXm);
+	}
+	Quaternion SLerp(Quaternion a, Quaternion b, float t)
+	{
+		Float4 aData = a;
+		Float4 bData = b;
+
+		DirectX::FXMVECTOR q0 = aData;
+		DirectX::FXMVECTOR q1 = bData;
+
+		DirectX::XMVECTOR res = DirectX::XMQuaternionSlerp(q0, q1, t);
+
+		return Quaternion(res);
+	}
+	void Decompose(HMatrix44 matrix, Vector3& scale, Quaternion& rotation, Vector3 translation)
+	{
+		DirectX::XMVECTOR s, r, t;
+		DirectX::FXMMATRIX mat = matrix;
+		DirectX::XMMatrixDecompose(&s, &r, &t, mat);
+
+		scale = s;
+		rotation = r;
+		translation = t;
 	}
 }

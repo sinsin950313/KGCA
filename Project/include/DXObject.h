@@ -78,6 +78,7 @@ namespace SSB
 		void Rotate(float pitch, float yaw);
 		OBB GetOBB();
 		void AddAnimation(AnimationInfo info);
+		HMatrix44 GetInterpolate(AnimationInfo info);
 
 	public:
 		bool Init() override;

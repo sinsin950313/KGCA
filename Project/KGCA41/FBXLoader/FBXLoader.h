@@ -41,7 +41,8 @@ namespace SSB
 
 	public:
 		bool Release() override;
-		//void Draw(ID3D11DeviceContext* dc) override;
+		bool Render() override;
+		void Draw(ID3D11DeviceContext* dc) override;
 	};
 
 	class DXFBXSkeletonObject : public DXObject
@@ -88,7 +89,7 @@ namespace SSB
 
 	public:
 		bool Release() override;
-		//void Draw(ID3D11DeviceContext* dc) override;
+		void DeviceContextSettingBeforeDraw(ID3D11DeviceContext* dc) override;
 	};
 
 	class FBXLoader : public Common
@@ -118,6 +119,8 @@ namespace SSB
 		void NewModel(FbxNode* node, int layerIndex, int materialIndex, std::map<int, FBXModel*>& modelMap);
 		FbxVector2 Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex);
 		int GetSubMaterialIndex(int iPoly, FbxLayerElementMaterial* pMaterialSetList);
+		//void ParseSkeleton();
+		void ParseMeshSkinningData(FbxMesh* mesh);
 
 	private:
 		template<typename T>

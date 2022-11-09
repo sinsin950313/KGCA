@@ -58,6 +58,10 @@ namespace SSB
 		int _currentAnimationFrame = 0;
 		Timer _animationTimer;
 
+		Model* _currentDrawModel;
+		ID3D11Buffer* _currentDrawVertexBuffer;
+		ID3D11Buffer* _currentDrawIndexBuffer;
+
 	public:
 		DXObject() { }
 		virtual ~DXObject() { Release(); }
@@ -68,6 +72,7 @@ namespace SSB
 		virtual bool CreateConstantBuffer();
 		virtual void UpdateConstantBuffer();
 		virtual void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count);
+		virtual void DeviceContextSettingBeforeDraw(ID3D11DeviceContext* dc);
 
 	private:
 		bool CreateVertexLayout();

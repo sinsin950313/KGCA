@@ -96,6 +96,8 @@ namespace SSB
 		{
 			ParseMesh(node, mesh, object);
 
+			ParseMeshSkinningData(mesh);
+
 			FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
 			if (animStack)
 			{
@@ -146,10 +148,10 @@ namespace SSB
 
 	void SSB::FBXLoader::ParseMesh(FbxNode* node, FbxMesh* mesh, DXObject* object)
 	{
-		std::map<int, FBXModel*> modelMap;
-
 		for (int iLayer = 0; iLayer < mesh->GetLayerCount(); ++iLayer)
 		{
+			std::map<int, FBXModel*> modelMap;
+
 			FbxLayer* layer = mesh->GetLayer(iLayer);
 
 			FbxAMatrix geometricMatrix;
@@ -367,6 +369,39 @@ namespace SSB
 		return iSubMtrl;
 	}
 
+	void FBXLoader::ParseMeshSkinningData(FbxMesh* mesh)
+	{
+		int deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
+		for (int iDeformer = 0; iDeformer < deformerCount; ++iDeformer)
+		{
+			FbxDeformer* deformer = mesh->GetDeformer(iDeformer, FbxDeformer::eSkin);
+			FbxSkin* skin = (FbxSkin*)deformer;
+			int clusterCount = skin->GetClusterCount();
+			for (int iCluster = 0; iCluster < clusterCount; ++iCluster)
+			{
+				FbxCluster* cluster = skin->GetCluster(iCluster);
+
+				FbxAMatrix linkMatrix;
+				cluster->GetTransformLinkMatrix(linkMatrix);
+
+				FbxAMatrix adjustMatrix;
+				cluster->GetTransformMatrix(adjustMatrix);
+
+				FbxAMatrix toBoneLocalMatrix = linkMatrix.Inverse() * adjustMatrix;
+				HMatrix44 matrix = Convert(toBoneLocalMatrix);
+
+				int controlPointCount = cluster->GetControlPointIndicesCount();
+				int* controlPointIndice = cluster->GetControlPointIndices();
+				double* controlPointWeights = cluster->GetControlPointWeights();
+				for (int iControlPoint = 0; iControlPoint < controlPointCount; ++iControlPoint)
+				{
+					int index = controlPointIndice[iControlPoint];
+					float weight = controlPointWeights[iControlPoint];
+					//Register matrix, index, weight here
+				}
+			}
+		}
+	}
 
 	bool SSB::FBXLoader::Init()
 	{
@@ -486,6 +521,18 @@ namespace SSB
 
 		return true;
 	}
+	bool DXFBXRootObject::Render()
+	{
+		DXObject::Render();
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_skeletonAnimationDataBuffer, NULL, NULL, &_skeletonAnimationData, 0, 0);
+		return false;
+	}
+	void DXFBXRootObject::Draw(ID3D11DeviceContext* dc)
+	{
+		DXObject::Draw(dc);
+
+		dc->VSSetConstantBuffers(1, 1, &_skeletonAnimationDataBuffer);
+	}
 	bool DXFBXSkeletonObject::Frame()
 	{
 		DXObject::Frame();
@@ -565,5 +612,14 @@ namespace SSB
 		DXObject::Release();
 
 		return true;
+	}
+	void DXFBXMeshObject::DeviceContextSettingBeforeDraw(ID3D11DeviceContext* dc)
+	{
+		DXObject::DeviceContextSettingBeforeDraw(dc);
+
+		UINT stride = sizeof(Vertex_PNCT);
+		UINT offset = 0;
+
+		dc->IASetVertexBuffers(1, 1, &_skinningDataBuffer, &stride, &offset);
 	}
 }

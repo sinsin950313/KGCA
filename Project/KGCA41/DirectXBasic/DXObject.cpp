@@ -120,6 +120,39 @@ namespace SSB
 
 		count = 4;
 	}
+	void DXObject::DeviceContextSettingBeforeDraw(ID3D11DeviceContext* dc)
+	{
+		UINT stride = sizeof(Vertex_PNCT);
+		UINT offset = 0;
+
+		auto& vertexList = _currentDrawModel->GetVertexList();
+		std::vector<Vertex_PNCT> update;
+		for (int i = 0; i < vertexList.size(); ++i)
+		{
+			HVector4 position{ vertexList[i].position, 1.0f };
+			//position = position * _matrix;
+			//position = position * view;
+			//position = position * projection;
+			//position.Normalize();
+
+			Vertex_PNCT vertex = vertexList[i];
+			memcpy(&vertex.position, &position, sizeof(Float4));
+			update.push_back(vertex);
+		}
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_currentDrawVertexBuffer, NULL, NULL, &update.at(0), 0, 0);
+
+		dc->IASetVertexBuffers(0, 1, &_currentDrawVertexBuffer, &stride, &offset);
+		dc->IASetIndexBuffer(_currentDrawIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		dc->IASetInputLayout(_vertexLayout);
+		dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
+		dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
+		dc->PSSetShaderResources(0, 1, _currentDrawModel->GetSprite()->GetResource()->GetShaderResourceView());
+		ID3D11SamplerState* ss = _currentDrawModel->GetSprite()->GetSamplerState();
+		dc->PSSetSamplers(0, 1, &ss);
+		dc->PSSetShaderResources(1, 1, _currentDrawModel->GetSprite()->GetMaskResource()->GetShaderResourceView());
+		dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
+		dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
+	}
 	HMatrix44 DXObject::GetMatrix()
 	{
 		if (_animationInfos.empty())
@@ -294,9 +327,6 @@ namespace SSB
     }
     void DXObject::Draw(ID3D11DeviceContext* dc)
     {
-		UINT stride = sizeof(Vertex_PNCT);
-		UINT offset = 0;
-
 		//{
 		//	// Move to Model Frame
 		//	HMatrix44 view = g_dxWindow->GetMainCamera()->GetViewMatrix();
@@ -339,33 +369,10 @@ namespace SSB
 			// Use Constant Buffer instead
 			for(int i = 0; i < _models.size(); ++i)
 			{
-				auto& vertexList = _models[i]->GetVertexList();
-				std::vector<Vertex_PNCT> update;
-				for (int i = 0; i < vertexList.size(); ++i)
-				{
-					HVector4 position{ vertexList[i].position, 1.0f };
-					//position = position * _matrix;
-					//position = position * view;
-					//position = position * projection;
-					//position.Normalize();
-
-					Vertex_PNCT vertex = vertexList[i];
-					memcpy(&vertex.position, &position, sizeof(Float4));
-					update.push_back(vertex);
-				}
-				g_dxWindow->GetDeviceContext()->UpdateSubresource(_vertexBuffers[i], NULL, NULL, &update.at(0), 0, 0);
-
-				dc->IASetVertexBuffers(0, 1, &_vertexBuffers[i], &stride, &offset);
-				dc->IASetIndexBuffer(_indexBuffers[i], DXGI_FORMAT_R32_UINT, 0);
-				dc->IASetInputLayout(_vertexLayout);
-				dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
-				dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
-				dc->PSSetShaderResources(0, 1, _models[i]->GetSprite()->GetResource()->GetShaderResourceView());
-				ID3D11SamplerState* ss = _models[i]->GetSprite()->GetSamplerState();
-				dc->PSSetSamplers(0, 1, &ss);
-				dc->PSSetShaderResources(1, 1, _models[i]->GetSprite()->GetMaskResource()->GetShaderResourceView());
-				dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
-				dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
+				_currentDrawModel = _models[i];
+				_currentDrawVertexBuffer = _vertexBuffers[i];
+				_currentDrawIndexBuffer = _indexBuffers[i];
+				DeviceContextSettingBeforeDraw(dc);
 				dc->DrawIndexed(_models[i]->GetIndexList().size(), 0, 0);
 			}
 

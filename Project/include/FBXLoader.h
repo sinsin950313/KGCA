@@ -18,6 +18,79 @@ namespace SSB
 		friend class FBXLoader;
 	};
 
+	struct SkeletonAnimationData
+	{
+		HMatrix44 Skeleton[255];
+	};
+
+	class DXFBXRootObject : public DXObject
+	{
+	private:
+		SkeletonAnimationData _skeletonAnimationData;
+		ID3D11Buffer* _skeletonAnimationDataBuffer;
+
+	public:
+		~DXFBXRootObject() { Release(); }
+
+	public:
+		void UpdateSkeletonAnimationData(int index, HMatrix44 data) { _skeletonAnimationData.Skeleton[index] = data; }
+
+	private:
+		bool CreateConstantBuffer() override;
+		void UpdateConstantBuffer() override;
+
+	public:
+		bool Release() override;
+		//void Draw(ID3D11DeviceContext* dc) override;
+	};
+
+	class DXFBXSkeletonObject : public DXObject
+	{
+	private:
+		DXFBXRootObject* _root;
+		int _boneIndex;
+
+	public:
+		~DXFBXSkeletonObject() { Release(); }
+
+	public:
+		void SetRootObject(DXFBXRootObject* root) { _root = root; }
+		void SetBoneIndex(int index) { _boneIndex = index; }
+
+	public:
+		bool Frame() override;
+		bool Release() override;
+	};
+
+	struct SkinningData
+	{
+		int BoneIndex[4]{ 0, };
+		//HMatrix44 ToBoneSpaceMatrix;
+		float Weight[4]{ 0, };
+	};
+
+	class DXFBXMeshObject : public DXObject
+	{
+	private:
+		//SkinningData _skinningData[4];
+		SkinningData _skinningData;
+		ID3D11Buffer* _skinningDataBuffer;
+
+	public:
+		~DXFBXMeshObject() { Release(); }
+
+	private:
+		bool CreateVertexBuffer() override;
+		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
+
+	public:
+		void LinkMeshWithBone(int boneIndex, float weight);
+
+	public:
+		bool Release() override;
+		//void Draw(ID3D11DeviceContext* dc) override;
+	};
+
 	class FBXLoader : public Common
 	{
 	private:
@@ -29,8 +102,8 @@ namespace SSB
 		//std::vector<FbxMesh*> _meshList;
 
 	public:
-		//std::vector<DXObject*> _objectList;
-		DXObject* _rootObject;
+		DXFBXRootObject* _rootObject;
+		//DXObject* _rootObject;
 
 	public:
 		FBXLoader();

@@ -58,15 +58,13 @@ namespace SSB
     }
     bool DXObject::CreateVertexLayout()
     {
-		D3D11_INPUT_ELEMENT_DESC ied[] =
-		{
-			{ "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		};
-		UINT iedCount = sizeof(ied) / sizeof(ied[0]);
-		HRESULT hr = g_dxWindow->GetDevice()->CreateInputLayout(ied, iedCount, _vs->GetCode()->GetBufferPointer(), _vs->GetCode()->GetBufferSize(), &_vertexLayout);
+		D3D11_INPUT_ELEMENT_DESC* inputElementDesc;
+		int inputElementDescCount;
+		SetVertexLayoutDesc(&inputElementDesc, inputElementDescCount);
+
+		HRESULT hr = g_dxWindow->GetDevice()->CreateInputLayout(inputElementDesc, inputElementDescCount, _vs->GetCode()->GetBufferPointer(), _vs->GetCode()->GetBufferSize(), &_vertexLayout);
+		delete inputElementDesc;
+
 		if (FAILED(hr))
 		{
 			return false;
@@ -106,6 +104,21 @@ namespace SSB
 		_constantData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
 
 		g_dxWindow->GetDeviceContext()->UpdateSubresource(_constantBuffer, 0, nullptr, &_constantData, 0, 0);
+
+		//for (auto child : _childObjectList)
+		//{
+		//	child->UpdateConstantBuffer();
+		//}
+	}
+	void DXObject::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
+	{
+		*desc = new D3D11_INPUT_ELEMENT_DESC[4];
+		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[1] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[2] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[3] = { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+
+		count = 4;
 	}
 	HMatrix44 DXObject::GetMatrix()
 	{
@@ -142,7 +155,7 @@ namespace SSB
 		ret.Matrix = _matrix;
 		return ret;
 	}
-	void DXObject::AddAnimation(AnimationInfo info)
+	void DXObject::SetAdditionalAnimation(AnimationInfo info)
 	{
 		_animationInfos.push_back(info);
 	}
@@ -355,6 +368,11 @@ namespace SSB
 				dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
 				dc->DrawIndexed(_models[i]->GetIndexList().size(), 0, 0);
 			}
+
+			//for (auto child : _childObjectList)
+			//{
+			//	child->Draw(dc);
+			//}
 		}
     }
 }

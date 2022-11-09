@@ -15,7 +15,8 @@ bool SSB::FBXLoaderTest::Init()
 	//_loader->SetFileName("../../Resource/FBX/box.FBX");
 	//_loader->SetFileName("../../Resource/FBX/MultiCameras.FBX");
 	//_loader->SetFileName("../../Resource/FBX/ship.FBX");
-	_loader->SetFileName("../../Resource/FBX/Turret_Deploy1.FBX");
+	//_loader->SetFileName("../../Resource/FBX/Turret_Deploy1.FBX");
+	_loader->SetFileName("../../Resource/FBX/Man.FBX");
 	_loader->Init();
 
 	ModelViewCamera* camera = new ModelViewCamera();

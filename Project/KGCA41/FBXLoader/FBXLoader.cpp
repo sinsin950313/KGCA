@@ -37,7 +37,11 @@ namespace SSB
 
 		if (_root)
 		{
-			_rootObject = new DXObject();
+			//_rootObject = new DXObject;
+			_rootObject = new DXFBXRootObject;
+			// Need to Remove
+			_rootObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
+			_rootObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
 			ParseNode(_root, _rootObject);
 		}
 	}
@@ -81,15 +85,12 @@ namespace SSB
 			info.Matrix = Convert(node->EvaluateGlobalTransform(time));
 			Decompose(info.Matrix, info.Scale, info.Rotate, info.Translate);
 
-			object->AddAnimation(info);
+			object->SetAdditionalAnimation(info);
 		}
 	}
 
 	void SSB::FBXLoader::ParseNode(FbxNode* node, DXObject* object)
 	{
-		object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
-		object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
-
 		FbxMesh* mesh = node->GetMesh();
 		if(mesh)
 		{
@@ -102,6 +103,12 @@ namespace SSB
 			}
 		}
 
+		//FbxSkeleton* skeleton = node->GetSkeleton();
+		//if (skeleton)
+		//{
+		//	ParseSkeleton(node, object);
+		//}
+
 		for (int i = 0; i < node->GetChildCount(); ++i)
 		{
 			FbxNodeAttribute::EType attribute = node->GetChild(i)->GetNodeAttribute()->GetAttributeType();
@@ -109,7 +116,28 @@ namespace SSB
 				attribute == FbxNodeAttribute::eMesh ||
 				attribute == FbxNodeAttribute::eSkeleton)
 			{
-				DXObject* childObject = new DXObject;
+				DXObject* childObject = nullptr;
+				if (attribute == FbxNodeAttribute::eMesh)
+				{
+					childObject = new DXFBXMeshObject;
+					childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshObject.hlsl", "VS", "vs_5_0"));
+					childObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshObject.hlsl", "PS", "ps_5_0"));
+				}
+				else if (attribute == FbxNodeAttribute::eSkeleton)
+				{
+					childObject = new DXFBXSkeletonObject;
+					// Need to Remove
+					childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
+					childObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
+					((DXFBXSkeletonObject*)childObject)->SetRootObject(_rootObject);
+				}
+				else
+				{
+					childObject = new DXObject;
+					 //Need to Remove
+					childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
+					childObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
+				}
 				object->SetAdditionalChildObject(childObject);
 				ParseNode(node->GetChild(i), childObject);
 			}
@@ -417,6 +445,124 @@ namespace SSB
 		TextureResourceManager::GetInstance().Release();
 		DXStateManager::GetInstance().Release();
 		ShaderManager::GetInstance().Release();
+
+		return true;
+	}
+	bool DXFBXRootObject::CreateConstantBuffer()
+	{
+		DXObject::CreateConstantBuffer();
+
+		D3D11_BUFFER_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
+		desc.ByteWidth = sizeof(_skeletonAnimationData);
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+		sd.pSysMem = &_skeletonAnimationData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_skeletonAnimationDataBuffer);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+		return true;
+	}
+	void DXFBXRootObject::UpdateConstantBuffer()
+	{
+		DXObject::UpdateConstantBuffer();
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_skeletonAnimationDataBuffer, 0, nullptr, &_skeletonAnimationData, 0, 0);
+	}
+	bool DXFBXRootObject::Release()
+	{
+		if (_skeletonAnimationDataBuffer)
+		{
+			_skeletonAnimationDataBuffer->Release();
+			_skeletonAnimationDataBuffer = nullptr;
+		}
+
+		DXObject::Release();
+
+		return true;
+	}
+	bool DXFBXSkeletonObject::Frame()
+	{
+		DXObject::Frame();
+
+		_root->UpdateSkeletonAnimationData(_boneIndex, GetMatrix());
+
+		return true;
+	}
+	bool DXFBXSkeletonObject::Release()
+	{
+		_root = nullptr;
+
+		DXObject::Release();
+
+		return true;
+	}
+	bool DXFBXMeshObject::CreateVertexBuffer()
+	{
+		DXObject::CreateVertexBuffer();
+
+		D3D11_BUFFER_DESC bd;
+		ZeroMemory(&bd, sizeof(bd));
+		bd.ByteWidth = sizeof(decltype(_skinningData)) * sizeof(_skinningData);
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+		sd.pSysMem = &_skinningData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_skinningDataBuffer);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+		return true;
+	}
+	void DXFBXMeshObject::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
+	{
+		*desc = new D3D11_INPUT_ELEMENT_DESC[6];
+		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[1] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[2] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[3] = { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+
+		(*desc)[4] = { "BoneIndex", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[5] = { "Weight", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		count = 6;
+	}
+	void DXFBXMeshObject::LinkMeshWithBone(int boneIndex, float weight)
+	{
+		for (int i = 0; i < 4; ++i)
+		{
+			if (_skinningData.Weight[i] < weight)
+			{
+				for (int j = 3; i < j; --j)
+				{
+					_skinningData.BoneIndex[j] = _skinningData.BoneIndex[j - 1];
+					_skinningData.Weight[j] = _skinningData.Weight[j - 1];
+				}
+
+				_skinningData.BoneIndex[i] = boneIndex;
+				_skinningData.Weight[i] = weight;
+
+				break;
+			}
+		}
+	}
+	bool DXFBXMeshObject::Release()
+	{
+		if (_skinningDataBuffer)
+		{
+			_skinningDataBuffer->Release();
+			_skinningDataBuffer = nullptr;
+		}
+
+		DXObject::Release();
 
 		return true;
 	}

@@ -62,12 +62,15 @@ namespace SSB
 		DXObject() { }
 		virtual ~DXObject() { Release(); }
 
+	protected:
+		virtual bool CreateVertexBuffer();
+		virtual bool CreateIndexBuffer();
+		virtual bool CreateConstantBuffer();
+		virtual void UpdateConstantBuffer();
+		virtual void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count);
+
 	private:
-		bool CreateVertexBuffer();
-		bool CreateIndexBuffer();
 		bool CreateVertexLayout();
-		bool CreateConstantBuffer();
-		void UpdateConstantBuffer();
 
 	protected:
 		std::vector<Model*> GetModel() { return _models; }
@@ -75,13 +78,13 @@ namespace SSB
 	public:
 		void SetAdditionalModel(Model* model) { _models.push_back(model); }
 		void SetAdditionalChildObject(DXObject* child) { _childObjectList.push_back(child); child->_parent = this; }
+		void SetAdditionalAnimation(AnimationInfo info);
 		void SetVertexShader(Shader* shader) { _vs = shader; }
 		void SetPixelShader(Shader* shader) { _ps = shader; }
 		HMatrix44 GetMatrix();
 		void Move(Vector3 vec);
 		void Rotate(float pitch, float yaw);
 		OBB GetOBB();
-		void AddAnimation(AnimationInfo info);
 		HMatrix44 GetInterpolate(AnimationInfo info);
 
 	public:

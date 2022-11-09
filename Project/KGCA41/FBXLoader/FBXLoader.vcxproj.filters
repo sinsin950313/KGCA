@@ -33,4 +33,8 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Shader\Default3DObject.hlsl" />
+    <FxCompile Include="..\..\Shader\Default3DMeshObject.hlsl" />
+  </ItemGroup>
 </Project>

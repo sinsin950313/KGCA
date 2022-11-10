@@ -4,8 +4,8 @@ struct VS_in
 	float4 n : Normal;
 	float4 c : Color;
 	float2 t : Texture;
-	float4 boneIndex : BoneIndex;
-	float4 weight : Weight;
+	float4 AffectingBoneIndex : AffectingBoneIndex;
+	float4 Weight : Weight;
 };
 
 struct VS_out
@@ -23,17 +23,36 @@ cbuffer Camera : register(b0)
 	matrix g_Projection : packoffset(c8);
 };
 
+cbuffer Bone : register(b1)
+{
+	matrix ToBoneSpaceMatrix[255];
+	matrix ToWorldSpaceMatrix[255];
+}
+
 VS_out VS(VS_in input)
 {
 	VS_out output = (VS_out)0;
 
-	float4 local = input.p;
-	float4 world = mul(local, g_World);
+	float4 pos = 0;
+	float4 normal = 0;
+	for (int i = 0; i < 4; ++i)
+	{
+		uint index = input.AffectingBoneIndex[i];
+		float weight = input.Weight[i];
+
+		float4 tmpPos = mul(input.n, ToBoneSpaceMatrix[index]);
+		pos += mul(tmpPos, ToWorldSpaceMatrix[index]) * weight;
+
+		float4 tmpNormal = mul(input.n, ToBoneSpaceMatrix[index]);
+		normal += mul(tmpNormal, ToWorldSpaceMatrix[index]) * weight;
+	}
+
+	float4 world = mul(pos, g_World);
 	float4 view = mul(world, g_View);
 	float4 proj = mul(view, g_Projection);
 
 	output.p = proj;
-	output.n = input.n;
+	output.n = normal;
 	output.c = input.c;
 	output.t = input.t;
 

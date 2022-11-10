@@ -72,13 +72,14 @@ namespace SSB
 
 	struct SkinningData
 	{
-		int AffectingBoneIndex[4]{ 0, };
+		float AffectingBoneIndex[4]{ 0, };
 		float Weight[4]{ 0, };
 	};
 
 	class DXFBXMeshObject : public DXObject
 	{
 	private:
+		std::vector<SkinningData> _originSkinningDataList;
 		std::vector<SkinningData> _skinningDataList;
 		ID3D11Buffer* _skinningDataBuffer;
 

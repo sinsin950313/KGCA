@@ -125,9 +125,8 @@ namespace SSB
 		FbxMesh* mesh = node->GetMesh();
 		if(mesh)
 		{
-			ParseMesh(node, mesh, object);
-
 			ParseMeshSkinningData((DXFBXMeshObject*)object, mesh);
+			ParseMesh(node, mesh, object);
 
 			FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
 			if (animStack)
@@ -285,6 +284,9 @@ namespace SSB
 							iter = modelMap.find(iSubMtrl);
 						}
 						iter->second->_tmpVertexList.push_back(vertex);
+
+						DXFBXMeshObject* meshObject = ((DXFBXMeshObject*)object);
+						meshObject->_skinningDataList.push_back(meshObject->_originSkinningDataList[vertexIndex]);
 					}
 				}
 				iBasePolyIndex += mesh->GetPolygonSize(iPoly);
@@ -396,7 +398,7 @@ namespace SSB
 
 	void FBXLoader::ParseMeshSkinningData(DXFBXMeshObject* object, FbxMesh* mesh)
 	{
-		object->_skinningDataList.resize(mesh->GetControlPointsCount());
+		object->_originSkinningDataList.resize(mesh->GetControlPointsCount());
 		int deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
 		for (int iDeformer = 0; iDeformer < deformerCount; ++iDeformer)
 		{
@@ -615,16 +617,16 @@ namespace SSB
 		count = 6;
 		*desc = new D3D11_INPUT_ELEMENT_DESC[count];
 		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[1] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[2] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[3] = { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[1] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[2] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[3] = { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 
 		(*desc)[4] = { "AffectingBoneIndex", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[5] = { "Weight", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[5] = { "Weight", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 	void DXFBXMeshObject::LinkMeshWithBone(int vertexIndex, int boneIndex, float weight)
 	{
-		SkinningData& data = _skinningDataList[vertexIndex];
+		SkinningData& data = _originSkinningDataList[vertexIndex];
 		for (int i = 0; i < 4; ++i)
 		{
 			if (data.Weight[i] < weight)
@@ -658,7 +660,7 @@ namespace SSB
 	{
 		DXObject::DeviceContextSettingBeforeDraw(dc);
 
-		UINT stride = sizeof(Vertex_PNCT);
+		UINT stride = sizeof(SkinningData);
 		UINT offset = 0;
 
 		dc->IASetVertexBuffers(1, 1, &_skinningDataBuffer, &stride, &offset);

@@ -21,27 +21,26 @@ namespace SSB
 	class DXFBXRootObject : public DXObject
 	{
 	private:
-		struct SkeletonAnimationData
+		struct ObjectAnimationData
 		{
 			//HMatrix44 MeshWorldInverseMatrix[255];
-			HMatrix44 AnimatedBoneMatrix[255];
-			//HMatrix44 BoneBaseMatrix[255];
+			HMatrix44 AnimatedBoneMatrix[255];	// Bone Index
+			HMatrix44 TransformBoneBasedSpace[255];	// Mesh Index
 		};
 
 	private:
-		SkeletonAnimationData _skeletonAnimationData;
-		ID3D11Buffer* _skeletonAnimationDataBuffer;
+		ObjectAnimationData _objectAnimationData;
+		ID3D11Buffer* _objectAnimationDataBuffer;
 
 	public:
 		~DXFBXRootObject() { Release(); }
 
 	public:
-		void UpdateSkeletonAnimationData(int boneIndex, HMatrix44 matrix);
 		void UpdateAnimatedBoneData(int boneIndex, HMatrix44 matrix);
 		//void UpdateMeshWorldAnimationData(int meshIndex, HMatrix44 matrix);
 
 	private:
-		void SetBoneSpaceMatrix(int boneIndex, HMatrix44 toBoneSpace);
+		void SetTransformBoneBasedSpaceMatrix(int meshIndex, HMatrix44 transformBoneBasedSpaceMatrix);
 
 	private:
 		bool CreateConstantBuffer() override;
@@ -49,7 +48,6 @@ namespace SSB
 
 	public:
 		bool Release() override;
-		bool Render() override;
 		void DeviceContextSettingBeforeDraw(ID3D11DeviceContext* dc) override;
 
 		friend class FBXLoader;
@@ -83,9 +81,10 @@ namespace SSB
 		};
 
 	private:
-		std::vector<SkinningData> _originSkinningDataList;
-		std::vector<SkinningData> _skinningDataList;
-		std::map<FbxNode*, HMatrix44> _boneBaseMatrix; // Every bone base matrices are difference with mesh object. So don't erase this.
+		int _meshIndex;
+		ID3D11Buffer* _meshConstantBuffer;
+		std::vector<SkinningData> _skinningDataPerVertex;
+		std::vector<SkinningData> _skinningData;
 		ID3D11Buffer* _skinningDataBuffer;
 
 	public:
@@ -93,15 +92,19 @@ namespace SSB
 
 	private:
 		void LinkMeshWithBone(int vertexIndex, int boneIndex, float weight);
-		void SetAdditionalBoneBaseMatrixData(FbxNode* node, HMatrix44 matrix) { _boneBaseMatrix.insert(std::make_pair(node, matrix)); }
 
 	private:
 		bool CreateVertexBuffer() override;
+		bool CreateConstantBuffer() override;
+		void UpdateConstantBuffer() override;
 		void DeviceContextSettingBeforeDraw(ID3D11DeviceContext* dc) override;
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 
 	public:
 		bool Release() override;
+
+	public:
+		void SetMeshIndex(int index) { _meshIndex = index; }
 
 		friend class FBXLoader;
 	};
@@ -114,8 +117,8 @@ namespace SSB
 		FbxImporter* _importer;
 		FbxScene* _scene;
 		FbxNode* _root;
-		//std::vector<FbxMesh*> _meshList;
 		std::map<FbxNode*, int> _skeletonDataMap;
+		std::map<FbxNode*, int> _meshDataMap;
 
 	public:
 		DXFBXRootObject* _rootObject;

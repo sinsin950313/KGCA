@@ -4,7 +4,7 @@ struct VS_in
 	float4 n : Normal;
 	float4 c : Color;
 	float2 t : Texture;
-	float4 AffectingBoneIndex : AffectingBoneIndex;
+	int4 AffectingBoneIndex : AffectingBoneIndex;
 	float4 Weight : Weight;
 };
 
@@ -25,8 +25,13 @@ cbuffer Camera : register(b0)
 
 cbuffer Bone : register(b1)
 {
-	matrix ToBoneSpaceMatrix[255];
-	matrix ToWorldSpaceMatrix[255];
+	matrix AnimatedBoneMatrix[255];
+}
+
+//constant?vertex?
+cbuffer BoneBaseData : register(b2)
+{
+	matrix TransformBasedBone[255];
 }
 
 VS_out VS(VS_in input)
@@ -37,14 +42,14 @@ VS_out VS(VS_in input)
 	float4 normal = 0;
 	for (int i = 0; i < 4; ++i)
 	{
-		uint index = input.AffectingBoneIndex[i];
+		int index = input.AffectingBoneIndex[i];
 		float weight = input.Weight[i];
 
-		float4 tmpPos = mul(input.n, ToBoneSpaceMatrix[index]);
-		pos += mul(tmpPos, ToWorldSpaceMatrix[index]) * weight;
+		float4 tmpPos = mul(input.p, AnimatedBoneMatrix[index]);
+		pos += mul(tmpPos, TransformBasedBone[index]) * weight;
 
-		float4 tmpNormal = mul(input.n, ToBoneSpaceMatrix[index]);
-		normal += mul(tmpNormal, ToWorldSpaceMatrix[index]) * weight;
+		float4 tmpNormal = mul(input.n, AnimatedBoneMatrix[index]);
+		normal += mul(tmpNormal, TransformBasedBone[index]) * weight;
 	}
 
 	float4 world = mul(pos, g_World);

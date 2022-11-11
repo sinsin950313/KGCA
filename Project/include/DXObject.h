@@ -54,6 +54,7 @@ namespace SSB
 		DXObject* _parent = nullptr;
 		std::vector<DXObject*> _childObjectList;
 
+	public:
 		std::vector<AnimationInfo> _animationInfos;
 		int _currentAnimationFrame = 0;
 		Timer _animationTimer;

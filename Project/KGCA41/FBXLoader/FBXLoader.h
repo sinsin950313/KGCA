@@ -18,26 +18,29 @@ namespace SSB
 		friend class FBXLoader;
 	};
 
-	struct SkeletonAnimationData
-	{
-		HMatrix44 ToBoneSpaceMatrix[255];
-		HMatrix44 ToWorldSpaceMatrix[255];
-	};
-
 	class DXFBXRootObject : public DXObject
 	{
 	private:
+		struct SkeletonAnimationData
+		{
+			//HMatrix44 MeshWorldInverseMatrix[255];
+			HMatrix44 AnimatedBoneMatrix[255];
+			//HMatrix44 BoneBaseMatrix[255];
+		};
+
+	private:
 		SkeletonAnimationData _skeletonAnimationData;
 		ID3D11Buffer* _skeletonAnimationDataBuffer;
-		int _boneIndexCounter = 0;
-		std::map<FbxNode*, int> _skeletonDataMap;
 
 	public:
 		~DXFBXRootObject() { Release(); }
 
+	public:
+		void UpdateSkeletonAnimationData(int boneIndex, HMatrix44 matrix);
+		void UpdateAnimatedBoneData(int boneIndex, HMatrix44 matrix);
+		//void UpdateMeshWorldAnimationData(int meshIndex, HMatrix44 matrix);
+
 	private:
-		void SetAdditionalBone(FbxNode* node);
-		int FindBoneIndex(FbxNode* node);
 		void SetBoneSpaceMatrix(int boneIndex, HMatrix44 toBoneSpace);
 
 	private:
@@ -52,35 +55,37 @@ namespace SSB
 		friend class FBXLoader;
 	};
 
-	//class DXFBXSkeletonObject : public DXObject
-	//{
-	//private:
-	//	DXFBXRootObject* _root;
-	//	int _boneIndex;
-
-	//public:
-	//	~DXFBXSkeletonObject() { Release(); }
-
-	//public:
-	//	void SetRootObject(DXFBXRootObject* root) { _root = root; }
-	//	void SetBoneIndex(int index) { _boneIndex = index; }
-
-	//public:
-	//	bool Frame() override;
-	//	bool Release() override;
-	//};
-
-	struct SkinningData
+	class DXFBXSkeletonObject : public DXObject
 	{
-		float AffectingBoneIndex[4]{ 0, };
-		float Weight[4]{ 0, };
+	private:
+		DXFBXRootObject* _root;
+		int _boneIndex;
+
+	public:
+		~DXFBXSkeletonObject() { Release(); }
+
+	public:
+		void SetRootObject(DXFBXRootObject* root) { _root = root; }
+		void SetBoneIndex(int index) { _boneIndex = index; }
+
+	public:
+		bool Frame() override;
+		bool Release() override;
 	};
 
 	class DXFBXMeshObject : public DXObject
 	{
 	private:
+		struct SkinningData
+		{
+			int AffectingBoneIndex[4]{ 0, };
+			float Weight[4]{ 0, };
+		};
+
+	private:
 		std::vector<SkinningData> _originSkinningDataList;
 		std::vector<SkinningData> _skinningDataList;
+		std::map<FbxNode*, HMatrix44> _boneBaseMatrix; // Every bone base matrices are difference with mesh object. So don't erase this.
 		ID3D11Buffer* _skinningDataBuffer;
 
 	public:
@@ -88,6 +93,7 @@ namespace SSB
 
 	private:
 		void LinkMeshWithBone(int vertexIndex, int boneIndex, float weight);
+		void SetAdditionalBoneBaseMatrixData(FbxNode* node, HMatrix44 matrix) { _boneBaseMatrix.insert(std::make_pair(node, matrix)); }
 
 	private:
 		bool CreateVertexBuffer() override;
@@ -109,6 +115,7 @@ namespace SSB
 		FbxScene* _scene;
 		FbxNode* _root;
 		//std::vector<FbxMesh*> _meshList;
+		std::map<FbxNode*, int> _skeletonDataMap;
 
 	public:
 		DXFBXRootObject* _rootObject;

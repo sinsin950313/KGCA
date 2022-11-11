@@ -62,7 +62,7 @@ namespace SSB
 		FbxSkeleton* skeleton = node->GetSkeleton();
 		if (skeleton)
 		{
-			_rootObject->SetAdditionalBone(node);
+			_skeletonDataMap.insert(std::make_pair(node, _skeletonDataMap.size()));
 		}
 
 		for (int i = 0; i < node->GetChildCount(); ++i)
@@ -104,7 +104,10 @@ namespace SSB
 		FbxLongLong start = startTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
 		FbxLongLong	end = endTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
 
-		for (FbxLongLong i = start; i <= end; ++i)
+		// Devide this
+		//for (FbxLongLong i = start; i <= end; ++i)
+		// Easy for test
+		for (FbxLongLong i = start; i <= 0; ++i)
 		{
 			AnimationInfo info;
 			info.StartFrame = start;
@@ -127,7 +130,12 @@ namespace SSB
 		{
 			ParseMeshSkinningData((DXFBXMeshObject*)object, mesh);
 			ParseMesh(node, mesh, object);
+		}
 
+		FbxSkeleton* skeleton = node->GetSkeleton();
+		if (mesh || skeleton)
+		{
+			// Load Animation Matrix from here
 			FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
 			if (animStack)
 			{
@@ -149,14 +157,15 @@ namespace SSB
 					childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshObject.hlsl", "VS", "vs_5_0"));
 					childObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshObject.hlsl", "PS", "ps_5_0"));
 				}
-				//else if (attribute == FbxNodeAttribute::eSkeleton)
-				//{
-				//	childObject = new DXFBXSkeletonObject;
-				//	// Need to Remove
-				//	childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
-				//	childObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
-				//	((DXFBXSkeletonObject*)childObject)->SetRootObject(_rootObject);
-				//}
+				else if (attribute == FbxNodeAttribute::eSkeleton)
+				{
+					childObject = new DXFBXSkeletonObject;
+					// Need to Remove
+					childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
+					childObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
+					((DXFBXSkeletonObject*)childObject)->SetRootObject(_rootObject);
+					((DXFBXSkeletonObject*)childObject)->SetBoneIndex(_skeletonDataMap.find(node)->second);
+				}
 				else
 				{
 					childObject = new DXObject;
@@ -408,7 +417,7 @@ namespace SSB
 			for (int iCluster = 0; iCluster < clusterCount; ++iCluster)
 			{
 				FbxCluster* cluster = skin->GetCluster(iCluster);
-				int boneIndex = _rootObject->FindBoneIndex(cluster->GetLink());
+				int boneIndex = _skeletonDataMap.find(cluster->GetLink())->second;
 
 				FbxAMatrix linkMatrix;
 				cluster->GetTransformLinkMatrix(linkMatrix);
@@ -416,9 +425,9 @@ namespace SSB
 				FbxAMatrix adjustMatrix;
 				cluster->GetTransformMatrix(adjustMatrix);
 
-				FbxAMatrix toBoneSpaceMatrix = linkMatrix.Inverse() * adjustMatrix;
-				HMatrix44 toBoneSpace = Convert(toBoneSpaceMatrix);
-				_rootObject->SetBoneSpaceMatrix(boneIndex, toBoneSpace);
+				FbxAMatrix fbxBoneBaseMatrix = linkMatrix.Inverse() * adjustMatrix;
+				HMatrix44 boneBaseMatrix = Convert(fbxBoneBaseMatrix);
+				object->SetAdditionalBoneBaseMatrixData(cluster->GetLink(), boneBaseMatrix);
 
 				int controlPointCount = cluster->GetControlPointIndicesCount();
 				int* controlPointIndice = cluster->GetControlPointIndices();
@@ -513,27 +522,21 @@ namespace SSB
 
 		return true;
 	}
-	void DXFBXRootObject::SetAdditionalBone(FbxNode* node)
+	void DXFBXRootObject::UpdateSkeletonAnimationData(int boneIndex, HMatrix44 matrix)
 	{
-		_skeletonDataMap.insert(std::make_pair(node, _boneIndexCounter));
-		++_boneIndexCounter;
+		_skeletonAnimationData.BoneBaseMatrix[boneIndex] = matrix;
 	}
-	int DXFBXRootObject::FindBoneIndex(FbxNode* node)
-	{
-		return _skeletonDataMap.find(node)->second;
-	}
-	void DXFBXRootObject::SetBoneSpaceMatrix(int boneIndex, HMatrix44 toBoneSpace)
-	{
-		_skeletonAnimationData.ToBoneSpaceMatrix[boneIndex] = toBoneSpace.Transpose();
-		_skeletonAnimationData.ToWorldSpaceMatrix[boneIndex] = toBoneSpace.Inverse().Transpose();
-	}
+	//void DXFBXRootObject::SetBoneSpaceMatrix(int boneIndex, HMatrix44 toBoneSpace)
+	//{
+	//	_skeletonAnimationData.BoneBaseMatrix[boneIndex] = toBoneSpace.Transpose();
+	//}
 	bool DXFBXRootObject::CreateConstantBuffer()
 	{
 		DXObject::CreateConstantBuffer();
 
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
-		desc.ByteWidth = sizeof(_skeletonAnimationData);
+		desc.ByteWidth = sizeof(SkeletonAnimationData);
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
@@ -575,22 +578,24 @@ namespace SSB
 		DXObject::DeviceContextSettingBeforeDraw(dc);
 		dc->VSSetConstantBuffers(1, 1, &_skeletonAnimationDataBuffer);
 	}
-	//bool DXFBXSkeletonObject::Frame()
-	//{
-	//	DXObject::Frame();
+	bool DXFBXSkeletonObject::Frame()
+	{
+		DXObject::Frame();
 
-	//	_root->UpdateSkeletonAnimationData(_boneIndex, GetMatrix());
+		// Easy for Test
+		HMatrix44 animationMatrix = GetInterpolate(_animationInfos[0]);
+		_root->UpdateAnimatedBoneData(_boneIndex, animationMatrix);
 
-	//	return true;
-	//}
-	//bool DXFBXSkeletonObject::Release()
-	//{
-	//	_root = nullptr;
+		return true;
+	}
+	bool DXFBXSkeletonObject::Release()
+	{
+		_root = nullptr;
 
-	//	DXObject::Release();
+		DXObject::Release();
 
-	//	return true;
-	//}
+		return true;
+	}
 	bool DXFBXMeshObject::CreateVertexBuffer()
 	{
 		DXObject::CreateVertexBuffer();
@@ -621,7 +626,7 @@ namespace SSB
 		(*desc)[2] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[3] = { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 
-		(*desc)[4] = { "AffectingBoneIndex", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[4] = { "AffectingBoneIndex", 0, DXGI_FORMAT_R32G32B32A32_SINT, 1, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[5] = { "Weight", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 	void DXFBXMeshObject::LinkMeshWithBone(int vertexIndex, int boneIndex, float weight)

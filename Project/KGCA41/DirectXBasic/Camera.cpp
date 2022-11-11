@@ -194,6 +194,11 @@ namespace SSB
         float rotX = 0;
         float rotY = 0;
 		float coeff = 0.0001f;
+		float rotCoeff = 0.0001f;
+		if (InputManager::GetInstance().GetKeyState(VK_SPACE) == EKeyState::KEY_HOLD)
+		{
+			coeff *= 10;
+		}
 		if (InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
 		{
 			vPos.z += 10.0f * coeff;
@@ -212,24 +217,24 @@ namespace SSB
 		}
         if (InputManager::GetInstance().GetKeyState(VK_LBUTTON) == EKeyState::KEY_HOLD)
         {
-			rotY += (InputManager::GetInstance().GetDeltaPosition().x * coeff * 10.0f);
-			rotX += (InputManager::GetInstance().GetDeltaPosition().y * coeff * 10.0f);
+			rotY += (InputManager::GetInstance().GetDeltaPosition().x * rotCoeff * 10.0f);
+			rotX += (InputManager::GetInstance().GetDeltaPosition().y * rotCoeff * 10.0f);
         }
 		if (InputManager::GetInstance().GetKeyState('Q') == EKeyState::KEY_HOLD)
 		{
-			rotY += 10.0f * coeff;
+			rotY += 10.0f * rotCoeff;
 		}
 		if (InputManager::GetInstance().GetKeyState('E') == EKeyState::KEY_HOLD)
 		{
-			rotY -= 10.0f * coeff;
+			rotY -= 10.0f * rotCoeff;
 		}
 		if (InputManager::GetInstance().GetKeyState('Z') == EKeyState::KEY_HOLD)
 		{
-			rotX += 10.0f * coeff;
+			rotX += 10.0f * rotCoeff;
 		}
 		if (InputManager::GetInstance().GetKeyState('X') == EKeyState::KEY_HOLD)
 		{
-			rotX -= 10.0f * coeff;
+			rotX -= 10.0f * rotCoeff;
 		}
 
         Move(vPos.z, vPos.x);

@@ -72,7 +72,7 @@ namespace SSB
 
 	struct SkinningData
 	{
-		float AffectingBoneIndex[4]{ 0, };
+		int AffectingBoneIndex[4]{ 0, };
 		float Weight[4]{ 0, };
 	};
 

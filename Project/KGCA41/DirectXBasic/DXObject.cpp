@@ -155,15 +155,15 @@ namespace SSB
 	}
 	HMatrix44 DXObject::GetMatrix()
 	{
-		if (_animationInfos.empty())
+		//if (_animationInfos.empty())
 		{
 			return _matrix;
 		}
-		else
-		{
-			AnimationInfo info = _animationInfos[0];
-			return _matrix * GetInterpolate(info);
-		}
+		//else
+		//{
+		//	AnimationInfo info = _animationInfos[0];
+		//	return _matrix * GetInterpolate(info);
+		//}
 	}
 	void DXObject::Move(Vector3 vec)
 	{

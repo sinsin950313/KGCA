@@ -112,7 +112,14 @@ namespace SSB
 		FbxScene* _scene;
 		FbxNode* _root;
 		std::map<FbxNode*, int> _skeletonDataMap;
-		std::map<FbxNode*, int> _meshDataMap;
+
+		float _frameSpeed = 30.0f;
+		float _tickPerFrame = 160;
+		FbxTime::EMode _timeMode;
+		FbxLongLong _animationStartFrame;
+		FbxLongLong	_animationEndFrame;
+		std::map<FbxNode*, DXObject*> _nodeToObject;
+		std::map<DXObject*, ActionInfo> _objectToActionInfo;
 
 	public:
 		DXFBXRootObject* _rootObject;
@@ -126,7 +133,8 @@ namespace SSB
 		void Load();
 		void ExtractSkeletonData(FbxNode* node);
 		HMatrix44 Convert(FbxAMatrix matrix);
-		void LoadAnimation(FbxAnimStack* animStack, FbxNode* node, DXObject* object);
+		void ExtractAnimationInfo(FbxAnimStack* animStack);
+		void SaveFrame(FbxTime timer);
 		void ParseNode(FbxNode* node, DXObject* object);
 		void ParseMesh(FbxNode* node, FbxMesh* mesh, DXObject* object);
 		void NewModel(FbxNode* node, int layerIndex, int materialIndex, std::map<int, FBXModel*>& modelMap);

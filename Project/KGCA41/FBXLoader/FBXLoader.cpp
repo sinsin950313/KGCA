@@ -49,11 +49,27 @@ namespace SSB
 				}
 			};
 			_rootObject->SetAdditionalModel(new FBXRootModel);
+			_nodeToObject.insert(std::make_pair(_root, _rootObject));
 			// Need to Remove
 			_rootObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
 			_rootObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
 			ExtractSkeletonData(_root);
 			ParseNode(_root, _rootObject);
+
+			FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
+			ExtractAnimationInfo(animStack);
+			for (FbxLongLong t = _animationStartFrame; t <= _animationEndFrame; ++t)
+			{
+				FbxTime time;
+				time.SetFrame(t, _timeMode);
+				SaveFrame(time);
+			}
+
+			std::string animationName(animStack->GetName());
+			for (auto objectToActionInfo : _objectToActionInfo)
+			{
+				objectToActionInfo.first->SetAdditionalAction(animationName, objectToActionInfo.second);
+			}
 		}
 	}
 
@@ -90,37 +106,15 @@ namespace SSB
 		return ret;
 	}
 
-	void FBXLoader::LoadAnimation(FbxAnimStack* animStack, FbxNode* node, DXObject* object)
+	void FBXLoader::SaveFrame(FbxTime timer)
 	{
-		FbxString animationName = animStack->GetName();
-
-		FbxTakeInfo* info = _scene->GetTakeInfo(animationName);
-
-		FbxTimeSpan timeSpan = info->mLocalTimeSpan;
-		FbxTime startTime = timeSpan.GetStart();
-		FbxTime endTime = timeSpan.GetStop();
-		FbxTime duration = timeSpan.GetDirection();
-
-		FbxLongLong start = startTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
-		FbxLongLong	end = endTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
-
-		// Devide this
-		for (FbxLongLong i = start; i <= end; ++i)
-		// Easy for test
-		//for (FbxLongLong i = start; i <= 0; ++i)
+		FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
+		for (auto nodeToObject : _nodeToObject)
 		{
-			AnimationInfo info;
-			info.StartFrame = start;
-			info.EndFrame = end;
-			//info.EndFrame = 0;
-			info.CurrentFrame = i;
-
-			FbxTime time;
-			time.SetFrame(i, FbxTime::GetGlobalTimeMode());
-			info.Matrix = Convert(node->EvaluateGlobalTransform(time));
-			Decompose(info.Matrix, info.Scale, info.Rotate, info.Translate);
-
-			object->SetAdditionalAnimation(info);
+			ActionFrameInfo actionFrameInfo;
+			actionFrameInfo.Matrix = Convert(nodeToObject.first->EvaluateGlobalTransform(timer));
+			Decompose(actionFrameInfo.Matrix, actionFrameInfo.Scale, actionFrameInfo.Rotate, actionFrameInfo.Translate);
+			_objectToActionInfo.find(nodeToObject.second)->second.FrameInfoList.push_back(actionFrameInfo);
 		}
 	}
 
@@ -131,17 +125,6 @@ namespace SSB
 		{
 			ParseMeshSkinningData((DXFBXMeshObject*)object, mesh);
 			ParseMesh(node, mesh, object);
-		}
-
-		FbxSkeleton* skeleton = node->GetSkeleton();
-		if (mesh || skeleton)
-		{
-			// Load Animation Matrix from here
-			FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
-			if (animStack)
-			{
-				LoadAnimation(animStack, node, object);
-			}
 		}
 
 		for (int i = 0; i < node->GetChildCount(); ++i)
@@ -175,6 +158,7 @@ namespace SSB
 					childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
 					childObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
 				}
+				_nodeToObject.insert(std::make_pair(node->GetChild(i), childObject));
 				object->SetAdditionalChildObject(childObject);
 				ParseNode(node->GetChild(i), childObject);
 			}
@@ -377,6 +361,26 @@ namespace SSB
 		return t;
 	}
 
+	void FBXLoader::ExtractAnimationInfo(FbxAnimStack* animStack)
+	{
+		FbxString fbxStr(animStack->GetName());
+		FbxTakeInfo* info = _scene->GetTakeInfo(fbxStr);
+
+		FbxTimeSpan timeSpan = info->mLocalTimeSpan;
+		FbxTime startTime = timeSpan.GetStart();
+		FbxTime endTime = timeSpan.GetStop();
+		FbxTime duration = timeSpan.GetDirection();
+
+		_animationStartFrame = startTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
+		_animationEndFrame = endTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
+		_timeMode = FbxTime::GetGlobalTimeMode();
+
+		for (auto nodeToObject : _nodeToObject)
+		{
+			_objectToActionInfo.insert(std::make_pair(nodeToObject.second, ActionInfo{(UINT)_animationStartFrame, (UINT)_animationEndFrame, std::vector<ActionFrameInfo>() }));
+		}
+	}
+
 	int SSB::FBXLoader::GetSubMaterialIndex(int iPoly, FbxLayerElementMaterial* pMaterialSetList)
 	{
 		int iSubMtrl = 0;
@@ -460,6 +464,9 @@ namespace SSB
 		Load();
 
 		_rootObject->Init();
+
+		// Easy for Test
+		_rootObject->UpdateCurrentAnimation("Take 001");
 
 		return true;
 	}
@@ -575,8 +582,7 @@ namespace SSB
 	{
 		DXObject::Frame();
 
-		// Easy for Test
-		HMatrix44 animationMatrix = GetInterpolate(_animationInfos[0]);
+		HMatrix44 animationMatrix = GetInterpolate();
 		_root->UpdateAnimatedBoneData(_boneIndex, animationMatrix);
 
 		return true;
@@ -674,6 +680,12 @@ namespace SSB
 		{
 			_skinningDataBuffer->Release();
 			_skinningDataBuffer = nullptr;
+		}
+
+		if (_toBoneSpaceTransformMatrixBuffer)
+		{
+			_toBoneSpaceTransformMatrixBuffer->Release();
+			_toBoneSpaceTransformMatrixBuffer = nullptr;
 		}
 
 		DXObject::Release();

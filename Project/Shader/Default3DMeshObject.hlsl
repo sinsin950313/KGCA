@@ -8,14 +8,6 @@ struct VS_in
 	float4 Weight : Weight;
 };
 
-struct VS_out
-{
-	float4 p : SV_POSITION;
-	float4 n : NORMAL;
-	float4 c : COLOR0;
-	float2 t : TEXCOORD0;
-};
-
 cbuffer Camera : register(b0)
 {
 	matrix g_World : packoffset(c0);
@@ -23,16 +15,23 @@ cbuffer Camera : register(b0)
 	matrix g_Projection : packoffset(c8);
 };
 
-cbuffer Bone : register(b1)
+cbuffer Object : register(b1)
 {
 	matrix AnimatedBoneMatrix[255];
-	matrix BoneBasedMeshTransform[255];
 }
 
-cbuffer Mesh : register(b2)
+cbuffer Bone : register(b2)
 {
-	int MeshIndex;
+	matrix ToBoneSpace[255];
 }
+
+struct VS_out
+{
+	float4 p : SV_POSITION;
+	float4 n : NORMAL;
+	float4 c : COLOR0;
+	float2 t : TEXCOORD0;
+};
 
 VS_out VS(VS_in input)
 {
@@ -42,14 +41,16 @@ VS_out VS(VS_in input)
 	float4 normal = 0;
 	for (int i = 0; i < 4; ++i)
 	{
-		int index = input.AffectingBoneIndex[i];
+		int boneIndex = input.AffectingBoneIndex[i];
 		float weight = input.Weight[i];
+		matrix toBoneSpaceMatrix = ToBoneSpace[boneIndex];
+		matrix boneAnimationMatrix = AnimatedBoneMatrix[boneIndex];
 
-		float4 tmpPos = mul(input.p, BoneBasedMeshTransform[MeshIndex]);
-		pos += mul(tmpPos, AnimatedBoneMatrix[index]) * weight;
+		float4 tmpPos = mul(input.p, toBoneSpaceMatrix);
+		pos += mul(tmpPos, boneAnimationMatrix) * weight;
 
-		float4 tmpNormal = mul(input.n, BoneBasedMeshTransform[MeshIndex]);
-		normal += mul(tmpNormal, AnimatedBoneMatrix[index]) * weight;
+		float4 tmpNormal = mul(input.n, toBoneSpaceMatrix);
+		normal += mul(tmpNormal, boneAnimationMatrix) * weight;
 	}
 
 	float4 world = mul(pos, g_World);

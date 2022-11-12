@@ -105,14 +105,14 @@ namespace SSB
 		FbxLongLong	end = endTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
 
 		// Devide this
-		//for (FbxLongLong i = start; i <= end; ++i)
+		for (FbxLongLong i = start; i <= end; ++i)
 		// Easy for test
-		for (FbxLongLong i = start; i <= 0; ++i)
+		//for (FbxLongLong i = start; i <= 0; ++i)
 		{
 			AnimationInfo info;
 			info.StartFrame = start;
-			//info.EndFrame = end;
-			info.EndFrame = 0;
+			info.EndFrame = end;
+			//info.EndFrame = 0;
 			info.CurrentFrame = i;
 
 			FbxTime time;
@@ -155,9 +155,6 @@ namespace SSB
 				if (attribute == FbxNodeAttribute::eMesh)
 				{
 					childObject = new DXFBXMeshObject;
-					int meshCount = _meshDataMap.size();
-					((DXFBXMeshObject*)childObject)->SetMeshIndex(meshCount);
-					_meshDataMap.insert(std::make_pair(node->GetChild(i), meshCount));
 					// Need to Remove
 					childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshObject.hlsl", "VS", "vs_5_0"));
 					childObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshObject.hlsl", "PS", "ps_5_0"));
@@ -430,9 +427,9 @@ namespace SSB
 				FbxAMatrix adjustMatrix;
 				cluster->GetTransformMatrix(adjustMatrix);
 
-				FbxAMatrix fbxBoneBaseMatrix = linkMatrix.Inverse() * adjustMatrix;
-				HMatrix44 boneBaseMatrix = Convert(fbxBoneBaseMatrix);
-				_rootObject->SetTransformBoneBasedSpaceMatrix(_meshDataMap.find(mesh->GetNode())->second, boneBaseMatrix);
+				FbxAMatrix fbxBoneSpaceMatrix = linkMatrix.Inverse() * adjustMatrix;
+				HMatrix44 toBoneSpaceMatrix = Convert(fbxBoneSpaceMatrix);
+				object->SetBoneSpaceTransformMatrix(boneIndex, toBoneSpaceMatrix);
 
 				int controlPointCount = cluster->GetControlPointIndicesCount();
 				int* controlPointIndice = cluster->GetControlPointIndices();
@@ -530,10 +527,6 @@ namespace SSB
 	void DXFBXRootObject::UpdateAnimatedBoneData(int boneIndex, HMatrix44 matrix)
 	{
 		_objectAnimationData.AnimatedBoneMatrix[boneIndex] = matrix.Transpose();
-	}
-	void DXFBXRootObject::SetTransformBoneBasedSpaceMatrix(int meshIndex, HMatrix44 transformBoneBasedSpaceMatrix)
-	{
-		_objectAnimationData.TransformBoneBasedSpace[meshIndex] = transformBoneBasedSpaceMatrix.Transpose();
 	}
 	bool DXFBXRootObject::CreateConstantBuffer()
 	{
@@ -655,14 +648,14 @@ namespace SSB
 
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
-		desc.ByteWidth = sizeof(decltype(_meshIndex)) * 4;
+		desc.ByteWidth = sizeof(_toBoneSpaceMatrixData);
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA sd;
 		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		sd.pSysMem = &_meshIndex;
-		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_meshConstantBuffer);
+		sd.pSysMem = &_toBoneSpaceMatrixData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_toBoneSpaceTransformMatrixBuffer);
 		if (FAILED(hr))
 		{
 			assert(SUCCEEDED(hr));
@@ -673,7 +666,7 @@ namespace SSB
 	void DXFBXMeshObject::UpdateConstantBuffer()
 	{
 		DXObject::UpdateConstantBuffer();
-		g_dxWindow->GetDeviceContext()->UpdateSubresource(_meshConstantBuffer, 0, nullptr, &_meshIndex, 0, 0);
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_toBoneSpaceTransformMatrixBuffer, 0, nullptr, &_toBoneSpaceMatrixData, 0, 0);
 	}
 	bool DXFBXMeshObject::Release()
 	{
@@ -695,5 +688,7 @@ namespace SSB
 		UINT offset = 0;
 
 		dc->IASetVertexBuffers(1, 1, &_skinningDataBuffer, &stride, &offset);
+
+		dc->VSSetConstantBuffers(2, 1, &_toBoneSpaceTransformMatrixBuffer);
 	}
 }

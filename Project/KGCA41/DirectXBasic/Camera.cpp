@@ -197,7 +197,7 @@ namespace SSB
 		float rotCoeff = 0.0001f;
 		if (InputManager::GetInstance().GetKeyState(VK_SPACE) == EKeyState::KEY_HOLD)
 		{
-			coeff *= 10;
+			coeff *= 100;
 		}
 		if (InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
 		{

@@ -25,7 +25,6 @@ namespace SSB
 		{
 			//HMatrix44 MeshWorldInverseMatrix[255];
 			HMatrix44 AnimatedBoneMatrix[255];	// Bone Index
-			HMatrix44 TransformBoneBasedSpace[255];	// Mesh Index
 		};
 
 	private:
@@ -38,9 +37,6 @@ namespace SSB
 	public:
 		void UpdateAnimatedBoneData(int boneIndex, HMatrix44 matrix);
 		//void UpdateMeshWorldAnimationData(int meshIndex, HMatrix44 matrix);
-
-	private:
-		void SetTransformBoneBasedSpaceMatrix(int meshIndex, HMatrix44 transformBoneBasedSpaceMatrix);
 
 	private:
 		bool CreateConstantBuffer() override;
@@ -81,16 +77,17 @@ namespace SSB
 		};
 
 	private:
-		int _meshIndex;
-		ID3D11Buffer* _meshConstantBuffer;
 		std::vector<SkinningData> _skinningDataPerVertex;
 		std::vector<SkinningData> _skinningData;
 		ID3D11Buffer* _skinningDataBuffer;
+		HMatrix44 _toBoneSpaceMatrixData[255];
+		ID3D11Buffer* _toBoneSpaceTransformMatrixBuffer;
 
 	public:
 		~DXFBXMeshObject() { Release(); }
 
 	private:
+		void SetBoneSpaceTransformMatrix(int boneIndex, HMatrix44 toBoneSpaceTransform) { _toBoneSpaceMatrixData[boneIndex] = toBoneSpaceTransform.Transpose(); }
 		void LinkMeshWithBone(int vertexIndex, int boneIndex, float weight);
 
 	private:
@@ -102,9 +99,6 @@ namespace SSB
 
 	public:
 		bool Release() override;
-
-	public:
-		void SetMeshIndex(int index) { _meshIndex = index; }
 
 		friend class FBXLoader;
 	};

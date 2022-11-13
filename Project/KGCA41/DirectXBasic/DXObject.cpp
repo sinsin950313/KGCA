@@ -169,6 +169,15 @@ namespace SSB
 	{
 		return _matrix;
 	}
+	void DXObject::UpdatePosition(Vector3 vec)
+	{
+		Float33 axis = _matrix;
+		Float3 pos;
+		pos.x = vec.GetX();
+		pos.y = vec.GetY();
+		pos.z = vec.GetZ();
+		_matrix = HMatrix44(axis, pos);
+	}
 	void DXObject::Move(Vector3 vec)
 	{
 		HMatrix44 trans{

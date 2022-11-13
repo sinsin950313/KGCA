@@ -117,6 +117,7 @@ namespace SSB
 		void SetPixelShader(Shader* shader) { _ps = shader; }
 		void UpdateCurrentAnimation(std::string name);
 		HMatrix44 GetMatrix();
+		void UpdatePosition(Vector3 vec);
 		void Move(Vector3 vec);
 		void Rotate(float pitch, float yaw);
 		OBB GetOBB();

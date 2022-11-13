@@ -180,9 +180,17 @@ namespace SSB
 #ifdef _DEBUG
 			Vector3 vLight = { 0, 1, 0 };
 			float dot = vLight.Dot(_vertexList[iVertex].normal);
-			_vertexList[iVertex].color = { dot ,dot ,dot , 1 };
+			_vertexList[iVertex].color = { dot, dot, dot, 1 };
 #endif
 		}
+	}
+	float Map::GetCoordinateHeight(int x, int z)
+	{
+		return _vertexList[x * _widthVertexCount + z].position.y;
+	}
+	float Map::Lerp(float start, float end, float param)
+	{
+		return start - (start * param) + (end * param);
 	}
 	void Map::Move(Vector3 vec)
 	{
@@ -249,8 +257,70 @@ namespace SSB
 		texture2D->Release();
 
 	}
+	float Map::GetHeight(float x, float z)
+	{
+		float cellX = (float)(_widthVertexCount * _cellDistance / 2.0f + x);
+		float cellZ = (float)(_heightVertexCount * _cellDistance / 2.0f - z);
+
+		cellX /= (float)_cellDistance;
+		cellZ /= (float)_cellDistance;
+
+		int coordX = cellX;
+		if (coordX < 0.0f)
+		{
+			coordX = 0.0f;
+		}
+		if (_heightVertexCount - 2 < coordX)
+		{
+			coordX = _heightVertexCount - 2;
+		}
+
+		int coordZ = cellZ;
+		if (coordZ < 0.0f)
+		{
+			coordZ = 0.0f;
+		}
+		if (_widthVertexCount - 2 < coordZ)
+		{
+			coordZ = _widthVertexCount - 2;
+		}
+
+		//  A   B
+		//  *---*
+		//  | / |
+		//  *---*  
+		//  C   D
+		float A = GetCoordinateHeight(coordX, coordZ);
+		float B = GetCoordinateHeight(coordX, coordZ + 1);
+		float C = GetCoordinateHeight(coordX + 1, coordZ);
+		float D = GetCoordinateHeight(coordX + 1, coordZ + 1);
+
+		float deltaX = cellX - coordX;
+		float deltaZ = cellZ - coordZ;
+		float height = 0.0f;
+		if (deltaX + deltaZ < 1.0f)  //ABC
+		{
+			float uy = B - A; // A->B
+			float vy = C - A; // A->C	
+							  // 두 정점의 높이값의 차이를 비교하여 델타X의 값에 따라 보간값을 찾는다.		
+			height = A + Lerp(0.0f, uy, deltaX) + Lerp(0.0f, vy, deltaZ);
+		}
+		else // DCB
+		{
+			float uy = C - D; // D->C
+			float vy = B - D; // D->B
+							  // 두 정점의 높이값의 차이를 비교하여 델타Z의 값에 따라 보간값을 찾는다.		
+			height = D + Lerp(0.0f, uy, 1.0f - deltaX) + Lerp(0.0f, vy, 1.0f - deltaZ);
+		}
+		return height;
+	}
 	bool Map::Init()
     {
+		if (_heightData.empty())
+		{
+			_heightData.resize(_widthVertexCount * _heightVertexCount);
+		}
+
 		CreateVertex();
 		_root = new Node(*this, 0, _widthVertexCount - 1, _widthVertexCount * (_heightVertexCount - 1), _widthVertexCount * _heightVertexCount - 1, 0);
         CreateVertexBuffer();
@@ -346,14 +416,27 @@ namespace SSB
 			_nodes[3] = new Node(map, _center, rightCenter, bottomCenter, rightBottom, depth + 1);
 		}
 
-		_indexList.resize(6);
-		_indexList[0] = leftTop;
-		_indexList[1] = rightTop;
-		_indexList[2] = leftBottom;
+		int widthCellCount = (leftBottom - leftTop) / map._heightVertexCount;
+		int heightCellCount = rightTop - leftTop;
+		int cellCount = widthCellCount * heightCellCount;
+		int faceCount = cellCount * 2 * 3;
+		_indexList.resize(faceCount);
+		int iIndex = 0;
+		for (int i = 0; i < heightCellCount; i++)
+		{
+			for (int j = 0; j < widthCellCount; j++)
+			{
+				_indexList[iIndex + 0] = leftTop + j + (i * map._widthVertexCount);
+				_indexList[iIndex + 1] = _indexList[iIndex + 0] + 1;
+				_indexList[iIndex + 2] = leftTop + j + ((i + 1) * map._widthVertexCount);
 
-		_indexList[3] = leftBottom;
-		_indexList[4] = rightTop;
-		_indexList[5] = rightBottom;
+				_indexList[iIndex + 3] = _indexList[iIndex + 2];
+				_indexList[iIndex + 4] = _indexList[iIndex + 1];
+				_indexList[iIndex + 5] = _indexList[iIndex + 2] + 1;
+
+				iIndex += 6;
+			}
+		}
 
 		auto vLeftTop = _map._vertexList[leftTop];
 		auto vRightBottom = _map._vertexList[rightBottom];

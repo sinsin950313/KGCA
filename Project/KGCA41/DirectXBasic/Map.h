@@ -88,6 +88,8 @@ namespace SSB
 		void UpdateConstantBuffer();
 		Vector3 CalculateFaceNormal(UINT i0, UINT i1, UINT i2);
 		void CalculateVertexNormal();
+		float GetCoordinateHeight(int x, int z);
+		float Lerp(float start, float end, float param);
 
 	public:
 		void SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount) { _widthVertexCount = widthVertexCount + 1; _heightVertexCount = heightVertexCount + 1; }

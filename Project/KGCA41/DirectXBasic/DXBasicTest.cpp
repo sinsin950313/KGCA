@@ -25,13 +25,13 @@ namespace SSB
 		_frames = 0;
 		_fps = 0.0f;
         
-        //_object = new DXObject();
-        //_object->SetAdditionalModel(new Box);
-        //_object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
-        //_object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
-        //_object->Init();
-        //_object->Move({ 0, 5, 0 });
-        //
+        _object = new DXObject();
+        _object->SetAdditionalModel(new Box);
+        _object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+        _object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
+        _object->Init();
+        _object->Move({ 0, 5, 0 });
+        
         //_objectBack = new DXObject();
         //_objectBack->SetAdditionalModel(new Box);
         //_objectBack->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
@@ -40,10 +40,8 @@ namespace SSB
         //_objectBack->Move({ 0, 0, 5 });
 
         _terrain = new Map();
-        //Terrain* terrain = new Terrain;
         SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"KGCABK.bmp", L"Background", { 0, 0, 1024, 768 });
         _terrain->SetSprite(SpriteLoader::GetInstance().Load(L"KGCABK.bmp", L"Background", DXStateManager::kDefaultWrapSample));
-        //_terrain->SetModel(terrain);
         _terrain->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
         _terrain->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Main", "ps_5_0"));
         _terrain->SetHeightMap(L"heightMap513.bmp");
@@ -53,11 +51,14 @@ namespace SSB
         _dCamera = new DebugCamera();
         _dCamera->Init();
 
-        //_mCamera = new ModelViewCamera();
-        //_mCamera->Init();
-        //_mCamera->SetTarget(_object);
+        _mCamera = new ModelViewCamera();
+        _mCamera->Init();
+        _mCamera->SetTarget(_object);
         ChangeMainCamera(_dCamera);
-        GetMainCamera()->Move({ 0, 5, -10 });
+        
+        HVector4 pos = _object->GetMatrix().GetRow(3);
+        _object->UpdatePosition({ pos.GetX(), _terrain->GetHeight(pos.GetX(), pos.GetZ()), pos.GetZ() });
+        GetMainCamera()->Move(_object->GetMatrix());
 
         return false;
     }
@@ -76,7 +77,7 @@ namespace SSB
 			_beforeTime = _timer->GetElapseTime();
 		OutputDebugString((L"Time : " + std::to_wstring(_timer->GetElapseTime() / 1000.0f) + L" FPS : " + std::to_wstring(_fps) + L"\n").c_str());
 		}
-        //_object->Frame();
+        _object->Frame();
         _terrain->Frame();
         //_objectBack->Rotate(0, 0.001f);
         //_objectBack->Frame();
@@ -86,12 +87,12 @@ namespace SSB
 
     bool SSB::DXBasicTest::Release()
     {
-        //if (_object)
-        //{
-        //    _object->Release();
-        //    delete _object;
-        //    _object = nullptr;
-        //}
+        if (_object)
+        {
+            _object->Release();
+            delete _object;
+            _object = nullptr;
+        }
         //if (_objectBack)
         //{
         //    _objectBack->Release();
@@ -131,7 +132,7 @@ namespace SSB
     bool SSB::DXBasicTest::PreRender()
     {
         DXWindow::PreRender();
-        //_object->Render();
+        _object->Render();
         _terrain->Render();
         //_objectBack->Render();
         return true;

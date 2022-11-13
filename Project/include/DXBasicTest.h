@@ -8,8 +8,8 @@ namespace SSB
 	class DXBasicTest : public DXWindow
 	{
 	private:
-		DXObject* _object;
-		DXObject* _objectBack;
+		//DXObject* _object;
+		//DXObject* _objectBack;
 		Map* _terrain;
 		DebugCamera* _dCamera;
 		ModelViewCamera* _mCamera;

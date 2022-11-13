@@ -61,6 +61,7 @@ namespace SSB
 		ConstantData _constantData;
 
 		float _cellDistance = 1.0f;
+		float _heightScale = 100;
 		//float tileX = 10.0f;
 		//float tileY = 10.0f;
 		float tileX = 1.0f;
@@ -72,8 +73,11 @@ namespace SSB
 		int _layerDepth = 3;
 		std::vector<Node*> _drawingNodeList;
 
+		ID3D11Texture2D* _heightTexture;
+		std::vector<float> _heightData;
+
 	public:
-		Map(int layerDepth = 5) : _layerDepth(layerDepth) { }
+		Map(int layerDepth = 15) : _layerDepth(layerDepth) { }
 		virtual ~Map() { Release(); }
 
 	private:
@@ -82,6 +86,8 @@ namespace SSB
 		bool CreateVertexLayout();
 		bool CreateConstantBuffer();
 		void UpdateConstantBuffer();
+		Vector3 CalculateFaceNormal(UINT i0, UINT i1, UINT i2);
+		void CalculateVertexNormal();
 
 	public:
 		void SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount) { _widthVertexCount = widthVertexCount + 1; _heightVertexCount = heightVertexCount + 1; }
@@ -91,6 +97,8 @@ namespace SSB
 		void Move(Vector3 vec);
 		OBB GetOBB();
 		void SetSprite(Sprite* sprite) { _sprite = sprite; }
+		void SetHeightMap(std::wstring fileName);
+		float GetHeight(float x, float z);
 
 	public:
 		bool Init() override;

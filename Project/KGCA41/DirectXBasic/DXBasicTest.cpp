@@ -25,19 +25,19 @@ namespace SSB
 		_frames = 0;
 		_fps = 0.0f;
         
-        _object = new DXObject();
-        _object->SetAdditionalModel(new Box);
-        _object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
-        _object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
-        _object->Init();
-        _object->Move({ 0, 5, 0 });
-        
-        _objectBack = new DXObject();
-        _objectBack->SetAdditionalModel(new Box);
-        _objectBack->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
-        _objectBack->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
-        _objectBack->Init();
-        _objectBack->Move({ 0, 0, 5 });
+        //_object = new DXObject();
+        //_object->SetAdditionalModel(new Box);
+        //_object->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+        //_object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
+        //_object->Init();
+        //_object->Move({ 0, 5, 0 });
+        //
+        //_objectBack = new DXObject();
+        //_objectBack->SetAdditionalModel(new Box);
+        //_objectBack->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+        //_objectBack->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
+        //_objectBack->Init();
+        //_objectBack->Move({ 0, 0, 5 });
 
         _terrain = new Map();
         //Terrain* terrain = new Terrain;
@@ -46,15 +46,16 @@ namespace SSB
         //_terrain->SetModel(terrain);
         _terrain->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
         _terrain->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Main", "ps_5_0"));
+        _terrain->SetHeightMap(L"heightMap513.bmp");
         _terrain->Init();
         _terrain->Move({ 0, 0, 0 });
 
         _dCamera = new DebugCamera();
         _dCamera->Init();
 
-        _mCamera = new ModelViewCamera();
-        _mCamera->Init();
-        _mCamera->SetTarget(_object);
+        //_mCamera = new ModelViewCamera();
+        //_mCamera->Init();
+        //_mCamera->SetTarget(_object);
         ChangeMainCamera(_dCamera);
         GetMainCamera()->Move({ 0, 5, -10 });
 
@@ -75,28 +76,28 @@ namespace SSB
 			_beforeTime = _timer->GetElapseTime();
 		OutputDebugString((L"Time : " + std::to_wstring(_timer->GetElapseTime() / 1000.0f) + L" FPS : " + std::to_wstring(_fps) + L"\n").c_str());
 		}
-        _object->Frame();
+        //_object->Frame();
         _terrain->Frame();
-        _objectBack->Rotate(0, 0.001f);
-        _objectBack->Frame();
+        //_objectBack->Rotate(0, 0.001f);
+        //_objectBack->Frame();
 
         return false;
     }
 
     bool SSB::DXBasicTest::Release()
     {
-        if (_object)
-        {
-            _object->Release();
-            delete _object;
-            _object = nullptr;
-        }
-        if (_objectBack)
-        {
-            _objectBack->Release();
-            delete _objectBack;
-            _objectBack = nullptr;
-        }
+        //if (_object)
+        //{
+        //    _object->Release();
+        //    delete _object;
+        //    _object = nullptr;
+        //}
+        //if (_objectBack)
+        //{
+        //    _objectBack->Release();
+        //    delete _objectBack;
+        //    _objectBack = nullptr;
+        //}
         if (_terrain)
         {
             _terrain->Release();
@@ -130,9 +131,9 @@ namespace SSB
     bool SSB::DXBasicTest::PreRender()
     {
         DXWindow::PreRender();
-        _object->Render();
+        //_object->Render();
         _terrain->Render();
-        _objectBack->Render();
+        //_objectBack->Render();
         return true;
     }
 }

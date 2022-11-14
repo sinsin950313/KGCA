@@ -4,6 +4,8 @@
 #include "DXStateManager.h"
 #include "WICTextureLoader.h"
 #include "CommonPath.h"
+#include "ShaderManager.h"
+#include "InputManager.h"
 
 namespace SSB
 {
@@ -172,7 +174,7 @@ namespace SSB
 		{
 			for (UINT i = 0; i < vertexInfo[iVertex].faceIndexArray.size(); i++)
 			{
-				vertexInfo[iVertex].normal += faceNormal[i];
+				vertexInfo[iVertex].normal += faceNormal[vertexInfo[iVertex].faceIndexArray[i]];
 			}
 			vertexInfo[iVertex].normal.Normalize();
 			_vertexList[iVertex].normal = { vertexInfo[iVertex].normal.GetX(), vertexInfo[iVertex].normal.GetY(), vertexInfo[iVertex].normal.GetZ(), 0 };
@@ -333,6 +335,13 @@ namespace SSB
     }
     bool Map::Frame()
     {
+		if (InputManager::GetInstance().GetKeyState('V') == EKeyState::KEY_PRESSED)
+		{
+			_bDebug = !_bDebug;
+		}
+
+		_root->Frame();
+
 		return true;
 	}
 	bool Map::Render()
@@ -398,11 +407,11 @@ namespace SSB
 		_drawingNodeList.clear();
 	}
 	Map::Node::Node(Map& map, int leftTop, int rightTop, int leftBottom, int rightBottom, int depth) 
-		: _map(map), _leftTop(leftTop), _leftBottom(leftBottom), _rightTop(rightTop), _rightBottom(rightBottom), _depth(depth)
+		: _map(map), _leftTop(leftTop), _leftBottom(leftBottom), _rightTop(rightTop), _rightBottom(rightBottom), _layerDepth(depth)
 	{
 		_center = (leftTop + leftBottom + rightTop + rightBottom) / 4;
 
-		if (depth  + 1< map._layerDepth && 2 < rightTop - leftTop)
+		if (_layerDepth + 1< map._layerDepth && 2 < rightTop - leftTop)
 		{
 			int leftCenter = (leftTop + leftBottom) / 2;
 			int rightCenter = (rightTop + rightBottom) / 2;
@@ -410,10 +419,10 @@ namespace SSB
 			int bottomCenter = (leftBottom + rightBottom) / 2;
 
 			_nodes.resize(4);
-			_nodes[0] = new Node(map, leftTop, topCenter, leftCenter, _center, depth + 1);
-			_nodes[1] = new Node(map, topCenter, rightTop, _center, rightCenter, depth + 1);
-			_nodes[2] = new Node(map, leftCenter, _center, leftBottom, bottomCenter, depth + 1);
-			_nodes[3] = new Node(map, _center, rightCenter, bottomCenter, rightBottom, depth + 1);
+			_nodes[0] = new Node(map, leftTop, topCenter, leftCenter, _center, _layerDepth + 1);
+			_nodes[1] = new Node(map, topCenter, rightTop, _center, rightCenter, _layerDepth + 1);
+			_nodes[2] = new Node(map, leftCenter, _center, leftBottom, bottomCenter, _layerDepth + 1);
+			_nodes[3] = new Node(map, _center, rightCenter, bottomCenter, rightBottom, _layerDepth + 1);
 		}
 
 		int widthCellCount = (leftBottom - leftTop) / map._heightVertexCount;
@@ -438,14 +447,43 @@ namespace SSB
 			}
 		}
 
-		auto vLeftTop = _map._vertexList[leftTop];
-		auto vRightBottom = _map._vertexList[rightBottom];
-		auto vLeftBottom = _map._vertexList[leftBottom];
-		auto vRightTop = _map._vertexList[rightTop];
-		_width = vRightBottom.position.x - vLeftTop.position.x;
-		//_height = vRightBottom.position.y - vLeftTop.position.y;
-		_height = 10;
-		_depth = vLeftTop.position.z - vRightBottom.position.z;
+		float heightMax = map._vertexList[_indexList[0]].position.y;
+		float heightMin = map._vertexList[_indexList[0]].position.y;
+		float widthMax = map._vertexList[_indexList[0]].position.x;
+		float widthMin = map._vertexList[_indexList[0]].position.x;
+		float depthMax = map._vertexList[_indexList[0]].position.z;
+		float depthMin = map._vertexList[_indexList[0]].position.z;
+		for (auto index : _indexList)
+		{
+			Float4 tmp = map._vertexList[index].position;
+			heightMax = fmax(heightMax, tmp.y);
+			heightMin = fmin(heightMin, tmp.y);
+			widthMax = fmax(widthMax, tmp.x);
+			widthMin = fmin(widthMin, tmp.x);
+			depthMax = fmax(depthMax, tmp.z);
+			depthMin = fmin(depthMin, tmp.z);
+		}
+
+		_width = fabs(widthMax - widthMin);
+		_height = fabs(heightMax - heightMin);
+		_depth = fabs(depthMax - depthMin);
+
+		class DebugBox : public DXObject
+		{
+		public:
+			bool Render() override
+			{
+				UpdateConstantBuffer();
+				g_dxWindow->AddDrawable(this);
+				return true;
+			}
+		};
+		_debugBox = new DebugBox();
+		Box* box = new Box(_width, _height, _depth);
+		_debugBox->SetAdditionalModel(box);
+		_debugBox->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+		_debugBox->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Debug", "ps_5_0"));
+		_debugBox->Move(map._vertexList[_center].position);
 	}
 	Map::Node::operator OBB()
 	{
@@ -504,6 +542,10 @@ namespace SSB
 				drawingNodeList.push_back(this);
 			}
 		}
+		if (_map._bDebug)
+		{
+			_debugBox->Render();
+		}
 	}
 	bool Map::Node::Init()
 	{
@@ -515,14 +557,29 @@ namespace SSB
 				node->Init();
 			}
 		}
+		_debugBox->Init();
 		return true;
 	}
 	bool Map::Node::Frame()
 	{
+		for (auto node : _nodes)
+		{
+			node->Frame();
+		}
+
+		_debugBox->Frame();
+
 		return true;
 	}
 	bool Map::Node::Render()
 	{
+		for (auto node : _nodes)
+		{
+			node->Frame();
+		}
+
+		_debugBox->Render();
+
 		return true;
 	}
 	bool Map::Node::Release()
@@ -539,6 +596,12 @@ namespace SSB
 			delete node;
 		}
 		_nodes.clear();
+
+		if (_debugBox)
+		{
+			_debugBox->Release();
+			delete _debugBox;
+		}
 
 		return true;
 	}

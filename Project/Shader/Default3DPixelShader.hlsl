@@ -16,3 +16,8 @@ float4 Main(PS_input input) : SV_TARGET
 	return g_txTextureA.Sample(g_sampleA, input.t) * input.c;
 	//return input.n;
 }
+
+float4 Debug(PS_input input) : SV_TARGET
+{
+	return float4(0, 0, 0, 1);
+}

@@ -26,10 +26,13 @@ namespace SSB
 			int _rightTop;
 			int _rightBottom;
 			int _center;
+			int _layerDepth;
 
 			float _width;
 			float _height;
 			float _depth;
+
+			DXObject* _debugBox;
 
 		public:
 			Node(Map& map, int leftTop, int rightTop, int leftBottom, int rightBottom, int depth);
@@ -75,6 +78,8 @@ namespace SSB
 
 		ID3D11Texture2D* _heightTexture;
 		std::vector<float> _heightData;
+
+		bool _bDebug = false;
 
 	public:
 		Map(int layerDepth = 3) : _layerDepth(layerDepth) { }

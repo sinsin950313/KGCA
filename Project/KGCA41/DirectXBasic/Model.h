@@ -67,6 +67,12 @@ namespace SSB
 	class Box : public Model
 	{
 	private:
+		float _width;
+		float _height;
+		float _depth;
+
+	public:
+		Box(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
 
 	public:
 		void Build() override;

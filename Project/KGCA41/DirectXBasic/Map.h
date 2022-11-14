@@ -66,8 +66,8 @@ namespace SSB
 		//float tileY = 10.0f;
 		float tileX = 1.0f;
 		float tileY = 1.0f;
-		unsigned int _widthVertexCount = 8 + 1u;
-		unsigned int _heightVertexCount = 8 + 1u;
+		unsigned int _widthVertexCount = 256 + 1u;
+		unsigned int _heightVertexCount = 256 + 1u;
 
 		Node* _root;
 		int _layerDepth = 3;
@@ -77,7 +77,7 @@ namespace SSB
 		std::vector<float> _heightData;
 
 	public:
-		Map(int layerDepth = 15) : _layerDepth(layerDepth) { }
+		Map(int layerDepth = 3) : _layerDepth(layerDepth) { }
 		virtual ~Map() { Release(); }
 
 	private:

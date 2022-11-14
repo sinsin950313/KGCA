@@ -443,7 +443,8 @@ namespace SSB
 		auto vLeftBottom = _map._vertexList[leftBottom];
 		auto vRightTop = _map._vertexList[rightTop];
 		_width = vRightBottom.position.x - vLeftTop.position.x;
-		_height = vRightBottom.position.y - vLeftTop.position.y;
+		//_height = vRightBottom.position.y - vLeftTop.position.y;
+		_height = 10;
 		_depth = vLeftTop.position.z - vRightBottom.position.z;
 	}
 	Map::Node::operator OBB()

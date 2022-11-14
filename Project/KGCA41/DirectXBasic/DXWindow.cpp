@@ -9,50 +9,14 @@ namespace SSB
 {
 	DXWindow* g_dxWindow = nullptr;
 
+	DXWindow::DXWindow(HWND hwnd) : BasicWindow(hwnd)
+	{
+		g_dxWindow = this;
+	}
+
 	DXWindow::DXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : BasicWindow(name, hInstance, nCmdShow)
 	{
 		g_dxWindow = this;
-
-		HRESULT hResult;
-
-		hResult = CreateDevice();
-		if (FAILED(hResult))
-		{
-			assert(SUCCEEDED(hResult));
-			return;
-		}
-
-		hResult = CreateWindowDXGIFactory();
-		if (FAILED(hResult))
-		{
-			assert(SUCCEEDED(hResult));
-			return;
-		}
-
-		hResult = CreateSwapChain();
-		if (FAILED(hResult))
-		{
-			assert(SUCCEEDED(hResult));
-			return;
-		}
-
-		hResult = Create2DFactory();
-		if (FAILED(hResult))
-		{
-			assert(SUCCEEDED(hResult));
-			return;
-		}
-
-		hResult = CreateWriteFactory();
-		if (FAILED(hResult))
-		{
-			assert(SUCCEEDED(hResult));
-			return;
-		}
-
-		_renderTarget = new RenderTarget();
-
-		_mainCamera = &_defaultCamera;
 	}
 
 	DXWindow::~DXWindow()
@@ -62,6 +26,8 @@ namespace SSB
 
 	HRESULT DXWindow::UpdateResize()
 	{
+		BasicWindow::UpdateResize();
+
 		if (_device == nullptr)
 		{
 			return S_OK;
@@ -126,6 +92,51 @@ namespace SSB
 	bool DXWindow::Init()
 	{
 		BasicWindow::Init();
+
+		HRESULT hResult;
+
+		hResult = CreateDevice();
+		if (FAILED(hResult))
+		{
+			assert(SUCCEEDED(hResult));
+			return false;
+		}
+
+		hResult = CreateWindowDXGIFactory();
+		if (FAILED(hResult))
+		{
+			assert(SUCCEEDED(hResult));
+			return false;
+		}
+
+		hResult = CreateSwapChain();
+		if (FAILED(hResult))
+		{
+			assert(SUCCEEDED(hResult));
+			return false;
+		}
+
+		hResult = Create2DFactory();
+		if (FAILED(hResult))
+		{
+			assert(SUCCEEDED(hResult));
+			return false;
+		}
+
+		hResult = CreateWriteFactory();
+		if (FAILED(hResult))
+		{
+			assert(SUCCEEDED(hResult));
+			return false;
+		}
+
+		_renderTarget = new RenderTarget();
+		_renderTarget->Init();
+		_screen.SetRenderTargetTexture(_renderTarget->GetRenderTargetTexture());
+		_screen.SetDepthStencilTexture(_renderTarget->GetDepthStencilTexture());
+		_screen.Init();
+
+		_mainCamera = &_defaultCamera;
 
 		DXStateManager::GetInstance().Init();
 

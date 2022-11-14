@@ -125,17 +125,16 @@ namespace SSB
 		void ClearD3D11DeviceContext();
 
 	public:
+		DXWindow(HWND hwnd);
 		DXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
 		~DXWindow();
-
-	private:
-		HRESULT UpdateResize() override;
 
 	public:
 		bool Init() override;
 		bool Frame() override;
 		bool Render() override final;
 		bool Release() override;
+		HRESULT UpdateResize() override;
 
 	protected:
 		virtual bool PreRender();

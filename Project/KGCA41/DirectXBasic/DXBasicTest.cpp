@@ -132,7 +132,7 @@ namespace SSB
     bool SSB::DXBasicTest::PreRender()
     {
         DXWindow::PreRender();
-        _object->Render();
+        //_object->Render();
         _terrain->Render();
         //_objectBack->Render();
         return true;

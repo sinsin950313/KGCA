@@ -96,4 +96,7 @@
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\..\Shader\Default3DPixelShader.hlsl" />
+  </ItemGroup>
 </Project>

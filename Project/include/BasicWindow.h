@@ -21,11 +21,14 @@ namespace SSB
 		RECT _clientRect;
 
 	public:
+		BasicWindow(HWND hwnd);
 		BasicWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
+
+	public:
 		void Run();
 		LRESULT CALLBACK WindowProcedureCallbackFunction(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-	protected:
+	public:
 		virtual HRESULT UpdateResize();
 
 	public:

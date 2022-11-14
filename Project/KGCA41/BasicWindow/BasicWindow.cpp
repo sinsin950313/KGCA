@@ -9,7 +9,10 @@ namespace SSB
 	{
 		return g_Window->WindowProcedureCallbackFunction(hWnd, message, wParam, lParam);
 	}
-
+	BasicWindow::BasicWindow(HWND hwnd) : _hWnd(hwnd)
+	{
+		g_Window = this;
+	}
 	BasicWindow::BasicWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : _name(name), _hInstance(hInstance), _nCmdShow(nCmdShow)
 	{
 		g_Window = this;
@@ -40,8 +43,8 @@ namespace SSB
 
 	bool BasicWindow::Init()
 	{
-		//GetWindowRect(_hWnd, &_windowRect);
-		//GetClientRect(_hWnd, &_clientRect);
+		GetWindowRect(_hWnd, &_windowRect);
+		GetClientRect(_hWnd, &_clientRect);
 
 		UINT iScreenWidth = GetSystemMetrics(SM_CXFULLSCREEN);
 		UINT iScreenHieght = GetSystemMetrics(SM_CYFULLSCREEN);
@@ -104,9 +107,6 @@ namespace SSB
 		{
 			if (wParam != SIZE_MINIMIZED)
 			{
-				GetWindowRect(_hWnd, &_windowRect);
-				GetClientRect(_hWnd, &_clientRect);
-
 				HRESULT hr;
 				if (FAILED(hr = UpdateResize()))
 				{
@@ -132,6 +132,9 @@ namespace SSB
 
 	HRESULT BasicWindow::UpdateResize()
 	{
+		GetWindowRect(_hWnd, &_windowRect);
+		GetClientRect(_hWnd, &_clientRect);
+
 		return S_OK;
 	}
 }

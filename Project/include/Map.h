@@ -32,6 +32,7 @@ namespace SSB
 			float _height;
 			float _depth;
 
+			HMatrix44 _matrix;
 			DXObject* _debugBox;
 
 		public:
@@ -78,11 +79,12 @@ namespace SSB
 
 		ID3D11Texture2D* _heightTexture;
 		std::vector<float> _heightData;
+		float _height = 0;
 
 		bool _bDebug = false;
 
 	public:
-		Map(int layerDepth = 3) : _layerDepth(layerDepth) { }
+		Map(int layerDepth = 4) : _layerDepth(layerDepth) { }
 		virtual ~Map() { Release(); }
 
 	private:

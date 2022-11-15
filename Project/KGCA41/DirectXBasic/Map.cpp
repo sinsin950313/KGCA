@@ -14,7 +14,7 @@ namespace SSB
 	void Map::CreateVertex()
 	{
 		int hWidthVertexCount = _widthVertexCount / 2;
-		int hHeightVertexCount = _heightVertexCount / 2;
+		int hDepthVertexCount = _heightVertexCount / 2;
 
 		// z x-->
 		// |
@@ -26,7 +26,7 @@ namespace SSB
 			for (int col = 0; col < _widthVertexCount; ++col)
 			{
 				int index = row * _widthVertexCount + col;
-				_vertexList[index].position = { (float)(col - hWidthVertexCount) * _cellDistance, _heightData[row * _widthVertexCount + col] * _heightScale, (float)(hHeightVertexCount - row) * _cellDistance, 1.0f };
+				_vertexList[index].position = { (float)(col - hWidthVertexCount) * _cellDistance, _heightData[row * _widthVertexCount + col] * _heightScale, (float)(hDepthVertexCount - row) * _cellDistance, 1.0f };
 				_vertexList[index].color = { (rand() % 10) / 10.0f, (rand() % 10) / 10.0f, (rand() % 10) / 10.0f, 1.0f };
 				_vertexList[index].texture = { ((float)col / (float)(_widthVertexCount - 1.0f)) * tileX, ((float)row / (float)(_heightVertexCount - 1.0f)) * tileY };
 			}
@@ -237,9 +237,13 @@ namespace SSB
 		_heightData.resize(textureDesc.Height * textureDesc.Width);
 
 		D3D11_MAPPED_SUBRESOURCE MappedFaceDest;
+		float minHeight;
+		float maxHeight;
 		if (SUCCEEDED(g_dxWindow->GetDeviceContext()->Map(texture2D, D3D11CalcSubresource(0, 0, 1), D3D11_MAP_READ, 0, &MappedFaceDest)))
 		{
 			UCHAR* pTexels = (UCHAR*)MappedFaceDest.pData;
+			minHeight = (float)pTexels[0] / 255.0f;
+			maxHeight = (float)pTexels[0] / 255.0f;
 			for (UINT row = 0; row < textureDesc.Height; row++)
 			{
 				UINT rowStart = row * MappedFaceDest.RowPitch;
@@ -247,11 +251,15 @@ namespace SSB
 				{
 					UINT colStart = col * 4;
 					UINT uRed = pTexels[rowStart + colStart + 0];
-					_heightData[row * textureDesc.Width + col] = (float)uRed / 255.0f;
+					float heightData = (float)uRed / 255.0f;
+					_heightData[row * textureDesc.Width + col] = heightData;
+					minHeight = fmin(minHeight, heightData);
+					maxHeight = fmax(maxHeight, heightData);
 				}
 			}
 			g_dxWindow->GetDeviceContext()->Unmap(texture2D, D3D11CalcSubresource(0, 0, 1));
 		}
+		_height = maxHeight - minHeight;
 
 		//m_iNumRows = td.Height;
 		//m_iNumCols = td.Width;
@@ -406,6 +414,7 @@ namespace SSB
 		}
 		_drawingNodeList.clear();
 	}
+
 	Map::Node::Node(Map& map, int leftTop, int rightTop, int leftBottom, int rightBottom, int depth) 
 		: _map(map), _leftTop(leftTop), _leftBottom(leftBottom), _rightTop(rightTop), _rightBottom(rightBottom), _layerDepth(depth)
 	{
@@ -425,11 +434,11 @@ namespace SSB
 			_nodes[3] = new Node(map, _center, rightCenter, bottomCenter, rightBottom, _layerDepth + 1);
 		}
 
-		int widthCellCount = (leftBottom - leftTop) / map._heightVertexCount;
-		int heightCellCount = rightTop - leftTop;
+		int widthCellCount = rightTop - leftTop;
+		int heightCellCount = (leftBottom - leftTop) / map._widthVertexCount;
 		int cellCount = widthCellCount * heightCellCount;
-		int faceCount = cellCount * 2 * 3;
-		_indexList.resize(faceCount);
+		int vertexCount = cellCount * 2 * 3;
+		_indexList.resize(vertexCount);
 		int iIndex = 0;
 		for (int i = 0; i < heightCellCount; i++)
 		{
@@ -467,6 +476,8 @@ namespace SSB
 		_width = fabs(widthMax - widthMin);
 		_height = fabs(heightMax - heightMin);
 		_depth = fabs(depthMax - depthMin);
+		Vector3 position{map._vertexList[_center].position.x, heightMin + _height / 2.0f, map._vertexList[_center].position.z};
+		_matrix = HMatrix44(Matrix33(), position);
 
 		class DebugBox : public DXObject
 		{
@@ -483,15 +494,13 @@ namespace SSB
 		_debugBox->SetAdditionalModel(box);
 		_debugBox->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
 		_debugBox->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Debug", "ps_5_0"));
-		_debugBox->Move(map._vertexList[_center].position);
+		_debugBox->Move(position);
 	}
 	Map::Node::operator OBB()
 	{
-		HMatrix44 matrix = _map.GetMatrix();
-		matrix = matrix.Translate(_map._vertexList[_center].position);
 		OBB data
 		{
-			matrix,
+			_matrix,
 			_width,
 			_height,
 			_depth

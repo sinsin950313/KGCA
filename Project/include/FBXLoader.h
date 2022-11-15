@@ -23,8 +23,8 @@ namespace SSB
 	private:
 		struct ObjectAnimationData
 		{
-			//HMatrix44 MeshWorldInverseMatrix[255];
 			HMatrix44 AnimatedBoneMatrix[255];	// Bone Index
+			HMatrix44 AnimatedMeshMatrix[255];	// Mesh Index
 		};
 
 	private:
@@ -36,7 +36,7 @@ namespace SSB
 
 	public:
 		void UpdateAnimatedBoneData(int boneIndex, HMatrix44 matrix);
-		//void UpdateMeshWorldAnimationData(int meshIndex, HMatrix44 matrix);
+		void UpdateAnimatedMeshData(int meshIndex, HMatrix44 matrix);
 
 	private:
 		bool CreateConstantBuffer() override;
@@ -75,19 +75,34 @@ namespace SSB
 			int AffectingBoneIndex[4]{ 0, };
 			float Weight[4]{ 0, };
 		};
+		struct MeshParam
+		{
+			float MeshIndex;
+			float MeshWeight = 0;
+			float padding[2];
+		};
+		struct MeshConstantData
+		{
+			HMatrix44 ToBoneSpaceMatrixData[255];
+			MeshParam MeshParam;
+		};
 
 	private:
 		std::vector<SkinningData> _skinningDataPerVertex;
 		std::vector<SkinningData> _skinningData;
 		ID3D11Buffer* _skinningDataBuffer;
-		HMatrix44 _toBoneSpaceMatrixData[255];
-		ID3D11Buffer* _toBoneSpaceTransformMatrixBuffer;
+		MeshConstantData _meshConstantData;
+		ID3D11Buffer* _meshConstantBuffer;
+		DXFBXRootObject* _root;
+		int _meshIndex;
 
 	public:
 		~DXFBXMeshObject() { Release(); }
 
 	private:
-		void SetBoneSpaceTransformMatrix(int boneIndex, HMatrix44 toBoneSpaceTransform) { _toBoneSpaceMatrixData[boneIndex] = toBoneSpaceTransform.Transpose(); }
+		void SetRootObject(DXFBXRootObject* root) { _root = root; }
+		void SetMeshIndex(int meshIndex) { _meshIndex = meshIndex; _meshConstantData.MeshParam.MeshIndex = meshIndex; }
+		void SetBoneSpaceTransformMatrix(int boneIndex, HMatrix44 toBoneSpaceTransform) { _meshConstantData.ToBoneSpaceMatrixData[boneIndex] = toBoneSpaceTransform.Transpose(); }
 		void LinkMeshWithBone(int vertexIndex, int boneIndex, float weight);
 
 	private:
@@ -98,6 +113,7 @@ namespace SSB
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 
 	public:
+		bool Frame() override;
 		bool Release() override;
 
 		friend class FBXLoader;
@@ -112,6 +128,7 @@ namespace SSB
 		FbxScene* _scene;
 		FbxNode* _root;
 		std::map<FbxNode*, int> _skeletonDataMap;
+		std::map<FbxNode*, int> _meshDataMap;
 
 		float _frameSpeed = 30.0f;
 		float _tickPerFrame = 160;

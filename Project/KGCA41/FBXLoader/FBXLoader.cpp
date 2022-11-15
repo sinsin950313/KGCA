@@ -138,6 +138,10 @@ namespace SSB
 				if (attribute == FbxNodeAttribute::eMesh)
 				{
 					childObject = new DXFBXMeshObject;
+					((DXFBXMeshObject*)childObject)->SetRootObject(_rootObject);
+					int meshIndex = _meshDataMap.size();
+					((DXFBXMeshObject*)childObject)->SetMeshIndex(meshIndex);
+					_meshDataMap.insert(std::make_pair(node->GetChild(i), meshIndex + 1));
 					// Need to Remove
 					childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshObject.hlsl", "VS", "vs_5_0"));
 					childObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshObject.hlsl", "PS", "ps_5_0"));
@@ -414,35 +418,42 @@ namespace SSB
 	void FBXLoader::ParseMeshSkinningData(DXFBXMeshObject* object, FbxMesh* mesh)
 	{
 		object->_skinningDataPerVertex.resize(mesh->GetControlPointsCount());
-		int deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
-		for (int iDeformer = 0; iDeformer < deformerCount; ++iDeformer)
+		if (mesh->GetDeformerCount() == 0)
 		{
-			FbxDeformer* deformer = mesh->GetDeformer(iDeformer, FbxDeformer::eSkin);
-			FbxSkin* skin = (FbxSkin*)deformer;
-			int clusterCount = skin->GetClusterCount();
-			for (int iCluster = 0; iCluster < clusterCount; ++iCluster)
+			object->_meshConstantData.MeshParam.MeshWeight = 1;
+		}
+		else
+		{
+			int deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
+			for (int iDeformer = 0; iDeformer < deformerCount; ++iDeformer)
 			{
-				FbxCluster* cluster = skin->GetCluster(iCluster);
-				int boneIndex = _skeletonDataMap.find(cluster->GetLink())->second;
-
-				FbxAMatrix linkMatrix;
-				cluster->GetTransformLinkMatrix(linkMatrix);
-
-				FbxAMatrix adjustMatrix;
-				cluster->GetTransformMatrix(adjustMatrix);
-
-				FbxAMatrix fbxBoneSpaceMatrix = linkMatrix.Inverse() * adjustMatrix;
-				HMatrix44 toBoneSpaceMatrix = Convert(fbxBoneSpaceMatrix);
-				object->SetBoneSpaceTransformMatrix(boneIndex, toBoneSpaceMatrix);
-
-				int controlPointCount = cluster->GetControlPointIndicesCount();
-				int* controlPointIndice = cluster->GetControlPointIndices();
-				double* controlPointWeights = cluster->GetControlPointWeights();
-				for (int iControlPoint = 0; iControlPoint < controlPointCount; ++iControlPoint)
+				FbxDeformer* deformer = mesh->GetDeformer(iDeformer, FbxDeformer::eSkin);
+				FbxSkin* skin = (FbxSkin*)deformer;
+				int clusterCount = skin->GetClusterCount();
+				for (int iCluster = 0; iCluster < clusterCount; ++iCluster)
 				{
-					int vertexIndex = controlPointIndice[iControlPoint];
-					float weight = controlPointWeights[iControlPoint];
-					object->LinkMeshWithBone(vertexIndex, boneIndex, weight);
+					FbxCluster* cluster = skin->GetCluster(iCluster);
+					int boneIndex = _skeletonDataMap.find(cluster->GetLink())->second;
+
+					FbxAMatrix linkMatrix;
+					cluster->GetTransformLinkMatrix(linkMatrix);
+
+					FbxAMatrix adjustMatrix;
+					cluster->GetTransformMatrix(adjustMatrix);
+
+					FbxAMatrix fbxBoneSpaceMatrix = linkMatrix.Inverse() * adjustMatrix;
+					HMatrix44 toBoneSpaceMatrix = Convert(fbxBoneSpaceMatrix);
+					object->SetBoneSpaceTransformMatrix(boneIndex, toBoneSpaceMatrix);
+
+					int controlPointCount = cluster->GetControlPointIndicesCount();
+					int* controlPointIndice = cluster->GetControlPointIndices();
+					double* controlPointWeights = cluster->GetControlPointWeights();
+					for (int iControlPoint = 0; iControlPoint < controlPointCount; ++iControlPoint)
+					{
+						int vertexIndex = controlPointIndice[iControlPoint];
+						float weight = controlPointWeights[iControlPoint];
+						object->LinkMeshWithBone(vertexIndex, boneIndex, weight);
+					}
 				}
 			}
 		}
@@ -534,6 +545,10 @@ namespace SSB
 	void DXFBXRootObject::UpdateAnimatedBoneData(int boneIndex, HMatrix44 matrix)
 	{
 		_objectAnimationData.AnimatedBoneMatrix[boneIndex] = matrix.Transpose();
+	}
+	void DXFBXRootObject::UpdateAnimatedMeshData(int meshIndex, HMatrix44 matrix)
+	{
+		_objectAnimationData.AnimatedMeshMatrix[meshIndex] = matrix.Transpose();
 	}
 	bool DXFBXRootObject::CreateConstantBuffer()
 	{
@@ -654,14 +669,14 @@ namespace SSB
 
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
-		desc.ByteWidth = sizeof(_toBoneSpaceMatrixData);
+		desc.ByteWidth = sizeof(_meshConstantData);
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA sd;
 		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		sd.pSysMem = &_toBoneSpaceMatrixData;
-		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_toBoneSpaceTransformMatrixBuffer);
+		sd.pSysMem = &_meshConstantData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_meshConstantBuffer);
 		if (FAILED(hr))
 		{
 			assert(SUCCEEDED(hr));
@@ -669,10 +684,19 @@ namespace SSB
 		}
 		return true;
 	}
+	bool DXFBXMeshObject::Frame()
+	{
+		DXObject::Frame();
+
+		HMatrix44 animationMatrix = GetInterpolate();
+		_root->UpdateAnimatedMeshData(_meshIndex, animationMatrix);
+
+		return true;
+	}
 	void DXFBXMeshObject::UpdateConstantBuffer()
 	{
 		DXObject::UpdateConstantBuffer();
-		g_dxWindow->GetDeviceContext()->UpdateSubresource(_toBoneSpaceTransformMatrixBuffer, 0, nullptr, &_toBoneSpaceMatrixData, 0, 0);
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_meshConstantBuffer, 0, nullptr, &_meshConstantData, 0, 0);
 	}
 	bool DXFBXMeshObject::Release()
 	{
@@ -682,10 +706,10 @@ namespace SSB
 			_skinningDataBuffer = nullptr;
 		}
 
-		if (_toBoneSpaceTransformMatrixBuffer)
+		if (_meshConstantBuffer)
 		{
-			_toBoneSpaceTransformMatrixBuffer->Release();
-			_toBoneSpaceTransformMatrixBuffer = nullptr;
+			_meshConstantBuffer->Release();
+			_meshConstantBuffer = nullptr;
 		}
 
 		DXObject::Release();
@@ -701,6 +725,6 @@ namespace SSB
 
 		dc->IASetVertexBuffers(1, 1, &_skinningDataBuffer, &stride, &offset);
 
-		dc->VSSetConstantBuffers(2, 1, &_toBoneSpaceTransformMatrixBuffer);
+		dc->VSSetConstantBuffers(2, 1, &_meshConstantBuffer);
 	}
 }

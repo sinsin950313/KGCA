@@ -18,11 +18,13 @@ cbuffer Camera : register(b0)
 cbuffer Object : register(b1)
 {
 	matrix AnimatedBoneMatrix[255];
+	matrix AnimatedMeshMatrix[255];
 }
 
-cbuffer Bone : register(b2)
+cbuffer MeshData : register(b2)
 {
 	matrix ToBoneSpace[255];
+	float4 MeshParam;
 }
 
 struct VS_out
@@ -39,12 +41,18 @@ VS_out VS(VS_in input)
 
 	float4 pos = 0;
 	float4 normal = 0;
+	{
+		float index = MeshParam[0];
+		float weight = MeshParam[1];
+		pos = mul(input.p, AnimatedMeshMatrix[index]) * weight;
+		normal = mul(input.n, AnimatedMeshMatrix[index]) * weight;
+	}
 	for (int i = 0; i < 4; ++i)
 	{
-		int boneIndex = input.AffectingBoneIndex[i];
+		int index = input.AffectingBoneIndex[i];
 		float weight = input.Weight[i];
-		matrix toBoneSpaceMatrix = ToBoneSpace[boneIndex];
-		matrix boneAnimationMatrix = AnimatedBoneMatrix[boneIndex];
+		matrix toBoneSpaceMatrix = ToBoneSpace[index];
+		matrix boneAnimationMatrix = AnimatedBoneMatrix[index];
 
 		float4 tmpPos = mul(input.p, toBoneSpaceMatrix);
 		pos += mul(tmpPos, boneAnimationMatrix) * weight;

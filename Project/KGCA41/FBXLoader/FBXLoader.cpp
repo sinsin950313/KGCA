@@ -29,6 +29,11 @@ namespace SSB
 		Release();
 	}
 
+	std::vector<FBXLoader::Script> FBXLoader::ParseScript(std::string fileName)
+	{
+		return { { "Idle", 60 }, {"Walk", 91}, {"Run", 115 } };
+	}
+
 	DXObject* SSB::FBXLoader::Load(std::string fileName)
 	{
 		FbxNode* root = PreLoad(fileName);
@@ -43,6 +48,71 @@ namespace SSB
 			ExtractAnimationInfoData info = ExtractAnimationInfo(animStack);
 
 			LoadAnimation(animationName, info);
+		}
+
+		return rootObject;
+	}
+
+	DXObject* FBXLoader::Load(std::string fileName, std::string scriptFileName)
+	{
+		std::vector<Script> scriptDatas = ParseScript(scriptFileName);
+		FbxNode* root = PreLoad(fileName);
+
+		DXFBXRootObject* rootObject = nullptr;
+		if (root)
+		{
+			rootObject = LoadObject(root);
+
+			FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
+			ExtractAnimationInfoData info = ExtractAnimationInfo(animStack);
+
+			int beforeFrame = 0;
+			for (auto scriptData : scriptDatas)
+			{
+				for (auto& nodeToAnimationInfo : _nodeToAnimationInfo)
+				{
+					std::map<std::string, ActionInfo>& actionData = nodeToAnimationInfo.second.FrameInfo;
+
+					actionData.insert(std::make_pair(scriptData.ActionName, ActionInfo{ (UINT)scriptData.EndFrame - beforeFrame }));
+				}
+				beforeFrame = scriptData.EndFrame;
+			}
+
+			int scriptIndex = 0;
+			for (FbxLongLong t = info.Start; t <= info.End; ++t)
+			{
+				FbxTime time;
+				time.SetFrame(t, info.TimeMode);
+
+				if (scriptDatas[scriptIndex].EndFrame < t)
+				{
+					++scriptIndex;
+
+					if (scriptDatas.size() <= scriptIndex)
+					{
+						break;
+					}
+				}
+				SaveFrame(scriptDatas[scriptIndex].ActionName, time);
+			}
+
+			for (auto scriptData : scriptDatas)
+			{
+				for (auto& nodetToAnimationInfo : _nodeToAnimationInfo)
+				{
+					Animation* animation = nodetToAnimationInfo.second.Animation;
+					std::map<std::string, ActionInfo>& actionData = nodetToAnimationInfo.second.FrameInfo;
+
+					animation->SetAdditionalAction(scriptData.ActionName, actionData.find(scriptData.ActionName)->second);
+				}
+			}
+
+			for (auto& nodeToObject : _nodeToObject)
+			{
+				FbxNode* node = nodeToObject.first;
+				DXObject* object = nodeToObject.second;
+				object->SetAnimation(_nodeToAnimationInfo.find(node)->second.Animation);
+			}
 		}
 
 		return rootObject;

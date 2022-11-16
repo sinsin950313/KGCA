@@ -21,15 +21,17 @@ bool SSB::FBXLoaderTest::Init()
 
 	_loader = new FBXLoader();
 
-	//_loader->Init();
+	_loader->Init();
+	DXObject* man = _loader->Load("../../Resource/FBX/Man.FBX", "Test.txt");
 	//DXObject* man = _loader->Load("../../Resource/FBX/Man.FBX");
 
-	//man->Init();
+	man->Init();
 
-	//// Easy for Test
+	// Easy for Test
+	man->UpdateCurrentAnimation("Run");
 	//man->UpdateCurrentAnimation("Take 001");
 
-	//_objectList.push_back(man);
+	_objectList.push_back(man);
 
 	//_loader->Init();
 	//DXObject* turret = _loader->Load("../../Resource/FBX/Turret_Deploy1.FBX");
@@ -41,11 +43,11 @@ bool SSB::FBXLoaderTest::Init()
 
 	//_objectList.push_back(turret);
 
-	_loader->Init();
-	DXObject* swat = _loader->Load("../../Resource/FBX/Swat.FBX", std::vector<std::string>{ "../../Resource/FBX/Swat@walking_backwards.fbx", "../../Resource/FBX/Swat@strafe_2.fbx", "../../Resource/FBX/Swat@strafe.fbx" });
-	swat->Init();
-	swat->UpdateCurrentAnimation("mixamo.com");
-	_objectList.push_back(swat);
+	//_loader->Init();
+	//DXObject* swat = _loader->Load("../../Resource/FBX/Swat.FBX", std::vector<std::string>{ "../../Resource/FBX/Swat@walking_backwards.fbx", "../../Resource/FBX/Swat@strafe_2.fbx", "../../Resource/FBX/Swat@strafe.fbx" });
+	//swat->Init();
+	//swat->UpdateCurrentAnimation("mixamo.com");
+	//_objectList.push_back(swat);
 
 	//ModelViewCamera* camera = new ModelViewCamera();
 	//camera->SetTarget(_loader->_rootObject);

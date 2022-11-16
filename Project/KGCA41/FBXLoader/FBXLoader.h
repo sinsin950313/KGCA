@@ -133,6 +133,11 @@ namespace SSB
 			Animation* Animation;
 			std::map<std::string, ActionInfo> FrameInfo;
 		};
+		struct Script
+		{
+			std::string ActionName;
+			int EndFrame;
+		};
 
 	private:
 		FbxManager* _manager;
@@ -165,6 +170,7 @@ namespace SSB
 		FbxNode* PreLoad(std::string fileName);
 		DXFBXRootObject* LoadObject(FbxNode* root);
 		void LoadAnimation(std::string animationName, ExtractAnimationInfoData info);
+		std::vector<Script> ParseScript(std::string fileName);
 
 	private:
 		template<typename T>

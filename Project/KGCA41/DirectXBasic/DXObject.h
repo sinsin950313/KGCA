@@ -30,7 +30,6 @@ namespace SSB
 	};
 	struct ActionInfo
 	{
-		UINT StartFrame;
 		UINT EndFrame;
 		std::vector<ActionFrameInfo> FrameInfoList;
 	};
@@ -67,6 +66,9 @@ namespace SSB
 	class DXObject : public DXDrawableInterface
 	{
 	private:
+		Animation DefaultAnimation;
+
+	private:
 		//Model* _direction;
 		//ID3D11Buffer* _directionVertexBuffer;
 		//ID3D11Buffer* _directionIndexBuffer;
@@ -84,7 +86,7 @@ namespace SSB
 		DXObject* _parent = nullptr;
 		std::vector<DXObject*> _childObjectList;
 
-		Animation _animation;
+		Animation* _animation;
 
 		Model* _currentDrawModel;
 		ID3D11Buffer* _currentDrawVertexBuffer;
@@ -107,12 +109,12 @@ namespace SSB
 
 	protected:
 		std::vector<Model*> GetModel() { return _models; }
-		HMatrix44 GetInterpolate() { return _animation.GetInterpolate(); }
+		HMatrix44 GetInterpolate() { return _animation->GetInterpolate(); }
 
 	public:
 		void SetAdditionalModel(Model* model) { _models.push_back(model); }
 		void SetAdditionalChildObject(DXObject* child) { _childObjectList.push_back(child); child->_parent = this; }
-		void SetAdditionalAction(std::string name, ActionInfo info);
+		void SetAnimation(Animation* animation) { _animation = animation; }
 		void SetVertexShader(Shader* shader) { _vs = shader; }
 		void SetPixelShader(Shader* shader) { _ps = shader; }
 		void UpdateCurrentAnimation(std::string name);

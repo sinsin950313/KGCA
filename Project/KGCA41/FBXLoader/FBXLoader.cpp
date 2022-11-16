@@ -19,6 +19,9 @@ namespace SSB
 
 	SSB::FBXLoader::FBXLoader()
 	{
+		_manager = FbxManager::Create();
+		_importer = FbxImporter::Create(_manager, "");
+		_scene = FbxScene::Create(_manager, "");
 	}
 
 	SSB::FBXLoader::~FBXLoader()
@@ -26,51 +29,83 @@ namespace SSB
 		Release();
 	}
 
-	void SSB::FBXLoader::Load()
+	DXObject* SSB::FBXLoader::Load(std::string fileName)
 	{
-		_importer->Import(_scene);
+		FbxNode* root = PreLoad(fileName);
 
-		FbxSystemUnit::m.ConvertScene(_scene);
-		FbxAxisSystem::MayaZUp.ConvertScene(_scene);
-
-		_root = _scene->GetRootNode();
-
-		if (_root)
+		DXFBXRootObject* rootObject = nullptr;
+		if (root)
 		{
-			//_rootObject = new DXObject;
-			_rootObject = new DXFBXRootObject;
-			class FBXRootModel : public Model
-			{
-			public:
-				void Build()
-				{
-					_vertexList.push_back({});
-					_indexList.push_back(0);
-				}
-			};
-			_rootObject->SetAdditionalModel(new FBXRootModel);
-			_nodeToObject.insert(std::make_pair(_root, _rootObject));
-			// Need to Remove
-			_rootObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
-			_rootObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
-			ExtractSkeletonData(_root);
-			ParseNode(_root, _rootObject);
+			rootObject = LoadObject(root);
 
 			FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
-			ExtractAnimationInfo(animStack);
-			for (FbxLongLong t = _animationStartFrame; t <= _animationEndFrame; ++t)
-			{
-				FbxTime time;
-				time.SetFrame(t, _timeMode);
-				SaveFrame(time);
-			}
-
 			std::string animationName(animStack->GetName());
-			for (auto objectToActionInfo : _objectToActionInfo)
+			ExtractAnimationInfoData info = ExtractAnimationInfo(animStack);
+
+			LoadAnimation(animationName, info);
+		}
+
+		return rootObject;
+	}
+
+	DXObject* FBXLoader::Load(std::string fileName, std::vector<std::string> animationFileNameList)
+	{
+		DXFBXRootObject* rootObject = (DXFBXRootObject*)Load(fileName);
+
+		FBXLoader animationLoader;
+		for (auto animationFIleName : animationFileNameList)
+		{
+			animationLoader.Init();
+			FbxNode* animationRoot = animationLoader.PreLoad(animationFIleName);
+
+			DXFBXRootObject* animationRootObject = nullptr;
+			if (animationRoot)
 			{
-				objectToActionInfo.first->SetAdditionalAction(animationName, objectToActionInfo.second);
+				{
+					animationRootObject = animationLoader.LoadObject(animationRoot);
+
+					FbxAnimStack* animStack = animationLoader._scene->GetSrcObject<FbxAnimStack>();
+					std::string animationName(animStack->GetName());
+					ExtractAnimationInfoData info = animationLoader.ExtractAnimationInfo(animStack);
+
+					animationLoader.LoadAnimation(animationName, info);
+				}
+
+				{
+					auto& animationSkeletonNodeToIndex = animationLoader._skeletonDataMap;
+					auto& animationNodeToAnimationInfo = animationLoader._nodeToAnimationInfo;
+					for (auto nodeToIndex : animationSkeletonNodeToIndex)
+					{
+						FbxNode* animationNode = nodeToIndex.first;
+						AnimationData& animationData = animationNodeToAnimationInfo.find(animationNode)->second;
+						int index = nodeToIndex.second;
+						FbxNode* node = _skeletonIndexToObjectMap.find(index)->second;
+
+						for (auto& nameAndActionInfo : animationData.FrameInfo)
+						{
+							std::string name = nameAndActionInfo.first;
+							ActionInfo info = nameAndActionInfo.second;
+							_nodeToAnimationInfo.find(node)->second.FrameInfo.insert(std::make_pair(name, info));
+						}
+					}
+				}
 			}
 		}
+
+		for (auto& nodeToObject : _nodeToObject)
+		{
+			FbxNode* node = nodeToObject.first;
+			DXObject* object = nodeToObject.second;
+
+			auto& nodeToAnimationData = _nodeToAnimationInfo.find(node)->second;
+			for (auto info : nodeToAnimationData.FrameInfo)
+			{
+				nodeToAnimationData.Animation->SetAdditionalAction(info.first, info.second);
+			}
+			object->SetAnimation(_nodeToAnimationInfo.find(node)->second.Animation);
+		}
+
+		return rootObject;
 	}
 
 	void FBXLoader::ExtractSkeletonData(FbxNode* node)
@@ -106,19 +141,21 @@ namespace SSB
 		return ret;
 	}
 
-	void FBXLoader::SaveFrame(FbxTime timer)
+	void FBXLoader::SaveFrame(std::string name, FbxTime timer)
 	{
-		FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
 		for (auto nodeToObject : _nodeToObject)
 		{
 			ActionFrameInfo actionFrameInfo;
 			actionFrameInfo.Matrix = Convert(nodeToObject.first->EvaluateGlobalTransform(timer));
 			Decompose(actionFrameInfo.Matrix, actionFrameInfo.Scale, actionFrameInfo.Rotate, actionFrameInfo.Translate);
-			_objectToActionInfo.find(nodeToObject.second)->second.FrameInfoList.push_back(actionFrameInfo);
+
+			AnimationData& animationData = _nodeToAnimationInfo.find(nodeToObject.first)->second;
+			ActionInfo& frameInfo = animationData.FrameInfo.find(name)->second;
+			frameInfo.FrameInfoList.push_back(actionFrameInfo);
 		}
 	}
 
-	void SSB::FBXLoader::ParseNode(FbxNode* node, DXObject* object)
+	void SSB::FBXLoader::ParseNode(FbxNode* node, DXObject* object, DXFBXRootObject* rootObject)
 	{
 		FbxMesh* mesh = node->GetMesh();
 		if(mesh)
@@ -138,7 +175,7 @@ namespace SSB
 				if (attribute == FbxNodeAttribute::eMesh)
 				{
 					childObject = new DXFBXMeshObject;
-					((DXFBXMeshObject*)childObject)->SetRootObject(_rootObject);
+					((DXFBXMeshObject*)childObject)->SetRootObject(rootObject);
 					int meshIndex = _meshDataMap.size();
 					((DXFBXMeshObject*)childObject)->SetMeshIndex(meshIndex);
 					_meshDataMap.insert(std::make_pair(node->GetChild(i), meshIndex + 1));
@@ -149,8 +186,10 @@ namespace SSB
 				else if (attribute == FbxNodeAttribute::eSkeleton)
 				{
 					childObject = new DXFBXSkeletonObject;
-					((DXFBXSkeletonObject*)childObject)->SetRootObject(_rootObject);
-					((DXFBXSkeletonObject*)childObject)->SetBoneIndex(_skeletonDataMap.find(node->GetChild(i))->second);
+					((DXFBXSkeletonObject*)childObject)->SetRootObject(rootObject);
+					int boneIndex = _skeletonDataMap.find(node->GetChild(i))->second;
+					((DXFBXSkeletonObject*)childObject)->SetBoneIndex(boneIndex);
+					_skeletonIndexToObjectMap.insert(std::make_pair(boneIndex, node->GetChild(i)));
 					// Need to Remove
 					childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
 					childObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
@@ -164,7 +203,7 @@ namespace SSB
 				}
 				_nodeToObject.insert(std::make_pair(node->GetChild(i), childObject));
 				object->SetAdditionalChildObject(childObject);
-				ParseNode(node->GetChild(i), childObject);
+				ParseNode(node->GetChild(i), childObject, rootObject);
 			}
 		}
 	}
@@ -365,7 +404,7 @@ namespace SSB
 		return t;
 	}
 
-	void FBXLoader::ExtractAnimationInfo(FbxAnimStack* animStack)
+	FBXLoader::ExtractAnimationInfoData FBXLoader::ExtractAnimationInfo(FbxAnimStack* animStack)
 	{
 		FbxString fbxStr(animStack->GetName());
 		FbxTakeInfo* info = _scene->GetTakeInfo(fbxStr);
@@ -375,14 +414,12 @@ namespace SSB
 		FbxTime endTime = timeSpan.GetStop();
 		FbxTime duration = timeSpan.GetDirection();
 
-		_animationStartFrame = startTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
-		_animationEndFrame = endTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
-		_timeMode = FbxTime::GetGlobalTimeMode();
+		ExtractAnimationInfoData ret;
+		ret.Start = startTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
+		ret.End = endTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
+		ret.TimeMode = FbxTime::GetGlobalTimeMode();
 
-		for (auto nodeToObject : _nodeToObject)
-		{
-			_objectToActionInfo.insert(std::make_pair(nodeToObject.second, ActionInfo{(UINT)_animationStartFrame, (UINT)_animationEndFrame, std::vector<ActionFrameInfo>() }));
-		}
+		return ret;
 	}
 
 	int SSB::FBXLoader::GetSubMaterialIndex(int iPoly, FbxLayerElementMaterial* pMaterialSetList)
@@ -459,40 +496,110 @@ namespace SSB
 		}
 	}
 
-	bool SSB::FBXLoader::Init()
+	FbxNode* FBXLoader::PreLoad(std::string fileName)
 	{
-		_manager = FbxManager::Create();
-		_importer = FbxImporter::Create(_manager, "");
-		_scene = FbxScene::Create(_manager, "");
-		bool ret = _importer->Initialize(_fileName.c_str());
+		bool ret = _importer->Initialize(fileName.c_str());
 		if (!ret)
 		{
 			OutputDebugStringA(_importer->GetStatus().GetErrorString());
+			assert(ret);
 		}
-		FbxTime::EMode timeMode;
 		FbxTime::SetGlobalTimeMode(FbxTime::eFrames30);
 
-		Load();
+		_importer->Import(_scene);
 
-		_rootObject->Init();
+		FbxSystemUnit::m.ConvertScene(_scene);
+		FbxAxisSystem::MayaZUp.ConvertScene(_scene);
 
-		// Easy for Test
-		_rootObject->UpdateCurrentAnimation("Take 001");
+		FbxNode* root = _scene->GetRootNode();
+
+		return root;
+	}
+
+	DXFBXRootObject* FBXLoader::LoadObject(FbxNode* root)
+	{
+		DXFBXRootObject* rootObject = new DXFBXRootObject;
+		class FBXRootModel : public Model
+		{
+		public:
+			void Build()
+			{
+				_vertexList.push_back({});
+				_indexList.push_back(0);
+			}
+		};
+		rootObject->SetAdditionalModel(new FBXRootModel);
+		_nodeToObject.insert(std::make_pair(root, rootObject));
+		// Need to Remove
+		rootObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
+		rootObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DObject.hlsl", "PS", "ps_5_0"));
+		ExtractSkeletonData(root);
+		ParseNode(root, rootObject, rootObject);
+
+		for (auto nodeToObject : _nodeToObject)
+		{
+			FbxNode* node = nodeToObject.first;
+			DXObject* object = nodeToObject.second;
+			Animation* animation = new Animation;
+
+			_nodeToAnimationInfo.insert(std::make_pair(node, AnimationData{ animation, std::map<std::string, ActionInfo>() }));
+		}
+		return rootObject;
+	}
+
+	void FBXLoader::LoadAnimation(std::string animationName, ExtractAnimationInfoData info)
+	{
+		for (auto& nodeToAnimationInfo : _nodeToAnimationInfo)
+		{
+			std::map<std::string, ActionInfo>& actionData = nodeToAnimationInfo.second.FrameInfo;
+
+			actionData.insert(std::make_pair(animationName, ActionInfo{ (UINT)info.End }));
+		}
+
+		for (FbxLongLong t = info.Start; t <= info.End; ++t)
+		{
+			FbxTime time;
+			time.SetFrame(t, info.TimeMode);
+			SaveFrame(animationName, time);
+		}
+
+		for (auto& nodetToAnimationInfo : _nodeToAnimationInfo)
+		{
+			Animation* animation = nodetToAnimationInfo.second.Animation;
+			std::map<std::string, ActionInfo>& actionData = nodetToAnimationInfo.second.FrameInfo;
+
+			animation->SetAdditionalAction(animationName, actionData.find(animationName)->second);
+		}
+
+		for (auto& nodeToObject : _nodeToObject)
+		{
+			FbxNode* node = nodeToObject.first;
+			DXObject* object = nodeToObject.second;
+			object->SetAnimation(_nodeToAnimationInfo.find(node)->second.Animation);
+		}
+	}
+
+	bool SSB::FBXLoader::Init()
+	{
+		_skeletonDataMap.clear();
+		_meshDataMap.clear();
+
+		_frameSpeed = 30.0f;
+		_tickPerFrame = 160;
+		_nodeToObject.clear();
+		_skeletonIndexToObjectMap.clear();
+		_nodeToAnimationInfo.clear();
 
 		return true;
 	}
 
 	bool SSB::FBXLoader::Frame()
 	{
-		_rootObject->Frame();
-
 		return true;
 	}
 
 	bool SSB::FBXLoader::Render()
 	{
-		_rootObject->Render();
-
 		return true;
 	}
 
@@ -528,17 +635,6 @@ namespace SSB
 		//	mesh->Destroy();
 		//}
 		//_meshList.clear();
-
-		if (_rootObject)
-		{
-			_rootObject->Release();
-			delete _rootObject;
-			_rootObject = nullptr;
-		}
-
-		TextureResourceManager::GetInstance().Release();
-		DXStateManager::GetInstance().Release();
-		ShaderManager::GetInstance().Release();
 
 		return true;
 	}

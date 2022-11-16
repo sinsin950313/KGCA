@@ -153,13 +153,9 @@ namespace SSB
 		dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
 		dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
 	}
-	void DXObject::SetAdditionalAction(std::string name, ActionInfo info)
-	{
-		_animation.SetAdditionalAction(name, info);
-	}
 	void DXObject::UpdateCurrentAnimation(std::string name)
 	{
-		_animation.UpdateCurrentAction(name);
+		_animation->UpdateCurrentAction(name);
 		for (auto child : _childObjectList)
 		{
 			child->UpdateCurrentAnimation(name);
@@ -218,13 +214,16 @@ namespace SSB
         CreateVertexLayout();
 		CreateConstantBuffer();
 
-		_animation.Init();
+		if (_animation != &DefaultAnimation)
+		{
+			_animation->Init();
+		}
 
         return true;
     }
     bool DXObject::Frame()
     {
-		_animation.Frame();
+		_animation->Frame();
 		for (auto child : _childObjectList)
 		{
 			child->Frame();
@@ -244,7 +243,7 @@ namespace SSB
 			//OutputDebugString(L"Invisible\n");
 		}
 
-		_animation.Render();
+		_animation->Render();
 
 		for (auto child : _childObjectList)
 		{
@@ -296,7 +295,12 @@ namespace SSB
 			_constantBuffer = nullptr;
 		}
 
-		_animation.Release();
+		if (_animation && _animation != &DefaultAnimation)
+		{
+			_animation->Release();
+			delete _animation;
+			_animation = nullptr;
+		}
 
 		for (auto child : _childObjectList)
 		{
@@ -363,7 +367,7 @@ namespace SSB
 		}
     }
 
-	ActionInfo Animation::DefaultAction{ 0, 0, std::vector<ActionFrameInfo>{ActionFrameInfo{}} };
+	ActionInfo Animation::DefaultAction{ 0, std::vector<ActionFrameInfo>{ActionFrameInfo{}} };
 
 	void Animation::SetAdditionalAction(std::string name, ActionInfo info)
 	{
@@ -382,7 +386,7 @@ namespace SSB
 		else if (_currentAction->EndFrame <= beforeIndex)
 		{
 			_animationTimer.Init();
-			ret = _currentAction->FrameInfoList[_currentAction->StartFrame].Matrix;
+			ret = _currentAction->FrameInfoList[0].Matrix;
 		}
 		else
 		{

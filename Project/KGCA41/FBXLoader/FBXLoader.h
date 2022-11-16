@@ -122,50 +122,58 @@ namespace SSB
 	class FBXLoader : public Common
 	{
 	private:
-		std::string _fileName;
+		struct ExtractAnimationInfoData
+		{
+			FbxLongLong Start;
+			FbxLongLong End;
+			FbxTime::EMode TimeMode;
+		};
+		struct AnimationData
+		{
+			Animation* Animation;
+			std::map<std::string, ActionInfo> FrameInfo;
+		};
+
+	private:
 		FbxManager* _manager;
 		FbxImporter* _importer;
 		FbxScene* _scene;
-		FbxNode* _root;
 		std::map<FbxNode*, int> _skeletonDataMap;
+		std::map<int, FbxNode*> _skeletonIndexToObjectMap;
 		std::map<FbxNode*, int> _meshDataMap;
 
 		float _frameSpeed = 30.0f;
 		float _tickPerFrame = 160;
-		FbxTime::EMode _timeMode;
-		FbxLongLong _animationStartFrame;
-		FbxLongLong	_animationEndFrame;
 		std::map<FbxNode*, DXObject*> _nodeToObject;
-		std::map<DXObject*, ActionInfo> _objectToActionInfo;
-
-	public:
-		DXFBXRootObject* _rootObject;
-		//DXObject* _rootObject;
+		std::map<FbxNode*, AnimationData> _nodeToAnimationInfo;
 
 	public:
 		FBXLoader();
 		~FBXLoader();
 
 	private:
-		void Load();
 		void ExtractSkeletonData(FbxNode* node);
 		HMatrix44 Convert(FbxAMatrix matrix);
-		void ExtractAnimationInfo(FbxAnimStack* animStack);
-		void SaveFrame(FbxTime timer);
-		void ParseNode(FbxNode* node, DXObject* object);
+		ExtractAnimationInfoData ExtractAnimationInfo(FbxAnimStack* animStack);
+		void SaveFrame(std::string name, FbxTime timer);
+		void ParseNode(FbxNode* node, DXObject* object, DXFBXRootObject* rootObject);
 		void ParseMesh(FbxNode* node, FbxMesh* mesh, DXObject* object);
 		void NewModel(FbxNode* node, int layerIndex, int materialIndex, std::map<int, FBXModel*>& modelMap);
 		FbxVector2 Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex);
 		int GetSubMaterialIndex(int iPoly, FbxLayerElementMaterial* pMaterialSetList);
-		//void ParseSkeleton();
 		void ParseMeshSkinningData(DXFBXMeshObject* object, FbxMesh* mesh);
+		FbxNode* PreLoad(std::string fileName);
+		DXFBXRootObject* LoadObject(FbxNode* root);
+		void LoadAnimation(std::string animationName, ExtractAnimationInfoData info);
 
 	private:
 		template<typename T>
 		T Read(FbxLayerElementTemplate<T>* element, int position, int index);
 
 	public:
-		void SetFileName(std::string fileName) { _fileName = fileName; }
+		DXObject* Load(std::string fileName);
+		DXObject* Load(std::string fileName, std::string scriptFileName);
+		DXObject* Load(std::string fileName, std::vector<std::string> animationFileNameList);
 
 	public:
 		bool Init() override;

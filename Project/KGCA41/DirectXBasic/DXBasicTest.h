@@ -1,10 +1,11 @@
 #pragma once
 #include "DXWindow.h"
-#include "DXObject.h"
-#include "Map.h"
 
 namespace SSB
 {
+	class DXObject;
+	class Map;
+
 	class DXBasicTest : public DXWindow
 	{
 	private:

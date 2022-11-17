@@ -177,8 +177,8 @@ namespace SSB
         const static std::string kDefaultDepthStencil;
 
     private:
-        static DXStateManager* _instance;
-        DXStateManager() { }
+        static DXStateManager _instance;
+        DXStateManager() { Init(); }
 
     public:
         static DXStateManager& GetInstance();
@@ -195,10 +195,12 @@ namespace SSB
         ID3D11BlendState* GetBlendState(std::string name);
         ID3D11DepthStencilState* GetDepthStencilState(std::string name);
 
-    public:
+    private:
 		bool Init() override;
+		bool Release() override;
+
+    public:
 		bool Frame() override;
 		bool Render() override;
-		bool Release() override;
     };
 }

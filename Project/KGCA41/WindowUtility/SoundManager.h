@@ -19,14 +19,14 @@ namespace SSB
 		std::wstring _path = kSoundPath;
 
 	public:
-		static SoundManager* _instance;
+		static SoundManager _instance;
 
 	private:
 		SoundManager();
 
 	public:
 		static SoundManager& GetInstance();
-		~SoundManager();
+		~SoundManager() { Release(); }
 
 	public:
 		void SetPath(std::wstring path) { _path = path; }
@@ -38,10 +38,12 @@ namespace SSB
 		std::wstring GetPath(std::wstring fileName) { return _path + fileName; }
 		bool LoadSound(std::wstring fileName);
 
-	public:
+	private:
 		bool Init() override;
+		bool Release() override;
+
+	public:
 		bool Frame() override;
 		bool Render() override;
-		bool Release() override;
 	};
 }

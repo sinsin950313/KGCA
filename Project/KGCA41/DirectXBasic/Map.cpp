@@ -380,12 +380,28 @@ namespace SSB
 			_constantBuffer = nullptr;
 		}
 
+		if (_sprite)
+		{
+			_sprite->Release();
+			delete _sprite;
+			_sprite = nullptr;
+		}
+
 		if (_root)
 		{
 			_root->Release();
 			delete _root;
 			_root = nullptr;
 		}
+
+		_drawingNodeList.clear();
+
+		if (_heightTexture)
+		{
+			_heightTexture->Release();
+			_heightTexture = nullptr;
+		}
+		_heightData.clear();
 
         return true;
     }

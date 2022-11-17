@@ -3,7 +3,7 @@
 
 namespace SSB
 {
-	InputManager* InputManager::_instance = nullptr;
+	InputManager InputManager::_instance;
 
 	InputManager::~InputManager()
 	{
@@ -17,11 +17,7 @@ namespace SSB
 
 	InputManager& InputManager::GetInstance()
 	{
-		if (_instance == nullptr)
-		{
-			_instance = new InputManager();
-		}
-		return *_instance;
+		return _instance;
 	}
 
 	EKeyState InputManager::GetKeyState(DWORD key)

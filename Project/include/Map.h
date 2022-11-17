@@ -66,8 +66,6 @@ namespace SSB
 
 		float _cellDistance = 1.0f;
 		float _heightScale = 100;
-		//float tileX = 10.0f;
-		//float tileY = 10.0f;
 		float tileX = 1.0f;
 		float tileY = 1.0f;
 		unsigned int _widthVertexCount = 256 + 1u;

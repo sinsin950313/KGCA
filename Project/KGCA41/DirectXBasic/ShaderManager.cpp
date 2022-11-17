@@ -9,7 +9,7 @@
 
 namespace SSB
 {
-    ShaderManager* ShaderManager::_instance = nullptr;
+    ShaderManager ShaderManager::_instance;
     extern DXWindow* g_dxWindow;
 
     ShaderManager::ShaderManager()
@@ -23,11 +23,7 @@ namespace SSB
 
     ShaderManager& ShaderManager::GetInstance()
     {
-        if (_instance == nullptr)
-        {
-            _instance = new ShaderManager();
-        }
-        return *_instance;
+        return _instance;
     }
 
     template<typename func>

@@ -19,7 +19,7 @@ namespace SSB
 		std::wstring _path = kShaderPath;
 
 	private:
-		static ShaderManager* _instance;
+		static ShaderManager _instance;
 		ShaderManager();
 
 	public:
@@ -38,10 +38,12 @@ namespace SSB
 		Shader* LoadVertexShader(std::wstring fileName, std::string entryPoint, std::string target);
 		Shader* LoadPixelShader(std::wstring fileName, std::string entryPoint, std::string target);
 
-	public:
+	private:
 		bool Init() override;
+		bool Release() override;
+
+	public:
 		bool Frame() override;
 		bool Render() override;
-		bool Release() override;
 	};
 }

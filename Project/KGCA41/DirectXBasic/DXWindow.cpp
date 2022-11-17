@@ -138,8 +138,6 @@ namespace SSB
 
 		_mainCamera = &_defaultCamera;
 
-		DXStateManager::GetInstance().Init();
-
 		UpdateResize();
 
 		_mainCamera->Init();
@@ -235,8 +233,6 @@ namespace SSB
 		}
 
 		_mainCamera = nullptr;
-
-		DXStateManager::GetInstance().Release();
 
 		if (_renderTarget)
 		{

@@ -20,8 +20,8 @@ namespace SSB
 		TextureResource _defaultTextureResource;
 
 	private:
-		static TextureResourceManager* _instance;
-		TextureResourceManager() : _defaultTextureResource(nullptr, nullptr) { }
+		static TextureResourceManager _instance;
+		TextureResourceManager() : _defaultTextureResource(nullptr, nullptr) { Init(); }
 
 	public:
 		~TextureResourceManager();
@@ -37,11 +37,13 @@ namespace SSB
 	private:
 		std::wstring GetPath(std::wstring resourceFileName) { return _path + resourceFileName; }
 
-	public:
+	private:
 		bool Init() override;
+		bool Release() override;
+
+	public:
 		bool Frame() override;
 		bool Render() override;
-		bool Release() override;
 	};
 	
 	struct SpriteData
@@ -60,7 +62,7 @@ namespace SSB
 		Sprite _defaultSprite;
 
 	private:
-		static SpriteLoader* _instance;
+		static SpriteLoader _instance;
 		SpriteLoader();
 
 	public:
@@ -79,17 +81,19 @@ namespace SSB
 		Sprite* Load(std::wstring resourceFileName, std::wstring spriteName, std::string samplerName);
 		Sprite* Load(std::wstring resourceFileName, std::string samplerName);
 		TexturePartRelative GetTexturePart(std::wstring resourceFileName, std::wstring spriteName);
-		Sprite* GetDefaultSprite() { return &_defaultSprite; }
+		Sprite* GetDefaultSprite();
 
 	private:
 		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".SpriteInfo"; }
 		std::wstring GetMaskFileName(std::wstring originFileName);
 
-	public:
+	private:
 		bool Init() override;
+		bool Release() override;
+
+	public:
 		bool Frame() override;
 		bool Render() override;
-		bool Release() override;
 	};
 
 	struct SpriteActionData
@@ -108,8 +112,8 @@ namespace SSB
 		SpriteAction _defaultSpriteAction;
 
 	private:
-		static SpriteActionLoader* _instance;
-		SpriteActionLoader() : _defaultSpriteAction(TextureResourceManager::GetInstance().GetDefaultTextureResource(), TextureResourceManager::GetInstance().GetDefaultTextureResource()) { }
+		static SpriteActionLoader _instance;
+		SpriteActionLoader() : _defaultSpriteAction(TextureResourceManager::GetInstance().GetDefaultTextureResource(), TextureResourceManager::GetInstance().GetDefaultTextureResource()) { Init(); }
 
 	public:
 		static SpriteActionLoader& GetInstance();
@@ -134,10 +138,12 @@ namespace SSB
 		std::wstring GetPath(std::wstring infoFileName) { return _path + infoFileName + L".spriteActionInfo"; }
 		std::wstring GetMaskFileName(std::wstring originFileName);
 
-	public:
+	private:
 		bool Init() override;
+		bool Release() override;
+
+	public:
 		bool Frame() override;
 		bool Render() override;
-		bool Release() override;
 	};
 }

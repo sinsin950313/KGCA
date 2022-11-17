@@ -13,7 +13,7 @@ namespace SSB
 
 	public:
 		FBXLoaderTest(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }
-		~FBXLoaderTest();
+		virtual ~FBXLoaderTest();
 
 	public:
 		bool Init() override;

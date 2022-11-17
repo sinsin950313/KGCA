@@ -2,9 +2,12 @@
 #include "ShaderManager.h"
 #include "DXStateManager.h"
 #include "InputManager.h"
+#include "Map.h"
 
 namespace SSB
 {
+	extern DXWindow* g_dxWindow;
+
     DXBasicTest::~DXBasicTest()
     {
         Release();
@@ -12,11 +15,7 @@ namespace SSB
     bool SSB::DXBasicTest::Init()
     {
         DXWindow::Init();
-        ShaderManager::GetInstance().Init();
-        DXStateManager::GetInstance().Init();
-        SpriteLoader::GetInstance().Init();
         InputManager::GetInstance().Set(g_dxWindow->GetWindowHandle());
-        InputManager::GetInstance().Init();
 
 		_timer = new Timer();
 		_timer->Init();
@@ -123,10 +122,10 @@ namespace SSB
             delete _timer;
             _timer = nullptr;
         }
-        ShaderManager::GetInstance().Release();
-        TextureResourceManager::GetInstance().Release();
+
         DXWindow::Release();
-        return false;
+
+        return true;
     }
 
     bool SSB::DXBasicTest::PreRender()

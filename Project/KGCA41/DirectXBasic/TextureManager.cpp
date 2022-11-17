@@ -15,23 +15,16 @@ namespace SSB
 {
     extern DXWindow* g_dxWindow;
 
-    TextureResourceManager* TextureResourceManager::_instance = nullptr;
+    TextureResourceManager TextureResourceManager::_instance;
 
     TextureResourceManager::~TextureResourceManager()
     {
         Release();
-
-        if (_instance) delete _instance;
-        _instance = nullptr;
     }
 
     TextureResourceManager& TextureResourceManager::GetInstance()
     {
-        if (_instance == nullptr)
-        {
-            _instance = new TextureResourceManager();
-        }
-        return *_instance;
+        return _instance;
     }
 
     TextureResource* TextureResourceManager::Load(std::wstring resourceFileName)
@@ -87,30 +80,23 @@ namespace SSB
         return true;
     }
 
-    SpriteLoader* SpriteLoader::_instance = nullptr;
+    SpriteLoader SpriteLoader::_instance;
 
     SpriteLoader& SpriteLoader::GetInstance()
     {
-        if (_instance == nullptr)
-        {
-            _instance = new SpriteLoader();
-        }
-        return *_instance;
+        return _instance;
     }
 
 
 	SpriteLoader::SpriteLoader() 
         : _defaultSprite(TextureResourceManager::GetInstance().GetDefaultTextureResource(), TextureResourceManager::GetInstance().GetDefaultTextureResource())
     {
-        _defaultSprite.SetSamplerState(DXStateManager::GetInstance().GetSamplerState(DXStateManager::kDefaultWrapSample));
+        Init();
     }
 
     SpriteLoader::~SpriteLoader()
     {
         Release();
-
-        if (_instance) delete _instance;
-        _instance = nullptr;
     }
 
     void SpriteLoader::RegisterSpriteWithRelativeValue(std::wstring resourceFileName, std::wstring spriteName, TexturePartRelative part)
@@ -216,6 +202,11 @@ namespace SSB
         return sprite;
     }
 
+    Sprite* SpriteLoader::GetDefaultSprite()
+    {
+        _defaultSprite.SetSamplerState(DXStateManager::GetInstance().GetSamplerState(DXStateManager::kDefaultWrapSample));
+        return &_defaultSprite;
+    }
     TexturePartRelative SpriteLoader::GetTexturePart(std::wstring resourceFileName, std::wstring spriteName)
     {
         return _spriteDatas.find(resourceFileName)->second.textureParts.find(wtm(spriteName))->second;
@@ -232,42 +223,35 @@ namespace SSB
 
     bool SpriteLoader::Init()
     {
-        return false;
+        return true;
     }
 
     bool SpriteLoader::Frame()
     {
-        return false;
+        return true;
     }
 
     bool SpriteLoader::Render()
     {
-        return false;
+        return true;
     }
 
     bool SpriteLoader::Release()
     {
         _spriteDatas.clear();
-        return false;
+        return true;
     }
 
-    SpriteActionLoader* SpriteActionLoader::_instance = nullptr;
+    SpriteActionLoader SpriteActionLoader::_instance;
 
     SpriteActionLoader& SpriteActionLoader::GetInstance()
     {
-        if (_instance == nullptr)
-        {
-            _instance = new SpriteActionLoader();
-        }
-        return *_instance;
+        return _instance;
     }
 
     SpriteActionLoader::~SpriteActionLoader()
     {
         Release();
-
-        if (_instance) delete _instance;
-		_instance = nullptr;
     }
 
     void SpriteActionLoader::RegisterSpriteActionFromFile(std::wstring resourceFileName, std::wstring infoFileName)

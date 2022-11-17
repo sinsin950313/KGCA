@@ -9,7 +9,7 @@ namespace SSB
 	{
 	private:
 		DXObject* _object;
-		//DXObject* _objectBack;
+		DXObject* _objectBack;
 		Map* _terrain;
 		DebugCamera* _dCamera;
 		ModelViewCamera* _mCamera;
@@ -22,7 +22,7 @@ namespace SSB
 	public:
 		ToolBaseTest(HWND hwnd) : DXWindow(hwnd) { }
 		ToolBaseTest(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }
-		~ToolBaseTest();
+		virtual ~ToolBaseTest();
 
 	public:
 		bool Init() override;

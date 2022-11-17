@@ -127,7 +127,7 @@ namespace SSB
 	public:
 		DXWindow(HWND hwnd);
 		DXWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
-		~DXWindow();
+		virtual ~DXWindow();
 
 	public:
 		bool Init() override;

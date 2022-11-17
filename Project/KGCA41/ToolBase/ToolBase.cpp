@@ -154,6 +154,8 @@ int CToolBaseApp::ExitInstance()
 	//TODO: 추가한 추가 리소스를 처리합니다.
 	AfxOleTerm(FALSE);
 
+	delete _window;
+
 	return CWinAppEx::ExitInstance();
 }
 

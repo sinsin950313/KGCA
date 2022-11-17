@@ -9,15 +9,11 @@ namespace SSB
 	const std::string DXStateManager::kDefaultBlend = "DefaultBlendState";
 	const std::string DXStateManager::kDefaultDepthStencil = "DefaultDepthStencilState";
 
-	DXStateManager* DXStateManager::_instance = nullptr;
+	DXStateManager DXStateManager::_instance;
 
 	DXStateManager& DXStateManager::GetInstance()
 	{
-		if (_instance == nullptr)
-		{
-			_instance = new DXStateManager;
-		}
-		return *_instance;
+		return _instance;
 	}
 
 	DXStateManager::~DXStateManager()

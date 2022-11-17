@@ -15,38 +15,51 @@ bool SSB::FBXLoaderTest::Init()
 
 	DXWindow::Init();
 
-	//_loader->SetFileName("../../Resource/FBX/box.FBX");
-	//_loader->SetFileName("../../Resource/FBX/MultiCameras.FBX");
-	//_loader->SetFileName("../../Resource/FBX/ship.FBX");
-
 	_loader = new FBXLoader();
 
-	_loader->Init();
-	DXObject* man = _loader->Load("../../Resource/FBX/Man.FBX", "Test.txt");
-	//DXObject* man = _loader->Load("../../Resource/FBX/Man.FBX");
-
-	man->Init();
-
-	// Easy for Test
-	man->UpdateCurrentAnimation("Run");
-	//man->UpdateCurrentAnimation("Take 001");
-
-	_objectList.push_back(man);
+	//_loader->Init();
+	//DXObject* box = _loader->Load("box.FBX");
+	//box->Init();
+	//_objectList.push_back(box);
 
 	//_loader->Init();
-	//DXObject* turret = _loader->Load("../../Resource/FBX/Turret_Deploy1.FBX");
+	//DXObject* multiCameras = _loader->Load("MultiCameras.FBX");
+	//multiCameras->Init();
+	//_objectList.push_back(multiCameras);
 
+	//_loader->Init();
+	//DXObject* ship = _loader->Load("ship.FBX");
+	//ship->Init();
+	//_objectList.push_back(ship);
+
+	//_loader->Init();
+	//DXObject* man1 = _loader->Load("Man.FBX");
+	//man1->Init();
+	//man1->UpdateCurrentAnimation("Take 001");
+	//_objectList.push_back(man1);
+
+	//_loader->Init();
+	//DXObject* man = _loader->Load("Man.FBX", "Man.FBXScript");
+	//man->Init();
+	//man->UpdateCurrentAnimation("Walk");
+	//_objectList.push_back(man);
+
+	//_loader->Init();
+	//DXObject* turret = _loader->Load("Turret_Deploy1.FBX");
 	//turret->Init();
-
-	//// Easy for Test
 	//turret->UpdateCurrentAnimation("Take 001");
-
 	//_objectList.push_back(turret);
 
+	_loader->Init();
+	DXObject* swat1 = _loader->Load("Swat.FBX", std::vector<std::string>{ "Swat@walking_backwards.fbx", "Swat@strafe_2.fbx", "Swat@strafe.fbx" });
+	swat1->Init();
+	swat1->UpdateCurrentAnimation("mixamo.com");
+	_objectList.push_back(swat1);
+
 	//_loader->Init();
-	//DXObject* swat = _loader->Load("../../Resource/FBX/Swat.FBX", std::vector<std::string>{ "../../Resource/FBX/Swat@walking_backwards.fbx", "../../Resource/FBX/Swat@strafe_2.fbx", "../../Resource/FBX/Swat@strafe.fbx" });
+	//DXObject* swat = _loader->Load("Swat.FBX", std::vector<std::string>{ "Swat@walking_backwards.fbx", "Swat@strafe_2.fbx", "Swat@strafe.fbx"}, "Swat.FBXScript");
 	//swat->Init();
-	//swat->UpdateCurrentAnimation("mixamo.com");
+	//swat->UpdateCurrentAnimation("strafe");
 	//_objectList.push_back(swat);
 
 	//ModelViewCamera* camera = new ModelViewCamera();

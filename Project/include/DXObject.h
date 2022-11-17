@@ -93,7 +93,7 @@ namespace SSB
 		ID3D11Buffer* _currentDrawIndexBuffer;
 
 	public:
-		DXObject() { }
+		DXObject();
 		virtual ~DXObject() { Release(); }
 
 	protected:

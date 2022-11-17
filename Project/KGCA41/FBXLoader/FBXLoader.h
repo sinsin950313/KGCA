@@ -169,7 +169,7 @@ namespace SSB
 		void ParseMeshSkinningData(DXFBXMeshObject* object, FbxMesh* mesh);
 		FbxNode* PreLoad(std::string fileName);
 		DXFBXRootObject* LoadObject(FbxNode* root);
-		void LoadAnimation(std::string animationName, ExtractAnimationInfoData info);
+		virtual void LoadAnimation(std::string animationName, ExtractAnimationInfoData info);
 		std::vector<Script> ParseScript(std::string fileName);
 
 	private:
@@ -180,6 +180,7 @@ namespace SSB
 		DXObject* Load(std::string fileName);
 		DXObject* Load(std::string fileName, std::string scriptFileName);
 		DXObject* Load(std::string fileName, std::vector<std::string> animationFileNameList);
+		DXObject* Load(std::string fileName, std::vector<std::string> animationFileNameList, std::string animationScriptFileName);
 
 	public:
 		bool Init() override;

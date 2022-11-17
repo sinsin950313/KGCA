@@ -98,5 +98,7 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Shader\Default3DPixelShader.hlsl" />
+    <FxCompile Include="..\..\Shader\Default3DVertexShader.hlsl" />
+    <FxCompile Include="..\..\Shader\DefaultPixelShader.hlsl" />
   </ItemGroup>
 </Project>

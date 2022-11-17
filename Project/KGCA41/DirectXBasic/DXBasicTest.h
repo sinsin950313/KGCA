@@ -9,7 +9,7 @@ namespace SSB
 	{
 	private:
 		DXObject* _object;
-		//DXObject* _objectBack;
+		DXObject* _objectBack;
 		Map* _terrain;
 		DebugCamera* _dCamera;
 		ModelViewCamera* _mCamera;

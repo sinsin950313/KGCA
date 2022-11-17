@@ -8,6 +8,10 @@ namespace SSB
 {
     extern DXWindow* g_dxWindow;
 
+	DXObject::DXObject()
+	{
+		_animation = &DefaultAnimation;
+	}
     bool DXObject::CreateVertexBuffer()
     {
 		_vertexBuffers.resize(_models.size());
@@ -214,7 +218,7 @@ namespace SSB
         CreateVertexLayout();
 		CreateConstantBuffer();
 
-		if (_animation != &DefaultAnimation)
+		if (_animation && _animation != &DefaultAnimation)
 		{
 			_animation->Init();
 		}

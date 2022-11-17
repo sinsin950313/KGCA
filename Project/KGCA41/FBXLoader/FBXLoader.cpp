@@ -5,6 +5,7 @@
 #include "DXStateManager.h"
 #include "HCCalculator.h"
 #include "DXObject.h"
+#include "CommonPath.h"
 
 namespace SSB
 {
@@ -31,12 +32,41 @@ namespace SSB
 
 	std::vector<FBXLoader::Script> FBXLoader::ParseScript(std::string fileName)
 	{
-		return { { "Idle", 60 }, {"Walk", 91}, {"Run", 115 } };
+		std::vector<Script> ret;
+
+		std::wstring fileFullPath = kFBXScriptPath + mtw(fileName);
+
+        FILE* fp_src;
+        _wfopen_s(&fp_src, fileFullPath.c_str(), _T("rt"));
+        if (fp_src == NULL) return ret;
+
+        TCHAR pBuffer[256] = { 0 };
+        _fgetts(pBuffer, _countof(pBuffer), fp_src);
+
+        int iNumFBXAction = 0;
+        _stscanf_s(pBuffer, _T("%d"), &iNumFBXAction);
+
+        for (int iCnt = 0; iCnt < iNumFBXAction; iCnt++)
+        {
+			TCHAR pTemp[256] = { 0 };
+            int iNumFrame = 0;
+            Script script;
+
+            _fgetts(pBuffer, _countof(pBuffer), fp_src);
+            _stscanf_s(pBuffer, _T("%s %d"), pTemp, (unsigned int)_countof(pTemp), &iNumFrame);
+			script.ActionName = wtm(std::wstring(pTemp));
+			script.EndFrame = iNumFrame;
+
+			ret.push_back(script);
+        }
+        fclose(fp_src);
+
+		return ret;
 	}
 
 	DXObject* SSB::FBXLoader::Load(std::string fileName)
 	{
-		FbxNode* root = PreLoad(fileName);
+		FbxNode* root = PreLoad(wtm(kFBXPath) + fileName);
 
 		DXFBXRootObject* rootObject = nullptr;
 		if (root)
@@ -56,7 +86,7 @@ namespace SSB
 	DXObject* FBXLoader::Load(std::string fileName, std::string scriptFileName)
 	{
 		std::vector<Script> scriptDatas = ParseScript(scriptFileName);
-		FbxNode* root = PreLoad(fileName);
+		FbxNode* root = PreLoad(wtm(kFBXPath) + fileName);
 
 		DXFBXRootObject* rootObject = nullptr;
 		if (root)
@@ -126,7 +156,7 @@ namespace SSB
 		for (auto animationFIleName : animationFileNameList)
 		{
 			animationLoader.Init();
-			FbxNode* animationRoot = animationLoader.PreLoad(animationFIleName);
+			FbxNode* animationRoot = animationLoader.PreLoad(wtm(kFBXPath) + animationFIleName);
 
 			DXFBXRootObject* animationRootObject = nullptr;
 			if (animationRoot)
@@ -139,6 +169,140 @@ namespace SSB
 					ExtractAnimationInfoData info = animationLoader.ExtractAnimationInfo(animStack);
 
 					animationLoader.LoadAnimation(animationName, info);
+					delete animationRootObject;
+				}
+
+				{
+					auto& animationSkeletonNodeToIndex = animationLoader._skeletonDataMap;
+					auto& animationNodeToAnimationInfo = animationLoader._nodeToAnimationInfo;
+					for (auto nodeToIndex : animationSkeletonNodeToIndex)
+					{
+						FbxNode* animationNode = nodeToIndex.first;
+						AnimationData& animationData = animationNodeToAnimationInfo.find(animationNode)->second;
+						int index = nodeToIndex.second;
+						FbxNode* node = _skeletonIndexToObjectMap.find(index)->second;
+
+						for (auto& nameAndActionInfo : animationData.FrameInfo)
+						{
+							std::string name = nameAndActionInfo.first;
+							ActionInfo info = nameAndActionInfo.second;
+							_nodeToAnimationInfo.find(node)->second.FrameInfo.insert(std::make_pair(name, info));
+						}
+					}
+				}
+			}
+		}
+
+		for (auto& nodeToObject : _nodeToObject)
+		{
+			FbxNode* node = nodeToObject.first;
+			DXObject* object = nodeToObject.second;
+
+			auto& nodeToAnimationData = _nodeToAnimationInfo.find(node)->second;
+			for (auto info : nodeToAnimationData.FrameInfo)
+			{
+				nodeToAnimationData.Animation->SetAdditionalAction(info.first, info.second);
+			}
+			object->SetAnimation(_nodeToAnimationInfo.find(node)->second.Animation);
+		}
+
+		return rootObject;
+	}
+
+	DXObject* FBXLoader::Load(std::string fileName, std::vector<std::string> animationFileNameList, std::string animationScriptFileName)
+	{
+		DXFBXRootObject* rootObject = (DXFBXRootObject*)Load(fileName);
+
+		std::map<std::string, Script> actionList;
+		{
+			std::wstring fileFullPath = kFBXScriptPath + mtw(animationScriptFileName);
+
+			FILE* fp_src;
+			_wfopen_s(&fp_src, fileFullPath.c_str(), _T("rt"));
+			if (fp_src)
+			{
+				TCHAR pBuffer[256] = { 0 };
+				_fgetts(pBuffer, _countof(pBuffer), fp_src);
+
+				int iNumFBXAction = 0;
+				_stscanf_s(pBuffer, _T("%d"), &iNumFBXAction);
+
+				for (int iCnt = 0; iCnt < iNumFBXAction; iCnt++)
+				{
+					TCHAR fileName[256] = { 0 };
+					TCHAR actionName[256] = { 0 };
+					int iNumFrame = 0;
+					Script script;
+
+					_fgetts(pBuffer, _countof(pBuffer), fp_src);
+					_stscanf_s(pBuffer, _T("%s %s %d"), fileName, (unsigned int)_countof(fileName), actionName, (unsigned int)_countof(actionName), &iNumFrame);
+					script.ActionName = wtm(std::wstring(actionName));
+					script.EndFrame = iNumFrame;
+
+					actionList.insert(std::make_pair(wtm(std::wstring(fileName)), script));
+				}
+				fclose(fp_src);
+			}
+		}
+
+		class AnimatinFBXLoader : public FBXLoader
+		{
+		public:
+			Script _script;
+
+		public:
+			void LoadAnimation(std::string animationName, ExtractAnimationInfoData info) override
+			{
+				for (auto& nodeToAnimationInfo : _nodeToAnimationInfo)
+				{
+					std::map<std::string, ActionInfo>& actionData = nodeToAnimationInfo.second.FrameInfo;
+
+					actionData.insert(std::make_pair(_script.ActionName, ActionInfo{ (UINT)_script.EndFrame }));
+				}
+
+				for (FbxLongLong t = info.Start; t <= info.End; ++t)
+				{
+					if (_script.EndFrame < t)
+					{
+						break;
+					}
+
+					FbxTime time;
+					time.SetFrame(t, info.TimeMode);
+					SaveFrame(_script.ActionName, time);
+				}
+
+				for (auto& nodetToAnimationInfo : _nodeToAnimationInfo)
+				{
+					Animation* animation = nodetToAnimationInfo.second.Animation;
+					std::map<std::string, ActionInfo>& actionData = nodetToAnimationInfo.second.FrameInfo;
+
+					animation->SetAdditionalAction(_script.ActionName, actionData.find(_script.ActionName)->second);
+				}
+			}
+		};
+
+		AnimatinFBXLoader animationLoader;
+		for (auto animationFIleName : animationFileNameList)
+		{
+			Script script = actionList.find(animationFIleName)->second;
+
+			animationLoader.Init();
+			FbxNode* animationRoot = animationLoader.PreLoad(wtm(kFBXPath) + animationFIleName);
+
+			DXFBXRootObject* animationRootObject = nullptr;
+			if (animationRoot)
+			{
+				{
+					animationRootObject = animationLoader.LoadObject(animationRoot);
+
+					FbxAnimStack* animStack = animationLoader._scene->GetSrcObject<FbxAnimStack>();
+					std::string animationName(animStack->GetName());
+					ExtractAnimationInfoData info = animationLoader.ExtractAnimationInfo(animStack);
+
+					animationLoader._script = script;
+					animationLoader.LoadAnimation(animationName, info);
+					delete animationRootObject;
 				}
 
 				{

@@ -32,7 +32,7 @@ namespace SSB
 
 	public:
 		Model() : _sprite(SpriteLoader::GetInstance().GetDefaultSprite()) { }
-		~Model() { Release(); }
+		virtual ~Model() { Release(); }
 
 	public:
 		virtual void Build() = 0;

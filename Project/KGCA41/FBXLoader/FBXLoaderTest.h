@@ -10,6 +10,7 @@ namespace SSB
 	private:
 		FBXLoader* _loader;
 		std::vector<DXObject*> _objectList;
+		Camera* _camera;
 
 	public:
 		FBXLoaderTest(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }

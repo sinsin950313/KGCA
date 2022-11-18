@@ -14,10 +14,12 @@ namespace SSB
 {
 	class TextureResourceManager : public Common
 	{
+	public:
+		TextureResource _defaultTextureResource;
+
 	private:
 		std::map<std::wstring, TextureResource*> _resourceData;
 		std::wstring _path = kTextureResourcePath;
-		TextureResource _defaultTextureResource;
 
 	private:
 		static TextureResourceManager _instance;
@@ -56,10 +58,11 @@ namespace SSB
 	// Never use extension name to infoFileName
 	class SpriteLoader : public Common
 	{
+	public:
+		Sprite _defaultSprite;
 	private:
 		std::map<std::wstring, SpriteData> _spriteDatas;
 		std::wstring _path = kSpritePath;
-		Sprite _defaultSprite;
 
 	private:
 		static SpriteLoader _instance;
@@ -106,10 +109,12 @@ namespace SSB
 	// Never use extension name to infoFileName
 	class SpriteActionLoader : public Common
 	{
+	public:
+		SpriteAction _defaultSpriteAction;
+
 	private:
 		std::map<std::wstring, SpriteActionData> _spriteActionDatas;
 		std::wstring _path = kSpriteActionPath;
-		SpriteAction _defaultSpriteAction;
 
 	private:
 		static SpriteActionLoader _instance;

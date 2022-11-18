@@ -21,7 +21,6 @@ namespace SSB
 	SSB::FBXLoader::FBXLoader()
 	{
 		_manager = FbxManager::Create();
-		_importer = FbxImporter::Create(_manager, "");
 		_scene = FbxScene::Create(_manager, "");
 	}
 
@@ -305,24 +304,24 @@ namespace SSB
 					delete animationRootObject;
 				}
 
-				{
-					auto& animationSkeletonNodeToIndex = animationLoader._skeletonDataMap;
-					auto& animationNodeToAnimationInfo = animationLoader._nodeToAnimationInfo;
-					for (auto nodeToIndex : animationSkeletonNodeToIndex)
-					{
-						FbxNode* animationNode = nodeToIndex.first;
-						AnimationData& animationData = animationNodeToAnimationInfo.find(animationNode)->second;
-						int index = nodeToIndex.second;
-						FbxNode* node = _skeletonIndexToObjectMap.find(index)->second;
+			//	{
+			//		auto& animationSkeletonNodeToIndex = animationLoader._skeletonDataMap;
+			//		auto& animationNodeToAnimationInfo = animationLoader._nodeToAnimationInfo;
+			//		for (auto nodeToIndex : animationSkeletonNodeToIndex)
+			//		{
+			//			FbxNode* animationNode = nodeToIndex.first;
+			//			AnimationData& animationData = animationNodeToAnimationInfo.find(animationNode)->second;
+			//			int index = nodeToIndex.second;
+			//			FbxNode* node = _skeletonIndexToObjectMap.find(index)->second;
 
-						for (auto& nameAndActionInfo : animationData.FrameInfo)
-						{
-							std::string name = nameAndActionInfo.first;
-							ActionInfo info = nameAndActionInfo.second;
-							_nodeToAnimationInfo.find(node)->second.FrameInfo.insert(std::make_pair(name, info));
-						}
-					}
-				}
+			//			for (auto& nameAndActionInfo : animationData.FrameInfo)
+			//			{
+			//				std::string name = nameAndActionInfo.first;
+			//				ActionInfo info = nameAndActionInfo.second;
+			//				_nodeToAnimationInfo.find(node)->second.FrameInfo.insert(std::make_pair(name, info));
+			//			}
+			//		}
+			//	}
 			}
 		}
 
@@ -732,6 +731,7 @@ namespace SSB
 
 	FbxNode* FBXLoader::PreLoad(std::string fileName)
 	{
+		_importer = FbxImporter::Create(_manager, "");
 		bool ret = _importer->Initialize(fileName.c_str());
 		if (!ret)
 		{
@@ -740,7 +740,13 @@ namespace SSB
 		}
 		FbxTime::SetGlobalTimeMode(FbxTime::eFrames30);
 
-		_importer->Import(_scene);
+		ret = _importer->Import(_scene);
+		if (!ret)
+		{
+			OutputDebugStringA(_importer->GetStatus().GetErrorString());
+			assert(ret);
+		}
+		_importer->Destroy();
 
 		FbxSystemUnit::m.ConvertScene(_scene);
 		FbxAxisSystem::MayaZUp.ConvertScene(_scene);
@@ -839,36 +845,21 @@ namespace SSB
 
 	bool SSB::FBXLoader::Release()
 	{
-		//for (auto object : _objectList)
-		//{
-		//	object->Release();
-		//}
-		//_objectList.clear();
-		//if (_manager)
-		//{
-		//	// FbxManager is singleton
-		//	_manager = nullptr;
-		//}
 		//if (_importer)
 		//{
 		//	_importer->Destroy();
 		//	_importer = nullptr;
 		//}
-		//if (_scene)
-		//{
-		//	_scene->Destroy();
-		//	_scene = nullptr;
-		//}
-		//if (_root)
-		//{
-		//	_root->Destroy();
-		//	_root = nullptr;
-		//}
-		//for (auto mesh : _meshList)
-		//{
-		//	mesh->Destroy();
-		//}
-		//_meshList.clear();
+		if (_scene)
+		{
+			_scene->Destroy();
+			_scene = nullptr;
+		}
+		if (_manager)
+		{
+			_manager->Destroy();
+			_manager = nullptr;
+		}
 
 		return true;
 	}

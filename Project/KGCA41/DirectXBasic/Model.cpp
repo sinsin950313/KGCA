@@ -128,8 +128,10 @@ namespace SSB
 	{
 		_vertexList.clear();
 		_indexList.clear();
-		if (_sprite)
+		if (_sprite && _sprite != &(SpriteLoader::GetInstance()._defaultSprite))
 		{
+			_sprite->Release();
+			delete _sprite;
 			_sprite = nullptr;
 		}
 		return false;

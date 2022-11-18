@@ -309,7 +309,9 @@ namespace SSB
 		for (auto child : _childObjectList)
 		{
 			child->Release();
+			delete child;
 		}
+		_childObjectList.clear();
 
         return true;
     }

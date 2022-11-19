@@ -127,10 +127,10 @@ namespace SSB
 
 			for (auto scriptData : scriptDatas)
 			{
-				for (auto& nodetToAnimationInfo : _nodeToAnimationInfo)
+				for (auto& nodeToAnimationInfo : _nodeToAnimationInfo)
 				{
-					Animation* animation = nodetToAnimationInfo.second.Animation;
-					std::map<std::string, ActionInfo>& actionData = nodetToAnimationInfo.second.FrameInfo;
+					Animation* animation = nodeToAnimationInfo.second.Animation;
+					std::map<std::string, ActionInfo>& actionData = nodeToAnimationInfo.second.FrameInfo;
 
 					animation->SetAdditionalAction(scriptData.ActionName, actionData.find(scriptData.ActionName)->second);
 				}
@@ -210,132 +210,181 @@ namespace SSB
 
 	DXObject* FBXLoader::Load(std::string fileName, std::vector<std::string> animationFileNameList, std::string animationScriptFileName)
 	{
-		DXFBXRootObject* rootObject = (DXFBXRootObject*)Load(fileName);
+		FbxNode* root = PreLoad(wtm(kFBXPath) + fileName);
 
-		std::map<std::string, Script> actionList;
+		DXFBXRootObject* rootObject = nullptr;
+		if (root)
 		{
-			std::wstring fileFullPath = kFBXScriptPath + mtw(animationScriptFileName);
+			rootObject = LoadObject(root);
 
-			FILE* fp_src;
-			_wfopen_s(&fp_src, fileFullPath.c_str(), _T("rt"));
-			if (fp_src)
+			std::map<std::string, Script> actionList;
 			{
-				TCHAR pBuffer[256] = { 0 };
-				_fgetts(pBuffer, _countof(pBuffer), fp_src);
+				std::wstring fileFullPath = kFBXScriptPath + mtw(animationScriptFileName);
 
-				int iNumFBXAction = 0;
-				_stscanf_s(pBuffer, _T("%d"), &iNumFBXAction);
-
-				for (int iCnt = 0; iCnt < iNumFBXAction; iCnt++)
+				FILE* fp_src;
+				_wfopen_s(&fp_src, fileFullPath.c_str(), _T("rt"));
+				if (fp_src)
 				{
-					TCHAR fileName[256] = { 0 };
-					TCHAR actionName[256] = { 0 };
-					int iNumFrame = 0;
-					Script script;
-
+					TCHAR pBuffer[256] = { 0 };
 					_fgetts(pBuffer, _countof(pBuffer), fp_src);
-					_stscanf_s(pBuffer, _T("%s %s %d"), fileName, (unsigned int)_countof(fileName), actionName, (unsigned int)_countof(actionName), &iNumFrame);
-					script.ActionName = wtm(std::wstring(actionName));
-					script.EndFrame = iNumFrame;
 
-					actionList.insert(std::make_pair(wtm(std::wstring(fileName)), script));
-				}
-				fclose(fp_src);
-			}
-		}
+					int iNumFBXAction = 0;
+					_stscanf_s(pBuffer, _T("%d"), &iNumFBXAction);
 
-		class AnimatinFBXLoader : public FBXLoader
-		{
-		public:
-			Script _script;
-
-		public:
-			void LoadAnimation(std::string animationName, ExtractAnimationInfoData info) override
-			{
-				for (auto& nodeToAnimationInfo : _nodeToAnimationInfo)
-				{
-					std::map<std::string, ActionInfo>& actionData = nodeToAnimationInfo.second.FrameInfo;
-
-					actionData.insert(std::make_pair(_script.ActionName, ActionInfo{ (UINT)_script.EndFrame }));
-				}
-
-				for (FbxLongLong t = info.Start; t <= info.End; ++t)
-				{
-					if (_script.EndFrame < t)
+					for (int iCnt = 0; iCnt < iNumFBXAction; iCnt++)
 					{
-						break;
+						TCHAR fileName[256] = { 0 };
+						TCHAR actionName[256] = { 0 };
+						int iNumFrame = 0;
+						Script script;
+
+						_fgetts(pBuffer, _countof(pBuffer), fp_src);
+						_stscanf_s(pBuffer, _T("%s %s %d"), fileName, (unsigned int)_countof(fileName), actionName, (unsigned int)_countof(actionName), &iNumFrame);
+						script.ActionName = wtm(std::wstring(actionName));
+						script.EndFrame = iNumFrame;
+
+						actionList.insert(std::make_pair(wtm(std::wstring(fileName)), script));
+					}
+					fclose(fp_src);
+				}
+			}
+
+			class AnimationFBXLoader : public FBXLoader
+			{
+			public:
+				Script _script;
+				std::map<int, AnimationData> _skeletonIndexToAnimation;
+
+			public:
+				void SetNodeIndex(std::map<FbxNode*, AnimationData>& nodeToAnimationOrigin, std::map<FbxNode*, int> nodeToSkeletonIndexOrigin)
+				{
+					for (auto nodeToAnimation : nodeToAnimationOrigin)
+					{
+						FbxNode* node = nodeToAnimation.first;
+						if (node->GetSkeleton())
+						{
+							int index = nodeToSkeletonIndexOrigin.find(node)->second;
+							AnimationData animData = nodeToAnimation.second;
+							_skeletonIndexToAnimation.insert(std::make_pair(index, animData));
+						}
+					}
+				}
+				void LoadAnimation(std::string animationName, ExtractAnimationInfoData info) override
+				{
+					for (auto& nodeToAnimationInfo : _nodeToAnimationInfo)
+					{
+						FbxNode* node = nodeToAnimationInfo.first;
+						if (node->GetSkeleton())
+						{
+							int index = _skeletonDataMap.find(node)->second;
+							AnimationData& animData = _skeletonIndexToAnimation.find(index)->second;
+							animData.FrameInfo.insert(std::make_pair(_script.ActionName, ActionInfo{ (UINT)_script.EndFrame }));
+						}
 					}
 
-					FbxTime time;
-					time.SetFrame(t, info.TimeMode);
-					SaveFrame(_script.ActionName, time);
-				}
+					for (FbxLongLong t = info.Start; t <= info.End; ++t)
+					{
+						if (_script.EndFrame < t)
+						{
+							break;
+						}
 
-				for (auto& nodetToAnimationInfo : _nodeToAnimationInfo)
+						FbxTime time;
+						time.SetFrame(t, info.TimeMode);
+
+						for (auto nodeToObject : _nodeToObject)
+						{
+							FbxNode* node = nodeToObject.first;
+							if (node->GetSkeleton())
+							{
+								ActionFrameInfo actionFrameInfo;
+								actionFrameInfo.Matrix = Convert(nodeToObject.first->EvaluateGlobalTransform(time));
+								Decompose(actionFrameInfo.Matrix, actionFrameInfo.Scale, actionFrameInfo.Rotate, actionFrameInfo.Translate);
+
+								int index = _skeletonDataMap.find(node)->second;
+								AnimationData& animData = _skeletonIndexToAnimation.find(index)->second;
+								ActionInfo& data = animData.FrameInfo.find(_script.ActionName)->second;
+								data.FrameInfoList.push_back(actionFrameInfo);
+							}
+						}
+					}
+
+					for (auto data : _skeletonIndexToAnimation)
+					{
+						Animation* animation = data.second.Animation;
+						std::map<std::string, ActionInfo>& actionData = data.second.FrameInfo;
+						animation->SetAdditionalAction(_script.ActionName, actionData.find(_script.ActionName)->second);
+					}
+				}
+				bool Init() override
 				{
-					Animation* animation = nodetToAnimationInfo.second.Animation;
-					std::map<std::string, ActionInfo>& actionData = nodetToAnimationInfo.second.FrameInfo;
+					for (auto nodeToAnimation : _nodeToAnimationInfo)
+					{
+						Animation* animation = nodeToAnimation.second.Animation;
+						animation->Release();
+						delete animation;
+					}
 
-					animation->SetAdditionalAction(_script.ActionName, actionData.find(_script.ActionName)->second);
+					FBXLoader::Init();
+
+					return true;
 				}
-			}
-		};
-
-		AnimatinFBXLoader animationLoader;
-		for (auto animationFIleName : animationFileNameList)
-		{
-			Script script = actionList.find(animationFIleName)->second;
-
-			animationLoader.Init();
-			FbxNode* animationRoot = animationLoader.PreLoad(wtm(kFBXPath) + animationFIleName);
-
-			DXFBXRootObject* animationRootObject = nullptr;
-			if (animationRoot)
-			{
+				bool Release() override
 				{
-					animationRootObject = animationLoader.LoadObject(animationRoot);
+					for (auto nodeToAnimation : _nodeToAnimationInfo)
+					{
+						Animation* animation = nodeToAnimation.second.Animation;
+						animation->Release();
+						delete animation;
+					}
 
-					FbxAnimStack* animStack = animationLoader._scene->GetSrcObject<FbxAnimStack>();
-					std::string animationName(animStack->GetName());
-					ExtractAnimationInfoData info = animationLoader.ExtractAnimationInfo(animStack);
-
-					animationLoader._script = script;
-					animationLoader.LoadAnimation(animationName, info);
-					delete animationRootObject;
+					_skeletonIndexToAnimation.clear();
+					FBXLoader::Release();
+					return true;
 				}
+			};
 
-			//	{
-			//		auto& animationSkeletonNodeToIndex = animationLoader._skeletonDataMap;
-			//		auto& animationNodeToAnimationInfo = animationLoader._nodeToAnimationInfo;
-			//		for (auto nodeToIndex : animationSkeletonNodeToIndex)
-			//		{
-			//			FbxNode* animationNode = nodeToIndex.first;
-			//			AnimationData& animationData = animationNodeToAnimationInfo.find(animationNode)->second;
-			//			int index = nodeToIndex.second;
-			//			FbxNode* node = _skeletonIndexToObjectMap.find(index)->second;
-
-			//			for (auto& nameAndActionInfo : animationData.FrameInfo)
-			//			{
-			//				std::string name = nameAndActionInfo.first;
-			//				ActionInfo info = nameAndActionInfo.second;
-			//				_nodeToAnimationInfo.find(node)->second.FrameInfo.insert(std::make_pair(name, info));
-			//			}
-			//		}
-			//	}
-			}
-		}
-
-		for (auto& nodeToObject : _nodeToObject)
-		{
-			FbxNode* node = nodeToObject.first;
-			DXObject* object = nodeToObject.second;
-
-			auto& nodeToAnimationData = _nodeToAnimationInfo.find(node)->second;
-			for (auto info : nodeToAnimationData.FrameInfo)
+			AnimationFBXLoader animationLoader;
+			animationLoader.SetNodeIndex(_nodeToAnimationInfo, _skeletonDataMap);
+			for (auto animationFIleName : animationFileNameList)
 			{
-				nodeToAnimationData.Animation->SetAdditionalAction(info.first, info.second);
+				Script script = actionList.find(animationFIleName)->second;
+
+				animationLoader.Init();
+				FbxNode* animationRoot = animationLoader.PreLoad(wtm(kFBXPath) + animationFIleName);
+
+				DXFBXRootObject* animationRootObject = nullptr;
+				if (animationRoot)
+				{
+					{
+						animationRootObject = animationLoader.LoadObject(animationRoot);
+
+						FbxAnimStack* animStack = animationLoader._scene->GetSrcObject<FbxAnimStack>();
+						std::string animationName(animStack->GetName());
+						ExtractAnimationInfoData info = animationLoader.ExtractAnimationInfo(animStack);
+
+						animationLoader._script = script;
+						animationLoader.LoadAnimation(animationName, info);
+
+						delete animationRootObject;
+					}
+				}
 			}
-			object->SetAnimation(_nodeToAnimationInfo.find(node)->second.Animation);
+
+			for (auto& nodeToObject : _nodeToObject)
+			{
+				FbxNode* node = nodeToObject.first;
+				DXObject* object = nodeToObject.second;
+
+				auto& nodeToAnimationData = _nodeToAnimationInfo.find(node)->second;
+				for (auto info : nodeToAnimationData.FrameInfo)
+				{
+					nodeToAnimationData.Animation->SetAdditionalAction(info.first, info.second);
+				}
+				object->SetAnimation(_nodeToAnimationInfo.find(node)->second.Animation);
+			}
+
+			animationLoader.Release();
 		}
 
 		return rootObject;
@@ -803,10 +852,10 @@ namespace SSB
 			SaveFrame(animationName, time);
 		}
 
-		for (auto& nodetToAnimationInfo : _nodeToAnimationInfo)
+		for (auto& nodeToAnimationInfo : _nodeToAnimationInfo)
 		{
-			Animation* animation = nodetToAnimationInfo.second.Animation;
-			std::map<std::string, ActionInfo>& actionData = nodetToAnimationInfo.second.FrameInfo;
+			Animation* animation = nodeToAnimationInfo.second.Animation;
+			std::map<std::string, ActionInfo>& actionData = nodeToAnimationInfo.second.FrameInfo;
 
 			animation->SetAdditionalAction(animationName, actionData.find(animationName)->second);
 		}

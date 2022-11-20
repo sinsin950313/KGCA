@@ -38,6 +38,13 @@ public:
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
 	virtual BOOL OnIdle(LONG lCount);
+	afx_msg void OnCreatemapCall();
+
+public:
+	CString ComponentSize;
+	CString Section;
+	CString SectionSize;
+	int TextureData;
 };
 
 extern CToolBaseApp theApp;

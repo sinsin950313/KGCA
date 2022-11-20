@@ -47,15 +47,29 @@
 #define IDS_DEBUG_TAB                   301
 #define IDS_FIND_TAB                    302
 #define IDS_EDIT_MENU                   306
+#define IDD_MapCreationDialog           310
+#define IDC_MapCreationSizeEditorBox    1001
+#define IDC_MapCreationComponentEditorBox 1003
+#define IDC_MapCreationSectionEditorBox 1005
+#define IDC_MapCreationComponentStaicText 1006
+#define IDC_MapCreationSectionStaicText 1007
+#define IDC_MapCreationSectionSizeStaicText 1008
+#define IDC_MapCreationTextureGroupBox  1009
+#define IDC_MapCreationMapCreationDataGroupBox 1010
+#define IDC_TextureDataComboBox         1011
 #define ID_ASD_ASDASD                   32771
+#define ID_CreateMap                    32772
+#define ID_SaveMap                      32774
+#define ID_LoadMap                      32775
+#define ID_BUTTON32787                  32787
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        310
-#define _APS_NEXT_COMMAND_VALUE         32772
-#define _APS_NEXT_CONTROL_VALUE         1000
+#define _APS_NEXT_RESOURCE_VALUE        314
+#define _APS_NEXT_COMMAND_VALUE         32788
+#define _APS_NEXT_CONTROL_VALUE         1012
 #define _APS_NEXT_SYMED_VALUE           310
 #endif
 #endif

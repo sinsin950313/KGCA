@@ -57,6 +57,9 @@
     <ClInclude Include="ToolBaseTest.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="MapCreationDialog.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MainFrm.cpp">
@@ -81,6 +84,9 @@
       <Filter>MFC\소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="ToolBaseTest.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="MapCreationDialog.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

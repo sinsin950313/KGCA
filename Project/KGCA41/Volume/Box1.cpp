@@ -2,52 +2,55 @@
 
 namespace SSB
 {
-	//Box::BoxCollideDelegate::BoxCollideDelegate(BoxData data)
-	//{
-	//	_data = data;
-	//	GetPlaneVectorList(GetVertexList(data), _plane);
-	//}
-	//std::vector<Vector3> Box::BoxCollideDelegate::GetVertexList(BoxData boxData)
-	//{
-	//	Vector3 center = boxData._matrix.GetRow(3);
+	Box::BoxCollideDelegate::BoxCollideDelegate(Box* owner) : CollideCheckDelegate(owner)
+	{
+	}
+	std::vector<Vector3> Box::GetVertexList()
+	{
+		Vector3 center = GetPosition();
 
-	//	int dx[8] = { -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f };
-	//	int dy[8] = { -0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f };
-	//	int dz[8] = { -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
+		int dx[8] = { -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f };
+		int dy[8] = { -0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f };
+		int dz[8] = { -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
 
-	//	std::vector<Vector3> vertexList;
-	//	vertexList.resize(8);
-	//	for (int i = 0; i < 8; ++i)
-	//	{
-	//		vertexList[i] = center
-	//			+ ((Vector3)boxData._matrix.GetRow(0)) * boxData._width * dx[i]
-	//			+ ((Vector3)boxData._matrix.GetRow(1)) * boxData._height * dy[i]
-	//			+ ((Vector3)boxData._matrix.GetRow(2)) * boxData._depth * dz[i];
-	//	}
-	//	return vertexList;
-	//}
-	//void Box::BoxCollideDelegate::GetPlaneVectorList(std::vector<Vector3> vertexList, Float4 retPlaneVector[6])
-	//{
-	//}
+		Matrix33 rotation = GetRotation();
+		std::vector<Vector3> vertexList;
+		vertexList.resize(8);
+		for (int i = 0; i < 8; ++i)
+		{
+			vertexList[i] = center
+				+ (rotation.GetRow(0)) * _width * dx[i]
+				+ (rotation.GetRow(1)) * _height * dy[i]
+				+ (rotation.GetRow(2)) * _depth * dz[i];
+		}
+		return vertexList;
+	}
+	void Box::GetPlaneVectorList(std::vector<Vector3> vertexList, Float4 retPlaneVector[6])
+	{
+		implement;
+	}
 	//bool Box::BoxCollideDelegate::IsCollide(PlaneData data)
 	//{
 	//	return false;
 	//}
-	//bool Box::BoxCollideDelegate::IsCollide(BoxData boxData)
-	//{
-	//}
-	//bool Box::BoxCollideDelegate::IsCollide(SphereData sphereData)
-	//{
-	//	return false;
-	//}
+	bool Box::BoxCollideDelegate::IsCollide(BoxData boxData)
+	{
+		implement;
+	}
+	bool Box::BoxCollideDelegate::IsCollide(SphereData sphereData)
+	{
+		implement;
+	}
 	//bool Box::BoxCollideDelegate::IsCollide(FrustumData frustum)
 	//{
 	//	return false;
 	//}
-	//Box::Box(BoxData data)
-	//{
-	//}
-	//Box::operator BoxData()
-	//{
-	//}
+	Box::Box(float width, float height, float depth)
+		: Volume1(new BoxCollideDelegate(this)), _width(width), _height(height), _depth(depth)
+	{
+	}
+	Box::operator BoxData()
+	{
+		return BoxData{GetPosition(), GetRotation(), GetScale(), _width, _height, _depth};
+	}
 }

@@ -58,8 +58,13 @@ namespace SSB
 	//	_data.D = -(normal.GetX() * point.GetX() + normal.GetY() * point.GetY() + normal.GetZ() * point.GetZ());
 	//}
 	//
+	//void Plane::Resize(float width, float height, float depth)
+	//{
+	//}
+
 	//SSB::Plane::operator PlaneData()
 	//{
 	//	//return _data;
+	//	implement;
 	//}
 }

@@ -11,7 +11,7 @@ namespace SSB
 	//{
 	//public:
 	//	virtual HMatrix* GetMatrix() = 0;
-	//	virtual virtual std::vector<VectorInterface<Vector>*> GetVertexes() = 0;
+	//	virtual virtual std::vector<VectorInterface<Vector>*> GetVertices() = 0;
 	//	virtual bool IsIn(VectorInterface<Vector>* vertex) = 0;
 	//};
 }

@@ -7,57 +7,57 @@
 
 namespace SSB
 {
-	//template<typename HMatrix, typename Vector>
-	//class Volume1 : public VolumeInterface1<HMatrix, Vector>
-	//{
-	//protected:
-	//	Volume1<HMatrix, Vector>* _parent;
-	//	float _radius;
-	//	HMatrix* _matrix;
-
-	//public:
-	//	bool IsIn(const Vector& v) const;
-	//	bool IsCollide(const Volume1& volume) const;
-	//	const std::vector<Vector*>& GetVertexes() const { return _vertexes; }
-	//	const Vector GetCenter() const { return _matrix->GetRow(); }
-
-	//protected:
-	//	const Vector& GetCenter() const { return _parent->GetMatrix().GetRow(0); }
-	//	float GetRadius() const { return _radius; }
-
-	//public:
-	//	virtual void Print() const = 0;
-	//	virtual void Resize(float radius) { _radius = radius; }
-	//	virtual void Reposition(Vector pos) { _center = pos; }
-	//};
-
-	class Volume1
+	// World
+	struct VolumeData
 	{
-	protected:
-		struct PlaneData
+		Vector3 Position;
+		Matrix33 Rotation;
+		Vector3 Scale;
+	};
+
+	struct FaceData : public VolumeData
+	{
+		union
 		{
+			Float4 NormalVector;
+
 			float A;
 			float B;
 			float C;
 			float D;
 		};
+	};
 
-		struct BoxData
-		{
-			PlaneData Plane[6];
-		};
+	//struct PlaneData : public FaceData
+	//{
+	//	// commendted, not erased
+	//	float Width;
+	//	float Height;
+	//};
 
-		struct SphereData
-		{
-			HMatrix44 Matrix;
-			float Radius;
-		};
+	struct BoxData : public VolumeData
+	{
+		FaceData Plane[6];
+		float Width;
+		float Height;
+		float Depth;
+	};
 
-		struct FrustumData
-		{
-			PlaneData Plane[6];
-		};
+	struct SphereData : public VolumeData
+	{
+		float Radius;
+	};
 
+	//struct FrustumData : public VolumeData
+	//{
+	//	// commendted, not erased
+	//	//PlaneData Plane[6];
+	//	Vector3 Vertices[6];
+	//};
+
+	class Volume1
+	{
+	protected:
 		class CollideCheckDelegate
 		{
 		private:
@@ -70,32 +70,47 @@ namespace SSB
 			Volume1* GetOwner() { return _owner; }
 
 		public:
-			virtual bool IsCollide(PlaneData planeData) = 0;
+			//virtual bool IsCollide(VolumeData data) { return false; }
+			//virtual bool IsCollide(PlaneData planeData) = 0;
 			virtual bool IsCollide(BoxData boxData) = 0;
 			virtual bool IsCollide(SphereData sphereData) = 0;
-			virtual bool IsCollide(FrustumData frustum) = 0;
+			//virtual bool IsCollide(FrustumData frustum) = 0;
 		};
 
 	private:
-		HMatrix44 _matrix;
+		static Volume1 DefaultVolume;
+
+	private:
+		VolumeData _data;
 		CollideCheckDelegate* _collideDelegate;
+		Volume1* _parent;
 
 	public:
-		Volume1(CollideCheckDelegate* collideDelegate, HMatrix44 matrix = HMatrix44()) : _collideDelegate(collideDelegate), _matrix(matrix) { }
+		Volume1(CollideCheckDelegate* collideDelegate);
 
 	public:
 		virtual bool IsCollide(Volume1* volume) = 0;
+		virtual void Resize(float width, float height, float depth) = 0;
 
 	public:
-		// Return World Matrix
-		HMatrix44 GetMatrix() { return _matrix; }
-
-	public:
-		bool IsCollideToPlane(PlaneData data) { return _collideDelegate->IsCollide(data); }
-		bool IsCollideToBox(BoxData data) { return _collideDelegate->IsCollide(data); }
-		bool IsCollideToSphere(SphereData data) { return _collideDelegate->IsCollide(data); }
-		bool IsCollideToFrustum(FrustumData data) { return _collideDelegate->IsCollide(data); }
+		void SetParent(Volume1* parent = &DefaultVolume);
+		VolumeData GetLocalVolumeData() { return _data; }
+		void SetPosition(Vector3 position);
+		void AddPosition(Vector3 vector);
+		Vector3 GetPosition();
+		// Radian
+		void SetRotation(float yaw, float pitch, float roll);
 		void Rotate(HMatrix44 rotate);
 		void Rotate(Quaternion quaternion);
+		Matrix33 GetRotation();
+		void SetScale(float width, float height, float depth);
+		Vector3 GetScale();
+
+	public:
+		//bool IsCollideToVolume(VolumeData data) { return _collideDelegate->IsCollide(data); }
+		//bool IsCollideToPlane(PlaneData data) { return _collideDelegate->IsCollide(data); }
+		bool IsCollideToBox(BoxData data) { return _collideDelegate->IsCollide(data); }
+		bool IsCollideToSphere(SphereData data) { return _collideDelegate->IsCollide(data); }
+		//bool IsCollideToFrustum(FrustumData data) { return _collideDelegate->IsCollide(data); }
 	};
 }

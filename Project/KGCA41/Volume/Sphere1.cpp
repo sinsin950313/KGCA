@@ -2,43 +2,62 @@
 
 namespace SSB
 {
-	//Sphere::SphereCollideDelegate::SphereCollideDelegate(Sphere* owner) : CollideCheckDelegate(owner)
-	//{
-	//}
+	Sphere::SphereCollideDelegate::SphereCollideDelegate(Sphere* owner) : CollideCheckDelegate(owner)
+	{
+	}
 	//bool Sphere::SphereCollideDelegate::IsCollide(PlaneData data)
 	//{
 	//	Sphere* owner = (Sphere*)GetOwner();
-	//	auto center = owner->GetMatrix().GetRow(3);
-	//	float distance = data.A * center.GetX() + data.B * center.GetY() + data.C * center.GetZ() + data.D;
-	//	return  abs(distance) < owner->_radius;
-	//}
-	//bool Sphere::SphereCollideDelegate::IsCollide(BoxData boxData)
-	//{
-	//	Sphere* owner = (Sphere*)GetOwner();
-	//	auto center = owner->GetMatrix().GetRow(3);
-	//	for (int i = 0; i < 6; ++i)
+	//	Vector3 center = owner->GetPosition();
+	//	Vector3 planeCenter = data.Position;
+	//	Vector3 vec = center - planeCenter;
+
+	//	float radius = ((SphereData)*owner).Radius;
+	//	if (vec.Length() < radius)
 	//	{
-	//		PlaneData data = boxData.Plane[i];
+	//		return true;
+	//	}
+	//	else
+	//	{
 	//		float distance = data.A * center.GetX() + data.B * center.GetY() + data.C * center.GetZ() + data.D;
-	//		if (distance - owner->_radius > 0)
+	//		if (distance < radius)
 	//		{
-	//			return false;
+	//			// make sphere to circle at plane space
+	//			// make it checking collision with rectangle and circle problem
+	//			// check projection length at each rectangle axis with circle center position
+	//			implement;
 	//		}
 	//	}
-	//	return true;
+	//	return false;
 	//}
-	//bool Sphere::SphereCollideDelegate::IsCollide(SphereData sphereData)
-	//{
-	//	Sphere* owner = (Sphere*)GetOwner();
-	//	Vector3 ownerPosition = owner->GetMatrix().GetRow(3);
-	//	Vector3 targetPosition = sphereData.Matrix.GetRow(3);
-	//	float length = (ownerPosition - targetPosition).Length();
-	//	return length <= (owner->_radius + sphereData.Radius);
-	//}
+	bool Sphere::SphereCollideDelegate::IsCollide(BoxData boxData)
+	{
+		Sphere* owner = (Sphere*)GetOwner();
+		auto center = owner->GetPosition();
+
+		for (int i = 0; i < 6; ++i)
+		{
+			FaceData data = boxData.Plane[i];
+			float distance = data.A * center.GetX() + data.B * center.GetY() + data.C * center.GetZ() + data.D;
+			if (distance - owner->_radius > 0)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	bool Sphere::SphereCollideDelegate::IsCollide(SphereData sphereData)
+	{
+		Sphere* owner = (Sphere*)GetOwner();
+		Vector3 ownerPosition = owner->GetPosition();
+		Vector3 targetPosition = sphereData.Position;
+		float length = (ownerPosition - targetPosition).Length();
+		return length <= (owner->_radius + sphereData.Radius);
+	}
 	//bool Sphere::SphereCollideDelegate::IsCollide(FrustumData frustumData)
 	//{
 	//	Sphere* owner = (Sphere*)GetOwner();
-	//	auto center = owner->GetMatrix().GetRow(3);
+	//	auto center = owner->GetPosition();
 	//	for (int i = 0; i < 6; ++i)
 	//	{
 	//		PlaneData data = frustumData.Plane[i];
@@ -50,12 +69,16 @@ namespace SSB
 	//	}
 	//	return true;
 	//}
-	//Sphere::Sphere(float radius, HMatrix44 matrix) : Volume1(new SphereCollideDelegate(this), matrix)
-	//{
-	//	_radius = radius;
-	//}
-	//Sphere::operator SphereData()
-	//{
-	//	//return SphereData{GetMatrix(), _radius};
-	//}
+	Sphere::Sphere(float radius) : Volume1(new SphereCollideDelegate(this))
+	{
+		_radius = radius;
+	}
+	void Sphere::Resize(float width, float height, float depth)
+	{
+		_radius = sqrt(width * width + height * height + depth * depth);
+	}
+	Sphere::operator SphereData()
+	{
+		return SphereData{GetPosition(), GetRotation(), GetScale(), _radius};
+	}
 }

@@ -13,18 +13,22 @@ namespace SSB
 			SphereCollideDelegate(Sphere* owner);
 
 		public:
-			bool IsCollide(PlaneData data) override;
+			//bool IsCollide(PlaneData data) override;
 			bool IsCollide(BoxData boxData) override;
 			bool IsCollide(SphereData sphereData) override;
-			bool IsCollide(FrustumData frustumData) override;
+			//bool IsCollide(FrustumData frustumData) override;
 		};
+
+	private:
 		float _radius;
 
 	public:
-		Sphere(float radius, HMatrix44 matrix = HMatrix44());
+		Sphere(float radius = 1.0f);
 
 	public:
-		bool IsCollide(Volume1* volume) { return volume->IsCollideToSphere(*this); }
+		bool IsCollide(Volume1* volume) override { return volume->IsCollideToSphere(*this); }
+		// Resize radius to sqrt(width * width + height * height + depth * depth);
+		void Resize(float width, float height, float depth) override;
 
 	public:
 		operator SphereData();

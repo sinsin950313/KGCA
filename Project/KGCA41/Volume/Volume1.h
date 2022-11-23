@@ -15,7 +15,7 @@ namespace SSB
 		Vector3 Scale;
 	};
 
-	struct FaceData : public VolumeData
+	struct FaceData
 	{
 		union
 		{
@@ -37,6 +37,7 @@ namespace SSB
 
 	struct BoxData : public VolumeData
 	{
+		Vector3 Vertices[8];
 		FaceData Plane[6];
 		float Width;
 		float Height;

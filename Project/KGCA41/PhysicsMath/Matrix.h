@@ -131,8 +131,8 @@ namespace SSB
 			float e31, float e32, float e33);
 		HMatrix33(Float22 srData, Float2 tData);
 
-	private:
-		bool IsZero(float val) { return abs(val) < _fThreshold; }
+	//private:
+	//	bool IsZero(float val) { return abs(val) < _fThreshold; }
 
 	public:
 		void Identity();
@@ -218,8 +218,8 @@ namespace SSB
 			float e41, float e42, float e43, float e44);
 		HMatrix44(Float33 srData, Float3 tData);
 
-	private:
-		bool IsZero(float val) { return abs(val) < _fThreshold; }
+	//private:
+	//	bool IsZero(float val) { return abs(val) < _fThreshold; }
 
 	public:
 		void Identity();

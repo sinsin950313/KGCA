@@ -1,4 +1,5 @@
 #include "Sphere1.h"
+#include "Common.h"
 
 namespace SSB
 {
@@ -39,7 +40,7 @@ namespace SSB
 		{
 			FaceData data = boxData.Plane[i];
 			float distance = data.A * center.GetX() + data.B * center.GetY() + data.C * center.GetZ() + data.D;
-			if (distance - owner->_radius > 0)
+			if (distance - owner->GetRadius() > 0)
 			{
 				return false;
 			}
@@ -52,7 +53,7 @@ namespace SSB
 		Vector3 ownerPosition = owner->GetPosition();
 		Vector3 targetPosition = sphereData.Position;
 		float length = (ownerPosition - targetPosition).Length();
-		return length <= (owner->_radius + sphereData.Radius);
+		return length <= (owner->GetRadius() + sphereData.Radius);
 	}
 	//bool Sphere::SphereCollideDelegate::IsCollide(FrustumData frustumData)
 	//{
@@ -71,14 +72,19 @@ namespace SSB
 	//}
 	Sphere::Sphere(float radius) : Volume1(new SphereCollideDelegate(this))
 	{
-		_radius = radius;
+		SetScale(radius, 0, 0);
 	}
-	void Sphere::Resize(float width, float height, float depth)
+	float Sphere::GetRadius()
 	{
-		_radius = sqrt(width * width + height * height + depth * depth);
+		auto scale = GetScale();
+		return sqrt(scale.GetX() * scale.GetX() + scale.GetY() * scale.GetY() + scale.GetZ() * scale.GetZ());
 	}
+	//void Sphere::Resize(float width, float height, float depth)
+	//{
+	//	_radius = sqrt(width * width + height * height + depth * depth);
+	//}
 	Sphere::operator SphereData()
 	{
-		return SphereData{GetPosition(), GetRotation(), GetScale(), _radius};
+		return SphereData{GetPosition(), GetRotation(), GetScale(), GetRadius()};
 	}
 }

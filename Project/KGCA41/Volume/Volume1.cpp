@@ -3,6 +3,8 @@
 
 namespace SSB
 {
+	VolumeInterface1 Volume1::DefaultVolume;
+
 	void Volume1::SetScale(float width, float height, float depth)
 	{
 		_data.Scale = { width, height, depth };
@@ -52,7 +54,7 @@ namespace SSB
 	Volume1::Volume1(CollideCheckDelegate* collideDelegate) : _collideDelegate(collideDelegate), _parent(&DefaultVolume)
 	{
 	}
-	void Volume1::SetParent(Volume1* parent)
+	void Volume1::SetParent(VolumeInterface1* parent)
 	{
 		VolumeData worldData;
 		worldData.Position = GetPosition();

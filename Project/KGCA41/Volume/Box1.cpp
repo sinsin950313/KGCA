@@ -1,5 +1,6 @@
 #include "Box1.h"
 #include "HCCalculator.h"
+#include "Common.h"
 
 namespace SSB
 {
@@ -77,7 +78,7 @@ namespace SSB
 				planes[i].C * center.GetZ() +
 				planes[i].D;
 
-			if (0 < distance)
+			if (0 < distance - sphereData.Radius)
 			{
 				return false;
 			}
@@ -90,9 +91,9 @@ namespace SSB
 		Vector3 center = GetPosition();
 		Vector3 scale = GetScale();
 
-		int dx[8] = { -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f };
-		int dy[8] = { -0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f };
-		int dz[8] = { -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
+		float dx[8] = { -0.5f, -0.5f, 0.5f, 0.5f, -0.5f, -0.5f, 0.5f, 0.5f };
+		float dy[8] = { -0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f, -0.5f, 0.5f };
+		float dz[8] = { -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f };
 
 		Matrix33 rotation = GetRotation();
 		std::vector<Vector3> vertexList;
@@ -101,9 +102,9 @@ namespace SSB
 		{
 			vertexList[i] = 
 			{ 
-				dx[i] * _width * scale.GetX(), 
-				dy[i] * _height * scale.GetY(), 
-				dz[i] * _depth * scale.GetZ() 
+				dx[i] * scale.GetX(), 
+				dy[i] * scale.GetY(), 
+				dz[i] * scale.GetZ() 
 			};
 			vertexList[i] = vertexList[i] * rotation;
 			vertexList[i] = vertexList[i] + center;
@@ -116,13 +117,17 @@ namespace SSB
 		Vector3 scale = GetScale();
 		std::vector<HVector4> planes;
 		planes.resize(6);
+
+		float width = GetScale().GetX();
+		float height = GetScale().GetY();
+		float depth = GetScale().GetZ();
 		
-		planes[0] = { 1, 0, 0, -_depth / 2  * scale.GetZ() };
-		planes[1] = { -1, 0, 0, -_depth / 2 * scale.GetZ() };
-		planes[2] = { 0, 1, 0, -_height / 2 * scale.GetY() };
-		planes[3] = { 0, -1, 0, -_height / 2 * scale.GetY() };
-		planes[4] = { 0, 0, 1, -_width / 2 * scale.GetX() };
-		planes[5] = { 0, 0, -1, -_width / 2 * scale.GetX() };
+		planes[0] = { 1, 0, 0, -depth / 2  * scale.GetZ() };
+		planes[1] = { -1, 0, 0, -depth / 2 * scale.GetZ() };
+		planes[2] = { 0, 1, 0, -height / 2 * scale.GetY() };
+		planes[3] = { 0, -1, 0, -height / 2 * scale.GetY() };
+		planes[4] = { 0, 0, 1, -width / 2 * scale.GetX() };
+		planes[5] = { 0, 0, -1, -width / 2 * scale.GetX() };
 
 		HMatrix44 matrix(GetRotation(), GetPosition());
 		std::vector<FaceData> ret;
@@ -135,13 +140,18 @@ namespace SSB
 
 		return ret;
 	}
+  //  void Box::Resize(float width, float height, float depth)
+  //  {
+		//SetScale(width, height, depth);
+  //  }
 	//bool Box::BoxCollideDelegate::IsCollide(FrustumData frustum)
 	//{
 	//	return false;
 	//}
 	Box::Box(float width, float height, float depth)
-		: Volume1(new BoxCollideDelegate(this)), _width(width), _height(height), _depth(depth)
+		: Volume1(new BoxCollideDelegate(this))
 	{
+		SetScale(width, height, depth);
 	}
 	Box::operator BoxData()
 	{
@@ -150,7 +160,6 @@ namespace SSB
 
 		return BoxData{GetPosition(), GetRotation(), GetScale(), 
 			vertices[0], vertices[1], vertices[2], vertices[3], vertices[4], vertices[5], vertices[6], vertices[7],
-			planes[0], planes[1], planes[2], planes[3], planes[4], planes[5],
-			_width, _height, _depth};
+			planes[0], planes[1], planes[2], planes[3], planes[4], planes[5]};
 	}
 }

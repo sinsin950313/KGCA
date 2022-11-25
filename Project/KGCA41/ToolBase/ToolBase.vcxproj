@@ -101,7 +101,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib\Debug;$(ProjectDir)\..\..\lib\Debug\FBX;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>PhysicsMath.lib;Volume.lib;BasicWindow.lib;fmod_vc.lib;WindowUtility.lib;DirectXBasic.lib;DirectXTK.lib;d3dcompiler.lib;libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PhysicsMath.lib;Volume.lib;CollisionSystem.lib;BasicWindow.lib;WindowUtility.lib;DirectXBasic.lib;FBXLoader.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>

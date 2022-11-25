@@ -55,6 +55,29 @@ namespace SSB
 		float length = (ownerPosition - targetPosition).Length();
 		return length <= (owner->GetRadius() + sphereData.Radius);
 	}
+	bool Sphere::SphereCollideDelegate::IsIn(BoxData data)
+	{
+		for(int i = 0; i < sizeof(data.Vertices) / sizeof(data.Vertices[0]); ++i)
+		{
+			Vector3 vertex = data.Vertices[i];
+			Vector3 center = ((Sphere*)GetOwner())->GetPosition();
+			Vector3 distance = vertex - center;
+			if (((Sphere*)GetOwner())->GetRadius() < distance.Length())
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	bool Sphere::SphereCollideDelegate::IsIn(SphereData data)
+	{
+		Sphere* owner = (Sphere*)GetOwner();
+		Vector3 ownerPosition = owner->GetPosition();
+		Vector3 targetPosition = data.Position;
+		float length = (ownerPosition - targetPosition).Length();
+
+		return length < owner->GetRadius();
+	}
 	//bool Sphere::SphereCollideDelegate::IsCollide(FrustumData frustumData)
 	//{
 	//	Sphere* owner = (Sphere*)GetOwner();

@@ -86,6 +86,47 @@ namespace SSB
 
 		return true;
 	}
+	bool Box::BoxCollideDelegate::IsIn(BoxData data)
+	{
+		auto planes = ((Box*)GetOwner())->GetPlanes();
+		for (int i = 0; i < sizeof(data.Vertices) / sizeof(data.Vertices[0]); ++i)
+		{
+			Vector3 vertex = data.Vertices[i];
+			for (auto plane : planes)
+			{
+				float distance = 
+					plane.A * vertex.GetX() + 
+					plane.B * vertex.GetY() + 
+					plane.C * vertex.GetZ() + 
+					plane.D;
+
+				if (0 < distance)
+				{
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	bool Box::BoxCollideDelegate::IsIn(SphereData data)
+	{
+		auto planes = ((Box*)GetOwner())->GetPlanes();
+		Vector3 center = data.Position;
+		for (auto plane : planes)
+		{
+			float distance =
+				plane.A * center.GetX() +
+				plane.B * center.GetY() +
+				plane.C * center.GetZ() +
+				plane.D;
+
+			if (0 < distance - data.Radius)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 	std::vector<Vector3> Box::GetVertices()
 	{
 		Vector3 center = GetPosition();
@@ -122,20 +163,32 @@ namespace SSB
 		float height = GetScale().GetY();
 		float depth = GetScale().GetZ();
 		
-		planes[0] = { 1, 0, 0, -depth / 2  * scale.GetZ() };
-		planes[1] = { -1, 0, 0, -depth / 2 * scale.GetZ() };
-		planes[2] = { 0, 1, 0, -height / 2 * scale.GetY() };
-		planes[3] = { 0, -1, 0, -height / 2 * scale.GetY() };
-		planes[4] = { 0, 0, 1, -width / 2 * scale.GetX() };
-		planes[5] = { 0, 0, -1, -width / 2 * scale.GetX() };
+		planes[0] = { 1, 0, 0, -depth / 2 };
+		planes[1] = { -1, 0, 0, -depth / 2 };
+		planes[2] = { 0, 1, 0, -height / 2 };
+		planes[3] = { 0, -1, 0, -height / 2 };
+		planes[4] = { 0, 0, 1, -width / 2 };
+		planes[5] = { 0, 0, -1, -width / 2 };
 
-		HMatrix44 matrix(GetRotation(), GetPosition());
+		Matrix33 rotation = GetRotation();
+		Vector3 translation = GetPosition();
+		HMatrix44 matrix(rotation, translation);
+
 		std::vector<FaceData> ret;
 		ret.resize(6);
 		for (int i = 0; i < 6; ++i)
 		{
-			auto result = planes[i] * matrix;
-			ret[i] = { result.GetX(), result.GetY(), result.GetZ(), result.GetW() };
+			Vector3 direction = planes[i];
+			direction = direction * rotation;
+			direction.Normalize();
+
+			float distance = 
+				direction.GetX() * translation.GetX() +
+				direction.GetY() * translation.GetY() +
+				direction.GetZ() * translation.GetZ();
+			distance = -distance;
+
+			ret[i] = { direction.GetX(), direction.GetY(), direction.GetZ(), distance + planes[i].GetW() };
 		}
 
 		return ret;

@@ -17,9 +17,7 @@ namespace SSB
     {
         DXWindow::Init();
 
-        DXStateManager::GetInstance().Init();
 		InputManager::GetInstance().Set(GetWindowHandle());
-        InputManager::GetInstance().Init();
 
         _text = new Text(L"Text Test", { 0, 0, 100, 30 });
         _text->SetTextFormat(TextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
@@ -189,7 +187,6 @@ namespace SSB
     bool GETestWindow::Release()
     {
         DXWindow::Release();
-        InputManager::GetInstance().Release();
 
         _background->Release();
         _object->Release();
@@ -204,9 +201,6 @@ namespace SSB
         //_terrain->Release();
 
         TextManager::GetInstance().Release();
-        ShaderManager::GetInstance().Release();
-        TextureResourceManager::GetInstance().Release();
-        DXStateManager::GetInstance().Release();
 
         return true;
     }

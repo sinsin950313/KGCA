@@ -84,6 +84,10 @@ namespace SSB
 			virtual bool IsCollide(BoxData boxData) = 0;
 			virtual bool IsCollide(SphereData sphereData) = 0;
 			//virtual bool IsCollide(FrustumData frustum) = 0;
+
+		public:
+			virtual bool IsIn(BoxData data) = 0;
+			virtual bool IsIn(SphereData data) = 0;
 		};
 
 	private:
@@ -99,6 +103,7 @@ namespace SSB
 
 	public:
 		virtual bool IsCollide(Volume1* volume) { return false; }
+		virtual bool IsIn(Volume1* volume) { return false; }
 		//virtual void Resize(float width, float height, float depth) { }
 
 	public:
@@ -118,6 +123,10 @@ namespace SSB
 		bool IsCollideToBox(BoxData data) { return _collideDelegate->IsCollide(data); }
 		bool IsCollideToSphere(SphereData data) { return _collideDelegate->IsCollide(data); }
 		//bool IsCollideToFrustum(FrustumData data) { return _collideDelegate->IsCollide(data); }
+
+	public:
+		bool IsInBox(BoxData data) { return _collideDelegate->IsIn(data); }
+		bool IsInSphere(SphereData data) { return _collideDelegate->IsIn(data); }
 
 	public:
 		Vector3 GetPosition() override final;

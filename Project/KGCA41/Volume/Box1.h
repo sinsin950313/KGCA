@@ -17,6 +17,10 @@ namespace SSB
 			bool IsCollide(BoxData boxData) override;
 			bool IsCollide(SphereData sphereData) override;
 			//bool IsCollide(FrustumData frustum) override;
+
+		public:
+			bool IsIn(BoxData data) override;
+			bool IsIn(SphereData data) override;
 		};
 
 	private:
@@ -28,6 +32,7 @@ namespace SSB
 
 	public:
 		bool IsCollide(Volume1* volume) override { return volume->IsCollideToBox(*this); }
+		bool IsIn(Volume1* volume) override { return volume->IsInBox(*this); }
 		//void Resize(float width, float height, float depth) override;
 
 	public:

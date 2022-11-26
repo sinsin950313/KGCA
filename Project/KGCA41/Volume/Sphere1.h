@@ -4,13 +4,13 @@
 
 namespace SSB
 {
-	class Sphere : public Volume1
+	class Sphere1Volume : public Volume1
 	{
 	private:
 		class SphereCollideDelegate : public CollideCheckDelegate
 		{
 		public:
-			SphereCollideDelegate(Sphere* owner);
+			SphereCollideDelegate(Sphere1Volume* owner);
 
 		public:
 			//bool IsCollide(PlaneData data) override;
@@ -27,7 +27,7 @@ namespace SSB
 	//	float _radius;
 
 	public:
-		Sphere(float radius = 1.0f);
+		Sphere1Volume(float radius = 1.0f);
 
 	public:
 		bool IsCollide(Volume1* volume) override { return volume->IsCollideToSphere(*this); }

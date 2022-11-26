@@ -1,16 +1,17 @@
 #pragma once
 
 #include "Volume1.h"
+#include <vector>
 
 namespace SSB
 {
-	class Box : public Volume1
+	class Box1Volume : public Volume1
 	{
 	private:
 		class BoxCollideDelegate : public CollideCheckDelegate
 		{
 		public:
-			BoxCollideDelegate(Box* owner);
+			BoxCollideDelegate(Box1Volume* owner);
 
 		public:
 			//bool IsCollide(PlaneData data) override;
@@ -28,7 +29,7 @@ namespace SSB
 		std::vector<FaceData> GetPlanes();
 
 	public:
-		Box(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
+		Box1Volume(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
 
 	public:
 		bool IsCollide(Volume1* volume) override { return volume->IsCollideToBox(*this); }

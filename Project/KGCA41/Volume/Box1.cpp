@@ -4,10 +4,10 @@
 
 namespace SSB
 {
-	Box::BoxCollideDelegate::BoxCollideDelegate(Box* owner) : CollideCheckDelegate(owner)
+	Box1Volume::BoxCollideDelegate::BoxCollideDelegate(Box1Volume* owner) : CollideCheckDelegate(owner)
 	{
 	}
-	//std::vector<Vector3> Box::GetVertexList()
+	//std::vector<Vector3> Box1Volume::GetVertexList()
 	//{
 	//	Vector3 center = GetPosition();
 
@@ -27,17 +27,17 @@ namespace SSB
 	//	}
 	//	return vertexList;
 	//}
-	//void Box::GetPlaneVectorList(std::vector<Vector3> vertexList, Float4 retPlaneVector[6])
+	//void Box1Volume::GetPlaneVectorList(std::vector<Vector3> vertexList, Float4 retPlaneVector[6])
 	//{
 	//	implement;
 	//}
-	//bool Box::BoxCollideDelegate::IsCollide(PlaneData data)
+	//bool Box1Volume::BoxCollideDelegate::IsCollide(PlaneData data)
 	//{
 	//	return false;
 	//}
-	bool Box::BoxCollideDelegate::IsCollide(BoxData boxData)
+	bool Box1Volume::BoxCollideDelegate::IsCollide(BoxData boxData)
 	{
-		auto planes = ((Box*)GetOwner())->GetPlanes();
+		auto planes = ((Box1Volume*)GetOwner())->GetPlanes();
 
 		for (int i = 0; i < 8; ++i)
 		{
@@ -65,9 +65,9 @@ namespace SSB
 		}
 		return false;
 	}
-	bool Box::BoxCollideDelegate::IsCollide(SphereData sphereData)
+	bool Box1Volume::BoxCollideDelegate::IsCollide(SphereData sphereData)
 	{
-		auto planes = ((Box*)GetOwner())->GetPlanes();
+		auto planes = ((Box1Volume*)GetOwner())->GetPlanes();
 
 		auto center = sphereData.Position;
 		for (int i = 0; i < 6; ++i)
@@ -86,9 +86,9 @@ namespace SSB
 
 		return true;
 	}
-	bool Box::BoxCollideDelegate::IsIn(BoxData data)
+	bool Box1Volume::BoxCollideDelegate::IsIn(BoxData data)
 	{
-		auto planes = ((Box*)GetOwner())->GetPlanes();
+		auto planes = ((Box1Volume*)GetOwner())->GetPlanes();
 		for (int i = 0; i < sizeof(data.Vertices) / sizeof(data.Vertices[0]); ++i)
 		{
 			Vector3 vertex = data.Vertices[i];
@@ -108,9 +108,9 @@ namespace SSB
 		}
 		return true;
 	}
-	bool Box::BoxCollideDelegate::IsIn(SphereData data)
+	bool Box1Volume::BoxCollideDelegate::IsIn(SphereData data)
 	{
-		auto planes = ((Box*)GetOwner())->GetPlanes();
+		auto planes = ((Box1Volume*)GetOwner())->GetPlanes();
 		Vector3 center = data.Position;
 		for (auto plane : planes)
 		{
@@ -127,7 +127,7 @@ namespace SSB
 		}
 		return true;
 	}
-	std::vector<Vector3> Box::GetVertices()
+	std::vector<Vector3> Box1Volume::GetVertices()
 	{
 		Vector3 center = GetPosition();
 		Vector3 scale = GetScale();
@@ -153,7 +153,7 @@ namespace SSB
 
 		return vertexList;
 	}
-	std::vector<FaceData> Box::GetPlanes()
+	std::vector<FaceData> Box1Volume::GetPlanes()
 	{
 		Vector3 scale = GetScale();
 		std::vector<HVector4> planes;
@@ -193,20 +193,20 @@ namespace SSB
 
 		return ret;
 	}
-  //  void Box::Resize(float width, float height, float depth)
+  //  void Box1Volume::Resize(float width, float height, float depth)
   //  {
 		//SetScale(width, height, depth);
   //  }
-	//bool Box::BoxCollideDelegate::IsCollide(FrustumData frustum)
+	//bool Box1Volume::BoxCollideDelegate::IsCollide(FrustumData frustum)
 	//{
 	//	return false;
 	//}
-	Box::Box(float width, float height, float depth)
+	Box1Volume::Box1Volume(float width, float height, float depth)
 		: Volume1(new BoxCollideDelegate(this))
 	{
 		SetScale(width, height, depth);
 	}
-	Box::operator BoxData()
+	Box1Volume::operator BoxData()
 	{
 		auto vertices = GetVertices();
 		auto planes = GetPlanes();

@@ -6,10 +6,10 @@
 
 namespace SSB
 {
-	class CollisionTree1 : public Common, public Box
+	class CollisionTree1 : public Common, public Box1Volume
 	{
 	protected:
-		class Node : public Box
+		class Node : public Box1Volume
 		{
 		private:
 			std::vector<Volume1*> _staticObjects;

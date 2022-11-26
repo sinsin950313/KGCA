@@ -41,7 +41,6 @@
     <ClInclude Include="Volume.h" />
     <ClInclude Include="Volume1.h" />
     <ClInclude Include="VolumeInterface.h" />
-    <ClInclude Include="VolumeInterface1.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

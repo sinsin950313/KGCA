@@ -31,7 +31,7 @@ namespace SSB
         return ret;
     }
 
-    Box::Box(Vector3D&& center, float width, float height, float depth)
+    BoxVolume::BoxVolume(Vector3D&& center, float width, float height, float depth)
         //Perfect Forwarding problem
         : Volume(std::forward<Vector3D>(center), sqrt(width* width + height * height + depth * depth) / 2, BoxVertexFactory(width, height, depth))
         , _ltf(Vector3DData{ -width / 2, height / 2, -depth / 2 })
@@ -39,7 +39,7 @@ namespace SSB
     {
     }
 
-    void Box::Resize(float width, float height, float depth)
+    void BoxVolume::Resize(float width, float height, float depth)
     {
         Volume::Resize(sqrt(width * width + height * height + depth * depth) / 2);
         *_ltf[0] = -width / 2;
@@ -51,7 +51,7 @@ namespace SSB
         *_rbb[2] = depth / 2;
     }
 
-    bool Box::IsIn(const Vector3D& coordinate, const Vector3D& v) const
+    bool BoxVolume::IsIn(const Vector3D& coordinate, const Vector3D& v) const
     {
         if (Volume::IsIn(coordinate, v))
         {
@@ -67,7 +67,7 @@ namespace SSB
         return false;
     }
 
-    void Box::Print() const
+    void BoxVolume::Print() const
     {
         auto vertexes = GetVertexes();
         auto center = GetCenter();

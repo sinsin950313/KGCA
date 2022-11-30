@@ -435,3 +435,10 @@ FodyWeavers.xsd
 
 Resource/
 Naver MYBOX/
+
+#!Unreal/*
+Unreal/*/*/*
+!Unreal/*/Config/*
+#!Unreal/*/Content/*
+!Unreal/*/Source/*
+!Unreal/*/*.uproject

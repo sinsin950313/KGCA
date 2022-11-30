@@ -439,6 +439,6 @@ Naver MYBOX/
 #!Unreal/*
 Unreal/*/*/*
 !Unreal/*/Config/*
-#!Unreal/*/Content/*
+!Unreal/*/Content/Blueprint/
 !Unreal/*/Source/*
 !Unreal/*/*.uproject

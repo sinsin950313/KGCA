@@ -1,4 +1,4 @@
-#echo "n" | cp -r -i Project/Resource/ Naver\ MYBOX/EngineData/
+echo "n" | cp -r -i Project/Resource/ Naver\ MYBOX/EngineData/
 
 for Directory in Unreal/*/;
 do

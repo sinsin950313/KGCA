@@ -10,10 +10,13 @@ do
 		if [ -f $SubDirectory ];
 		then
 			mkdir -p Naver\ MYBOX/UnrealData/$ProjectName/Content/
-			echo "n" | cp -r -i Unreal/$ProjectName/Content/$NewName Naver\ MYBOX/UnrealData/$ProjectName/Content/
-		elif [ "$NewName" != "Blueprint" ];
+#			echo "n" | cp -r -i Unreal/$ProjectName/Content/$NewName Naver\ MYBOX/UnrealData/$ProjectName/Content/
+#		elif [ "$NewName" != "Blueprint" ];
+		fi
+
+		if [ "$NewName" != "Blueprint" ];
 		then
-			mkdir -p Naver\ MYBOX/UnrealData/$ProjectName/Content/$NewName
+#			mkdir -p Naver\ MYBOX/UnrealData/$ProjectName/Content/$NewName
 			echo "n" | cp -r -i Unreal/$ProjectName/Content/$NewName Naver\ MYBOX/UnrealData/$ProjectName/Content/$NewName
 		fi
 	done

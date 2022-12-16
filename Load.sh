@@ -1,5 +1,9 @@
-#echo "n" | cp -r -i -v Naver\ MYBOX/EngineData/Resource Project
-cp -r -u -v Naver\ MYBOX/EngineData/Resource Project
+if [ "$1" == "-f" ]
+then
+	cp -r -u -v Naver\ MYBOX/EngineData/Resource Project
+else
+	echo "n" | cp -r -i -v Naver\ MYBOX/EngineData/Resource Project
+fi
 
 for Directory in Naver\ MYBOX/UnrealData/*;
 do
@@ -14,13 +18,16 @@ do
 #			mkdir -p Unreal/$ProjectName/Content/$NewName
 #		fi
 
+		if [ "$1" == "-f" ]
+		then
 			cp -r -u -v Naver\ MYBOX/UnrealData/$ProjectName/Content/$NewName Unreal/$ProjectName/Content/
-
-#		if [ "$NewName" == "Map" ];
-#		then
-#			cp -r -f -v Naver\ MYBOX/UnrealData/$ProjectName/Content/$NewName Unreal/$ProjectName/Content/
-#		else
-#			echo "n" | cp -r -i -v Naver\ MYBOX/UnrealData/$ProjectName/Content/$NewName Unreal/$ProjectName/Content/
-#		fi
+		else
+			if [ "$NewName" == "Map" ];
+			then
+				cp -r -f -v Naver\ MYBOX/UnrealData/$ProjectName/Content/$NewName Unreal/$ProjectName/Content/
+			else
+				echo "n" | cp -r -i -v Naver\ MYBOX/UnrealData/$ProjectName/Content/$NewName Unreal/$ProjectName/Content/
+			fi
+		fi
 	done
 done

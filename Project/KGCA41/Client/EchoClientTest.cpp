@@ -1,9 +1,36 @@
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
+﻿#define _WINSOCK_DEPRECATED_NO_WARNINGS
 
 #pragma comment (lib, "ws2_32.lib")
 
 #include <WinSock2.h>
 #include <iostream>
+
+DWORD WINAPI ClientThread(LPVOID lpThreadParameter)
+{
+	SOCKET sock = (SOCKET)lpThreadParameter;
+	while (1)
+	{
+		char sendMsg[256]{ 0, };
+		printf("%s", "Send : ");
+		fgets(sendMsg, 256, stdin);
+
+		if (strcmp(sendMsg, "exit\n") == 0)
+		{
+			break;
+		}
+
+		int sendByte = send(sock, sendMsg, strlen(sendMsg), 0);
+		if (sendByte == SOCKET_ERROR)
+		{
+			if (WSAGetLastError() != WSAEWOULDBLOCK)
+			{
+				closesocket(sock);
+				return 1;
+			}
+		}
+	}
+	closesocket(sock);
+}
 
 int main()
 {
@@ -29,46 +56,28 @@ int main()
 		}
 	}
 
+	DWORD threadID;
+	HANDLE handle = CreateThread(0, 0, ClientThread, (LPVOID)clientSocket, 0, &threadID);
+
 	u_long mode = TRUE;
 	ioctlsocket(clientSocket, FIONBIO, &mode);
 
 	while (1)
 	{
-		const int bufferSize = 256;
+		char recvMsg[256]{ 0, };
+		int recvByte = recv(clientSocket, recvMsg, 256, 0);
+		if (recvByte == SOCKET_ERROR)
 		{
-			char sendMsg[bufferSize]{ 0, };
-			printf("%s", "Send : ");
-			fgets(sendMsg, bufferSize, stdin);
-
-			int sendByte = send(clientSocket, sendMsg, bufferSize, 0);
-			if (sendByte == SOCKET_ERROR)
+			if (WSAGetLastError() != WSAEWOULDBLOCK)
 			{
-				if (WSAGetLastError() != WSAEWOULDBLOCK)
-				{
-					closesocket(clientSocket);
-					WSACleanup();
-					return 1;
-				}
-				continue;
+				closesocket(clientSocket);
+				WSACleanup();
+				return 1;
 			}
+			continue;
 		}
 
-		{
-			char recvMsg[bufferSize]{ 0, };
-			int recvByte = recv(clientSocket, recvMsg, bufferSize, 0);
-			if (recvByte == SOCKET_ERROR)
-			{
-				if (WSAGetLastError() != WSAEWOULDBLOCK)
-				{
-					closesocket(clientSocket);
-					WSACleanup();
-					return 1;
-				}
-				continue;
-			}
-
-			printf("Recv : %s", recvMsg);
-		}
+		printf("Recv : %s", recvMsg);
 	}
 
 	closesocket(clientSocket);

@@ -41,7 +41,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -149,6 +149,11 @@ copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"</Command>
   <ItemGroup>
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonPath.h" />
+    <ClInclude Include="CommonSocket.h" />
+    <ClInclude Include="NetworkProtocol.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="CommonSocket.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

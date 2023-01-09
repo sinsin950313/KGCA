@@ -1,5 +1,10 @@
 #pragma once
 
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
+#pragma comment (lib, "ws2_32.lib")
+
+#include <WinSock2.h>
 #include <Windows.h>
 #include "Common.h"
 #include <vector>
@@ -20,13 +25,14 @@ namespace SSB
 		RECT _windowRect;
 		RECT _clientRect;
 
+	public:
 		HWND _editBox;
 		HWND _button;
 		HWND _listBox;
-		//HANDLE _threadHandle;
 
 	public:
-		//SOCKET _clientSocket;
+		SOCKET _clientSocket;
+		HANDLE _threadHandle;
 
 	public:
 		ClientWindow(HWND hwnd);

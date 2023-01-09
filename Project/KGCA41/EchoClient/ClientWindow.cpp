@@ -3,20 +3,22 @@
 
 DWORD WINAPI ClientThread(LPVOID lpThreadParameter)
 {
-	//SSB::ClientWindow* window = (SSB::ClientWindow*)lpThreadParameter;
+	SSB::ClientWindow* window = (SSB::ClientWindow*)lpThreadParameter;
 
-	//char recvMsg[256]{ 0, };
-	//int recvByte = recv(window->_clientSocket, recvMsg, 256, 0);
-	//if (recvByte == SOCKET_ERROR)
-	//{
-	//	if (WSAGetLastError() != WSAEWOULDBLOCK)
-	//	{
-	//		PostQuitMessage(1);
-	//		return 1;
-	//	}
-	//}
-	//SendMessage(window->GetWindowHandle(), LB_ADDSTRING, 0, (LPARAM)recvMsg);
-	return 1;
+	while (1)
+	{
+		char recvMsg[256]{ 0, };
+		int recvByte = recv(window->_clientSocket, recvMsg, 256, 0);
+		if (recvByte == SOCKET_ERROR)
+		{
+			if (WSAGetLastError() != WSAEWOULDBLOCK)
+			{
+				PostQuitMessage(1);
+				return 1;
+			}
+		}
+		SendMessageA(window->_listBox, LB_ADDSTRING, 0, (LPARAM)recvMsg);
+	}
 }
 
 namespace SSB
@@ -77,24 +79,24 @@ namespace SSB
 			return 0;
 		}
 
-		//_clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+		_clientSocket = socket(AF_INET, SOCK_STREAM, 0);
 
-		//SOCKADDR_IN sa;
-		//sa.sin_family = AF_INET;
-		//sa.sin_addr.s_addr = inet_addr("192.168.0.126");
-		//sa.sin_port = htons(10000);
-		//{
-		//	int ret = connect(_clientSocket, (sockaddr*)&sa, sizeof(sa));
-		//	if (ret == SOCKET_ERROR)
-		//	{
-		//		printf("%d", WSAGetLastError());
-		//		WSACleanup();
-		//		return 1;
-		//	}
-		//}
+		SOCKADDR_IN sa;
+		sa.sin_family = AF_INET;
+		sa.sin_addr.s_addr = inet_addr("127.0.0.1");
+		sa.sin_port = htons(10000);
+		{
+			int ret = connect(_clientSocket, (sockaddr*)&sa, sizeof(sa));
+			if (ret == SOCKET_ERROR)
+			{
+				printf("%d", WSAGetLastError());
+				WSACleanup();
+				return 1;
+			}
+		}
 
 		DWORD threadID;
-		//_threadHandle = CreateThread(0, 0, ClientThread, (LPVOID)this, CREATE_SUSPENDED, &threadID);
+		_threadHandle = CreateThread(0, 0, ClientThread, (LPVOID)this, CREATE_SUSPENDED, &threadID);
 
 		//u_long mode = TRUE;
 		//ioctlsocket(clientSocket, FIONBIO, &mode);
@@ -114,7 +116,7 @@ namespace SSB
 
 	bool ClientWindow::Release()
 	{
-		//closesocket(_clientSocket);
+		closesocket(_clientSocket);
 		WSACleanup();
 		return true;
 	}
@@ -131,7 +133,7 @@ namespace SSB
 
 	void ClientWindow::Run()
 	{
-		//ResumeThread(_threadHandle);
+		ResumeThread(_threadHandle);
 
 		MSG msg{ 0, };
 		while (msg.message != WM_QUIT)
@@ -157,9 +159,9 @@ namespace SSB
 		{
 			_editBox = CreateWindow(L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 500, 10, 200, 25, hWnd, (HMENU)1000, _hInstance, NULL);
 			_button = CreateWindow(L"button", L"Send", WS_CHILD | WS_VISIBLE | WS_BORDER | BS_PUSHBUTTON, 700, 10, 50, 25, hWnd, (HMENU)1001, _hInstance, NULL);
-			_editBox = CreateWindow(L"listbox", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_HSCROLL | WS_VSCROLL, 0, 0, 500, 600, hWnd, (HMENU)1002, _hInstance, NULL);
+			_listBox = CreateWindow(L"listbox", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER | WS_HSCROLL | WS_VSCROLL, 0, 0, 500, 600, hWnd, (HMENU)1002, _hInstance, NULL);
 
-			SendMessage(_listBox, (LPARAM)L"Chatting Start", 0, NULL);
+			SendMessage(_listBox, LB_ADDSTRING, 0, (LPARAM)L"Chatting Start");
 			break;
 		}
 		case WM_COMMAND:
@@ -168,21 +170,15 @@ namespace SSB
 			{
 			case 1001:
 			{
+				char buffer[256]{ 0, };
+				int ret = GetWindowTextA(_editBox, buffer, 256);
+				if (ret == 0)
 				{
-					WCHAR szBuffer[255] = L"";
-					GetWindowText(_editBox, szBuffer, 255);
-					OutputDebugString(szBuffer);
+					TCHAR* message = nullptr;
+					FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, nullptr, GetLastError(), 0, (TCHAR*)&message, 0, nullptr);
+					OutputDebugString(message);
 				}
-
-				//char buffer[256]{ 0, };
-				//int ret = GetWindowTextA(_editBox, buffer, 256);
-				//if (ret == 0)
-				//{
-				//	TCHAR* message = nullptr;
-				//	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, nullptr, GetLastError(), 0, (TCHAR*)&message, 0, nullptr);
-				//	OutputDebugString(message);
-				//}
-				//int size = send(_clientSocket, buffer, 256, 0);
+				int size = send(_clientSocket, buffer, 256, 0);
 			}
 			}
 			break;

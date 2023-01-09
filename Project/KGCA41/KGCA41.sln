@@ -103,9 +103,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ToolBase", "ToolBase\ToolBa
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "9.Network", "9.Network", "{A6606AB8-1419-4004-85F8-E669BDC5E58B}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Client.vcxproj", "{D7E798AA-7D61-478C-985A-0BEA9E1B2A47}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EchoClient", "EchoClient\Client.vcxproj", "{D7E798AA-7D61-478C-985A-0BEA9E1B2A47}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Server", "Server\Server.vcxproj", "{8F7DF926-3924-4A3E-9985-6D1710D9D172}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EchoServer", "EchoServer\Server.vcxproj", "{8F7DF926-3924-4A3E-9985-6D1710D9D172}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

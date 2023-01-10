@@ -5,7 +5,7 @@ DWORD WINAPI ClientThread(LPVOID lpThreadParameter)
 {
 	SSB::ClientWindow* window = (SSB::ClientWindow*)lpThreadParameter;
 
-	while (1)
+	//while (1)
 	{
 		char recvMsg[256]{ 0, };
 		int recvByte = recv(window->_clientSocket, recvMsg, 256, 0);
@@ -80,6 +80,13 @@ namespace SSB
 		}
 
 		_clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+		{
+			int ret = WSAAsyncSelect(_clientSocket, _hWnd, CUSTOM_NETWORK_MESSAGE, FD_READ);
+			if (ret == SOCKET_ERROR)
+			{
+				return false;
+			}
+		}
 
 		SOCKADDR_IN sa;
 		sa.sin_family = AF_INET;
@@ -87,16 +94,19 @@ namespace SSB
 		sa.sin_port = htons(10000);
 		{
 			int ret = connect(_clientSocket, (sockaddr*)&sa, sizeof(sa));
-			if (ret == SOCKET_ERROR)
-			{
-				printf("%d", WSAGetLastError());
-				WSACleanup();
-				return 1;
-			}
+			//if (ret == SOCKET_ERROR)
+			//{
+			//	TCHAR* buf = 0;
+			//	int error = WSAGetLastError();
+			//	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, 0, error, 0, (TCHAR*)&buf, 0, 0);
+			//	OutputDebugString(buf);
+			//	WSACleanup();
+			//	return 1;
+			//}
 		}
 
-		DWORD threadID;
-		_threadHandle = CreateThread(0, 0, ClientThread, (LPVOID)this, CREATE_SUSPENDED, &threadID);
+		//DWORD threadID;
+		//_threadHandle = CreateThread(0, 0, ClientThread, (LPVOID)this, CREATE_SUSPENDED, &threadID);
 
 		//u_long mode = TRUE;
 		//ioctlsocket(clientSocket, FIONBIO, &mode);
@@ -155,6 +165,14 @@ namespace SSB
 	{
 		switch (message)
 		{
+		case CUSTOM_NETWORK_MESSAGE:
+		{
+			if (FD_READ)
+			{
+				ClientThread(this);
+			}
+			break;
+		}
 		case WM_CREATE:
 		{
 			_editBox = CreateWindow(L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 500, 10, 200, 25, hWnd, (HMENU)1000, _hInstance, NULL);

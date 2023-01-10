@@ -9,6 +9,8 @@
 #include "Common.h"
 #include <vector>
 
+#define CUSTOM_NETWORK_MESSAGE WM_USER+100
+
 namespace SSB
 {
 	class ClientWindow : public Common

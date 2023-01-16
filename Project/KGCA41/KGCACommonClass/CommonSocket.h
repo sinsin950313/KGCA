@@ -9,6 +9,14 @@
 
 namespace SSB
 {
+	struct HeaderStructure
+	{
+		ProtocolType Type;
+		unsigned int ContentLength;
+	};
+
+#define HeaderSize sizeof(HeaderStructure)
+
 	class CommunicationTypeAction
 	{
 	public:
@@ -21,51 +29,49 @@ namespace SSB
 		void operator()() override;
 	};
 
-	class PacketHeader
+#define PacketSize 256
+
+	struct PacketContentStruct
 	{
-	private:
-		HeaderStructure _structure;
-
-	public:
-		PacketHeader(HeaderStructure header);
-
-	public:
-		virtual Byte* Serialize() = 0;
-		virtual CommunicationTypeAction& GetAction() = 0;
-	};
-
-	class ConsoleDefaultPacketHeader : public PacketHeader
-	{
-	public:
-		ConsoleDefaultPacketHeader();
-
-	public:
-		Byte* Serialize() override;
-		CommunicationTypeAction& GetAction() override;
+		Byte Head[PacketSize - HeaderSize];
+		int Size;
 	};
 
 	class PacketContent
 	{
 	public:
-		virtual Byte* Serialize() = 0;
+		virtual PacketContentStruct Serialize() = 0;
 	};
-
-	typedef int UserID;
 
 	class Packet
 	{
 	private:
-		Byte _data[256];
+		HeaderStructure _header;
+		Byte _data[PacketSize];
+		int _length;
 
 	public:
-		Packet(PacketHeader type, PacketContent content);
-		Packet(Byte* serialData);
+		Packet(ProtocolType type, PacketContent* content);
+		Packet(Byte* serialData, int packetLength);
 
 	public:
 		const Byte* Serialize();
-		PacketHeader GetHeader();
-		PacketContent GetContent();
+		int GetLength();
 	};
+
+	class Decoder
+	{
+	public:
+		virtual CommunicationTypeAction& Decode(Packet packet) = 0;
+	};
+
+	class ConsoleDefaultDecoder : public Decoder
+	{
+	public:
+		CommunicationTypeAction& Decode(Packet packet) override;
+	};
+
+	typedef int UserID;
 
 	class Client
 	{
@@ -79,21 +85,25 @@ namespace SSB
 	public:
 		Packet Read();
 		void Write(Packet packet);
+		SOCKET GetSocket();
 	};
 
 	typedef int PortNumber;
 	typedef std::string IPAddress;
+#define TestPort 10000
+#define TestIP "127.0.0.1"
 
 	class CommunicationModule
 	{
+#define ListenSocketID -1
 	private:
 		std::map<UserID, Client> _connectionData;
 
 	public:
-		void Write(UserID id, PacketHeader header, PacketContent content);
-		virtual void Read(UserID id, PacketHeader& header, PacketContent& content);
-		virtual UserID Read(PacketHeader& header, PacketContent& content);
-		UserID Listen(PortNumber port);
-		void Connect(IPAddress address, PortNumber port);
+		void Write(UserID id, Packet packet);
+		virtual void Read(UserID id, Packet& packet);
+		virtual UserID Read(Packet& packet);
+		UserID Listen(PortNumber port = TestPort);
+		void Connect(IPAddress address = TestIP, PortNumber port = TestPort);
 	};
 }

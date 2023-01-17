@@ -81,10 +81,11 @@ namespace SSB
 
 	public:
 		Client(SOCKET socket, UserID id);
+		~Client();
 
 	public:
-		Packet Read();
-		void Write(Packet packet);
+		bool Read(Packet& packet);
+		bool Write(Packet& packet);
 		SOCKET GetSocket();
 	};
 
@@ -97,13 +98,20 @@ namespace SSB
 	{
 #define ListenSocketID -1
 	private:
+		WSADATA wsa;
 		std::map<UserID, Client> _connectionData;
 
 	public:
-		void Write(UserID id, Packet packet);
-		virtual void Read(UserID id, Packet& packet);
-		virtual UserID Read(Packet& packet);
+		CommunicationModule();
+		~CommunicationModule();
+
+	public:
+		bool Write(UserID id, Packet packet);
+		virtual bool Read(UserID id, Packet& packet);
+		virtual bool Read(UserID* id, Packet& packet);
 		UserID Listen(PortNumber port = TestPort);
 		void Connect(IPAddress address = TestIP, PortNumber port = TestPort);
+		void Close(UserID id);
+		bool IsClosed(UserID id);
 	};
 }

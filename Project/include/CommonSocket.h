@@ -12,7 +12,7 @@ namespace SSB
 	struct HeaderStructure
 	{
 		ProtocolType Type;
-		unsigned int PacketLength;
+		unsigned int ContentLength;
 	};
 
 #define HeaderSize sizeof(HeaderStructure)
@@ -48,10 +48,11 @@ namespace SSB
 	private:
 		HeaderStructure _header;
 		Byte _data[PacketSize];
+		int _length;
 
 	public:
 		Packet(ProtocolType type, PacketContent* content);
-		Packet(Byte* serialData);
+		Packet(Byte* serialData, int packetLength);
 
 	public:
 		const Byte* Serialize();
@@ -64,6 +65,12 @@ namespace SSB
 		virtual CommunicationTypeAction& Decode(Packet packet) = 0;
 	};
 
+	class ConsoleDefaultDecoder : public Decoder
+	{
+	public:
+		CommunicationTypeAction& Decode(Packet packet) override;
+	};
+
 	typedef int UserID;
 
 	class Client
@@ -74,25 +81,37 @@ namespace SSB
 
 	public:
 		Client(SOCKET socket, UserID id);
+		~Client();
 
 	public:
 		Packet Read();
 		void Write(Packet packet);
+		SOCKET GetSocket();
 	};
 
 	typedef int PortNumber;
 	typedef std::string IPAddress;
+#define TestPort 10000
+#define TestIP "127.0.0.1"
 
 	class CommunicationModule
 	{
+#define ListenSocketID -1
 	private:
+		WSADATA wsa;
 		std::map<UserID, Client> _connectionData;
 
 	public:
-		void Write(UserID id, Packet packet);
-		virtual void Read(UserID id, Packet& packet);
-		virtual UserID Read(Packet& packet);
-		UserID Listen(PortNumber port);
-		void Connect(IPAddress address, PortNumber port);
+		CommunicationModule();
+		~CommunicationModule();
+
+	public:
+		bool Write(UserID id, Packet packet);
+		virtual bool Read(UserID id, Packet& packet);
+		virtual bool Read(UserID* id, Packet& packet);
+		UserID Listen(PortNumber port = TestPort);
+		void Connect(IPAddress address = TestIP, PortNumber port = TestPort);
+		void Close(UserID id);
+		bool IsClosed(UserID id);
 	};
 }

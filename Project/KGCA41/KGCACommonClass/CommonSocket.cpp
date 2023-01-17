@@ -38,8 +38,14 @@ namespace SSB
 	}
 	Client::Client(SOCKET socket, UserID id) : _socket(socket), _id(id)
 	{
+		u_long mode = TRUE;
+		ioctlsocket(_socket, FIONBIO, &mode);
 	}
-	Packet Client::Read()
+	Client::~Client()
+	{
+		closesocket(_socket);
+	}
+	bool Client::Read(Packet& packet)
 	{
 		int length = 0;
 		Byte buf[PacketSize]{ 0, };
@@ -60,7 +66,7 @@ namespace SSB
 
 		return Packet(buf, HeaderSize + contentLength);
 	}
-	void Client::Write(Packet packet)
+	bool Client::Write(Packet& packet)
 	{
 		int sendCount = 0;
 		auto buf = packet.Serialize();
@@ -68,18 +74,47 @@ namespace SSB
 		{
 			sendCount += send(_socket, buf + sendCount, packet.GetLength() - sendCount, 0);
 		}
+
+		return;
 	}
 	SOCKET Client::GetSocket()
 	{
 		return _socket;
 	}
-	void CommunicationModule::Write(UserID id, Packet packet)
+	bool CommunicationModule::Write(UserID id, Packet packet)
 	{
-		_connectionData.find(id)->second.Write(packet);
+		bool ret = _connectionData.find(id)->second.Write(packet);
+		if (!ret)
+		{
+			if (WSAGetLastError() != WSAEWOULDBLOCK)
+			{
+				_connectionData.erase(id);
+			}
+		}
+		return ret;
 	}
-	void CommunicationModule::Read(UserID id, Packet& packet)
+	bool CommunicationModule::Read(UserID id, Packet& packet)
 	{
-		packet = _connectionData.find(id)->second.Read();
+		bool ret = _connectionData.find(id)->second.Read(packet);
+		if (!ret)
+		{
+			if (WSAGetLastError() != WSAEWOULDBLOCK)
+			{
+				_connectionData.erase(id);
+			}
+		}
+		return ret;
+	}
+	CommunicationModule::CommunicationModule()
+	{
+		if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
+		{
+			return;
+		}
+	}
+	CommunicationModule::~CommunicationModule()
+	{
+		WSACleanup();
 	}
 	UserID CommunicationModule::Listen(PortNumber port)
 	{
@@ -133,5 +168,13 @@ namespace SSB
 		{
 			int ret = connect(clientSocket, (sockaddr*)&sa, sizeof(sa));
 		}
+	}
+	void CommunicationModule::Close(UserID id)
+	{
+		_connectionData.erase(id);
+	}
+	bool CommunicationModule::IsClosed(UserID id)
+	{
+		return _connectionData.find(id) == _connectionData.end();
 	}
 }

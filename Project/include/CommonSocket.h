@@ -2,6 +2,8 @@
 
 #define _WINSOCK_DEPRECATED_NO_WARNINGS
 
+#pragma comment (lib, "ws2_32.lib")
+
 #include "NetworkProtocol.h"
 #include <WinSock2.h>
 #include <map>
@@ -23,11 +25,11 @@ namespace SSB
 		virtual void operator()() = 0;
 	};
 
-	class ConsoleDefaultAction : public CommunicationTypeAction
-	{
-	public:
-		void operator()() override;
-	};
+	//class ConsoleDefaultAction : public CommunicationTypeAction
+	//{
+	//public:
+	//	void operator()() override;
+	//};
 
 #define PacketSize 256
 
@@ -51,6 +53,7 @@ namespace SSB
 		int _length;
 
 	public:
+		Packet() = default;
 		Packet(ProtocolType type, PacketContent* content);
 		Packet(Byte* serialData, int packetLength);
 
@@ -65,50 +68,60 @@ namespace SSB
 		virtual CommunicationTypeAction& Decode(Packet packet) = 0;
 	};
 
-	class ConsoleDefaultDecoder : public Decoder
-	{
-	public:
-		CommunicationTypeAction& Decode(Packet packet) override;
-	};
+	//class ConsoleDefaultDecoder : public Decoder
+	//{
+	//public:
+	//	CommunicationTypeAction& Decode(Packet packet) override;
+	//};
 
-	typedef int UserID;
+	typedef SOCKET UserID;
 
 	class Client
 	{
 	private:
 		SOCKET _socket;
 		UserID _id;
+		bool _disconnect = false;;
 
 	public:
 		Client(SOCKET socket, UserID id);
 		~Client();
 
 	public:
-		Packet Read();
-		void Write(Packet packet);
+		bool Read(Packet& packet);
+		bool Write(Packet& packet);
 		SOCKET GetSocket();
+		bool IsDisconnect();
 	};
 
 	typedef int PortNumber;
 	typedef std::string IPAddress;
 #define TestPort 10000
 #define TestIP "127.0.0.1"
+#define ListenNotEstablished -1
 
 	class CommunicationModule
 	{
-#define ListenSocketID -1
 	private:
+		UserID _listenSocketID = ListenNotEstablished;
 		WSADATA wsa;
-		std::map<UserID, Client> _connectionData;
+		std::map<UserID, Client*> _connectionData;
+		bool _dataUpdated = true;;
+		std::map<UserID, Client*>::iterator _iter;
 
 	public:
 		CommunicationModule();
 		~CommunicationModule();
 
+	protected:
+		void DIsconnect(UserID id);
+		void Connect(SOCKET socket);
+		virtual std::map<UserID, Client*>::iterator GetNext();
+
 	public:
 		bool Write(UserID id, Packet packet);
-		virtual bool Read(UserID id, Packet& packet);
-		virtual bool Read(UserID* id, Packet& packet);
+		bool Read(UserID id, Packet& packet);
+		bool Read(UserID* id, Packet& packet);
 		UserID Listen(PortNumber port = TestPort);
 		void Connect(IPAddress address = TestIP, PortNumber port = TestPort);
 		void Close(UserID id);

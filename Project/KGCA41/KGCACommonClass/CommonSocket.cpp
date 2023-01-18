@@ -3,11 +3,6 @@
 
 namespace SSB
 {
-	void ConsoleDefaultAction::operator()()
-	{
-		std::cout << "Console Default Action Called" << std::endl;
-	}
-
 	Packet::Packet(ProtocolType type, PacketContent* content)
 	{
 		memcpy(_data, &_header, HeaderSize);
@@ -31,15 +26,10 @@ namespace SSB
 	{
 		return _length;
 	}
-	CommunicationTypeAction& ConsoleDefaultDecoder::Decode(Packet packet)
-	{
-		static ConsoleDefaultAction action;
-		return action;
-	}
 	Client::Client(SOCKET socket, UserID id) : _socket(socket), _id(id)
 	{
 		u_long mode = TRUE;
-		ioctlsocket(_socket, FIONBIO, &mode);
+		//ioctlsocket(_socket, FIONBIO, &mode);
 	}
 	Client::~Client()
 	{
@@ -51,7 +41,22 @@ namespace SSB
 		Byte buf[PacketSize]{ 0, };
 		while (length != HeaderSize)
 		{
-			length += recv(_socket, buf + length, HeaderSize - length, 0);
+			int recvByte = recv(_socket, buf + length, HeaderSize - length, 0);
+			if (recvByte == SOCKET_ERROR)
+			{
+				int error = WSAGetLastError();
+				if (error != WSAEWOULDBLOCK)
+				{
+					_disconnect = true;
+					return false;
+				}
+			}
+			if (recvByte == 0)
+			{
+				_disconnect = true;
+				return false;
+			}
+			length += recvByte;
 		}
 
 		HeaderStructure header;
@@ -61,10 +66,26 @@ namespace SSB
 		length = 0;
 		while (length != contentLength)
 		{
-			length += recv(_socket, buf + HeaderSize + length, contentLength - length, 0);
+			int recvByte = recv(_socket, buf + HeaderSize + length, contentLength - length, 0);
+			if (recvByte == SOCKET_ERROR)
+			{
+				if (WSAGetLastError() != WSAEWOULDBLOCK)
+				{
+					_disconnect = true;
+					return false;
+				}
+			}
+			if (recvByte == 0)
+			{
+				_disconnect = true;
+				return false;
+			}
+			length += recvByte;
 		}
 
-		return Packet(buf, HeaderSize + contentLength);
+		packet = Packet(buf, HeaderSize + contentLength);
+
+		return true;
 	}
 	bool Client::Write(Packet& packet)
 	{
@@ -72,38 +93,79 @@ namespace SSB
 		auto buf = packet.Serialize();
 		while (sendCount != packet.GetLength())
 		{
-			sendCount += send(_socket, buf + sendCount, packet.GetLength() - sendCount, 0);
+			int sendByte = send(_socket, buf + sendCount, packet.GetLength() - sendCount, 0);
+			if (sendByte == SOCKET_ERROR)
+			{
+				if (WSAGetLastError() != WSAEWOULDBLOCK)
+				{
+					_disconnect = true;
+					return false;
+				}
+			}
+			//if (sendByte == 0)
+			//{
+			//	_disconnect = true;
+			//	return false;
+			//}
+			sendCount += sendByte;
 		}
 
-		return;
+		return true;
 	}
 	SOCKET Client::GetSocket()
 	{
 		return _socket;
 	}
+	bool Client::IsDisconnect()
+	{
+		return _disconnect;
+	}
 	bool CommunicationModule::Write(UserID id, Packet packet)
 	{
-		bool ret = _connectionData.find(id)->second.Write(packet);
+		auto& client = _connectionData.find(id)->second;
+		bool ret = client->Write(packet);
 		if (!ret)
 		{
-			if (WSAGetLastError() != WSAEWOULDBLOCK)
+			if (client->IsDisconnect())
 			{
-				_connectionData.erase(id);
+				DIsconnect(id);
 			}
 		}
 		return ret;
 	}
 	bool CommunicationModule::Read(UserID id, Packet& packet)
 	{
-		bool ret = _connectionData.find(id)->second.Read(packet);
+		auto& client = _connectionData.find(id)->second;
+		bool ret = client->Read(packet);
 		if (!ret)
 		{
-			if (WSAGetLastError() != WSAEWOULDBLOCK)
+			if (client->IsDisconnect())
 			{
-				_connectionData.erase(id);
+				DIsconnect(id);
 			}
 		}
 		return ret;
+	}
+	bool CommunicationModule::Read(UserID* id, Packet& packet)
+	{
+		auto iter = GetNext();
+		if (iter != _connectionData.end())
+		{
+			Client& client = *(iter->second);
+			bool ret = client.Read(packet);
+			*id = iter->first;
+			if (!ret)
+			{
+				if (client.IsDisconnect())
+				{
+					DIsconnect(iter->first);
+				}
+			}
+
+			return ret;
+		}
+
+		return false;
 	}
 	CommunicationModule::CommunicationModule()
 	{
@@ -116,9 +178,42 @@ namespace SSB
 	{
 		WSACleanup();
 	}
+	void CommunicationModule::DIsconnect(UserID id)
+	{
+		_dataUpdated = true;
+		delete _connectionData.find(id)->second;
+		_connectionData.erase(id);
+		_iter = _connectionData.begin();
+	}
+	void CommunicationModule::Connect(SOCKET socket)
+	{
+		_dataUpdated = true;
+		_connectionData.insert(std::make_pair(socket, new Client(socket, socket)));
+		_iter = _connectionData.begin();
+	}
+	std::map<UserID, Client*>::iterator CommunicationModule::GetNext()
+	{
+		if (_connectionData.empty())
+		{
+			return _connectionData.end();
+		}
+
+		if (_dataUpdated)
+		{
+			_dataUpdated = false;
+			_iter = _connectionData.begin();
+		}
+
+		if (_iter == _connectionData.end())
+		{
+			_iter = _connectionData.begin();
+		}
+
+		return _iter++;
+	}
 	UserID CommunicationModule::Listen(PortNumber port)
 	{
-		if (_connectionData.find(ListenSocketID) == _connectionData.end())
+		if (_listenSocketID == ListenNotEstablished)
 		{
 			SOCKET listenSocket = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -144,18 +239,25 @@ namespace SSB
 				}
 			}
 
-			_connectionData.insert(std::make_pair(ListenSocketID, Client(listenSocket, ListenSocketID)));
+			_listenSocketID = listenSocket;
+			//Connect(listenSocket);
+
+			//u_long mode = FALSE;
+			//ioctlsocket(listenSocket, FIONBIO, &mode);
 		}
 
-		SOCKET listenSocket = _connectionData.find(ListenSocketID)->second.GetSocket();
+		//SOCKET listenSocket = (*_connectionData.find(_listenSocketID)->second).GetSocket();
 		SOCKADDR_IN clientAddr;
 		int length = sizeof(clientAddr);
-		SOCKET clientSocket = accept(listenSocket, (sockaddr*)&clientAddr, &length);
+		SOCKET clientSocket = accept(_listenSocketID, (sockaddr*)&clientAddr, &length);
+		if (clientSocket == SOCKET_ERROR)
+		{
+			return WSAGetLastError();
+		}
 
-		int clientID = _connectionData.size();
-		_connectionData.insert(std::make_pair(clientID, Client(clientSocket, clientID)));
+		Connect(clientSocket);
 
-		return clientID;
+		return clientSocket;
 	}
 	void CommunicationModule::Connect(IPAddress address, PortNumber port)
 	{
@@ -168,10 +270,11 @@ namespace SSB
 		{
 			int ret = connect(clientSocket, (sockaddr*)&sa, sizeof(sa));
 		}
+		Connect(clientSocket);
 	}
 	void CommunicationModule::Close(UserID id)
 	{
-		_connectionData.erase(id);
+		DIsconnect(id);
 	}
 	bool CommunicationModule::IsClosed(UserID id)
 	{

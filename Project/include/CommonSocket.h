@@ -8,9 +8,16 @@
 #include <WinSock2.h>
 #include <map>
 #include <string>
+#include <memory>
 
 namespace SSB
 {
+	class CommunicationTypeAction
+	{
+	public:
+		virtual void operator()() = 0;
+	};
+
 	struct HeaderStructure
 	{
 		ProtocolType Type;
@@ -18,24 +25,11 @@ namespace SSB
 	};
 
 #define HeaderSize sizeof(HeaderStructure)
-
-	class CommunicationTypeAction
-	{
-	public:
-		virtual void operator()() = 0;
-	};
-
-	//class ConsoleDefaultAction : public CommunicationTypeAction
-	//{
-	//public:
-	//	void operator()() override;
-	//};
-
 #define PacketSize 256
 
 	struct PacketContentStruct
 	{
-		Byte Head[PacketSize - HeaderSize];
+		Byte Stream[PacketSize - HeaderSize];
 		int Size;
 	};
 
@@ -48,13 +42,12 @@ namespace SSB
 	class Packet
 	{
 	private:
-		HeaderStructure _header;
 		Byte _data[PacketSize];
 		int _length;
 
 	public:
 		Packet() = default;
-		Packet(ProtocolType type, PacketContent* content);
+		Packet(ProtocolType type, PacketContent& content);
 		Packet(Byte* serialData, int packetLength);
 
 	public:
@@ -65,18 +58,12 @@ namespace SSB
 	class Decoder
 	{
 	public:
-		virtual CommunicationTypeAction& Decode(Packet packet) = 0;
+		virtual CommunicationTypeAction* Decode(Packet packet) = 0;
 	};
-
-	//class ConsoleDefaultDecoder : public Decoder
-	//{
-	//public:
-	//	CommunicationTypeAction& Decode(Packet packet) override;
-	//};
 
 	typedef SOCKET UserID;
 
-	class Client
+	class Session
 	{
 	private:
 		SOCKET _socket;
@@ -84,8 +71,8 @@ namespace SSB
 		bool _disconnect = false;;
 
 	public:
-		Client(SOCKET socket, UserID id);
-		~Client();
+		Session(SOCKET socket, UserID id);
+		~Session();
 
 	public:
 		bool Read(Packet& packet);
@@ -98,33 +85,43 @@ namespace SSB
 	typedef std::string IPAddress;
 #define TestPort 10000
 #define TestIP "127.0.0.1"
-#define ListenNotEstablished -1
+#define NewConnectionNotExist -1
 
 	class CommunicationModule
 	{
 	private:
-		UserID _listenSocketID = ListenNotEstablished;
 		WSADATA wsa;
-		std::map<UserID, Client*> _connectionData;
+		std::map<UserID, std::unique_ptr<Session>> _connectionData;
 		bool _dataUpdated = true;;
-		std::map<UserID, Client*>::iterator _iter;
+		std::map<UserID, std::unique_ptr<Session>>::iterator _iter;
 
 	public:
 		CommunicationModule();
 		~CommunicationModule();
 
 	protected:
+		SOCKET EstablishListen(PortNumber port = TestPort);
 		void DIsconnect(UserID id);
 		void Connect(SOCKET socket);
-		virtual std::map<UserID, Client*>::iterator GetNext();
+
+	protected:
+		virtual std::map<UserID, std::unique_ptr<Session>>::iterator GetNext();
 
 	public:
 		bool Write(UserID id, Packet packet);
 		bool Read(UserID id, Packet& packet);
 		bool Read(UserID* id, Packet& packet);
-		UserID Listen(PortNumber port = TestPort);
-		void Connect(IPAddress address = TestIP, PortNumber port = TestPort);
+		UserID Connect(IPAddress address = TestIP, PortNumber port = TestPort);
 		void Close(UserID id);
 		bool IsClosed(UserID id);
+	};
+
+	class ListenSocketInterface
+	{
+	protected:
+		virtual void SetListenEstablish() = 0;
+
+	public:
+		virtual UserID Listen() = 0;
 	};
 }

@@ -214,6 +214,8 @@
 
 #include "CommonSocket.h"
 #include <iostream>
+#include <queue>
+#include <thread>
 
 #pragma comment(lib, "Common.lib")
 
@@ -243,18 +245,80 @@ namespace SSB
 	class ConsoleDefaultDecoder : public Decoder
 	{
 	public:
-		CommunicationTypeAction& Decode(Packet packet) override;
+		CommunicationTypeAction* Decode(Packet packet) override;
 	};
-	CommunicationTypeAction& ConsoleDefaultDecoder::Decode(Packet packet)
+	CommunicationTypeAction* ConsoleDefaultDecoder::Decode(Packet packet)
 	{
 		static ConsoleDefaultAction action;
-		return action;
+		action.SetPacket(packet);
+		return &action;
+	}
+
+	class ConsoleDefaultCommunicationModule : public CommunicationModule, public ListenSocketInterface
+	{
+	private:
+		std::queue<SOCKET> waitForRegister;
+		bool _listenSocketEstablished;
+		SOCKET _listenSocket;
+		std::thread _listenThread;
+
+	private:
+		void RunListenSocket(SOCKET listenSocket);
+		bool IsListenEstablished();
+
+	public:
+		UserID Listen() override;
+		void SetListenEstablish() override;
+	};
+	void ConsoleDefaultCommunicationModule::RunListenSocket(SOCKET listenSocket)
+	{
+		while (1)
+		{
+			SOCKADDR_IN clientAddr;
+			int length = sizeof(clientAddr);
+			SOCKET clientSocket = accept(listenSocket, (sockaddr*)&clientAddr, &length);
+			if (clientSocket == SOCKET_ERROR)
+			{
+				int error = WSAGetLastError();
+				continue;
+			}
+
+			waitForRegister.push(clientSocket);
+		}
+	}
+	bool ConsoleDefaultCommunicationModule::IsListenEstablished()
+	{
+		return _listenSocketEstablished;
+	}
+	UserID ConsoleDefaultCommunicationModule::Listen()
+	{
+		static SOCKET listenSocket;
+		if (!IsListenEstablished())
+		{
+			SetListenEstablish();
+			listenSocket = EstablishListen();
+
+			static std::thread th(&ConsoleDefaultCommunicationModule::RunListenSocket, this, listenSocket);
+		}
+
+		SOCKET socketID = NewConnectionNotExist;
+		if (!waitForRegister.empty())
+		{
+			socketID = waitForRegister.front();
+			Connect(socketID);
+			waitForRegister.pop();
+		}
+		return socketID;
+	}
+	void ConsoleDefaultCommunicationModule::SetListenEstablish()
+	{
+		_listenSocketEstablished = true;
 	}
 }
 
 int main()
 {
-	SSB::CommunicationModule cm;
+	SSB::ConsoleDefaultCommunicationModule cm;
 	SSB::ConsoleDefaultDecoder decoder;
 	while (1)
 	{
@@ -270,8 +334,8 @@ int main()
 		SSB::Packet packet;
 		if (cm.Read(&id, packet))
 		{
-			SSB::CommunicationTypeAction& action = decoder.Decode(packet);
-			action();
+			SSB::CommunicationTypeAction* action = decoder.Decode(packet);
+			(*action)();
 		}
 	}
 }

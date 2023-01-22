@@ -1,15 +1,10 @@
 #pragma once
 
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-
-#pragma comment (lib, "ws2_32.lib")
-
 #include <WinSock2.h>
-#include <Windows.h>
 #include "Common.h"
-#include <vector>
+#include "CommonSocket.h"
 
-#define CUSTOM_NETWORK_MESSAGE WM_USER+100
+#pragma comment(lib, "CommunicationModule.lib")
 
 namespace SSB
 {
@@ -33,7 +28,8 @@ namespace SSB
 		HWND _listBox;
 
 	public:
-		SOCKET _clientSocket;
+		CommunicationModule _cm;
+		UserID _serverID;
 		HANDLE _threadHandle;
 
 	public:
@@ -60,3 +56,4 @@ namespace SSB
 		UINT GetClientHeight();
 	};
 }
+

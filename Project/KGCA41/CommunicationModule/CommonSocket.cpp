@@ -98,7 +98,8 @@ namespace SSB
 			int sendByte = send(_socket, buf + sendCount, packet.GetLength() - sendCount, 0);
 			if (sendByte == SOCKET_ERROR)
 			{
-				if (WSAGetLastError() != WSAEWOULDBLOCK)
+				int error = WSAGetLastError();
+				if (error != WSAEWOULDBLOCK)
 				{
 					_disconnect = true;
 					return false;

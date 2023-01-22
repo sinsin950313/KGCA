@@ -158,12 +158,7 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
     <ClInclude Include="ClassPool.h" />
     <ClInclude Include="Common.h" />
     <ClInclude Include="CommonPath.h" />
-    <ClInclude Include="CommonSocket.h" />
-    <ClInclude Include="NetworkProtocol.h" />
     <ClInclude Include="ObjectPool.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="CommonSocket.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

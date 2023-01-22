@@ -1,23 +1,111 @@
+#include <WinSock2.h>
 #include "ClientWindow.h"
 #include <cassert>
+
+const SSB::ProtocolType DefaultMsg = 1000;
+
+namespace SSB
+{
+	class DefaultAction : public CommunicationTypeAction
+	{
+	private:
+		char* _target;
+		char* _msg;
+		int _length;
+
+	public:
+		void SetMessage(char* msg, int length);
+		void SetData(char* msg);
+
+	public:
+		void operator()() override;
+	};
+	void DefaultAction::SetMessage(char* msg, int length)
+	{
+		_msg = msg;
+		_length = length;
+	}
+	void DefaultAction::SetData(char* msg)
+	{
+		_target = msg;
+	}
+	void DefaultAction::operator()()
+	{
+		memcpy(_target, _msg, _length);
+	}
+
+	class DefaultDecoder : public Decoder
+	{
+	public:
+		CommunicationTypeAction* Decode(Packet packet) override;
+	};
+	CommunicationTypeAction* DefaultDecoder::Decode(Packet packet)
+	{
+		int totalLength = packet.GetLength();
+		char* str = (char*)packet.Serialize();
+		HeaderStructure header;
+		memcpy(&header, str, HeaderSize);
+
+		CommunicationTypeAction* ret = nullptr;
+
+		ProtocolType protocol = header.Type;
+		switch (protocol)
+		{
+		case DefaultMsg:
+		{
+			static DefaultAction action;
+			action.SetMessage(str + HeaderSize, header.ContentLength);
+			ret = (CommunicationTypeAction*)&action;
+			break;
+		}
+		}
+
+		return ret;
+	}
+
+	class DefaultPacketContent : public PacketContent
+	{
+	private:
+		char _str[256];
+		int _length;
+
+	public:
+		void SetMessage(char* str, int length);
+
+	public:
+		PacketContentStruct Serialize() override;
+	};
+	void DefaultPacketContent::SetMessage(char* str, int length)
+	{
+		_length = length;
+		memcpy(_str, str, length);
+	}
+	PacketContentStruct DefaultPacketContent::Serialize()
+	{
+		PacketContentStruct ret;
+		ret.Size = _length;
+		memcpy(&ret.Stream, _str, _length);
+		return ret;
+	}
+}
 
 DWORD WINAPI ClientThread(LPVOID lpThreadParameter)
 {
 	SSB::ClientWindow* window = (SSB::ClientWindow*)lpThreadParameter;
 
-	//while (1)
+	while (1)
 	{
-		char recvMsg[256]{ 0, };
-		int recvByte = recv(window->_clientSocket, recvMsg, 256, 0);
-		if (recvByte == SOCKET_ERROR)
+		SSB::Packet packet;
+		if (window->_cm.Read(window->_serverID, packet))
 		{
-			if (WSAGetLastError() != WSAEWOULDBLOCK)
-			{
-				PostQuitMessage(1);
-				return 1;
-			}
+			SSB::DefaultDecoder decoder;
+			SSB::DefaultAction* action = (SSB::DefaultAction*)decoder.Decode(packet);
+
+			char recvMsg[256]{ 0, };
+			action->SetData(recvMsg);
+			(*action)();
+			SendMessageA(window->_listBox, LB_ADDSTRING, 0, (LPARAM)recvMsg);
 		}
-		SendMessageA(window->_listBox, LB_ADDSTRING, 0, (LPARAM)recvMsg);
 	}
 }
 
@@ -79,37 +167,10 @@ namespace SSB
 			return 0;
 		}
 
-		_clientSocket = socket(AF_INET, SOCK_STREAM, 0);
-		{
-			int ret = WSAAsyncSelect(_clientSocket, _hWnd, CUSTOM_NETWORK_MESSAGE, FD_READ);
-			if (ret == SOCKET_ERROR)
-			{
-				return false;
-			}
-		}
+		_serverID = _cm.Connect();
 
-		SOCKADDR_IN sa;
-		sa.sin_family = AF_INET;
-		sa.sin_addr.s_addr = inet_addr("127.0.0.1");
-		sa.sin_port = htons(10000);
-		{
-			int ret = connect(_clientSocket, (sockaddr*)&sa, sizeof(sa));
-			//if (ret == SOCKET_ERROR)
-			//{
-			//	TCHAR* buf = 0;
-			//	int error = WSAGetLastError();
-			//	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, 0, error, 0, (TCHAR*)&buf, 0, 0);
-			//	OutputDebugString(buf);
-			//	WSACleanup();
-			//	return 1;
-			//}
-		}
-
-		//DWORD threadID;
-		//_threadHandle = CreateThread(0, 0, ClientThread, (LPVOID)this, CREATE_SUSPENDED, &threadID);
-
-		//u_long mode = TRUE;
-		//ioctlsocket(clientSocket, FIONBIO, &mode);
+		DWORD threadID;
+		_threadHandle = CreateThread(0, 0, ClientThread, (LPVOID)this, CREATE_SUSPENDED, &threadID);
 
 		return true;
 	}
@@ -126,8 +187,6 @@ namespace SSB
 
 	bool ClientWindow::Release()
 	{
-		closesocket(_clientSocket);
-		WSACleanup();
 		return true;
 	}
 
@@ -165,14 +224,6 @@ namespace SSB
 	{
 		switch (message)
 		{
-		case CUSTOM_NETWORK_MESSAGE:
-		{
-			if (FD_READ)
-			{
-				ClientThread(this);
-			}
-			break;
-		}
 		case WM_CREATE:
 		{
 			_editBox = CreateWindow(L"edit", NULL, WS_CHILD | WS_VISIBLE | WS_BORDER, 500, 10, 200, 25, hWnd, (HMENU)1000, _hInstance, NULL);
@@ -188,7 +239,7 @@ namespace SSB
 			{
 			case 1001:
 			{
-				char buffer[256]{ 0, };
+				char buffer[200]{ 0, };
 				int ret = GetWindowTextA(_editBox, buffer, 256);
 				if (ret == 0)
 				{
@@ -196,7 +247,10 @@ namespace SSB
 					FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER, nullptr, GetLastError(), 0, (TCHAR*)&message, 0, nullptr);
 					OutputDebugString(message);
 				}
-				int size = send(_clientSocket, buffer, 256, 0);
+
+				SSB::DefaultPacketContent content;
+				content.SetMessage(buffer, 200);
+				_cm.Write(_serverID, Packet(DefaultMsg, content));
 			}
 			}
 			break;
@@ -236,3 +290,4 @@ namespace SSB
 		return S_OK;
 	}
 }
+

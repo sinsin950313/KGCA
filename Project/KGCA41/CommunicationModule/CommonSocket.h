@@ -91,8 +91,10 @@ namespace SSB
 	{
 	private:
 		WSADATA wsa;
-		std::map<UserID, std::unique_ptr<Session>> _connectionData;
 		bool _dataUpdated = true;;
+
+	protected:
+		std::map<UserID, std::unique_ptr<Session>> _connectionData;
 		std::map<UserID, std::unique_ptr<Session>>::iterator _iter;
 
 	public:
@@ -118,9 +120,6 @@ namespace SSB
 
 	class ListenSocketInterface
 	{
-	protected:
-		virtual void SetListenEstablish() = 0;
-
 	public:
 		virtual UserID Listen() = 0;
 	};

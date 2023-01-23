@@ -91,11 +91,11 @@ namespace SSB
 	{
 	private:
 		WSADATA wsa;
-		bool _dataUpdated = true;;
 
 	protected:
 		std::map<UserID, std::unique_ptr<Session>> _connectionData;
 		std::map<UserID, std::unique_ptr<Session>>::iterator _iter;
+		bool _dataUpdated = true;;
 
 	public:
 		CommunicationModule();
@@ -103,19 +103,21 @@ namespace SSB
 
 	protected:
 		SOCKET EstablishListen(PortNumber port = TestPort);
-		void DIsconnect(UserID id);
 		void Connect(SOCKET socket);
 
 	protected:
 		virtual std::map<UserID, std::unique_ptr<Session>>::iterator GetNext();
+		virtual void DIsconnect(UserID id);
 
 	public:
 		bool Write(UserID id, Packet packet);
 		bool Read(UserID id, Packet& packet);
 		bool Read(UserID* id, Packet& packet);
-		UserID Connect(IPAddress address = TestIP, PortNumber port = TestPort);
 		void Close(UserID id);
 		bool IsClosed(UserID id);
+
+	public:
+		virtual UserID Connect(IPAddress address = TestIP, PortNumber port = TestPort);
 	};
 
 	class ListenSocketInterface

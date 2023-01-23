@@ -3,6 +3,7 @@
 #pragma comment (lib, "CommunicationModule.lib")
 
 #include "SelectBaseCommunicationModule.h"
+#include "EventSelectBaseCommunicationModule.h"
 #include "ChattingServer.h"
 #include <map>
 #include <queue>
@@ -10,7 +11,8 @@
 
 int main()
 {
-	SSB::ListenWithSelectBaseCommunicationModule cm;
+	//SSB::ListenWithSelectBaseCommunicationModule cm;
+	SSB::ListenWithEventSelectBaseCommunicationModule cm;
 	SSB::ChattingServerDecoder decoder;
 
 	std::map<SSB::UserID, std::string> userList;

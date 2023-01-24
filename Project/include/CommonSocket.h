@@ -75,10 +75,12 @@ namespace SSB
 		~Session();
 
 	public:
-		bool Read(Packet& packet);
-		bool Write(Packet& packet);
 		SOCKET GetSocket();
 		bool IsDisconnect();
+
+	public:
+		virtual bool Read(Packet& packet);
+		virtual bool Write(Packet& packet);
 	};
 
 	typedef int PortNumber;
@@ -103,10 +105,10 @@ namespace SSB
 
 	protected:
 		SOCKET EstablishListen(PortNumber port = TestPort);
-		void Connect(SOCKET socket);
 
 	protected:
 		virtual std::map<UserID, std::unique_ptr<Session>>::iterator GetNext();
+		virtual void Connect(SOCKET socket);
 		virtual void DIsconnect(UserID id);
 
 	public:

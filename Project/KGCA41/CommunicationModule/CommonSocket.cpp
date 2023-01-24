@@ -254,7 +254,7 @@ namespace SSB
 	}
 	UserID CommunicationModule::Connect(IPAddress address, PortNumber port)
 	{
-		static SOCKET SessionSocket = socket(AF_INET, SOCK_STREAM, 0);
+		SOCKET SessionSocket = socket(AF_INET, SOCK_STREAM, 0);
 
 		SOCKADDR_IN sa;
 		sa.sin_family = AF_INET;

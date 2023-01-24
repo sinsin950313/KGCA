@@ -159,12 +159,14 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
     <ClCompile Include="AsyncSelectBaseCommunicationModule.cpp" />
     <ClCompile Include="CommonSocket.cpp" />
     <ClCompile Include="EventSelectBaseCommunicationModule.cpp" />
+    <ClCompile Include="IOCPBaseCommunicationModule.cpp" />
     <ClCompile Include="SelectBaseCommunicationModule.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AsyncSelectBaseCommunicationModule.h" />
     <ClInclude Include="CommonSocket.h" />
     <ClInclude Include="EventSelectBaseCommunicationModule.h" />
+    <ClInclude Include="IOCPBaseCommunicationModule.h" />
     <ClInclude Include="NetworkProtocol.h" />
     <ClInclude Include="SelectBaseCommunicationModule.h" />
   </ItemGroup>

@@ -6,21 +6,10 @@
 #include <vector>
 #include <io.h>
 #include <tchar.h>
+#include "Common.h"
 
 namespace SSB
 {
-	static std::wstring mtw(std::string str)
-	{
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-		return conv.from_bytes(str);
-	}
-
-	static std::string wtm(std::wstring str)
-	{
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-		return conv.to_bytes(str);
-	}
-
 	static std::vector<std::wstring> GetFilesUnderDirectory(std::wstring path)
 	{
 		std::wstring dirPath = path + L"*.*";

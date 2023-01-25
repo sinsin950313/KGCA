@@ -1,9 +1,10 @@
 #pragma once
 
+#include "Common.h"
+
 namespace SSB
 {
 	typedef unsigned int ProtocolType;
-	typedef char Byte;
 
 #define ServerEnter 1000
 #define MessageTransfer 1001

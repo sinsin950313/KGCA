@@ -24,6 +24,12 @@
     <ClInclude Include="DistanceCalculator.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="FloydPathFinder.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="NavigationResource.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AStarPathFinder.cpp">
@@ -33,6 +39,12 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DistanceCalculator.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="FloydPathFinder.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="NavigationResource.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

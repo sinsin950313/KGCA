@@ -11,38 +11,52 @@ namespace SSB
 		typedef unsigned long long AStarValueUnit;
 		static const AStarValueUnit AStarValueUnitMaxValue;
 
-		class AStarNode
+		struct AStarNode
+		{
+			NavigationNode Node;
+			AStarValueUnit GValue = AStarValueUnitMaxValue;
+			AStarValueUnit HValue = AStarValueUnitMaxValue;
+			NavigationNode Parent;
+		};
+
+		class AStarNodeClass
 		{
 		private:
-			DistanceCostCalculator* _calculator;
-			NavigationNode _node;
-			AStarValueUnit _gValue = AStarValueUnitMaxValue;
-			AStarValueUnit _hValue = AStarValueUnitMaxValue;
-			NavigationNode _parent;
+			AStarNode _node;
 
 		public:
-			void Link(AStarNode parent);
-			AStarValueUnit GetF();
-			AStarValueUnit GetG();
-			AStarValueUnit GetH();
-			NavigationNode GetParent();
+			void Link(DistanceCostCalculator& calculator, AStarNode parent);
+
+		public:
+			AStarNode Get();
 		};
 
 		class AStarNodeSet
 		{
+		private:
+			AStarNode* _array;
+			int _count;
+
 		public:
-			void Add(AStarNode node);
-			void Remove(AStarNode node);
-			AStarNode Get();
-			bool Contains(AStarNode node);
+			AStarNodeSet(int length);
+			~AStarNodeSet();
+
+		public:
+			void Add(NavigationNode node);
+			void Remove(NavigationNode node);
+			bool Contains(NavigationNode node);
+			AStarNode Top();
+			void Clear();
+			bool Empty();
 		};
 
 	private:
+		EuclidCalculator _calculator;
 		AStarNodeSet _openSet;
-		std::set<NavigationNode> _closeSet;
+		AStarNodeSet _closeSet;
 
 	public:
-		AStarPathFinder(NavigationNode leftTop, NavigationNode rightBottom);
+		AStarPathFinder(NavigationGraph* graph);
 
 	public:
 		std::vector<NavigationNode> Find(NavigationNode from, NavigationNode to) override;

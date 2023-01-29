@@ -136,4 +136,14 @@ namespace SSB
 	{
 		return GetArrayWidth() * GetArrayHeight();
 	}
+	NavigationNode ArrayBaseNavigationGraph::GetNode(int index)
+	{
+		return _grid[index];
+	}
+	int ArrayBaseNavigationGraph::GetIndex(NavigationNode node)
+	{
+		int indexX = GetIndexX(node);
+		int indexY = GetIndexY(node);
+		return indexX * GetArrayWidth() + indexY;
+	}
 }

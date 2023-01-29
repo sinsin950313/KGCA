@@ -1,6 +1,6 @@
 #pragma once
 
-#include "PathFinder.h"
+#include "NavigationResource.h"
 
 namespace SSB
 {

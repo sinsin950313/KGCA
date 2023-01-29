@@ -1,7 +1,6 @@
 #pragma once
 
 #include "PathFinder.h"
-#include "DistanceCalculator.h"
 
 namespace SSB
 {
@@ -62,7 +61,6 @@ namespace SSB
 		};
 
 	private:
-		EuclidCalculator _calculator;
 		AStarNodeSet _openSet;
 		AStarNodeSet _closeSet;
 

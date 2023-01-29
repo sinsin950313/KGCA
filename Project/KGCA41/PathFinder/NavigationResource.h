@@ -55,6 +55,8 @@ namespace SSB
 		virtual std::vector<NavigationNode> GetConnectedNode(NavigationNode node) = 0;
 		virtual bool IsAble(NavigationNode node) = 0;
 		virtual int GetSize() = 0;
+		virtual NavigationNode GetNode(int index) = 0;
+		virtual int GetIndex(NavigationNode node) = 0;
 	};
 
 	//	(0, 0) (0, 1) (0, 2) (0, 3) (0, 4) (0, 5) (0, 6)
@@ -82,6 +84,8 @@ namespace SSB
 		std::vector<NavigationNode> GetConnectedNode(NavigationNode node) override;
 		bool IsAble(NavigationNode node) override;
 		int GetSize() override;
+		NavigationNode GetNode(int index) override;
+		int GetIndex(NavigationNode node) override;
 	};
 
 	class ListBaseNavigationGraph : public NavigationGraph

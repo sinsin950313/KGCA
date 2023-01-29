@@ -1,6 +1,7 @@
 #pragma once
 
 #include "NavigationResource.h"
+#include "DistanceCalculator.h"
 #include <vector>
 
 namespace SSB
@@ -9,6 +10,7 @@ namespace SSB
 	{
 	protected:
 		NavigationGraph* _graph;
+		EuclidCalculator _calculator;
 
 	public:
 		PathFinder(NavigationGraph* graph);

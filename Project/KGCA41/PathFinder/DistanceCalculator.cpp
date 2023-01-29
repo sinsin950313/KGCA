@@ -6,6 +6,6 @@ namespace SSB
 	{
 		int width = to.X - from.X;
 		int height = to.Y - from.Y;
-		return sqrt(width * width + height * height);
+		return sqrt(width * width + height * height) * 10;
 	}
 }

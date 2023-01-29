@@ -37,8 +37,8 @@ namespace SSB
 	}
 	NavigationGraph::NavigationGraph(NavigationNode leftTop, NavigationNode rightBottom) : _zero(leftTop)
 	{
-		_width = abs(rightBottom.X - leftTop.X);
-		_height = abs(rightBottom.Y - leftTop.Y);
+		_width = abs(rightBottom.Y - leftTop.Y);
+		_height = abs(rightBottom.X - leftTop.X);
 	}
 	void NavigationGraph::AddDisableNode(NavigationNode node)
 	{
@@ -66,12 +66,12 @@ namespace SSB
 	}
 	ArrayBaseNavigationGraph::ArrayBaseNavigationGraph(NavigationNode leftTop, NavigationNode rightBottom) : NavigationGraph(leftTop, rightBottom)
 	{
-		_grid = (NavigationNode**)malloc(sizeof(NavigationNode) * GetArrayWidth() * GetArrayHeight());
-		for (int row = 0; row <= GetArrayHeight(); ++row)
+		_grid = (NavigationNode*)malloc(sizeof(NavigationNode) * GetArrayWidth() * GetArrayHeight());
+		for (int row = 0; row < GetArrayHeight(); ++row)
 		{
-			for (int col = 0; col <= GetArrayWidth(); ++col)
+			for (int col = 0; col < GetArrayWidth(); ++col)
 			{
-				_grid[row][col] = {GetZero().X + row, GetZero().Y + col};
+				_grid[row * GetArrayWidth() + col] = {GetZero().X + row, GetZero().Y + col};
 			}
 		}
 	}
@@ -97,9 +97,9 @@ namespace SSB
 	}
 	bool ArrayBaseNavigationGraph::IsIn(NavigationNode node)
 	{
-		int x = node.X - GetZero().X;
-		int y = node.Y - GetZero().Y;
-		if (x < 0 || GetWidth() < x || y < 0 || GetHeight() < y)
+		int col = GetIndexY(node);
+		int row = GetIndexX(node);
+		if (row < 0 || GetArrayHeight() < row || col < 0 || GetArrayWidth() < col)
 		{
 			return false;
 		}
@@ -116,13 +116,24 @@ namespace SSB
 			{
 				int indexX = GetIndexX(node) + dx[i];
 				int indexY = GetIndexY(node) + dy[i];
-				NavigationNode connected = _grid[indexX][indexY];
-				if (IsIn(connected) && !IsDisable(connected))
+				if (!(indexX < 0 || GetHeight() < indexX || indexY < 0 || GetWidth() < indexY))
 				{
-					ret.push_back(connected);
+					NavigationNode connected = _grid[indexX * GetArrayWidth() + indexY];
+					if (IsIn(connected) && !IsDisable(connected))
+					{
+						ret.push_back(connected);
+					}
 				}
 			}
 		}
 		return ret;
+	}
+	bool ArrayBaseNavigationGraph::IsAble(NavigationNode node)
+	{
+		return IsIn(node) && !IsDisable(node);
+	}
+	int ArrayBaseNavigationGraph::GetSize()
+	{
+		return GetArrayWidth() * GetArrayHeight();
 	}
 }

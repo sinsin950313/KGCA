@@ -25,16 +25,26 @@ namespace SSB
 			AStarNode _node;
 
 		public:
-			void Link(DistanceCostCalculator& calculator, AStarNode parent);
+			AStarNodeClass(NavigationNode node);
+			AStarNodeClass(AStarNode node);
 
 		public:
+			void Link(DistanceCostCalculator& calculator, AStarNode parent, AStarNode destination);
 			AStarNode Get();
+			AStarValueUnit FValue();
+
+		public:
+			bool operator!=(const AStarNodeClass& node) const;
+			bool operator==(const AStarNodeClass& node) const;
+			operator NavigationNode();
+			operator AStarPathFinder::AStarNode();
 		};
 
 		class AStarNodeSet
 		{
 		private:
 			AStarNode* _array;
+			AStarNode* _tmp;
 			int _count;
 
 		public:
@@ -42,10 +52,11 @@ namespace SSB
 			~AStarNodeSet();
 
 		public:
-			void Add(NavigationNode node);
-			void Remove(NavigationNode node);
-			bool Contains(NavigationNode node);
-			AStarNode Top();
+			void Add(AStarNode node);
+			void Remove(AStarNode node);
+			bool Contains(AStarNode node);
+			AStarNode Get();
+			AStarNode Find(AStarNode node);
 			void Clear();
 			bool Empty();
 		};

@@ -2,7 +2,7 @@
 
 namespace SSB
 {
-	PathFinder::PathFinder(NavigationGraph* graph) : _graph()
+	PathFinder::PathFinder(NavigationGraph* graph) : _graph(graph)
 	{
 	}
 	PathFinder::~PathFinder()

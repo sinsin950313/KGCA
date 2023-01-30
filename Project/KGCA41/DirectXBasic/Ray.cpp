@@ -1,4 +1,5 @@
 #include "Ray.h"
+#include <limits>
 
 namespace SSB
 {
@@ -447,4 +448,76 @@ namespace SSB
 	//TSelect::~TSelect(void)
 	//{
 	//}
+
+	const float Ray::EndlessLength = std::numeric_limits<float>::max();
+
+	Ray::Ray(Vector3 origin, Vector3 dir) : _origin(origin), _direction(dir)
+	{
+	}
+	Ray::Ray(Vector3 origin, Vector3 dir, float length) : _origin(origin), _direction(dir), _length(length)
+	{
+	}
+	bool Ray::IsIntersect(Vector3 v1, Vector3 v2, Vector3 v3)
+	{
+		Vector3 e1 = v2 - v1;
+		Vector3 e2 = v3 - v1;
+
+		Vector3 pVec = _direction.Cross(e2);
+		float det = e1.Dot(pVec);
+
+		Vector3 tVec;
+		if (det > 0)
+		{
+			tVec = _origin - v1;
+		}
+		else
+		{
+			tVec = v1 - _origin;
+			det = -det;
+		}
+
+		if (det < 0.0001f)
+			return false;
+
+		float u = tVec.Dot(pVec);
+		if (u < 0.0f)
+			return false;
+
+		Vector3 qVec = tVec.Cross(e1);
+
+		float v = _direction.Dot(qVec);
+		if (v < 0.0f)
+			return false;
+
+		if (u + v > det)
+			return false;
+
+		return true;
+	}
+	Vector3 Ray::GetIntersectionPoint(Vector3 v1, Vector3 v2, Vector3 v3)
+	{
+		Vector3 e1 = v2 - v1;
+		Vector3 e2 = v3 - v1;
+
+		Vector3 pVec = _direction.Cross(e2);
+		float det = e1.Dot(pVec);
+
+		Vector3 tVec;
+		if (det > 0)
+		{
+			tVec = _origin - v1;
+		}
+		else
+		{
+			tVec = v1 - _origin;
+			det = -det;
+		}
+
+		Vector3 qVec = tVec.Cross(e1);
+
+		float t = e2.Dot(qVec);
+		Vector3 ret = _origin + _direction * t;
+
+		return ret;
+	}
 }

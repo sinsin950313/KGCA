@@ -1,6 +1,7 @@
 #pragma once
 
 #define _USE_MATH_DEFINES 
+#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
 
 #include <Unknwnbase.h>
 #include <math.h>
@@ -50,14 +51,20 @@ namespace SSB
 
 	static std::wstring mtw(std::string str)
 	{
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-		return conv.from_bytes(str);
+		//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+		//return conv.from_bytes(str);
+		std::wstring ret;
+		ret.assign(str.begin(), str.end());
+		return ret;
 	}
 
 	static std::string wtm(std::wstring str)
 	{
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-		return conv.to_bytes(str);
+		//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+		//return conv.to_bytes(str);
+		std::string ret;
+		ret.assign(str.begin(), str.end());
+		return ret;
 	}
 
 };

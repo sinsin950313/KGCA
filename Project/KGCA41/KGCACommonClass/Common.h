@@ -1,13 +1,11 @@
 #pragma once
 
 #define _USE_MATH_DEFINES 
-#define _SILENCE_ALL_CXX17_DEPRECATION_WARNINGS
 
 #include <Unknwnbase.h>
 #include <math.h>
 #include <cstdlib>
 #include <string>
-#include <codecvt>
 
 namespace SSB
 {
@@ -67,4 +65,10 @@ namespace SSB
 		return ret;
 	}
 
+	static const float FDelta = 0.001f;
+
+	bool ZeroFloat(float val)
+	{
+		return val < FDelta;
+	}
 };

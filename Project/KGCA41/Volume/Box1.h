@@ -26,13 +26,4 @@ namespace SSB
 		operator OBBData() override;
 		operator SphereData() override;
 	};
-
-	class Frustum1Volume : public Volume1
-	{
-	public:
-		operator BoxData();
-		operator AABBData() override;
-		operator OBBData() override;
-		operator SphereData() override;
-	};
 }

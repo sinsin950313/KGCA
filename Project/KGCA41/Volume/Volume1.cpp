@@ -1,5 +1,6 @@
 #include "Volume1.h"
 #include "HCCalculator.h"
+#include "Common.h"
 
 namespace SSB
 {
@@ -40,7 +41,7 @@ namespace SSB
 		Vector3 up{ 0, 1, 0 };
 		{
 			Vector3 tmp = direction;
-			if (abs(tmp.GetY()) == up.GetY())
+			if (ZeroFloat(abs(tmp.GetY()) - up.GetY()))
 			{
 				up = { -1, 0, 0 };
 			}

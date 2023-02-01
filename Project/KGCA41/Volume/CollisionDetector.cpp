@@ -1,5 +1,4 @@
-#include "Ray.h"
-#include <limits>
+#include "CollisionDetector.h"
 
 namespace SSB
 {
@@ -448,15 +447,8 @@ namespace SSB
 	//TSelect::~TSelect(void)
 	//{
 	//}
-
 	const float Ray::EndlessLength = std::numeric_limits<float>::max();
 
-	Ray::Ray(Vector3 origin, Vector3 dir) : _origin(origin), _direction(dir)
-	{
-	}
-	Ray::Ray(Vector3 origin, Vector3 dir, float length) : _origin(origin), _direction(dir), _length(length)
-	{
-	}
 	bool Ray::IsIntersect(Vector3 v1, Vector3 v2, Vector3 v3)
 	{
 		Vector3 e1 = v2 - v1;
@@ -520,4 +512,5 @@ namespace SSB
 
 		return ret;
 	}
+
 }

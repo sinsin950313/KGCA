@@ -22,7 +22,7 @@
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Box1.cpp" />
     <ClCompile Include="Circle.cpp" />
-    <ClCompile Include="CollisionDetector.cpp" />
+    <ClCompile Include="CollisionCalculator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Line1.cpp" />
     <ClCompile Include="Rectangle.cpp" />
@@ -34,7 +34,7 @@
     <ClInclude Include="Box.h" />
     <ClInclude Include="Box1.h" />
     <ClInclude Include="Circle.h" />
-    <ClInclude Include="CollisionDetector.h" />
+    <ClInclude Include="CollisionCalculator.h" />
     <ClInclude Include="Line1.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Sphere1.h" />

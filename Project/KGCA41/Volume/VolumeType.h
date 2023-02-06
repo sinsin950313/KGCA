@@ -4,7 +4,7 @@
 
 namespace SSB
 {
-	// World Data
+	 //World Data
 
 	struct VolumeData
 	{
@@ -71,12 +71,12 @@ namespace SSB
 		PlaneData Plane[6];
 	};
 
-	// Same as Box
-	//struct FrustumData : public VolumeData
-	//{
-	//	Vector3 Vertices[6];
-	//	PlaneData Plane[6];
-	//};
+	 //Same as Box
+	struct FrustumData : public VolumeData
+	{
+		Vector3 Vertices[6];
+		PlaneData Plane[6];
+	};
 
 	struct SphereData : public VolumeData
 	{

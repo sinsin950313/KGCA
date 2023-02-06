@@ -61,8 +61,22 @@ namespace SSB
 			(std::numeric_limits<float>::max)()
 		};
 	}
-	Ray1Volume::Ray1Volume(Vector3 origin, Vector3 dir) : Line1Volume(origin, dir)
+	Ray1Volume::Ray1Volume(Vector3 origin, Vector3 dir)
 	{
+		SetPosition(origin);
+		LookAt(dir);
+	}
+	Vector3 Ray1Volume::GetDirection(Matrix33 rotation)
+	{
+		return rotation.GetRow(0);
+	}
+	Vector3 Ray1Volume::GetWorldDirection()
+	{
+		return GetDirection(GetWorldRotation());
+	}
+	Vector3 Ray1Volume::GetLocalDirection()
+	{
+		return GetDirection(GetLocalRotation());
 	}
 	Ray1Volume::operator RayData()
 	{

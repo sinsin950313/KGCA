@@ -75,9 +75,12 @@ namespace SSB
 		{
 			VolumeType toVolumeType = _owner->GetVolumeType(object);
 			CollisionDetectorInterface* detector = _owner->GetCollisionDetector(fromVolumeType, toVolumeType);
-			if(detector->IsCollide(target, object))
+			if (detector != nullptr)
 			{
-				ret.push_back(target);
+				if (detector->IsCollide(target, object))
+				{
+					ret.push_back(target);
+				}
 			}
 		}
 
@@ -85,9 +88,12 @@ namespace SSB
 		{
 			VolumeType toVolumeType = _owner->GetVolumeType(object);
 			CollisionDetectorInterface* detector = _owner->GetCollisionDetector(fromVolumeType, toVolumeType);
-			if(detector->IsCollide(target, object))
+			if (detector != nullptr)
 			{
-				ret.push_back(target);
+				if (detector->IsCollide(target, object))
+				{
+					ret.push_back(target);
+				}
 			}
 		}
 
@@ -252,7 +258,15 @@ namespace SSB
 	}
 	CollisionDetectorInterface* CollisionTree1::GetCollisionDetector(VolumeType fromType, VolumeType toType)
 	{
-		return _volumeTypeToDetectorMap.find(fromType)->second.find(toType)->second;
+		if (_volumeTypeToDetectorMap.find(fromType) != _volumeTypeToDetectorMap.end())
+		{
+			auto iter = _volumeTypeToDetectorMap.find(fromType);
+			if (iter->second.find(toType) != iter->second.end())
+			{
+				return iter->second.find(toType)->second;
+			}
+		}
+		return nullptr;
 	}
 	void CollisionTree1::Remove(Volume1* volume)
 	{
@@ -345,7 +359,11 @@ namespace SSB
 	{
 		VolumeType volumeType = _owner->GetVolumeType(object);
 		auto detector = _owner->GetCollisionDetector(AABB, volumeType);
-		return detector->IsIn(_volume, object);
+		if (detector != nullptr)
+		{
+			return detector->IsIn(_volume, object);
+		}
+		return false;
 	}
 	bool QuadTree::QuadTreeNode::Init()
 	{

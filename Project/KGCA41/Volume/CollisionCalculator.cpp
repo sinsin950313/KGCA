@@ -6,6 +6,54 @@ namespace SSB
 {
 	static DefaultCollisionCalculator kDefaultCollisionCalculator;
 
+	bool DefaultCollisionCalculator::IsCollide(RayData lData, PlaneData rData)
+	{
+		float distance = rData.A * lData.Origin.GetX() + rData.B * lData.Origin.GetY() + rData.C * lData.Origin.GetZ() + rData.D;
+		float dot = rData.A * lData.Direction.GetX() + rData.B * lData.Direction.GetY() + rData.C * lData.Direction.GetZ();
+
+		if (abs(dot) < FDelta)
+		{
+			if (abs(distance) < FDelta)
+				return true;
+			else
+				return false;
+		}
+
+		return distance * dot < 0;
+	}
+
+	bool DefaultCollisionCalculator::IsIn(RayData lData, PlaneData rData)
+	{
+		return false;
+	}
+
+	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(RayData lData, PlaneData rData)
+	{
+		std::vector<Vector3> ret;
+
+		float distance = lData.Direction.Dot(rData.NormalVector) + rData.D;
+		float dotProduct = lData.Direction.Dot(rData.NormalVector);
+		if (abs(dotProduct) < FDelta)
+		{
+			 //The ray is parallel to the plane
+			if (abs(distance - FDelta) < FDelta)
+			{
+				ret.push_back(lData.Origin);
+			}
+			return ret;
+		}
+
+		float t = -distance / dotProduct;
+		if (t >= 0)
+		{
+			 //The intersection point is in front of the ray origin
+			Vector3 intersection = lData.Origin + lData.Direction * t;
+			ret.push_back(intersection);
+		}
+
+		return ret;
+	}
+
 	bool DefaultCollisionCalculator::IsCollide(RayData lData, TriangleData rData)
 	{
 		Vector3 e1 = rData.Vertice[1] - rData.Vertice[0];
@@ -42,6 +90,11 @@ namespace SSB
 			return false;
 
 		return true;
+	}
+
+	bool DefaultCollisionCalculator::IsIn(RayData lData, TriangleData rData)
+	{
+		return false;
 	}
 
 	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(RayData lData, TriangleData rData)
@@ -99,6 +152,11 @@ namespace SSB
 		{
 			return true;
 		}
+		return false;
+	}
+
+	bool DefaultCollisionCalculator::IsIn(RayData lData, AABBData rData)
+	{
 		return false;
 	}
 
@@ -170,7 +228,7 @@ namespace SSB
 		float  fCross[3], fRhs;
 		Vector3 vDxR;
 		vR = vDxR.Cross(lData.Direction);
-		// D X pBox->vAxis[0]  분리축
+		 //D X pBox->vAxis[0]  분리축
 		fCross[0] = fabs(vDxR.Dot(rData.Rotation.GetRow(0)));
 		float fAxis2 = extent[1] * fa[2];
 		float fAxis1 = extent[2] * fa[1];
@@ -179,14 +237,14 @@ namespace SSB
 		{
 			return false;
 		}
-		// D x pBox->vAxis[1]  분리축
+		 //D x pBox->vAxis[1]  분리축
 		fCross[1] = fabs(vDxR.Dot(rData.Rotation.GetRow(1)));
 		fRhs = extent[0] * fa[2] + extent[2] * fa[0];
 		if (fCross[1] > fRhs)
 		{
 			return false;
 		}
-		// D x pBox->vAxis[2]  분리축
+		 //D x pBox->vAxis[2]  분리축
 		fCross[2] = fabs(vDxR.Dot(rData.Rotation.GetRow(2)));
 		fRhs = extent[0] * fa[1] + extent[1] * fa[0];
 		if (fCross[2] > fRhs)
@@ -195,6 +253,11 @@ namespace SSB
 		}
 
 		return true;
+	}
+
+	bool DefaultCollisionCalculator::IsIn(RayData lData, OBBData rData)
+	{
+		return false;
 	}
 
 	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(RayData lData, OBBData rData)
@@ -235,7 +298,7 @@ namespace SSB
 		float  fCross[3], fRhs;
 		Vector3 vDxR;
 		vR = vDxR.Cross(lData.Direction);
-		// D X pBox->vAxis[0]  분리축
+		 //D X pBox->vAxis[0]  분리축
 		fCross[0] = fabs(vDxR.Dot(rData.Rotation.GetRow(0)));
 		float fAxis2 = extent[1] * fa[2];
 		float fAxis1 = extent[2] * fa[1];
@@ -245,7 +308,7 @@ namespace SSB
 			//m_vDxR = vDxR;
 			return ret;
 		}
-		// D x pBox->vAxis[1]  분리축
+		 //D x pBox->vAxis[1]  분리축
 		fCross[1] = fabs(vDxR.Dot(rData.Rotation.GetRow(1)));
 		fRhs = extent[0] * fa[2] + extent[2] * fa[0];
 		if (fCross[1] > fRhs)
@@ -253,7 +316,7 @@ namespace SSB
 			//m_vDxR = vDxR;
 			return ret;
 		}
-		// D x pBox->vAxis[2]  분리축
+		 //D x pBox->vAxis[2]  분리축
 		fCross[2] = fabs(vDxR.Dot(rData.Rotation.GetRow(2)));
 		fRhs = extent[0] * fa[1] + extent[1] * fa[0];
 		if (fCross[2] > fRhs)
@@ -382,10 +445,10 @@ namespace SSB
 
 	bool DefaultCollisionCalculator::IsCollide(VolumeData lData, OBBData rData)
 	{
-		// Transform the given VolumeData into OBB space
+		 //Transform the given VolumeData into OBB space
 		Vector3 localPos = (lData.Position - rData.Position) * rData.Rotation.Transpose();
 
-		// Check if the transformed VolumeData is within the OBB
+		 //Check if the transformed VolumeData is within the OBB
 		return (
 			abs(localPos.GetX()) - rData.Width <= FDelta&&
 			abs(localPos.GetY()) - rData.Height <= FDelta &&
@@ -405,7 +468,7 @@ namespace SSB
 
 	bool DefaultCollisionCalculator::IsCollide(VolumeData lData, BoxData rData)
 	{
-		// Check if the line intersects with all 6 plane of the box
+		 //Check if the line intersects with all 6 plane of the box
 		for (int i = 0; i < 6; i++)
 		{
 			PlaneData plane = rData.Plane[i];
@@ -431,11 +494,11 @@ namespace SSB
 
 	bool DefaultCollisionCalculator::IsCollide(VolumeData lData, SphereData rData)
 	{
-		// Calculate distance between the center of sphere and the volume
+		 //Calculate distance between the center of sphere and the volume
 		Vector3 diff = rData.Position - lData.Position;
 		float distance = diff.Length();
 
-		// Check if the distance is within the radius of the sphere
+		 //Check if the distance is within the radius of the sphere
 		if (abs(distance - rData.Radius) <= FDelta)
 			return true;
 		else
@@ -459,7 +522,7 @@ namespace SSB
 
 	bool DefaultCollisionCalculator::IsIn(LineData lData, VolumeData rData)
 	{
-		return IsCollide(lData, rData);
+		return false;
 	}
 
 	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(LineData lData, VolumeData rData)
@@ -469,13 +532,13 @@ namespace SSB
 
 	bool DefaultCollisionCalculator::IsCollide(LineData lData, LineData rData)
 	{
-		// Calculate the cross product of two direction vectors
+		 //Calculate the cross product of two direction vectors
 		Vector3 cross = lData.Direction.Cross(rData.Direction);
 
-		// Check if the lines are parallel
+		 //Check if the lines are parallel
 		if (cross.LengthSquare() < FDelta)
 		{
-			// Check if the two lines are colinear
+			 //Check if the two lines are colinear
 			Vector3 lToR = rData.Position - lData.Position;
 			float dot = lToR.Dot(lData.Direction);
 			if (abs(abs(dot) - lToR.Length()) < FDelta)
@@ -489,7 +552,7 @@ namespace SSB
 		}
 		else
 		{
-			// Calculate the distance between two lines
+			 //Calculate the distance between two lines
 			Vector3 lToR = rData.Position - lData.Position;
 			float distance = lToR.Dot(cross) / cross.Length();
 			return fabs(distance) < 1e-6f;
@@ -500,10 +563,10 @@ namespace SSB
 	{
 		if (IsCollide(lData, rData))
 		{
-			// Calculate the cross product of two direction vectors
+			 //Calculate the cross product of two direction vectors
 			Vector3 cross = lData.Direction.Cross(rData.Direction);
 
-			// Check if the lines are parallel
+			 //Check if the lines are parallel
 			if (cross.LengthSquare() < FDelta)
 			{
 				return true;
@@ -512,20 +575,38 @@ namespace SSB
 		return false;
 	}
 
+	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(LineData lData, LineData rData)
+	{
+		std::vector<Vector3> ret;
+		if (IsIn(lData, rData))
+		{
+			ret.push_back(lData.Vertex);
+			ret.push_back(rData.Vertex);
+		}
+		else
+		{
+			if (IsCollide(lData, rData))
+			{
+				
+			}
+		}
+		return ret;
+	}
+
 	bool DefaultCollisionCalculator::IsCollide(RayData lData, SphereData rData)
 	{
-		// p0 - c
+		 //p0 - c
 		Vector3 vDir = lData.Origin - rData.Position;
-		// B = 2(u dot (p0 - c ))
+		 //B = 2(u dot (p0 - c ))
 		float  fProj = lData.Direction.Dot(vDir);
-		// what the hell?
-		//// 제한된 길이(세그먼트) 제외처리
+		 //what the hell?
+		 //제한된 길이(세그먼트) 제외처리
 		//if (pRay->fExtent > -1.0f && pRay->fExtent < fabs(fProj)) return false;
 
 		float b = 2.0f * fProj;
-		// C= (p0-c) dot (p0-c) - r*r
+		 //C= (p0-c) dot (p0-c) - r*r
 		float c = vDir.Dot(vDir) - (rData.Radius * rData.Radius);
-		// D = B*B - 4*AC;
+		 //D = B*B - 4*AC;
 		float fDiscriminant = (b * b) - (4.0f * c);
 		if (fDiscriminant < 0.0f)
 		{
@@ -546,22 +627,27 @@ namespace SSB
 		return false;
 	}
 
+	bool DefaultCollisionCalculator::IsIn(RayData lData, SphereData rData)
+	{
+		return false;
+	}
+
 	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(RayData lData, SphereData rData)
 	{
 		std::vector<Vector3> ret;
 
-		// p0 - c
+		 //p0 - c
 		Vector3 vDir = lData.Origin - rData.Position;
-		// B = 2(u dot (p0 - c ))
+		 //B = 2(u dot (p0 - c ))
 		float  fProj = lData.Direction.Dot(vDir);
-		// what the hell?
-		//// 제한된 길이(세그먼트) 제외처리
+		 //what the hell?
+		 //제한된 길이(세그먼트) 제외처리
 		//if (pRay->fExtent > -1.0f && pRay->fExtent < fabs(fProj)) return false;
 
 		float b = 2.0f * fProj;
-		// C= (p0-c) dot (p0-c) - r*r
+		 //C= (p0-c) dot (p0-c) - r*r
 		float c = vDir.Dot(vDir) - (rData.Radius * rData.Radius);
-		// D = B*B - 4*AC;
+		 //D = B*B - 4*AC;
 		float fDiscriminant = (b * b) - (4.0f * c);
 		if (fDiscriminant < 0.0f)
 		{
@@ -580,6 +666,21 @@ namespace SSB
 			ret.push_back(lData.Origin + lData.Direction * t1);
 		}
 		return ret;
+	}
+
+	bool DefaultCollisionCalculator::IsCollide(SegmentData lData, VolumeData rData)
+	{
+		return IsCollide(rData, lData);
+	}
+
+	bool DefaultCollisionCalculator::IsIn(SegmentData lData, VolumeData rData)
+	{
+		return IsCollide(lData, rData);
+	}
+
+	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(SegmentData lData, VolumeData rData)
+	{
+		return GetIntersections(rData, lData);
 	}
 
 	bool DefaultCollisionCalculator::IsCollide(OBBData lData, OBBData rData)
@@ -735,6 +836,10 @@ namespace SSB
 	{
 		return IsCollide(rData, lData);
 	}
+	bool DefaultCollisionCalculator::IsIn(AABBData lData, RayData rData)
+	{
+		return false;
+	}
 	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(AABBData lData, RayData rData)
 	{
 		return GetIntersections(rData, lData);
@@ -792,28 +897,28 @@ namespace SSB
 	}
 	bool DefaultCollisionCalculator::IsCollide(VolumeData lData, RayData rData)
 	{
-		// get the vector from the ray's origin to the volume's position
+		 //get the vector from the ray's origin to the volume's position
 		Vector3 toVolume = lData.Position - rData.Origin;
 
-		// calculate the dot product between toVolume and ray direction
+		 //calculate the dot product between toVolume and ray direction
 		float dot = toVolume.Dot(rData.Direction);
 
-		// if the dot product is negative, the volume is not on the ray
+		 //if the dot product is negative, the volume is not on the ray
 		if (dot < -FDelta)
 		{
 			return false;
 		}
 
-		// calculate the distance between the ray's origin and the volume's position
+		 //calculate the distance between the ray's origin and the volume's position
 		float distance = toVolume.Length();
 
-		// if the distance is greater than the dot product, the volume is not on the ray
+		 //if the distance is greater than the dot product, the volume is not on the ray
 		if (distance - dot > FDelta)
 		{
 			return false;
 		}
 
-		// if both checks pass, the volume is on the ray
+		 //if both checks pass, the volume is on the ray
 		return true;
 	}
 	bool DefaultCollisionCalculator::IsIn(VolumeData lData, RayData rData)
@@ -859,10 +964,150 @@ namespace SSB
 	}
 	bool DefaultCollisionCalculator::IsIn(RayData lData, VolumeData rData)
 	{
-		return IsCollide(lData, rData);
+		return false;
 	}
 	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(RayData lData, VolumeData rData)
 	{
 		return IsCollide(lData, rData) ? std::vector<Vector3>{rData.Position} : std::vector<Vector3>{};
+	}
+	bool DefaultCollisionCalculator::IsCollide(RayData lData, RayData rData)
+	{
+		float dotProduct = lData.Direction.Dot(rData.Direction);
+		if (abs(dotProduct - 1.0f) < FDelta)
+		{
+			Vector3 direction = rData.Position - rData.Position;
+			direction.Normalize();
+
+			float dotProduct = lData.Direction.Dot(rData.Direction);
+			if (abs(dotProduct - 1.0f) < FDelta)
+			{
+				return true;
+			}
+		}
+		else
+			return false;
+	}
+	bool DefaultCollisionCalculator::IsIn(RayData lData, RayData rData)
+	{
+		if (abs((lData.Origin - rData.Origin).LengthSquare()) < FDelta)
+		{
+			if (abs(lData.Direction.Cross(rData.Direction).LengthSquare()) < FDelta)
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	bool DefaultCollisionCalculator::IsCollide(AABBData lData, VolumeData rData)
+	{
+		return IsCollide(rData, lData);
+	}
+	bool DefaultCollisionCalculator::IsIn(AABBData lData, VolumeData rData)
+	{
+		return IsCollide(lData, rData);
+	}
+	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(AABBData lData, VolumeData rData)
+	{
+		return IsCollide(lData, rData) ? std::vector<Vector3>{rData.Position} : std::vector<Vector3>{};
+	}
+	bool DefaultCollisionCalculator::IsCollide(AABBData lData, AABBData rData)
+	{
+		if (lData.Max.GetX() < rData.Min.GetX() || lData.Min.GetX() > rData.Max.GetX())
+			return false;
+		if (lData.Max.GetY() < rData.Min.GetY() || lData.Min.GetY() > rData.Max.GetY())
+			return false;
+		if (lData.Max.GetZ() < rData.Min.GetZ() || lData.Min.GetZ() > rData.Max.GetZ())
+			return false;
+		return true;
+	}
+	bool DefaultCollisionCalculator::IsIn(AABBData lData, AABBData rData)
+	{
+		if (rData.Min.GetX() >= lData.Min.GetX() && rData.Max.GetX() <= lData.Max.GetX() &&
+			rData.Min.GetY() >= lData.Min.GetY() && rData.Max.GetY() <= lData.Max.GetY() &&
+			rData.Min.GetZ() >= lData.Min.GetZ() && rData.Max.GetZ() <= lData.Max.GetZ())
+			return true;
+
+		return false;
+	}
+	bool DefaultCollisionCalculator::IsCollide(AABBData lData, OBBData rData)
+	{
+		// Calculate the eight vertices of the OBB
+		Vector3 vertices[8];
+		vertices[0] = rData.Position + Vector3(-rData.Width / 2, -rData.Height / 2, rData.Depth / 2) * rData.Rotation;
+		vertices[1] = rData.Position + Vector3(rData.Width / 2, -rData.Height / 2, rData.Depth / 2) * rData.Rotation;
+		vertices[2] = rData.Position + Vector3(rData.Width / 2, rData.Height / 2, rData.Depth / 2) * rData.Rotation;
+		vertices[3] = rData.Position + Vector3(-rData.Width / 2, rData.Height / 2, rData.Depth / 2) * rData.Rotation;
+		vertices[4] = rData.Position + Vector3(-rData.Width / 2, -rData.Height / 2, -rData.Depth / 2) * rData.Rotation;
+		vertices[5] = rData.Position + Vector3(rData.Width / 2, -rData.Height / 2, -rData.Depth / 2) * rData.Rotation;
+		vertices[6] = rData.Position + Vector3(rData.Width / 2, rData.Height / 2, -rData.Depth / 2) * rData.Rotation;
+		vertices[7] = rData.Position + Vector3(-rData.Width / 2, rData.Height / 2, -rData.Depth / 2) * rData.Rotation;
+
+		// Check if any of the vertices of the OBB are outside the AABB
+		for (int i = 0; i < 8; i++) {
+			if (vertices[i].GetX() < lData.Min.GetX() || vertices[i].GetX() > lData.Max.GetX() ||
+				vertices[i].GetY() < lData.Min.GetY() || vertices[i].GetY() > lData.Max.GetY() ||
+				vertices[i].GetZ() < lData.Min.GetZ() || vertices[i].GetZ() > lData.Max.GetZ()) {
+				return false;
+			}
+		}
+
+		// All vertices of the OBB are inside the AABB
+		return true;
+	}
+	bool DefaultCollisionCalculator::IsIn(AABBData lData, OBBData rData)
+	{
+		Vector3 lMin = lData.Min;
+		Vector3 lMax = lData.Max;
+		Vector3 rPos = rData.Position;
+		Matrix33 rRot = rData.Rotation;
+		float rWidth = rData.Width;
+		float rHeight = rData.Height;
+		float rDepth = rData.Depth;
+
+		Vector3 rCorners[8];
+		rCorners[0] = Vector3(-rWidth / 2.0f, -rHeight / 2.0f, -rDepth / 2.0f);
+		rCorners[1] = Vector3(-rWidth / 2.0f, -rHeight / 2.0f, rDepth / 2.0f);
+		rCorners[2] = Vector3(-rWidth / 2.0f, rHeight / 2.0f, -rDepth / 2.0f);
+		rCorners[3] = Vector3(-rWidth / 2.0f, rHeight / 2.0f, rDepth / 2.0f);
+		rCorners[4] = Vector3(rWidth / 2.0f, -rHeight / 2.0f, -rDepth / 2.0f);
+		rCorners[5] = Vector3(rWidth / 2.0f, -rHeight / 2.0f, rDepth / 2.0f);
+		rCorners[6] = Vector3(rWidth / 2.0f, rHeight / 2.0f, -rDepth / 2.0f);
+		rCorners[7] = Vector3(rWidth / 2.0f, rHeight / 2.0f, rDepth / 2.0f);
+
+		for (int i = 0; i < 8; i++) {
+			Vector3 corner = rCorners[i];
+			Vector3 rotatedCorner = corner * rRot + rPos;
+			if (rotatedCorner.GetX() < lMin.GetX() || rotatedCorner.GetX() > lMax.GetX() ||
+				rotatedCorner.GetY() < lMin.GetY() || rotatedCorner.GetY() > lMax.GetY() ||
+				rotatedCorner.GetZ() < lMin.GetZ() || rotatedCorner.GetZ() > lMax.GetZ()) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+	bool DefaultCollisionCalculator::IsCollide(AABBData lData, SphereData rData)
+	{
+		if (rData.Position.GetX() - lData.Min.GetX() > rData.Radius || lData.Max.GetX() - rData.Position.GetX() > rData.Radius)
+			return false;
+		if (rData.Position.GetY() - lData.Min.GetY() > rData.Radius || lData.Max.GetY() - rData.Position.GetY() > rData.Radius)
+			return false;
+		if (rData.Position.GetZ() - lData.Min.GetZ() > rData.Radius || lData.Max.GetZ() - rData.Position.GetZ() > rData.Radius)
+			return false;
+
+		return true;
+	}
+	bool DefaultCollisionCalculator::IsIn(AABBData lData, SphereData rData)
+	{
+		Vector3 vec = rData.Position - lData.Position;
+		if (
+			vec.GetX() - rData.Radius < lData.Min.GetX() || lData.Max.GetX() < vec.GetX() + rData.Radius ||
+			vec.GetY() - rData.Radius < lData.Min.GetY() || lData.Max.GetY() < vec.GetY() + rData.Radius ||
+			vec.GetZ() - rData.Radius < lData.Min.GetZ() || lData.Max.GetZ() < vec.GetZ() + rData.Radius
+			)
+		{
+			return false;
+		}
+		return true;
 	}
 }

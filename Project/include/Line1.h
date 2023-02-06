@@ -24,10 +24,17 @@ namespace SSB
 		operator SphereData() override;
 	};
 
-	class Ray1Volume : public Line1Volume
+	class Ray1Volume : public Volume1
 	{
 	public:
 		Ray1Volume(Vector3 origin, Vector3 dir);
+
+	private:
+		Vector3 GetDirection(Matrix33 rotation);
+
+	protected:
+		Vector3 GetWorldDirection();
+		Vector3 GetLocalDirection();
 
 	public:
 		operator RayData();

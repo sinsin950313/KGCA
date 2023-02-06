@@ -683,6 +683,11 @@ namespace SSB
 		return GetIntersections(rData, lData);
 	}
 
+	bool DefaultCollisionCalculator::IsCollide(OBBData lData, AABBData rData)
+	{
+		return IsCollide(rData, lData);
+	}
+
 	bool DefaultCollisionCalculator::IsCollide(OBBData lData, OBBData rData)
 	{
 		Vector3 D(rData.Position.GetX() - lData.Position.GetX(), rData.Position.GetY() - lData.Position.GetY(), rData.Position.GetZ() - lData.Position.GetZ());
@@ -848,6 +853,10 @@ namespace SSB
 	{
 		return IsCollide(rData, lData);
 	}
+	bool DefaultCollisionCalculator::IsIn(OBBData lData, RayData rData)
+	{
+		return false;
+	}
 	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(OBBData lData, RayData rData)
 	{
 		return GetIntersections(rData, lData);
@@ -855,6 +864,10 @@ namespace SSB
 	bool DefaultCollisionCalculator::IsCollide(SphereData lData, RayData rData)
 	{
 		return IsCollide(rData, lData);
+	}
+	bool DefaultCollisionCalculator::IsIn(SphereData lData, RayData rData)
+	{
+		return false;
 	}
 	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(SphereData lData, RayData rData)
 	{
@@ -1109,5 +1122,81 @@ namespace SSB
 			return false;
 		}
 		return true;
+	}
+	bool DefaultCollisionCalculator::IsCollide(OBBData lData, VolumeData rData)
+	{
+		return IsCollide(rData, lData);
+	}
+	bool DefaultCollisionCalculator::IsIn(OBBData lData, VolumeData rData)
+	{
+		return IsCollide(lData, rData);
+	}
+	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(OBBData lData, VolumeData rData)
+	{
+		return IsCollide(lData, rData) ? std::vector<Vector3>{rData.Position} : std::vector<Vector3>{};
+	}
+	bool DefaultCollisionCalculator::IsCollide(OBBData lData, SphereData rData)
+	{
+		Vector3 vDiff = rData.Position - lData.Position;
+
+		float halfValue[3]{ lData.Depth / 2.0f, lData.Height / 2.0f, lData.Width / 2.0f };
+
+		Matrix33 matOBBRotation = lData.Rotation;
+		matOBBRotation = matOBBRotation.Transpose();
+
+		for (int i = 0; i < 3; ++i)
+		{
+			float fProj = vDiff.Dot(matOBBRotation.GetRow(i));
+			if (abs(fProj) < rData.Radius + halfValue[i])
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+	bool DefaultCollisionCalculator::IsCollide(SphereData lData, VolumeData rData)
+	{
+		return IsCollide(rData, lData);
+	}
+	bool DefaultCollisionCalculator::IsIn(SphereData lData, VolumeData rData)
+	{
+		return IsCollide(lData, rData);
+	}
+	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(SphereData lData, VolumeData rData)
+	{
+		return IsCollide(lData, rData) ? std::vector<Vector3>{rData.Position} : std::vector<Vector3>{};
+	}
+	bool DefaultCollisionCalculator::IsCollide(SphereData lData, AABBData rData)
+	{
+		return IsCollide(rData, lData);
+	}
+	bool DefaultCollisionCalculator::IsIn(SphereData lData, AABBData rData)
+	{
+		Vector3 lCenter = lData.Position;
+		float lRadius = lData.Radius;
+
+		Vector3 rMin = rData.Min;
+		Vector3 rMax = rData.Max;
+
+		float d = 0.0f;
+		d = max(d, fabs(lCenter.GetX() - rMin.GetX()));
+		d = max(d, fabs(lCenter.GetY() - rMin.GetY()));
+		d = max(d, fabs(lCenter.GetZ() - rMin.GetZ()));
+		d = max(d, fabs(rMax.GetX() - lCenter.GetX()));
+		d = max(d, fabs(rMax.GetY() - lCenter.GetY()));
+		d = max(d, fabs(rMax.GetZ() - lCenter.GetZ()));
+
+		return d <= lRadius;
+	}
+	bool DefaultCollisionCalculator::IsCollide(SphereData lData, SphereData rData)
+	{
+		return IsCollide(rData, lData);
+	}
+	bool DefaultCollisionCalculator::IsIn(SphereData lData, SphereData rData)
+	{
+		Vector3 vec = lData.Position - rData.Position;
+		float distance = vec.Length();
+
+		return distance + rData.Radius < lData.Radius;
 	}
 }

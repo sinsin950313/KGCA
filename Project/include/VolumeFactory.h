@@ -45,4 +45,25 @@ namespace SSB
 	public:
 		VolumeType GetType() override;
 	};
+
+	class AABBVolumeFactory : public VolumeFactoryInterface
+	{
+	private:
+		Vector3 _center;
+		float _width;
+		float _height;
+		float _depth;
+
+	public:
+		AABBVolumeFactory();
+
+	public:
+		void Set(Vector3 center, float width, float height, float depth);
+
+	protected:
+		virtual Volume1* Create() override;
+
+	public:
+		VolumeType GetType() override;
+	};
 }

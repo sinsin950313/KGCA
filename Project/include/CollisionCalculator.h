@@ -50,7 +50,7 @@ namespace SSB
 		bool IsIn(LineData lData, RayData rData);
 		std::vector<Vector3> GetIntersections(LineData lData, RayData rData);
 		bool IsCollide(LineData lData, SegmentData rData);
-		bool IsIN(LineData lData, SegmentData rData);
+		bool IsIn(LineData lData, SegmentData rData);
 		std::vector<Vector3> GetIntersections(LineData lData, SegmentData rData);
 		bool IsCollide(LineData lData, PlaneData rData);
 		bool IsIn(LineData lData, PlaneData rData);

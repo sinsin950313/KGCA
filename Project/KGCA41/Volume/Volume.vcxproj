@@ -25,6 +25,7 @@
     <ClCompile Include="CollisionCalculator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Line1.cpp" />
+    <ClCompile Include="Plane1.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Sphere1.cpp" />
     <ClCompile Include="Volume.cpp" />
@@ -36,6 +37,7 @@
     <ClInclude Include="Circle.h" />
     <ClInclude Include="CollisionCalculator.h" />
     <ClInclude Include="Line1.h" />
+    <ClInclude Include="Plane1.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Sphere1.h" />
     <ClInclude Include="Volume.h" />

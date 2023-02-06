@@ -18,7 +18,11 @@ namespace SSB
 		return new CollisionSystemVolume(GetType(), Create(), true);
 	}
 
-	RayVolumeFactory::RayVolumeFactory() : VolumeFactoryInterface(Ray, { {new RayToSphereCollisionDetector, Sphere} })
+	RayVolumeFactory::RayVolumeFactory() : VolumeFactoryInterface(Ray, {
+			{ new RayToSphereCollisionDetector, Sphere},
+			{ new RayToTriangleCollisionDetector, Triangle},
+			{ new RayToAABBCollisionDetector, AABB},
+			{ new RayToOBBCollisionDetector, OBB} })
 	{
 	}
 
@@ -34,5 +38,26 @@ namespace SSB
 	VolumeType RayVolumeFactory::GetType()
 	{
 		return Ray;
+	}
+	AABBVolumeFactory::AABBVolumeFactory() : VolumeFactoryInterface(AABB, {
+		{ new AABBToTriangleCollisionDetector, Triangle},
+		{ new AABBToOBBCollisionDetector, OBB},
+		{ new AABBToSphereCollisionDetector, Sphere}
+		})
+	{
+	}
+	void AABBVolumeFactory::Set(float width, float height, float depth)
+	{
+		_width = width;
+		_height = height;
+		_depth = depth;
+	}
+	Volume1* AABBVolumeFactory::Create()
+	{
+		return new AABB1Volume(_width, _height, _depth);
+	}
+	VolumeType AABBVolumeFactory::GetType()
+	{
+		return AABB;
 	}
 }

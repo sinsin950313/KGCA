@@ -72,11 +72,11 @@ namespace SSB
 	};
 
 	 //Same as Box
-	struct FrustumData : public VolumeData
-	{
-		Vector3 Vertices[6];
-		PlaneData Plane[6];
-	};
+	//struct FrustumData : public VolumeData
+	//{
+	//	Vector3 Vertices[6];
+	//	PlaneData Plane[6];
+	//};
 
 	struct SphereData : public VolumeData
 	{

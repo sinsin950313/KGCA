@@ -26,6 +26,14 @@ namespace SSB
 		operator SphereData() override;
 	};
 
+	class OBB1Volume : public Volume1
+	{
+	public:
+		operator AABBData() override;
+		operator OBBData() override;
+		operator SphereData() override;
+	};
+
 	class Box1Volume : public Volume1
 	{
 	public:

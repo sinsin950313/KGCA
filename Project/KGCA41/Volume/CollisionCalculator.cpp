@@ -334,6 +334,11 @@ namespace SSB
 		return IsCollide(rData, lData);
 	}
 
+	bool DefaultCollisionCalculator::IsIn(TriangleData lData, RayData rData)
+	{
+		return false;
+	}
+
 	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(TriangleData lData, RayData rData)
 	{
 		return GetIntersections(rData, lData);
@@ -445,6 +450,7 @@ namespace SSB
 
 	bool DefaultCollisionCalculator::IsCollide(VolumeData lData, OBBData rData)
 	{
+		// change to inner product
 		 //Transform the given VolumeData into OBB space
 		Vector3 localPos = (lData.Position - rData.Position) * rData.Rotation.Transpose();
 
@@ -1190,7 +1196,8 @@ namespace SSB
 	}
 	bool DefaultCollisionCalculator::IsCollide(SphereData lData, SphereData rData)
 	{
-		return IsCollide(rData, lData);
+		Vector3 vec = lData.Position - rData.Position;
+		return vec.Length() < lData.Radius + rData.Radius;
 	}
 	bool DefaultCollisionCalculator::IsIn(SphereData lData, SphereData rData)
 	{

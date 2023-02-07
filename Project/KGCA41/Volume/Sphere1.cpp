@@ -3,6 +3,8 @@
 
 namespace SSB
 {
+	const int Sphere1Volume::PI = 3;
+
 	Sphere1Volume::Sphere1Volume(float radius)
 	{
 		SetScale(radius, 0, 0);
@@ -18,6 +20,62 @@ namespace SSB
 	float Sphere1Volume::GetLocalRadius()
 	{
 		return GetRadius(GetLocalScale());
+	}
+	std::vector<Vector3> Sphere1Volume::GetWorldBaseVertices()
+	{
+		std::vector<Vector3> ret;
+
+		float radius = GetWorldRadius();
+		int stack = PI * radius;
+		int sector = 2 * PI * radius;
+		ret.resize((stack + 1) * (sector + 1));
+
+		float sectorAngleUnit = 2.0f * ((float)PI) / sector;
+		float stackAngleUnit = ((float)PI) / stack;
+		for (int i = 0; i <= stack; ++i)
+		{
+			float stackAngle = (((float)PI) / 2) - (i * stackAngleUnit);
+			float xz = radius * cosf(stackAngle);
+			float y = radius * sinf(stackAngle);
+			for (int j = 0; j <= sector; ++j)
+			{
+				float sectorAngle = sectorAngleUnit * j;
+				float x = xz * cosf(sectorAngle);
+				float z = xz * sinf(sectorAngle);
+				ret[(i * (sector + 1)) + j] = { x, y, z };
+			}
+		}
+
+		return ret;
+	}
+	std::vector<TriangleData> Sphere1Volume::GetWorldBaseTriangles()
+	{
+		std::vector<TriangleData> ret;
+		auto vertice = GetWorldBaseVertices();
+
+		float radius = GetWorldRadius();
+		int stack = PI * radius;
+		int sector = 2 * PI * radius;
+		//ret.resize();
+
+		for (int i = 0; i < stack; ++i)
+		{
+			int k1 = i * (sector + 1);
+			int k2 = k1 + sector + 1;
+			for (int j = 0; j < sector; ++j)
+			{
+				if (i != 0)
+				{
+					ret.push_back({ vertice[k2], vertice[k1], vertice[k1 + 1] });
+				}
+				if (i != (stack - 1))
+				{
+					ret.push_back({ vertice[k2], vertice[k1 + 1], vertice[k2 + 1] });
+				}
+			}
+		}
+
+		return ret;
 	}
 	Sphere1Volume::operator SphereData()
 	{

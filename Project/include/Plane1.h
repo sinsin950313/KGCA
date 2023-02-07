@@ -5,21 +5,21 @@
 
 namespace SSB
 {
-	class Plane1Volume : public Volume1
-	{
-	public:
-		operator AABBData() override;
-		operator OBBData() override;
-		operator SphereData() override;
-		operator PlaneData();
-	};
+	//class Plane1Volume : public Volume1
+	//{
+	//public:
+	//	operator AABBData() override;
+	//	operator OBBData() override;
+	//	operator SphereData() override;
+	//	operator PlaneData();
+	//};
 
-	class Triangle1Volume : public Volume1
-	{
-	public:
-		operator AABBData() override;
-		operator OBBData() override;
-		operator SphereData() override;
-		operator TriangleData();
-	};
+	//class Triangle1Volume : public Volume1
+	//{
+	//public:
+	//	operator AABBData() override;
+	//	operator OBBData() override;
+	//	operator SphereData() override;
+	//	operator TriangleData();
+	//};
 }

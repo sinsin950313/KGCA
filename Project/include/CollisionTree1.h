@@ -6,6 +6,7 @@
 #include "VolumeFactory.h"
 #include <map>
 #include <set>
+#include "CollisionDetector.h"
 
 namespace SSB
 {
@@ -17,6 +18,9 @@ namespace SSB
 		private:
 			std::set<Volume1*> _staticObjects;
 			std::set<Volume1*> _dynamicObjects;
+			SphereToSphereCollisionDetector _ssColCheck;
+			AABBToAABBCollisionDetector _aaColCheck;
+			OBBToOBBCollisionDetector _ooColCheck;
 
 		protected:
 			int _currentLayer;
@@ -26,6 +30,9 @@ namespace SSB
 		public:
 			Node(int currentLayer, CollisionTree1* tree);
 			~Node();
+
+		private:
+			bool RoughCollisionCheck(Volume1* target, Volume1* object);
 
 		protected:
 			virtual bool IsIn(Volume1* object) = 0;		//Consider totally in stuation, not overlap

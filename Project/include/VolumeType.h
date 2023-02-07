@@ -47,7 +47,7 @@ namespace SSB
 		};
 	};
 
-	struct TriangleData : public PlaneData
+	struct TriangleData
 	{
 		Vector3 Vertice[3];
 	};

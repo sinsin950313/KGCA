@@ -1,0 +1,84 @@
+this is example code
+
+	class AABBToTriangleCollisionDetector : public CollisionDetectorInterface
+	{
+	public:
+		bool IsCollide(Volume1* aabb, Volume1* triangle) override;
+		bool IsIn(Volume1* aabb, Volume1* triangle) override;
+		std::vector<Vector3> GetIntersections(Volume1* aabb, Volume1* triangle) override;
+	};
+
+	class AABBToAABBCollisionDetector : public CollisionDetectorInterface
+	{
+	public:
+		bool IsCollide(Volume1* aabb1, Volume1* aabb2) override;
+		bool IsIn(Volume1* aabb1, Volume1* aabb2) override;
+		std::vector<Vector3> GetIntersections(Volume1* aabb1, Volume1* aabb2) override;
+	};
+
+	bool AABBToTriangleCollisionDetector::IsCollide(Volume1* aabb, Volume1* triangle)
+	{
+		AABBData rayData = aabb->operator SSB::AABBData();
+		std::vector<TriangleData> triangles = triangle->GetTriangles();
+		for (auto triangleData : triangles)
+		{
+			if (kDefaultCollisionCalculator.IsCollide(rayData, triangleData))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	bool AABBToTriangleCollisionDetector::IsIn(Volume1* aabb, Volume1* triangle)
+	{
+		AABBData aabbData = aabb->operator SSB::AABBData();
+		std::vector<TriangleData> triangles = triangle->GetTriangles();
+		for (auto triangleData : triangles)
+		{
+			if (kDefaultCollisionCalculator.IsIn(aabbData, triangleData))
+			{
+				return true;
+			}
+		}
+		return false;
+	}
+	std::vector<Vector3> AABBToTriangleCollisionDetector::GetIntersections(Volume1* aabb, Volume1* triangle)
+	{
+		std::vector<Vector3> ret;
+		RayData rayData = *(Ray1Volume*)triangle;
+		std::vector<TriangleData> triangles = triangle->GetTriangles();
+		for (auto triangleData : triangles)
+		{
+			std::vector<Vector3> tmp = kDefaultCollisionCalculator.GetIntersections(rayData, triangleData);
+			ret.insert(ret.end(), tmp.begin(), tmp.end());
+		}
+		return ret;
+	}
+	bool AABBToAABBCollisionDetector::IsCollide(Volume1* aabb1, Volume1* aabb2)
+	{
+		AABBData aabb1Data = aabb1->operator SSB::AABBData();
+		AABBData aabb2Data = aabb2->operator SSB::AABBData();
+		return kDefaultCollisionCalculator.IsCollide(aabb1Data, aabb2Data);
+	}
+	bool AABBToAABBCollisionDetector::IsIn(Volume1* aabb1, Volume1* aabb2)
+	{
+		AABBData aabb1Data = aabb1->operator SSB::AABBData();
+		AABBData aabb2Data = aabb2->operator SSB::AABBData();
+		return kDefaultCollisionCalculator.IsIn(aabb1Data, aabb2Data);
+	}
+	std::vector<Vector3> AABBToAABBCollisionDetector::GetIntersections(Volume1* aabb1, Volume1* aabb2)
+	{
+		AABBData aabb1Data = aabb1->operator SSB::AABBData();
+		AABBData aabb2Data = aabb2->operator SSB::AABBData();
+		return kDefaultCollisionCalculator.GetIntersections(aabb1Data, aabb2Data);
+	}
+
+Implement code following example
+
+	class SphereToOBBCollisionDetector : public CollisionDetectorInterface
+	{
+	public:
+		bool IsCollide(Volume1* sphere, Volume1* obb) override;
+		bool IsIn(Volume1* sphere, Volume1* obb) override;
+		std::vector<Vector3> GetIntersections(Volume1* sphere, Volume1* obb) override;
+	};

@@ -2,6 +2,7 @@
 
 #include "VolumeType.h"
 #include "Quaternion.h"
+#include <vector>
 
 namespace SSB
 {
@@ -43,6 +44,10 @@ namespace SSB
 		Vector3 GetLocalPosition() const override final;
 		Matrix33 GetLocalRotation() const override final;
 		Vector3 GetLocalScale() const override final;
+
+	public:
+		virtual std::vector<Vector3> GetWorldBaseVertices() = 0;
+		virtual std::vector<TriangleData> GetWorldBaseTriangles() = 0;
 
 	public:
 		virtual operator AABBData() = 0;

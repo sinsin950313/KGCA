@@ -15,6 +15,20 @@ namespace SSB
 		}
 		_childNodes.clear();
 	}
+	bool CollisionTree1::Node::RoughCollisionCheck(Volume1* target, Volume1* object)
+	{
+		if (_ssColCheck.IsCollide(target, object))
+		{
+			if (_aaColCheck.IsCollide(target, object))
+			{
+				if (_ooColCheck.IsCollide(target, object))
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 	int CollisionTree1::Node::GetCurrentLayer()
 	{
 		return _currentLayer;
@@ -70,31 +84,39 @@ namespace SSB
 			ret.insert(ret.end(), tmp.begin(), tmp.end());
 		}
 
-		VolumeType fromVolumeType = _owner->GetVolumeType(target);
+		//VolumeType fromVolumeType = _owner->GetVolumeType(target);
 		for (auto object : _staticObjects)
 		{
-			VolumeType toVolumeType = _owner->GetVolumeType(object);
-			CollisionDetectorInterface* detector = _owner->GetCollisionDetector(fromVolumeType, toVolumeType);
-			if (detector != nullptr)
+			if(RoughCollisionCheck(target, object))
 			{
-				if (detector->IsCollide(target, object))
-				{
-					ret.push_back(target);
-				}
+				ret.push_back(object);
 			}
+			//VolumeType toVolumeType = _owner->GetVolumeType(object);
+			//CollisionDetectorInterface* detector = _owner->GetCollisionDetector(fromVolumeType, toVolumeType);
+			//if (detector != nullptr)
+			//{
+			//	if (detector->IsCollide(target, object))
+			//	{
+			//		ret.push_back(target);
+			//	}
+			//}
 		}
 
 		for (auto object : _dynamicObjects)
 		{
-			VolumeType toVolumeType = _owner->GetVolumeType(object);
-			CollisionDetectorInterface* detector = _owner->GetCollisionDetector(fromVolumeType, toVolumeType);
-			if (detector != nullptr)
+			if(RoughCollisionCheck(target, object))
 			{
-				if (detector->IsCollide(target, object))
-				{
-					ret.push_back(target);
-				}
+				ret.push_back(object);
 			}
+			//VolumeType toVolumeType = _owner->GetVolumeType(object);
+			//CollisionDetectorInterface* detector = _owner->GetCollisionDetector(fromVolumeType, toVolumeType);
+			//if (detector != nullptr)
+			//{
+			//	if (detector->IsCollide(target, object))
+			//	{
+			//		ret.push_back(target);
+			//	}
+			//}
 		}
 
 		return ret;
@@ -111,23 +133,35 @@ namespace SSB
 		VolumeType fromVolumeType = _owner->_volumeToTypeMap.find(target)->second;
 		for (auto object : _staticObjects)
 		{
-			VolumeType toVolumeType = _owner->_volumeToTypeMap.find(object)->second;
-			CollisionDetectorInterface* detector = _owner->_volumeTypeToDetectorMap.find(fromVolumeType)->second.find(toVolumeType)->second;
-			if(detector->IsCollide(target, object))
+			if(RoughCollisionCheck(target, object))
 			{
-				auto returnList = detector->GetIntersections(target, object);
-				ret.insert(ret.end(), returnList.begin(), returnList.end());
+				VolumeType toVolumeType = _owner->_volumeToTypeMap.find(object)->second;
+				CollisionDetectorInterface* detector = _owner->_volumeTypeToDetectorMap.find(fromVolumeType)->second.find(toVolumeType)->second;
+				if (detector != nullptr)
+				{
+					if (detector->IsCollide(target, object))
+					{
+						auto returnList = detector->GetIntersections(target, object);
+						ret.insert(ret.end(), returnList.begin(), returnList.end());
+					}
+				}
 			}
 		}
 
 		for (auto object : _dynamicObjects)
 		{
-			VolumeType toVolumeType = _owner->_volumeToTypeMap.find(object)->second;
-			CollisionDetectorInterface* detector = _owner->_volumeTypeToDetectorMap.find(fromVolumeType)->second.find(toVolumeType)->second;
-			if(detector->IsCollide(target, object))
+			if(RoughCollisionCheck(target, object))
 			{
-				auto returnList = detector->GetIntersections(target, object);
-				ret.insert(ret.end(), returnList.begin(), returnList.end());
+				VolumeType toVolumeType = _owner->_volumeToTypeMap.find(object)->second;
+				CollisionDetectorInterface* detector = _owner->_volumeTypeToDetectorMap.find(fromVolumeType)->second.find(toVolumeType)->second;
+				if (detector != nullptr)
+				{
+					if (detector->IsCollide(target, object))
+					{
+						auto returnList = detector->GetIntersections(target, object);
+						ret.insert(ret.end(), returnList.begin(), returnList.end());
+					}
+				}
 			}
 		}
 
@@ -246,7 +280,24 @@ namespace SSB
 	}
 	std::vector<Volume1*> CollisionTree1::GetCollidedObjects(Volume1* target)
 	{
-		return _root->GetCollidedObjects(target);
+		std::vector<Volume1*> ret;
+		auto candidates = _root->GetCollidedObjects(target);
+
+		VolumeType fromVolumeType = GetVolumeType(target);
+		for (auto object : candidates)
+		{
+			VolumeType toVolumeType = GetVolumeType(object);
+			CollisionDetectorInterface* detector = GetCollisionDetector(fromVolumeType, toVolumeType);
+			if (detector != nullptr)
+			{
+				if (detector->IsCollide(target, object))
+				{
+					ret.push_back(target);
+				}
+			}
+		}
+
+		return ret;
 	}
 	std::vector<Vector3> CollisionTree1::GetIntersections(Volume1* volume)
 	{
@@ -328,7 +379,7 @@ namespace SSB
 	QuadTree::QuadTreeNode::QuadTreeNode(int currentLayer, CollisionTree1* tree, Volume1* parentVolume)
 		: Node(currentLayer, tree)
 	{
-		_volume = new AABB1Volume;
+		_volume = new Box1Volume;
 		if (parentVolume != nullptr)
 		{
 			_volume->SetParent(parentVolume);

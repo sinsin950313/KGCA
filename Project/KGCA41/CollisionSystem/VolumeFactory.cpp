@@ -1,6 +1,8 @@
 #include "VolumeFactory.h"
 #include "CollisionTree1.h"
 #include "Line1.h"
+#include "Sphere1.h"
+#include "Box1.h"
 
 namespace SSB
 {
@@ -39,25 +41,45 @@ namespace SSB
 	{
 		return Ray;
 	}
-	AABBVolumeFactory::AABBVolumeFactory() : VolumeFactoryInterface(AABB, {
+	BoxVolumeFactory::BoxVolumeFactory() : VolumeFactoryInterface(AABB, {
 		{ new AABBToTriangleCollisionDetector, Triangle},
 		{ new AABBToOBBCollisionDetector, OBB},
 		{ new AABBToSphereCollisionDetector, Sphere}
 		})
 	{
 	}
-	void AABBVolumeFactory::Set(float width, float height, float depth)
+	void BoxVolumeFactory::Set(float width, float height, float depth)
 	{
 		_width = width;
 		_height = height;
 		_depth = depth;
 	}
-	Volume1* AABBVolumeFactory::Create()
+	Volume1* BoxVolumeFactory::Create()
 	{
-		return new AABB1Volume(_width, _height, _depth);
+		return new Box1Volume(_width, _height, _depth);
 	}
-	VolumeType AABBVolumeFactory::GetType()
+	VolumeType BoxVolumeFactory::GetType()
 	{
-		return AABB;
+		return Box;
+	}
+	SphereVolumeFactory::SphereVolumeFactory() : VolumeFactoryInterface(Sphere, {
+		{ new SphereToAABBCollisionDetector, AABB},
+		{ new SphereToOBBCollisionDetector, OBB},
+		{ new SphereToSphereCollisionDetector, Sphere},
+		{ new SphereToTriangleCollisionDetector, Triangle}
+		})
+	{
+	}
+	void SphereVolumeFactory::Set(float radius)
+	{
+		_radius = radius;
+	}
+	Volume1* SphereVolumeFactory::Create()
+	{
+		return new Sphere1Volume(_radius);
+	}
+	VolumeType SphereVolumeFactory::GetType()
+	{
+		return Sphere;
 	}
 }

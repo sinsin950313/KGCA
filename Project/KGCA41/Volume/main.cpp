@@ -10,6 +10,12 @@ int main()
 {
 	DefaultCollisionCalculator calculator;
 
+	Vertex1Volume vertex;
+	Ray1Volume ray(Vector3(), { 1, 0, 0 });
+	Box1Volume box;
+	Sphere1Volume sphere;
+	sphere.SetParent(&vertex);
+
 	{
 		VolumeData source{ {0, 0, 0} , Matrix33(), {1, 1, 1} };
 		VolumeData success{ {0, 0, 0} , Matrix33(), {1, 1, 1} };

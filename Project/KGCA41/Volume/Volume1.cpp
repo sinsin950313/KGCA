@@ -117,4 +117,39 @@ namespace SSB
 	{
 		return _data.Scale;
 	}
+	std::vector<Vector3> Vertex1Volume::GetWorldBaseVertices()
+	{
+		return { GetWorldPosition() };
+	}
+	std::vector<TriangleData> Vertex1Volume::GetWorldBaseTriangles()
+	{
+		return std::vector<TriangleData>();
+	}
+	Vertex1Volume::operator VolumeData()
+	{
+		return VolumeData{
+			GetWorldPosition(), GetWorldRotation(), GetWorldScale()
+		};
+	}
+	Vertex1Volume::operator AABBData()
+	{
+		return AABBData{
+			GetWorldPosition(), GetWorldRotation(), GetWorldScale(),
+			GetWorldPosition(), GetWorldPosition()
+		};
+	}
+	Vertex1Volume::operator OBBData()
+	{
+		return OBBData{
+			GetWorldPosition(), GetWorldRotation(), GetWorldScale(),
+			FDelta, FDelta, FDelta
+		};
+	}
+	Vertex1Volume::operator SphereData()
+	{
+		return SphereData{
+			GetWorldPosition(), GetWorldRotation(), GetWorldScale(),
+			FDelta
+		};
+	}
 }

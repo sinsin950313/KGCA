@@ -204,15 +204,6 @@ namespace SSB
 		};
 		_matrix = _matrix * trans;
 	}
-	OBB Map::GetOBB()
-	{
-		OBB ret;
-		ret.Width = 1.0f;
-		ret.Height = 1.0f;
-		ret.Depth = 1.0f;
-		ret.Matrix = _matrix;
-		return ret;
-	}
 	void Map::SetHeightMap(std::wstring fileName)
 	{
 		const wchar_t* filePath = (kHeightMapPath + fileName).c_str();
@@ -507,22 +498,10 @@ namespace SSB
 		};
 		_debugBox = new DebugBox();
 		Box* box = new Box(_width, _height, _depth);
-		_debugBox->SetAdditionalModel(box);
-		_debugBox->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
-		_debugBox->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Debug", "ps_5_0"));
+		box->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+		box->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Debug", "ps_5_0"));
+		_debugBox->SetModel(box);
 		_debugBox->Move(position);
-	}
-	Map::Node::operator OBB()
-	{
-		OBB data
-		{
-			_matrix,
-			_width,
-			_height,
-			_depth
-		};
-
-		return data;
 	}
 	bool Map::Node::CreateIndexBuffer()
 	{
@@ -545,7 +524,7 @@ namespace SSB
 	}
 	void Map::Node::Check(std::vector<Node*>& drawingNodeList, Camera* camera)
 	{
-		auto state = camera->GetCollideState(*this);
+		auto state = camera->GetCollideState(*_debugBox);
 		if (state != ECollideState::Out)
 		{
 			if (state == ECollideState::Cross)

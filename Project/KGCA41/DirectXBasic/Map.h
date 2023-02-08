@@ -7,14 +7,35 @@
 #include "Matrix.h"
 #include "DXObject.h"
 #include "Camera.h"
+#include "CollisionDetector.h"
 
 namespace SSB
 {
-	class Map : public DXDrawableInterface
+	class Map : public DXObject
 	{
+	private:
+		class MapModel : public Model
+		{
+
+		};
+
 	private:
 		class Node : public Common
 		{
+		private:
+			class NodeVolume : public Box
+			{
+
+			};
+
+			class RayToNodeCollisionDetector : public CollisionDetectorInterface
+			{
+			public:
+				bool IsCollide(Volume1* volumeA, Volume1* volumeB) override;
+				bool IsIn(Volume1* volumeA, Volume1* volumeB) override;
+				std::vector<Vector3> GetIntersections(Volume1* volumeA, Volume1* volumeB) override;
+			};
+
 		private:
 			std::vector<Node*> _nodes;
 			ID3D11Buffer* _indexBuffer;
@@ -37,9 +58,6 @@ namespace SSB
 
 		public:
 			Node(Map& map, int leftTop, int rightTop, int leftBottom, int rightBottom, int depth);
-
-		private:
-			operator OBB();
 
 		public:
 			bool CreateIndexBuffer();
@@ -102,7 +120,6 @@ namespace SSB
 		void SetPixelShader(Shader* shader) { _ps = shader; }
 		HMatrix44 GetMatrix() { return _matrix; }
 		void Move(Vector3 vec);
-		OBB GetOBB();
 		void SetSprite(Sprite* sprite) { _sprite = sprite; }
 		void SetHeightMap(std::wstring fileName);
 		float GetHeight(float x, float z);
@@ -113,7 +130,6 @@ namespace SSB
 		bool Render() override;
 		bool Release() override;
 		void Draw(ID3D11DeviceContext* dc) override;
-		void UpdateParentData(Position2D parentCenter, float parentRadian) override { }
 
 	private:
 		friend class Node;

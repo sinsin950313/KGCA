@@ -54,4 +54,17 @@ namespace SSB
 		virtual operator OBBData() = 0;
 		virtual operator SphereData() = 0;
 	};
+
+	class Vertex1Volume : public Volume1
+	{
+	public:
+		std::vector<Vector3> GetWorldBaseVertices() override;
+		std::vector<TriangleData> GetWorldBaseTriangles() override;
+
+	public:
+		operator VolumeData();
+		operator AABBData() override;
+		operator OBBData() override;
+		operator SphereData() override;
+	};
 }

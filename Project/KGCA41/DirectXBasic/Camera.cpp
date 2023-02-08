@@ -54,7 +54,7 @@ namespace SSB
 			ret[5] = makePlane(frustum[4], frustum[0], frustum[6]);
 		}
 	}
-	ECollideState Camera::GetCollideState(OBB data)
+	ECollideState Camera::GetCollideState(OBBData data)
 	{
 		Float4 planes[6];
 		GetPlane(planes);
@@ -63,19 +63,19 @@ namespace SSB
 		for (int i = 0; i < 6; ++i)
 		{
 			float distance = 0.0f;
-			Vector3 tmp = data.Matrix.GetRow(0);
+			Vector3 tmp = data.Rotation.GetRow(0);
 			Vector3 dir = tmp * data.Width / 2.0f;
 			distance += abs(dir.GetX() * planes[i].x + dir.GetY() * planes[i].y + dir.GetZ() * planes[i].z);
 
-			tmp = data.Matrix.GetRow(1);
+			tmp = data.Rotation.GetRow(1);
 			dir = tmp * data.Height / 2.0f;
 			distance += abs(dir.GetX() * planes[i].x + dir.GetY() * planes[i].y + dir.GetZ() * planes[i].z);
 
-			tmp = data.Matrix.GetRow(2);
+			tmp = data.Rotation.GetRow(2);
 			dir = tmp * data.Depth / 2.0f;
 			distance += abs(dir.GetX() * planes[i].x + dir.GetY() * planes[i].y + dir.GetZ() * planes[i].z);
 
-			Vector3 center = data.Matrix.GetRow(3);
+			Vector3 center = data.Position;
 			float cDistance = center.GetX() * planes[i].x + center.GetY() * planes[i].y + center.GetZ() * planes[i].z + planes[i].w;
 
 			if (cDistance < 0)
@@ -156,7 +156,7 @@ namespace SSB
 	}
 	bool Camera::IsRender(DXObject* object)
 	{
-		OBB obbData = object->GetOBB();
+		OBBData obbData = object->operator SSB::OBBData();
 		if (GetCollideState(obbData) == ECollideState::Out)
 		{
 			return false;
@@ -288,7 +288,7 @@ namespace SSB
 	}
 	HMatrix44 ModelViewCamera::GetViewMatrix()
 	{
-		return _target->GetMatrix().Inverse() * _matrix.Inverse();
+		return _target->GetWorldMatrix().Inverse() * _matrix.Inverse();
 	}
 	bool ModelViewCamera::Init()
 	{

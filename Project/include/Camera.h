@@ -4,6 +4,7 @@
 #include "Matrix.h"
 #include "Vector.h"
 #include "DXObject.h"
+#include "Volume1.h"
 
 namespace SSB
 {
@@ -34,7 +35,7 @@ namespace SSB
 		//void SetPosition(Vector3 position);
 		HMatrix44 GetMatrix() { return _matrix; }
 		bool IsRender(DXObject* object);
-		ECollideState GetCollideState(OBB data);
+		ECollideState GetCollideState(OBBData data);
 
 	public:
 		virtual HMatrix44 GetViewMatrix();

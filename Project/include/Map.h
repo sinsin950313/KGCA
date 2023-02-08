@@ -38,9 +38,6 @@ namespace SSB
 		public:
 			Node(Map& map, int leftTop, int rightTop, int leftBottom, int rightBottom, int depth);
 
-		private:
-			operator OBB();
-
 		public:
 			bool CreateIndexBuffer();
 			void Check(std::vector<Node*>& drawingNodeList, Camera* camera);
@@ -102,7 +99,6 @@ namespace SSB
 		void SetPixelShader(Shader* shader) { _ps = shader; }
 		HMatrix44 GetMatrix() { return _matrix; }
 		void Move(Vector3 vec);
-		OBB GetOBB();
 		void SetSprite(Sprite* sprite) { _sprite = sprite; }
 		void SetHeightMap(std::wstring fileName);
 		float GetHeight(float x, float z);
@@ -113,7 +109,6 @@ namespace SSB
 		bool Render() override;
 		bool Release() override;
 		void Draw(ID3D11DeviceContext* dc) override;
-		void UpdateParentData(Position2D parentCenter, float parentRadian) override { }
 
 	private:
 		friend class Node;

@@ -4,12 +4,23 @@
 #include "Matrix.h"
 #include "Vector.h"
 #include "DXObject.h"
+#include "Volume1.h"
+#include "CollisionDetector.h"
 
 namespace SSB
 {
 	enum class ECollideState { In, Cross, Out };
 	class Camera : public Common
 	{
+	private:
+		class CameraToAABBCollisionDetector : public CollisionDetectorInterface
+		{
+		public:
+			bool IsCollide(Volume1* volumeA, Volume1* volumeB) override;
+			bool IsIn(Volume1* volumeA, Volume1* volumeB) override;
+			std::vector<Vector3> GetIntersections(Volume1* volumeA, Volume1* volumeB) override;
+		};
+
 	private:
 		float _fov;
 		float _aspect;
@@ -34,7 +45,7 @@ namespace SSB
 		//void SetPosition(Vector3 position);
 		HMatrix44 GetMatrix() { return _matrix; }
 		bool IsRender(DXObject* object);
-		ECollideState GetCollideState(OBB data);
+		ECollideState GetCollideState(OBBData data);
 
 	public:
 		virtual HMatrix44 GetViewMatrix();

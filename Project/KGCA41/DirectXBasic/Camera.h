@@ -10,15 +10,48 @@
 namespace SSB
 {
 	enum class ECollideState { In, Cross, Out };
-	class Camera : public Common
+	class Camera : public DXObject
 	{
 	private:
+		class Frustum : public Volume1
+		{
+		public:
+			std::vector<Vector3> GetWorldBaseVertices() override;
+			std::vector<TriangleData> GetWorldBaseTriangles() override;
+
+		public:
+			operator AABBData() override;
+			operator OBBData() override;
+			operator SphereData() override;
+		};
+		class CameraToSphereCollisionDetector : public CollisionDetectorInterface
+		{
+		public:
+			bool IsCollide(Volume1* camera, Volume1* Sphere) override;
+			bool IsIn(Volume1* camera, Volume1* Sphere) override;
+			std::vector<Vector3> GetIntersections(Volume1* camera, Volume1* Sphere) override;
+		};
 		class CameraToAABBCollisionDetector : public CollisionDetectorInterface
 		{
 		public:
-			bool IsCollide(Volume1* volumeA, Volume1* volumeB) override;
-			bool IsIn(Volume1* volumeA, Volume1* volumeB) override;
-			std::vector<Vector3> GetIntersections(Volume1* volumeA, Volume1* volumeB) override;
+			bool IsCollide(Volume1* camera, Volume1* aabb) override;
+			bool IsIn(Volume1* camera, Volume1* aabb) override;
+			std::vector<Vector3> GetIntersections(Volume1* camera, Volume1* aabb) override;
+		};
+		class CameraToOBBCollisionDetector : public CollisionDetectorInterface
+		{
+		public:
+			bool IsCollide(Volume1* camera, Volume1* obb) override;
+			bool IsIn(Volume1* camera, Volume1* obb) override;
+			std::vector<Vector3> GetIntersections(Volume1* camera, Volume1* obb) override;
+		};
+		//Register Triangle Volume Type
+		class CameraFinalCollisionDetector : public CollisionDetectorInterface
+		{
+		public:
+			bool IsCollide(Volume1* camera, Volume1* triangle) override;
+			bool IsIn(Volume1* camera, Volume1* triangle) override;
+			std::vector<Vector3> GetIntersections(Volume1* camera, Volume1* triangle) override;
 		};
 
 	private:

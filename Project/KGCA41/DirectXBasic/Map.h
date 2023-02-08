@@ -8,6 +8,7 @@
 #include "DXObject.h"
 #include "Camera.h"
 #include "CollisionDetector.h"
+#include "Box1.h"
 
 namespace SSB
 {
@@ -16,24 +17,18 @@ namespace SSB
 	private:
 		class MapModel : public Model
 		{
-
+		private:
+			void Build() override;
 		};
 
 	private:
 		class Node : public Common
 		{
 		private:
-			class NodeVolume : public Box
-			{
-
-			};
-
-			class RayToNodeCollisionDetector : public CollisionDetectorInterface
+			class NodeVolume : public Box1Volume
 			{
 			public:
-				bool IsCollide(Volume1* volumeA, Volume1* volumeB) override;
-				bool IsIn(Volume1* volumeA, Volume1* volumeB) override;
-				std::vector<Vector3> GetIntersections(Volume1* volumeA, Volume1* volumeB) override;
+				std::vector<TriangleData> GetWorldBaseTriangles() override;
 			};
 
 		private:
@@ -62,8 +57,8 @@ namespace SSB
 		public:
 			bool CreateIndexBuffer();
 			void Check(std::vector<Node*>& drawingNodeList, Camera* camera);
-			ID3D11Buffer* GetIndexBuffer() { return _indexBuffer; }
-			std::vector<int> GetIndexList() { return _indexList; }
+			ID3D11Buffer* GetIndexBuffer();
+			std::vector<int> GetIndexList();
 
 		public:
 			bool Init() override;
@@ -100,8 +95,8 @@ namespace SSB
 		bool _bDebug = false;
 
 	public:
-		Map(int layerDepth = 4) : _layerDepth(layerDepth) { }
-		virtual ~Map() { Release(); }
+		Map(int layerDepth = 4);
+		virtual ~Map();
 
 	private:
 		void CreateVertex();
@@ -115,12 +110,12 @@ namespace SSB
 		float Lerp(float start, float end, float param);
 
 	public:
-		void SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount) { _widthVertexCount = widthVertexCount + 1; _heightVertexCount = heightVertexCount + 1; }
-		void SetVertexShader(Shader* shader) { _vs = shader; }
-		void SetPixelShader(Shader* shader) { _ps = shader; }
-		HMatrix44 GetMatrix() { return _matrix; }
+		void SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount);
+		void SetVertexShader(Shader* shader);
+		void SetPixelShader(Shader* shader);
+		HMatrix44 GetMatrix();
 		void Move(Vector3 vec);
-		void SetSprite(Sprite* sprite) { _sprite = sprite; }
+		void SetSprite(Sprite* sprite);
 		void SetHeightMap(std::wstring fileName);
 		float GetHeight(float x, float z);
 

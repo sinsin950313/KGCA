@@ -11,6 +11,13 @@ namespace SSB
 {
     extern DXWindow* g_dxWindow;
 
+	Map::Map(int layerDepth) : _layerDepth(layerDepth)
+	{
+	}
+	Map::~Map()
+	{
+		Release();
+	}
 	void Map::CreateVertex()
 	{
 		int hWidthVertexCount = _widthVertexCount / 2;
@@ -194,6 +201,22 @@ namespace SSB
 	{
 		return start - (start * param) + (end * param);
 	}
+	void Map::SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount)
+	{
+		_widthVertexCount = widthVertexCount + 1; _heightVertexCount = heightVertexCount + 1;
+	}
+	void Map::SetVertexShader(Shader* shader)
+	{
+		_vs = shader;
+	}
+	void Map::SetPixelShader(Shader* shader)
+	{
+		_ps = shader;
+	}
+	HMatrix44 Map::GetMatrix()
+	{
+		return _matrix;
+	}
 	void Map::Move(Vector3 vec)
 	{
 		HMatrix44 trans{
@@ -203,6 +226,10 @@ namespace SSB
 			vec.GetX(), vec.GetY(), vec.GetZ(), 1
 		};
 		_matrix = _matrix * trans;
+	}
+	void Map::SetSprite(Sprite* sprite)
+	{
+		_sprite = sprite;
 	}
 	void Map::SetHeightMap(std::wstring fileName)
 	{
@@ -521,6 +548,14 @@ namespace SSB
 			return false;
 		}
         return true;
+	}
+	ID3D11Buffer* Map::Node::GetIndexBuffer()
+	{
+		return _indexBuffer;
+	}
+	std::vector<int> Map::Node::GetIndexList()
+	{
+		return _indexList;
 	}
 	void Map::Node::Check(std::vector<Node*>& drawingNodeList, Camera* camera)
 	{

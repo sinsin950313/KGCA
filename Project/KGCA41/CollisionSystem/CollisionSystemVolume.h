@@ -5,6 +5,7 @@
 
 namespace SSB
 {
+	// For static dynamic system
 	class CollisionSystemVolume
 	{
 	private:

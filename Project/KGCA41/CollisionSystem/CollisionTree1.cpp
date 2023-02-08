@@ -288,6 +288,11 @@ namespace SSB
 		{
 			VolumeType toVolumeType = GetVolumeType(object);
 			CollisionDetectorInterface* detector = GetCollisionDetector(fromVolumeType, toVolumeType);
+			if (detector == nullptr)
+			{
+				detector = GetCollisionDetector(fromVolumeType, Triangle);
+			}
+
 			if (detector != nullptr)
 			{
 				if (detector->IsCollide(target, object))

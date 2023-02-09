@@ -70,6 +70,56 @@ namespace SSB
 	{
 		return rotation.GetRow(0);
 	}
+	Vector3 Ray1Volume::GetEnd(Vector3 origin, Vector3 direction)
+	{
+		float x, y, z;
+		if (ZeroFloat(direction.GetX()))
+		{
+			x = origin.GetX();
+		}
+		else
+		{
+			if (direction.GetX() > 0)
+			{
+				x = (std::numeric_limits<float>::max)();
+			}
+			else
+			{
+				x = -(std::numeric_limits<float>::max)();
+			}
+		}
+		if (ZeroFloat(direction.GetY()))
+		{
+			y = origin.GetY();
+		}
+		else
+		{
+			if (direction.GetY() > 0)
+			{
+				y = (std::numeric_limits<float>::max)();
+			}
+			else
+			{
+				y = -(std::numeric_limits<float>::max)();
+			}
+		}
+		if (ZeroFloat(direction.GetZ()))
+		{
+			z = origin.GetZ();
+		}
+		else
+		{
+			if (direction.GetZ() > 0)
+			{
+				z = (std::numeric_limits<float>::max)();
+			}
+			else
+			{
+				z = -(std::numeric_limits<float>::max)();
+			}
+		}
+		return { x, y, z };
+	}
 	Vector3 Ray1Volume::GetWorldDirection()
 	{
 		return GetDirection(GetWorldRotation());
@@ -80,9 +130,11 @@ namespace SSB
 	}
 	std::vector<Vector3> Ray1Volume::GetWorldBaseVertices()
 	{
-		// very far point but escape overflow
-		Vector3 end = GetWorldDirection() * (std::numeric_limits<float>::max)() / 2.0f + GetWorldPosition();
-		return { GetWorldPosition() , end };
+		auto origin = GetWorldPosition();
+		auto direction = GetWorldRotation().GetRow(2);
+
+		Vector3 end = GetEnd(origin, direction);
+		return { origin , end };
 	}
 	std::vector<TriangleData> Ray1Volume::GetWorldBaseTriangles()
 	{
@@ -98,60 +150,13 @@ namespace SSB
 	Ray1Volume::operator AABBData()
 	{
 		auto origin = GetWorldPosition();
-		auto direction = GetWorldRotation().GetRow(0);
-
-		float minX = (std::numeric_limits<float>::min)();
-		float maxX = (std::numeric_limits<float>::max)();
-		if (ZeroFloat(direction.GetX()))
-		{
-			minX = origin.GetX() - FDelta;
-			maxX = origin.GetX() + FDelta;
-		}
-		else if (direction.GetX() > 0)
-		{
-			minX = origin.GetX();
-		}
-		else
-		{
-			maxX = origin.GetX();
-		}
-
-		float minY = (std::numeric_limits<float>::min)();
-		float maxY = (std::numeric_limits<float>::max)();
-		if (ZeroFloat(direction.GetY()))
-		{
-			minY = origin.GetY() - FDelta;
-			maxY = origin.GetY() + FDelta;
-		}
-		else if (direction.GetY() > 0)
-		{
-			minY = origin.GetY();
-		}
-		else
-		{
-			maxY = origin.GetY();
-		}
-
-		float minZ = (std::numeric_limits<float>::min)();
-		float maxZ = (std::numeric_limits<float>::max)();
-		if (ZeroFloat(direction.GetZ()))
-		{
-			minZ = origin.GetZ() - FDelta;
-			maxZ = origin.GetZ() + FDelta;
-		}
-		else if (direction.GetZ() > 0)
-		{
-			minZ = origin.GetZ();
-		}
-		else
-		{
-			maxZ = origin.GetZ();
-		}
+		auto direction = GetWorldRotation().GetRow(2);
+		auto end = GetEnd(origin, direction);
 
 		return AABBData{
 			GetWorldPosition(), GetWorldRotation(), GetWorldScale(),
-			{ minX, minY, minZ },
-			{ maxX, maxY, maxZ }
+			{ min(origin.GetX(), end.GetX()), min(origin.GetY(), end.GetY()), min(origin.GetZ(), end.GetZ()) },
+			{ max(origin.GetX(), end.GetX()), max(origin.GetY(), end.GetY()), max(origin.GetZ(), end.GetZ()) }
 		};
 	}
 	Ray1Volume::operator OBBData()
@@ -161,7 +166,7 @@ namespace SSB
 
 		return OBBData{
 			GetWorldPosition(), GetWorldRotation(), GetWorldScale(),
-			FDelta * 2, FDelta * 2, (std::numeric_limits<float>::max)()
+			FDelta / 2, FDelta / 2, (std::numeric_limits<float>::max)()
 		};
 	}
 	Ray1Volume::operator SphereData()

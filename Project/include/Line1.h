@@ -31,6 +31,7 @@ namespace SSB
 
 	private:
 		Vector3 GetDirection(Matrix33 rotation);
+		Vector3 GetEnd(Vector3 origin, Vector3 direction);
 
 	protected:
 		Vector3 GetWorldDirection();

@@ -65,10 +65,10 @@ namespace SSB
 		return ret;
 	}
 
-	static const float FDelta = 0.001f;
+	static const float FDelta = 0.01f;
 
 	static bool ZeroFloat(float val)
 	{
-		return val < FDelta;
+		return abs(val) < FDelta;
 	}
 };

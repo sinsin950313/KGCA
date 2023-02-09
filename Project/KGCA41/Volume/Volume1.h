@@ -11,16 +11,19 @@ namespace SSB
 	public:
 		virtual Vector3 GetWorldPosition() const { return Vector3(); }
 		virtual Matrix33 GetWorldRotation() const { return Matrix33(); }
-		virtual Vector3 GetWorldScale() const { return Vector3(); }
+		virtual Vector3 GetWorldScale() const { return Vector3(1, 1, 1); }
 		virtual Vector3 GetLocalPosition() const { return Vector3(); }
 		virtual Matrix33 GetLocalRotation() const { return Matrix33(); }
-		virtual Vector3 GetLocalScale() const { return Vector3(); }
+		virtual Vector3 GetLocalScale() const { return Vector3(1, 1, 1); }
 	};
 
 	class Volume1 : public VolumeInterface1
 	{
 	private:
 		static const VolumeInterface1 DefaultVolume;
+
+	public:
+		Volume1();
 
 	private:
 		VolumeData _data;

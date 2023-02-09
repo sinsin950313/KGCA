@@ -31,12 +31,12 @@ namespace SSB
 	{
 		std::vector<Vector3> ret;
 
-		float distance = lData.Direction.Dot(rData.NormalVector) + rData.D;
 		float dotProduct = lData.Direction.Dot(rData.NormalVector);
-		if (abs(dotProduct) < FDelta)
+		float distance = lData.Origin.Dot(rData.NormalVector) + rData.D;
+		if (ZeroFloat(dotProduct))
 		{
 			 //The ray is parallel to the plane
-			if (abs(distance - FDelta) < FDelta)
+			if (ZeroFloat(distance))
 			{
 				ret.push_back(lData.Origin);
 			}
@@ -73,20 +73,24 @@ namespace SSB
 			det = -det;
 		}
 
-		if (det < 0.0001f)
+		if (ZeroFloat(det))
 			return false;
 
 		float u = tVec.Dot(pVec);
-		if (u < 0.0f)
+		if (u < -FDelta)
 			return false;
 
 		Vector3 qVec = tVec.Cross(e1);
 
 		float v = lData.Direction.Dot(qVec);
-		if (v < 0.0f)
+		if (v < -FDelta)
 			return false;
 
 		if (u + v > det)
+			return false;
+
+		float t = e2.Dot(qVec) / det;
+		if (t < -FDelta)
 			return false;
 
 		return true;
@@ -99,6 +103,8 @@ namespace SSB
 
 	std::vector<Vector3> DefaultCollisionCalculator::GetIntersections(RayData lData, TriangleData rData)
 	{
+		std::vector<Vector3> ret;
+
 		Vector3 e1 = rData.Vertice[1] - rData.Vertice[0];
 		Vector3 e2 = rData.Vertice[2] - rData.Vertice[0];
 
@@ -118,10 +124,14 @@ namespace SSB
 
 		Vector3 qVec = tVec.Cross(e1);
 
-		float t = e2.Dot(qVec);
-		Vector3 ret = lData.Origin + lData.Direction * t;
+		float t = e2.Dot(qVec) / det;
+		if (t > -FDelta)
+		{
+			Vector3 tmp = lData.Origin + lData.Direction * t;
+			ret.push_back(tmp);
+		}
 
-		return { ret };
+		return ret;
 	}
 
 	bool DefaultCollisionCalculator::IsCollide(RayData lData, AABBData rData)
@@ -164,17 +174,17 @@ namespace SSB
 	{
 		Vector3 tmin;
 		{
-			float x = (rData.Min.GetX() - lData.Origin.GetX()) / (lData.Direction.GetX() + FDelta);
-			float y = (rData.Min.GetY() - lData.Origin.GetY()) / (lData.Direction.GetY() + FDelta);
-			float z = (rData.Min.GetZ() - lData.Origin.GetZ()) / (lData.Direction.GetZ() + FDelta);
+			float x = (rData.Min.GetX() - lData.Origin.GetX()) / (lData.Direction.GetX() + (FDelta * 0.01f));
+			float y = (rData.Min.GetY() - lData.Origin.GetY()) / (lData.Direction.GetY() + (FDelta * 0.01f));
+			float z = (rData.Min.GetZ() - lData.Origin.GetZ()) / (lData.Direction.GetZ() + (FDelta * 0.01f));
 			tmin = Vector3(x, y,z);
 		}
 
 		Vector3 tmax;
 		{
-			float x = (rData.Max.GetX() - lData.Origin.GetX()) / (lData.Direction.GetX() + FDelta);
-			float y = (rData.Max.GetY() - lData.Origin.GetY()) / (lData.Direction.GetY() + FDelta);
-			float z = (rData.Max.GetZ() - lData.Origin.GetZ()) / (lData.Direction.GetZ() + FDelta);
+			float x = (rData.Max.GetX() - lData.Origin.GetX()) / (lData.Direction.GetX() + (FDelta * 0.01f));
+			float y = (rData.Max.GetY() - lData.Origin.GetY()) / (lData.Direction.GetY() + (FDelta * 0.01f));
+			float z = (rData.Max.GetZ() - lData.Origin.GetZ()) / (lData.Direction.GetZ() + (FDelta * 0.01f));
 			tmax = Vector3(x, y,z);
 		}
 
@@ -188,13 +198,14 @@ namespace SSB
 		if (minmax >= maxmin)
 		{
 			ret.push_back(lData.Origin + lData.Direction * maxmin);
+			ret.push_back(lData.Origin + lData.Direction * minmax);
 		}
 		return ret;
 	}
 
 	bool DefaultCollisionCalculator::IsCollide(RayData lData, OBBData rData)
 	{
-		float t_min = (std::numeric_limits<float>::min)();
+		float t_min = -(std::numeric_limits<float>::max)();
 		float t_max = (std::numeric_limits<float>::max)();
 		float f[3], fa[3], s[3], sa[3];
 
@@ -264,13 +275,13 @@ namespace SSB
 	{
 		std::vector<Vector3> ret;
 
-		float t_min = (std::numeric_limits<float>::min)();
+		float t_min = -(std::numeric_limits<float>::max)();
 		float t_max = (std::numeric_limits<float>::max)();
 		float f[3], fa[3], s[3], sa[3];
 
 		Vector3 vR = lData.Origin - rData.Position;
 
-		float extent[3]{ rData.Width, rData.Height, rData.Depth };
+		float extent[3]{ rData.Width / 2, rData.Height / 2, rData.Depth / 2 };
 		for (int v = 0; v < 3; v++)
 		{
 			f[v] = rData.Rotation.GetRow(v).Dot(lData.Direction);
@@ -326,6 +337,7 @@ namespace SSB
 		}
 
 		ret.push_back(lData.Origin + lData.Direction * t_min);
+		ret.push_back(lData.Origin + lData.Direction * t_max);
 		return ret;
 	}
 
@@ -433,9 +445,10 @@ namespace SSB
 
 	bool DefaultCollisionCalculator::IsCollide(VolumeData lData, AABBData rData)
 	{
-		return (lData.Position.GetX() - rData.Min.GetX() >= FDelta && lData.Position.GetX() - rData.Max.GetX() <= -FDelta &&
-			lData.Position.GetY() - rData.Min.GetY() >= FDelta && lData.Position.GetY() - rData.Max.GetY() <= -FDelta &&
-			lData.Position.GetZ() - rData.Min.GetZ() >= FDelta && lData.Position.GetZ() - rData.Max.GetZ() <= -FDelta);
+		return (
+			rData.Min.GetX() - FDelta <= lData.Position.GetX() && lData.Position.GetX() <= rData.Max.GetX() + FDelta &&
+			rData.Min.GetY() - FDelta <= lData.Position.GetY() && lData.Position.GetY() <= rData.Max.GetY() + FDelta &&
+			rData.Min.GetZ() - FDelta <= lData.Position.GetZ() && lData.Position.GetZ() <= rData.Max.GetZ() + FDelta);
 	}
 
 	bool DefaultCollisionCalculator::IsIn(VolumeData lData, AABBData rData)
@@ -505,7 +518,7 @@ namespace SSB
 		float distance = diff.Length();
 
 		 //Check if the distance is within the radius of the sphere
-		if (abs(distance - rData.Radius) <= FDelta)
+		if (distance <= rData.Radius + FDelta)
 			return true;
 		else
 			return false;
@@ -663,13 +676,13 @@ namespace SSB
 		float t0 = (-b + fDiscriminant) / 2.0f;
 		float t1 = (-b - fDiscriminant) / 2.0f;
 
-		if (t0 >= 0.0f)
-		{
-			ret.push_back(lData.Origin + lData.Direction * t0);
-		}
 		if (t1 >= 0.0f)
 		{
 			ret.push_back(lData.Origin + lData.Direction * t1);
+		}
+		if (t0 >= 0.0f)
+		{
+			ret.push_back(lData.Origin + lData.Direction * t0);
 		}
 		return ret;
 	}
@@ -932,7 +945,7 @@ namespace SSB
 		float distance = toVolume.Length();
 
 		 //if the distance is greater than the dot product, the volume is not on the ray
-		if (distance - dot > FDelta)
+		if (abs(distance - dot) > FDelta)
 		{
 			return false;
 		}
@@ -1061,17 +1074,15 @@ namespace SSB
 		vertices[6] = rData.Position + Vector3(rData.Width / 2, rData.Height / 2, -rData.Depth / 2) * rData.Rotation;
 		vertices[7] = rData.Position + Vector3(-rData.Width / 2, rData.Height / 2, -rData.Depth / 2) * rData.Rotation;
 
-		// Check if any of the vertices of the OBB are outside the AABB
 		for (int i = 0; i < 8; i++) {
-			if (vertices[i].GetX() < lData.Min.GetX() || vertices[i].GetX() > lData.Max.GetX() ||
-				vertices[i].GetY() < lData.Min.GetY() || vertices[i].GetY() > lData.Max.GetY() ||
-				vertices[i].GetZ() < lData.Min.GetZ() || vertices[i].GetZ() > lData.Max.GetZ()) {
-				return false;
+			if (vertices[i].GetX() > lData.Min.GetX() && vertices[i].GetX() < lData.Max.GetX() &&
+				vertices[i].GetY() > lData.Min.GetY() && vertices[i].GetY() < lData.Max.GetY() &&
+				vertices[i].GetZ() > lData.Min.GetZ() && vertices[i].GetZ() < lData.Max.GetZ()) {
+				return true;
 			}
 		}
 
-		// All vertices of the OBB are inside the AABB
-		return true;
+		return false;
 	}
 	bool DefaultCollisionCalculator::IsIn(AABBData lData, OBBData rData)
 	{
@@ -1107,11 +1118,11 @@ namespace SSB
 	}
 	bool DefaultCollisionCalculator::IsCollide(AABBData lData, SphereData rData)
 	{
-		if (rData.Position.GetX() - lData.Min.GetX() > rData.Radius || lData.Max.GetX() - rData.Position.GetX() > rData.Radius)
+		if (lData.Min.GetX() - rData.Position.GetX() > rData.Radius || rData.Position.GetX() - lData.Max.GetX() > rData.Radius)
 			return false;
-		if (rData.Position.GetY() - lData.Min.GetY() > rData.Radius || lData.Max.GetY() - rData.Position.GetY() > rData.Radius)
+		if (lData.Min.GetY() - rData.Position.GetY() > rData.Radius || rData.Position.GetY() - lData.Max.GetY() > rData.Radius)
 			return false;
-		if (rData.Position.GetZ() - lData.Min.GetZ() > rData.Radius || lData.Max.GetZ() - rData.Position.GetZ() > rData.Radius)
+		if (lData.Min.GetZ() - rData.Position.GetZ() > rData.Radius || rData.Position.GetZ() - lData.Max.GetZ() > rData.Radius)
 			return false;
 
 		return true;
@@ -1148,17 +1159,16 @@ namespace SSB
 		float halfValue[3]{ lData.Depth / 2.0f, lData.Height / 2.0f, lData.Width / 2.0f };
 
 		Matrix33 matOBBRotation = lData.Rotation;
-		matOBBRotation = matOBBRotation.Transpose();
 
 		for (int i = 0; i < 3; ++i)
 		{
 			float fProj = vDiff.Dot(matOBBRotation.GetRow(i));
 			if (abs(fProj) < rData.Radius + halfValue[i])
 			{
-				return false;
+				return true;
 			}
 		}
-		return true;
+		return false;
 	}
 	bool DefaultCollisionCalculator::IsCollide(SphereData lData, VolumeData rData)
 	{

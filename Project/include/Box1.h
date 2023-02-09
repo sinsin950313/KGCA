@@ -46,7 +46,7 @@ namespace SSB
 	class Box1Volume : public Volume1
 	{
 	public:
-		Box1Volume(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
+		Box1Volume(float width = 2.0f, float height = 2.0f, float depth = 2.0f);
 
 	private:
 		std::vector<Vector3> GetVertices(Vector3 center, Matrix33 rotation, Vector3 scale);

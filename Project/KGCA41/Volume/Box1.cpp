@@ -123,12 +123,12 @@ namespace SSB
 	Box1Volume::operator AABBData()
 	{
 		auto vertice = GetWorldVertices();
-		float minX = std::numeric_limits<float>::min();
-		float minY = std::numeric_limits<float>::min();
-		float minZ = std::numeric_limits<float>::min();
-		float maxX = std::numeric_limits<float>::max();
-		float maxY = std::numeric_limits<float>::max();
-		float maxZ = std::numeric_limits<float>::max();
+		float minX = std::numeric_limits<float>::max();
+		float minY = std::numeric_limits<float>::max();
+		float minZ = std::numeric_limits<float>::max();
+		float maxX = -std::numeric_limits<float>::max();
+		float maxY = -std::numeric_limits<float>::max();
+		float maxZ = -std::numeric_limits<float>::max();
 
 		for(auto vertex : vertice)
 		{
@@ -160,7 +160,7 @@ namespace SSB
 		float radius = scale.Length();
 		return SphereData{
 			GetWorldPosition(), GetWorldRotation(), GetWorldScale(),
-			sqrt(radius * radius)
+			radius
 		};
 	}
 	//AABB1Volume::AABB1Volume(float width, float height, float depth)

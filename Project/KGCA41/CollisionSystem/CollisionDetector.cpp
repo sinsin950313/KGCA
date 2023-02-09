@@ -1,6 +1,7 @@
 #include "CollisionDetector.h"
 #include "CollisionCalculator.h"
 #include "Line1.h"
+#include "CollisionTree1.h"
 
 namespace SSB
 {
@@ -62,22 +63,22 @@ namespace SSB
 		}
 		return ret;
 	}
-	bool RayToAABBCollisionDetector::IsCollide(Volume1* ray, Volume1* AABB)
+	bool RayToAABBCollisionDetector::IsCollide(Volume1* ray, Volume1* aabb)
 	{
 		RayData rayData = *(Ray1Volume*)ray;
-		AABBData aabbData = AABB->operator SSB::AABBData();
+		AABBData aabbData = aabb->operator SSB::AABBData();
 		return kDefaultCollisionCalculator.IsCollide(rayData, aabbData);
 	}
-	bool RayToAABBCollisionDetector::IsIn(Volume1* ray, Volume1* AABB)
+	bool RayToAABBCollisionDetector::IsIn(Volume1* ray, Volume1* aabb)
 	{
 		RayData rayData = *(Ray1Volume*)ray;
-		AABBData aabbData = AABB->operator SSB::AABBData();
+		AABBData aabbData = aabb->operator SSB::AABBData();
 		return kDefaultCollisionCalculator.IsIn(rayData, aabbData);
 	}
-	std::vector<Vector3> RayToAABBCollisionDetector::GetIntersections(Volume1* ray, Volume1* AABB)
+	std::vector<Vector3> RayToAABBCollisionDetector::GetIntersections(Volume1* ray, Volume1* aabb)
 	{
 		RayData rayData = *(Ray1Volume*)ray;
-		AABBData aabbData = AABB->operator SSB::AABBData();
+		AABBData aabbData = aabb->operator SSB::AABBData();
 		return { kDefaultCollisionCalculator.GetIntersections(rayData, aabbData) };
 	}
 	bool RayToOBBCollisionDetector::IsCollide(Volume1* ray, Volume1* obb)
@@ -100,40 +101,40 @@ namespace SSB
 	}
 	bool AABBToTriangleCollisionDetector::IsCollide(Volume1* aabb, Volume1* triangle)
 	{
-		AABBData rayData = aabb->operator SSB::AABBData();
-		std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
-		for (auto triangleData : triangles)
-		{
-			if (kDefaultCollisionCalculator.IsCollide(rayData, triangleData))
-			{
-				return true;
-			}
-		}
+		//AABBData rayData = aabb->operator SSB::AABBData();
+		//std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
+		//for (auto triangleData : triangles)
+		//{
+		//	if (kDefaultCollisionCalculator.IsCollide(rayData, triangleData))
+		//	{
+		//		return true;
+		//	}
+		//}
 		return false;
 	}
 	bool AABBToTriangleCollisionDetector::IsIn(Volume1* aabb, Volume1* triangle)
 	{
-		AABBData aabbData = aabb->operator SSB::AABBData();
-		std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
-		for (auto triangleData : triangles)
-		{
-			if (kDefaultCollisionCalculator.IsIn(aabbData, triangleData))
-			{
-				return true;
-			}
-		}
+		//AABBData aabbData = aabb->operator SSB::AABBData();
+		//std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
+		//for (auto triangleData : triangles)
+		//{
+		//	if (kDefaultCollisionCalculator.IsIn(aabbData, triangleData))
+		//	{
+		//		return true;
+		//	}
+		//}
 		return false;
 	}
 	std::vector<Vector3> AABBToTriangleCollisionDetector::GetIntersections(Volume1* aabb, Volume1* triangle)
 	{
 		std::vector<Vector3> ret;
-		RayData rayData = *(Ray1Volume*)triangle;
-		std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
-		for (auto triangleData : triangles)
-		{
-			std::vector<Vector3> tmp = kDefaultCollisionCalculator.GetIntersections(rayData, triangleData);
-			ret.insert(ret.end(), tmp.begin(), tmp.end());
-		}
+		//AABBData aabbData = *(Ray1Volume*)aabb;
+		//std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
+		//for (auto triangleData : triangles)
+		//{
+		//	std::vector<Vector3> tmp = kDefaultCollisionCalculator.GetIntersections(aabbData, triangleData);
+		//	ret.insert(ret.end(), tmp.begin(), tmp.end());
+		//}
 		return ret;
 	}
 	bool AABBToOBBCollisionDetector::IsCollide(Volume1* aabb, Volume1* obb)
@@ -150,9 +151,10 @@ namespace SSB
 	}
 	std::vector<Vector3> AABBToOBBCollisionDetector::GetIntersections(Volume1* aabb, Volume1* obb)
 	{
-		AABBData aabbData = aabb->operator SSB::AABBData();
-		OBBData obbData = obb->operator SSB::OBBData();
-		return { kDefaultCollisionCalculator.GetIntersections(aabbData, obbData) };
+		//AABBData aabbData = aabb->operator SSB::AABBData();
+		//OBBData obbData = obb->operator SSB::OBBData();
+		//return { kDefaultCollisionCalculator.GetIntersections(aabbData, obbData) };
+		return std::vector<Vector3>();
 	}
 	bool AABBToSphereCollisionDetector::IsCollide(Volume1* aabb, Volume1* sphere)
 	{
@@ -168,9 +170,10 @@ namespace SSB
 	}
 	std::vector<Vector3> AABBToSphereCollisionDetector::GetIntersections(Volume1* aabb, Volume1* sphere)
 	{
-		AABBData aabbData = aabb->operator SSB::AABBData();
-		SphereData sphereData = sphere->operator SSB::SphereData();
-		return { kDefaultCollisionCalculator.GetIntersections(aabbData, sphereData) };
+		//AABBData aabbData = aabb->operator SSB::AABBData();
+		//SphereData sphereData = sphere->operator SSB::SphereData();
+		//return { kDefaultCollisionCalculator.GetIntersections(aabbData, sphereData) };
+		return std::vector<Vector3>();
 	}
 	bool AABBToAABBCollisionDetector::IsCollide(Volume1* aabb1, Volume1* aabb2)
 	{
@@ -186,9 +189,10 @@ namespace SSB
 	}
 	std::vector<Vector3> AABBToAABBCollisionDetector::GetIntersections(Volume1* aabb1, Volume1* aabb2)
 	{
-		AABBData aabb1Data = aabb1->operator SSB::AABBData();
-		AABBData aabb2Data = aabb2->operator SSB::AABBData();
-		return kDefaultCollisionCalculator.GetIntersections(aabb1Data, aabb2Data);
+		//AABBData aabb1Data = aabb1->operator SSB::AABBData();
+		//AABBData aabb2Data = aabb2->operator SSB::AABBData();
+		//return kDefaultCollisionCalculator.GetIntersections(aabb1Data, aabb2Data);
+		return std::vector<Vector3>();
 	}
 	bool SphereToSphereCollisionDetector::IsCollide(Volume1* sphere1, Volume1* sphere2)
 	{
@@ -204,48 +208,49 @@ namespace SSB
 	}
 	std::vector<Vector3> SphereToSphereCollisionDetector::GetIntersections(Volume1* sphere1, Volume1* sphere2)
 	{
-		SphereData sphere1Data = sphere1->operator SSB::SphereData();
-		SphereData sphere2Data = sphere2->operator SSB::SphereData();
-		return kDefaultCollisionCalculator.GetIntersections(sphere1Data, sphere2Data);
+		//SphereData sphere1Data = sphere1->operator SSB::SphereData();
+		//SphereData sphere2Data = sphere2->operator SSB::SphereData();
+		//return kDefaultCollisionCalculator.GetIntersections(sphere1Data, sphere2Data);
+		return std::vector<Vector3>();
 	}
 	bool OBBToTriangleCollisionDetector::IsCollide(Volume1* obb, Volume1* triangle)
 	{
-		OBBData obbData = obb->operator SSB::OBBData();
-		std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
-		for (auto triangleData : triangles)
-		{
-			if (kDefaultCollisionCalculator.IsCollide(obbData, triangleData))
-			{
-				return true;
-			}
-		}
+		//OBBData obbData = obb->operator SSB::OBBData();
+		//std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
+		//for (auto triangleData : triangles)
+		//{
+		//	if (kDefaultCollisionCalculator.IsCollide(obbData, triangleData))
+		//	{
+		//		return true;
+		//	}
+		//}
 		return false;
 	}
 
 	bool OBBToTriangleCollisionDetector::IsIn(Volume1* obb, Volume1* triangle)
 	{
-		OBBData obbData = obb->operator SSB::OBBData();
-		std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
-		for (auto triangleData : triangles)
-		{
-			if (kDefaultCollisionCalculator.IsIn(obbData, triangleData))
-			{
-				return true;
-			}
-		}
+		//OBBData obbData = obb->operator SSB::OBBData();
+		//std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
+		//for (auto triangleData : triangles)
+		//{
+		//	if (kDefaultCollisionCalculator.IsIn(obbData, triangleData))
+		//	{
+		//		return true;
+		//	}
+		//}
 		return false;
 	}
 
 	std::vector<Vector3> OBBToTriangleCollisionDetector::GetIntersections(Volume1* obb, Volume1* triangle)
 	{
 		std::vector<Vector3> ret;
-		OBBData obbData = obb->operator SSB::OBBData();
-		std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
-		for (auto triangleData : triangles)
-		{
-			std::vector<Vector3> tmp = kDefaultCollisionCalculator.GetIntersections(obbData, triangleData);
-			ret.insert(ret.end(), tmp.begin(), tmp.end());
-		}
+		//OBBData obbData = obb->operator SSB::OBBData();
+		//std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
+		//for (auto triangleData : triangles)
+		//{
+		//	std::vector<Vector3> tmp = kDefaultCollisionCalculator.GetIntersections(obbData, triangleData);
+		//	ret.insert(ret.end(), tmp.begin(), tmp.end());
+		//}
 		return ret;
 	}
 
@@ -258,16 +263,18 @@ namespace SSB
 
 	bool OBBToAABBCollisionDetector::IsIn(Volume1* obb, Volume1* aabb)
 	{
-		OBBData obbData = obb->operator SSB::OBBData();
-		AABBData aabbData = aabb->operator SSB::AABBData();
-		return kDefaultCollisionCalculator.IsIn(obbData, aabbData);
+		//OBBData obbData = obb->operator SSB::OBBData();
+		//AABBData aabbData = aabb->operator SSB::AABBData();
+		//return kDefaultCollisionCalculator.IsIn(obbData, aabbData);
+		return false;
 	}
 
 	std::vector<Vector3> OBBToAABBCollisionDetector::GetIntersections(Volume1* obb, Volume1* aabb)
 	{
-		OBBData obbData = obb->operator SSB::OBBData();
-		AABBData aabbData = aabb->operator SSB::AABBData();
-		return kDefaultCollisionCalculator.GetIntersections(obbData, aabbData);
+		//OBBData obbData = obb->operator SSB::OBBData();
+		//AABBData aabbData = aabb->operator SSB::AABBData();
+		//return kDefaultCollisionCalculator.GetIntersections(obbData, aabbData);
+		return std::vector<Vector3>();
 	}
 
 	bool OBBToOBBCollisionDetector::IsCollide(Volume1* obb1, Volume1* obb2)
@@ -278,54 +285,56 @@ namespace SSB
 	}
 	bool OBBToOBBCollisionDetector::IsIn(Volume1* obb1, Volume1* obb2)
 	{
-		OBBData obb1Data = obb1->operator SSB::OBBData();
-		OBBData obb2Data = obb2->operator SSB::OBBData();
-		return kDefaultCollisionCalculator.IsIn(obb1Data, obb2Data);
+		//OBBData obb1Data = obb1->operator SSB::OBBData();
+		//OBBData obb2Data = obb2->operator SSB::OBBData();
+		//return kDefaultCollisionCalculator.IsIn(obb1Data, obb2Data);
+		return false;
 	}
 	std::vector<Vector3> OBBToOBBCollisionDetector::GetIntersections(Volume1* obb1, Volume1* obb2)
 	{
-		OBBData obb1Data = obb1->operator SSB::OBBData();
-		OBBData obb2Data = obb2->operator SSB::OBBData();
-		return kDefaultCollisionCalculator.GetIntersections(obb1Data, obb2Data);
+		//OBBData obb1Data = obb1->operator SSB::OBBData();
+		//OBBData obb2Data = obb2->operator SSB::OBBData();
+		//return kDefaultCollisionCalculator.GetIntersections(obb1Data, obb2Data);
+		return std::vector<Vector3>();
 	}
 	bool SphereToTriangleCollisionDetector::IsCollide(Volume1* sphere, Volume1* triangle)
 	{
-		SphereData sphereData = sphere->operator SSB::SphereData();
-		std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
-		for (auto triangleData : triangles)
-		{
-			if (kDefaultCollisionCalculator.IsCollide(sphereData, triangleData))
-			{
-				return true;
-			}
-		}
+		//SphereData sphereData = sphere->operator SSB::SphereData();
+		//std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
+		//for (auto triangleData : triangles)
+		//{
+		//	if (kDefaultCollisionCalculator.IsCollide(sphereData, triangleData))
+		//	{
+		//		return true;
+		//	}
+		//}
 		return false;
 	}
 
 	bool SphereToTriangleCollisionDetector::IsIn(Volume1* sphere, Volume1* triangle)
 	{
-		SphereData sphereData = sphere->operator SSB::SphereData();
-		std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
-		for (auto triangleData : triangles)
-		{
-			if (kDefaultCollisionCalculator.IsIn(sphereData, triangleData))
-			{
-				return true;
-			}
-		}
+		//SphereData sphereData = sphere->operator SSB::SphereData();
+		//std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
+		//for (auto triangleData : triangles)
+		//{
+		//	if (kDefaultCollisionCalculator.IsIn(sphereData, triangleData))
+		//	{
+		//		return true;
+		//	}
+		//}
 		return false;
 	}
 
 	std::vector<Vector3> SphereToTriangleCollisionDetector::GetIntersections(Volume1* sphere, Volume1* triangle)
 	{
 		std::vector<Vector3> ret;
-		SphereData sphereData = sphere->operator SSB::SphereData();
-		std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
-		for (auto triangleData : triangles)
-		{
-			std::vector<Vector3> tmp = kDefaultCollisionCalculator.GetIntersections(sphereData, triangleData);
-			ret.insert(ret.end(), tmp.begin(), tmp.end());
-		}
+		//SphereData sphereData = sphere->operator SSB::SphereData();
+		//std::vector<TriangleData> triangles = triangle->GetWorldBaseTriangles();
+		//for (auto triangleData : triangles)
+		//{
+		//	std::vector<Vector3> tmp = kDefaultCollisionCalculator.GetIntersections(sphereData, triangleData);
+		//	ret.insert(ret.end(), tmp.begin(), tmp.end());
+		//}
 		return ret;
 	}
 
@@ -345,9 +354,10 @@ namespace SSB
 
 	std::vector<Vector3> SphereToAABBCollisionDetector::GetIntersections(Volume1* sphere, Volume1* aabb)
 	{
-		SphereData sphereData = sphere->operator SSB::SphereData();
-		AABBData aabbData = aabb->operator SSB::AABBData();
-		return kDefaultCollisionCalculator.GetIntersections(sphereData, aabbData);
+		//SphereData sphereData = sphere->operator SSB::SphereData();
+		//AABBData aabbData = aabb->operator SSB::AABBData();
+		//return kDefaultCollisionCalculator.GetIntersections(sphereData, aabbData);
+		return std::vector<Vector3>();
 	}
 
 	bool OBBToSphereCollisionDetector::IsCollide(Volume1* obb, Volume1* sphere)
@@ -359,36 +369,41 @@ namespace SSB
 
 	bool OBBToSphereCollisionDetector::IsIn(Volume1* obb, Volume1* sphere)
 	{
-		OBBData obbData = obb->operator SSB::OBBData();
-		SphereData sphereData = sphere->operator SSB::SphereData();
-		return kDefaultCollisionCalculator.IsIn(obbData, sphereData);
+		//OBBData obbData = obb->operator SSB::OBBData();
+		//SphereData sphereData = sphere->operator SSB::SphereData();
+		//return kDefaultCollisionCalculator.IsIn(obbData, sphereData);
+		return false;
 	}
 
 	std::vector<Vector3> OBBToSphereCollisionDetector::GetIntersections(Volume1* obb, Volume1* sphere)
 	{
-		OBBData obbData = obb->operator SSB::OBBData();
-		SphereData sphereData = sphere->operator SSB::SphereData();
-		return kDefaultCollisionCalculator.GetIntersections(obbData, sphereData);
+		//OBBData obbData = obb->operator SSB::OBBData();
+		//SphereData sphereData = sphere->operator SSB::SphereData();
+		//return kDefaultCollisionCalculator.GetIntersections(obbData, sphereData);
+		return std::vector<Vector3>();
 	}
 
 	bool SphereToOBBCollisionDetector::IsCollide(Volume1* sphere, Volume1* obb)
 	{
-		SphereData sphereData = sphere->operator SSB::SphereData();
-		OBBData obbData = obb->operator SSB::OBBData();
-		return kDefaultCollisionCalculator.IsCollide(sphereData, obbData);
+		//SphereData sphereData = sphere->operator SSB::SphereData();
+		//OBBData obbData = obb->operator SSB::OBBData();
+		//return kDefaultCollisionCalculator.IsCollide(sphereData, obbData);
+		return false;
 	}
 
 	bool SphereToOBBCollisionDetector::IsIn(Volume1* sphere, Volume1* obb)
 	{
-		SphereData sphereData = sphere->operator SSB::SphereData();
-		OBBData obbData = obb->operator SSB::OBBData();
-		return kDefaultCollisionCalculator.IsIn(sphereData, obbData);
+		//SphereData sphereData = sphere->operator SSB::SphereData();
+		//OBBData obbData = obb->operator SSB::OBBData();
+		//return kDefaultCollisionCalculator.IsIn(sphereData, obbData);
+		return false;
 	}
 
 	std::vector<Vector3> SphereToOBBCollisionDetector::GetIntersections(Volume1* sphere, Volume1* obb)
 	{
-		SphereData sphereData = sphere->operator SSB::SphereData();
-		OBBData obbData = obb->operator SSB::OBBData();
-		return kDefaultCollisionCalculator.GetIntersections(sphereData, obbData);
+		//SphereData sphereData = sphere->operator SSB::SphereData();
+		//OBBData obbData = obb->operator SSB::OBBData();
+		//return kDefaultCollisionCalculator.GetIntersections(sphereData, obbData);
+		return std::vector<Vector3>();
 	}
 }

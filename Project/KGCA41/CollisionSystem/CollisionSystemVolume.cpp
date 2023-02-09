@@ -68,4 +68,8 @@ namespace SSB
 	{
 		return _type;
 	}
+	Volume1* CollisionSystemVolume::GetVolumeOrigin()
+	{
+		return _volume;
+	}
 }

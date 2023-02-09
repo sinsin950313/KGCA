@@ -5,6 +5,7 @@
 
 namespace SSB
 {
+	// For static dynamic system
 	class CollisionSystemVolume
 	{
 	private:
@@ -28,5 +29,6 @@ namespace SSB
 		void SetStatic();
 		void SetDynamic();
 		VolumeType GetType();
+		Volume1* GetVolumeOrigin();
 	};
 }

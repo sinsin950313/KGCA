@@ -262,14 +262,28 @@ namespace SSB
 	void CollisionTree1::AddStaticCollider(VolumeType type, Volume1* collider)
 	{
 		_volumeToTypeMap.insert(std::make_pair(collider, type));
-		_volumeTypeToVolumeSetMap.find(type)->second.insert(collider);
+
+		auto iter = _volumeTypeToVolumeSetMap.find(type);
+		if (iter == _volumeTypeToVolumeSetMap.end())
+		{
+			_volumeTypeToVolumeSetMap.insert(std::make_pair(type, std::set<Volume1*>()));
+			iter = _volumeTypeToVolumeSetMap.find(type);
+		}
+		iter->second.insert(collider);
 
 		_root->AddStaticCollider(collider);
 	}
 	void CollisionTree1::AddDynamicCollider(VolumeType type, Volume1* collider)
 	{
 		_volumeToTypeMap.insert(std::make_pair(collider, type));
-		_volumeTypeToVolumeSetMap.find(type)->second.insert(collider);
+
+		auto iter = _volumeTypeToVolumeSetMap.find(type);
+		if (iter == _volumeTypeToVolumeSetMap.end())
+		{
+			_volumeTypeToVolumeSetMap.insert(std::make_pair(type, std::set<Volume1*>()));
+			iter = _volumeTypeToVolumeSetMap.find(type);
+		}
+		iter->second.insert(collider);
 
 		_root->AddDynamicCollider(collider);
 		_dynamicColliderList.insert(collider);

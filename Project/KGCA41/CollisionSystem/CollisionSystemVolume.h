@@ -29,5 +29,6 @@ namespace SSB
 		void SetStatic();
 		void SetDynamic();
 		VolumeType GetType();
+		Volume1* GetVolumeOrigin();
 	};
 }

@@ -10,7 +10,7 @@
 
 namespace SSB
 {
-	class CollisionTree1 : public Common, public Box1Volume
+	class CollisionTree1 : public Common
 	{
 	protected:
 		class Node : public Common

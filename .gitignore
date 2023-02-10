@@ -433,8 +433,10 @@ FodyWeavers.xsd
 
 *.idb
 
-include/*
-!include/*/*
+Project/include/*.h
+!Project/include/*/DXTK
+!Project/include/*/FBX
+!Project/include/*/fmod
 
 Resource/
 Naver MYBOX/

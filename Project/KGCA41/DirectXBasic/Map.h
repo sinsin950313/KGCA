@@ -12,13 +12,35 @@
 
 namespace SSB
 {
-	class Map : public DXObject
+	class Map : public Common
 	{
 	private:
 		class MapModel : public Model
 		{
+			float _widthVertexCount;
+			float _heightVertexCount;
+			Map* _map;
+
+		public:
+			MapModel(Map* map);
+
+		private:
+			Vector3 CalculateFaceNormal(UINT i0, UINT i1, UINT i2);
+			void CalculateVertexNormal();
+
+		public:
+			float Lerp(float start, float end, float param);
+
 		private:
 			void Build() override;
+
+		public:
+			void Set(float widthVertexCount, float heightVertexCount);
+			void SetHeightMap(std::wstring fileName);
+			float GetCoordinateHeight(int x, int z);
+
+		public:
+			std::vector<Vertex_PNCT> GetVertice();
 		};
 
 	private:
@@ -66,16 +88,12 @@ namespace SSB
 			bool Render() override;
 			bool Release() override;
 		};
-		std::vector<Vertex_PNCT> _vertexList;
-		std::vector<int> _indexList;
-		Sprite* _sprite;
-		ID3D11Buffer* _vertexBuffer;
-		Shader* _vs;
-		Shader* _ps;
-		ID3D11InputLayout* _vertexLayout;
-		HMatrix44 _matrix;
+
+		MapModel _model;
 		ID3D11Buffer* _constantBuffer;
 		ConstantData _constantData;
+
+		HMatrix44 _matrix;
 
 		float _cellDistance = 1.0f;
 		float _heightScale = 100;
@@ -89,6 +107,7 @@ namespace SSB
 		std::vector<Node*> _drawingNodeList;
 
 		ID3D11Texture2D* _heightTexture;
+
 		std::vector<float> _heightData;
 		float _height = 0;
 
@@ -99,24 +118,17 @@ namespace SSB
 		virtual ~Map();
 
 	private:
-		void CreateVertex();
-		bool CreateVertexBuffer();
-		bool CreateVertexLayout();
 		bool CreateConstantBuffer();
 		void UpdateConstantBuffer();
-		Vector3 CalculateFaceNormal(UINT i0, UINT i1, UINT i2);
-		void CalculateVertexNormal();
 		float GetCoordinateHeight(int x, int z);
-		float Lerp(float start, float end, float param);
 
 	public:
 		void SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount);
-		void SetVertexShader(Shader* shader);
-		void SetPixelShader(Shader* shader);
-		HMatrix44 GetMatrix();
-		void Move(Vector3 vec);
+		void SetPosition(Vector3 vec);
 		void SetSprite(Sprite* sprite);
 		void SetHeightMap(std::wstring fileName);
+		void SetVertexShader(Shader* shader);
+		void SetPixelShader(Shader* shader);
 		float GetHeight(float x, float z);
 
 	public:
@@ -124,9 +136,5 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
-		void Draw(ID3D11DeviceContext* dc) override;
-
-	private:
-		friend class Node;
 	};
 }

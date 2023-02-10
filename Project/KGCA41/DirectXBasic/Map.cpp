@@ -11,131 +11,12 @@ namespace SSB
 {
     extern DXWindow* g_dxWindow;
 
-	Map::Map(int layerDepth) : _layerDepth(layerDepth)
+	Map::MapModel::MapModel(Map* map)
 	{
-	}
-	Map::~Map()
-	{
-		Release();
-	}
-	void Map::CreateVertex()
-	{
-		int hWidthVertexCount = _widthVertexCount / 2;
-		int hDepthVertexCount = _heightVertexCount / 2;
-
-		// z x-->
-		// |
-		// |
-		// v
-		_vertexList.resize(_widthVertexCount * _heightVertexCount);
-		for (int row = 0; row < _heightVertexCount; ++row)
-		{
-			for (int col = 0; col < _widthVertexCount; ++col)
-			{
-				int index = row * _widthVertexCount + col;
-				_vertexList[index].position = { (float)(col - hWidthVertexCount) * _cellDistance, _heightData[row * _widthVertexCount + col] * _heightScale, (float)(hDepthVertexCount - row) * _cellDistance, 1.0f };
-				_vertexList[index].color = { (rand() % 10) / 10.0f, (rand() % 10) / 10.0f, (rand() % 10) / 10.0f, 1.0f };
-				_vertexList[index].texture = { ((float)col / (float)(_widthVertexCount - 1.0f)) * tileX, ((float)row / (float)(_heightVertexCount - 1.0f)) * tileY };
-			}
-		}
-
-		// index-- -- -
-		//   |  / | /|
-		//   | /  |/ |
-		//    ---- -- -
-		_indexList.resize((_widthVertexCount - 1) * (_heightVertexCount - 1) * 2 * 3);
-		unsigned int index = 0;
-		for (int row = 0; row < _heightVertexCount - 1; ++row)
-		{
-			for (int col = 0; col < _widthVertexCount - 1; ++col)
-			{
-				int vIndex = row * _widthVertexCount + col;
-				_indexList[index + 0] = vIndex;
-				_indexList[index + 1] = vIndex + 1;
-				_indexList[index + 2] = vIndex + _widthVertexCount;
-
-				_indexList[index + 3] = vIndex + _widthVertexCount;
-				_indexList[index + 4] = vIndex + 1;
-				_indexList[index + 5] = vIndex + _widthVertexCount + 1;
-
-				index += 6;
-			}
-		}
-
-		CalculateVertexNormal();
+		_map = map;
 	}
 
-	bool Map::CreateVertexBuffer()
-    {
-		D3D11_BUFFER_DESC bd;
-		ZeroMemory(&bd, sizeof(bd));
-		bd.ByteWidth = sizeof(decltype(_vertexList[0])) * _vertexList.size();
-		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-		D3D11_SUBRESOURCE_DATA sd;
-		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		sd.pSysMem = &_vertexList.at(0);
-		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_vertexBuffer);
-		if (FAILED(hr))
-		{
-			assert(SUCCEEDED(hr));
-			return false;
-		}
-		return true;
-    }
-    bool Map::CreateVertexLayout()
-    {
-		D3D11_INPUT_ELEMENT_DESC ied[] =
-		{
-			{ "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		};
-		UINT iedCount = sizeof(ied) / sizeof(ied[0]);
-		HRESULT hr = g_dxWindow->GetDevice()->CreateInputLayout(ied, iedCount, _vs->GetCode()->GetBufferPointer(), _vs->GetCode()->GetBufferSize(), &_vertexLayout);
-		if (FAILED(hr))
-		{
-			return false;
-		}
-
-		g_dxWindow->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-		//for (auto dxObject : _childObjectList)
-		//{
-		//	dxObject->Init();
-		//}
-		return true;
-    }
-	bool Map::CreateConstantBuffer()
-	{
-		D3D11_BUFFER_DESC desc;
-		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
-		desc.ByteWidth = sizeof(ConstantData);
-		desc.Usage = D3D11_USAGE_DEFAULT;
-		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-
-		D3D11_SUBRESOURCE_DATA sd;
-		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		sd.pSysMem = &_constantData;
-		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_constantBuffer);
-		if (FAILED(hr))
-		{
-			assert(SUCCEEDED(hr));
-			return false;
-		}
-		return true;
-	}
-	void Map::UpdateConstantBuffer()
-	{
-		_constantData.World = GetMatrix().Transpose();
-		_constantData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
-		_constantData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
-
-		g_dxWindow->GetDeviceContext()->UpdateSubresource(_constantBuffer, 0, nullptr, &_constantData, 0, 0);
-	}
-	Vector3 Map::CalculateFaceNormal(UINT i0, UINT i1, UINT i2)
+	Vector3 Map::MapModel::CalculateFaceNormal(UINT i0, UINT i1, UINT i2)
 	{
 		Vector3 v0 = _vertexList[i0].position;
 		Vector3 v1 = _vertexList[i1].position;
@@ -148,7 +29,7 @@ namespace SSB
 
 		return normal;
 	}
-	void Map::CalculateVertexNormal()
+	void Map::MapModel::CalculateVertexNormal()
 	{
 		int faceCount = _indexList.size() / 3;
 		std::vector<Vector3> faceNormal;
@@ -193,45 +74,69 @@ namespace SSB
 #endif
 		}
 	}
-	float Map::GetCoordinateHeight(int x, int z)
-	{
-		return _vertexList[x * _widthVertexCount + z].position.y;
-	}
-	float Map::Lerp(float start, float end, float param)
-	{
-		return start - (start * param) + (end * param);
-	}
-	void Map::SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount)
+	void Map::MapModel::Set(float widthVertexCount, float heightVertexCount)
 	{
 		_widthVertexCount = widthVertexCount + 1; _heightVertexCount = heightVertexCount + 1;
 	}
-	void Map::SetVertexShader(Shader* shader)
+	float Map::MapModel::GetCoordinateHeight(int x, int z)
 	{
-		_vs = shader;
+		return _vertexList[x * _widthVertexCount + z].position.y;
 	}
-	void Map::SetPixelShader(Shader* shader)
+	std::vector<Vertex_PNCT> Map::MapModel::GetVertice()
 	{
-		_ps = shader;
+		return _vertexList;
 	}
-	HMatrix44 Map::GetMatrix()
+	float Map::MapModel::Lerp(float start, float end, float param)
 	{
-		return _matrix;
+		return start - (start * param) + (end * param);
 	}
-	void Map::Move(Vector3 vec)
+	void Map::MapModel::Build()
 	{
-		HMatrix44 trans{
-			1, 0, 0, 0,
-			0, 1, 0, 0,
-			0, 0, 1, 0,
-			vec.GetX(), vec.GetY(), vec.GetZ(), 1
-		};
-		_matrix = _matrix * trans;
+		int hWidthVertexCount = _widthVertexCount / 2;
+		int hDepthVertexCount = _heightVertexCount / 2;
+
+		// z x-->
+		// |
+		// |
+		// v
+		_vertexList.resize(_widthVertexCount * _heightVertexCount);
+		for (int row = 0; row < _heightVertexCount; ++row)
+		{
+			for (int col = 0; col < _widthVertexCount; ++col)
+			{
+				int index = row * _widthVertexCount + col;
+				_vertexList[index].position = { (float)(col - hWidthVertexCount) * _map->_cellDistance, _map->_heightData[row * _widthVertexCount + col] * _map->_heightScale, (float)(hDepthVertexCount - row) * _map->_cellDistance, 1.0f };
+				_vertexList[index].color = { (rand() % 10) / 10.0f, (rand() % 10) / 10.0f, (rand() % 10) / 10.0f, 1.0f };
+				_vertexList[index].texture = { ((float)col / (float)(_widthVertexCount - 1.0f)) * _map->tileX, ((float)row / (float)(_heightVertexCount - 1.0f)) * _map->tileY };
+			}
+		}
+
+		// index-- -- -
+		//   |  / | /|
+		//   | /  |/ |
+		//    ---- -- -
+		_indexList.resize((_widthVertexCount - 1) * (_heightVertexCount - 1) * 2 * 3);
+		unsigned int index = 0;
+		for (int row = 0; row < _heightVertexCount - 1; ++row)
+		{
+			for (int col = 0; col < _widthVertexCount - 1; ++col)
+			{
+				int vIndex = row * _widthVertexCount + col;
+				_indexList[index + 0] = vIndex;
+				_indexList[index + 1] = vIndex + 1;
+				_indexList[index + 2] = vIndex + _widthVertexCount;
+
+				_indexList[index + 3] = vIndex + _widthVertexCount;
+				_indexList[index + 4] = vIndex + 1;
+				_indexList[index + 5] = vIndex + _widthVertexCount + 1;
+
+				index += 6;
+			}
+		}
+
+		CalculateVertexNormal();
 	}
-	void Map::SetSprite(Sprite* sprite)
-	{
-		_sprite = sprite;
-	}
-	void Map::SetHeightMap(std::wstring fileName)
+	void Map::MapModel::SetHeightMap(std::wstring fileName)
 	{
 		const wchar_t* filePath = (kHeightMapPath + fileName).c_str();
 		ID3D11Resource* textureResource;
@@ -252,7 +157,7 @@ namespace SSB
 
 		_widthVertexCount = textureDesc.Width;
 		_heightVertexCount = textureDesc.Height;
-		_heightData.resize(textureDesc.Height * textureDesc.Width);
+		_map->_heightData.resize(textureDesc.Height * textureDesc.Width);
 
 		D3D11_MAPPED_SUBRESOURCE MappedFaceDest;
 		float minHeight;
@@ -270,20 +175,85 @@ namespace SSB
 					UINT colStart = col * 4;
 					UINT uRed = pTexels[rowStart + colStart + 0];
 					float heightData = (float)uRed / 255.0f;
-					_heightData[row * textureDesc.Width + col] = heightData;
+					_map->_heightData[row * textureDesc.Width + col] = heightData;
 					minHeight = fmin(minHeight, heightData);
 					maxHeight = fmax(maxHeight, heightData);
 				}
 			}
 			g_dxWindow->GetDeviceContext()->Unmap(texture2D, D3D11CalcSubresource(0, 0, 1));
 		}
-		_height = maxHeight - minHeight;
+		_map->_height = maxHeight - minHeight;
 
 		//m_iNumRows = td.Height;
 		//m_iNumCols = td.Width;
 		textureResource->Release();
 		texture2D->Release();
+	}
 
+	Map::Map(int layerDepth) : _layerDepth(layerDepth), _model(this)
+	{
+	}
+	Map::~Map()
+	{
+		Release();
+	}
+	bool Map::CreateConstantBuffer()
+	{
+		D3D11_BUFFER_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
+		desc.ByteWidth = sizeof(ConstantData);
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+		sd.pSysMem = &_constantData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_constantBuffer);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+		return true;
+	}
+	void Map::UpdateConstantBuffer()
+	{
+		_constantData.World = _matrix.Transpose();
+		_constantData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
+		_constantData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
+
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_constantBuffer, 0, nullptr, &_constantData, 0, 0);
+	}
+	float Map::GetCoordinateHeight(int x, int z)
+	{
+		return _model.GetCoordinateHeight(x, z);
+	}
+	void Map::SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount)
+	{
+		_model.Set(widthVertexCount, heightVertexCount);
+		_heightData.resize((widthVertexCount + 1) * (heightVertexCount + 1));
+		_model.Init();
+	}
+	void Map::SetPosition(Vector3 vec)
+	{
+		Matrix33 rot = _matrix;
+		_matrix = {rot, vec};
+	}
+	void Map::SetSprite(Sprite* sprite)
+	{
+		_model.SetSprite(sprite);
+	}
+	void Map::SetHeightMap(std::wstring fileName)
+	{
+		_model.SetHeightMap(fileName);
+	}
+	void Map::SetVertexShader(Shader* shader)
+	{
+		_model.SetVertexShader(shader);
+	}
+	void Map::SetPixelShader(Shader* shader)
+	{
+		_model.SetPixelShader(shader);
 	}
 	float Map::GetHeight(float x, float z)
 	{
@@ -331,14 +301,14 @@ namespace SSB
 			float uy = B - A; // A->B
 			float vy = C - A; // A->C	
 							  // 두 정점의 높이값의 차이를 비교하여 델타X의 값에 따라 보간값을 찾는다.		
-			height = A + Lerp(0.0f, uy, deltaX) + Lerp(0.0f, vy, deltaZ);
+			height = A + _model.Lerp(0.0f, uy, deltaX) + _model.Lerp(0.0f, vy, deltaZ);
 		}
 		else // DCB
 		{
 			float uy = C - D; // D->C
 			float vy = B - D; // D->B
 							  // 두 정점의 높이값의 차이를 비교하여 델타Z의 값에 따라 보간값을 찾는다.		
-			height = D + Lerp(0.0f, uy, 1.0f - deltaX) + Lerp(0.0f, vy, 1.0f - deltaZ);
+			height = D + _model.Lerp(0.0f, uy, 1.0f - deltaX) + _model.Lerp(0.0f, vy, 1.0f - deltaZ);
 		}
 		return height;
 	}
@@ -349,10 +319,8 @@ namespace SSB
 			_heightData.resize(_widthVertexCount * _heightVertexCount);
 		}
 
-		CreateVertex();
+		_model.Init();
 		_root = new Node(*this, 0, _widthVertexCount - 1, _widthVertexCount * (_heightVertexCount - 1), _widthVertexCount * _heightVertexCount - 1, 0);
-        CreateVertexBuffer();
-        CreateVertexLayout();
 		CreateConstantBuffer();
 
 		_root->Init();
@@ -374,35 +342,20 @@ namespace SSB
 	{
 		UpdateConstantBuffer();
 		_root->Check(_drawingNodeList, g_dxWindow->GetMainCamera());
-		g_dxWindow->AddDrawable(this);
+
+		for (auto drawingNode : _drawingNodeList)
+		{
+			drawingNode->Render();
+		}
 
 		return true;
 	}
 	bool Map::Release()
 	{
-		if (_vertexBuffer)
-        {
-            _vertexBuffer->Release();
-			_vertexBuffer = nullptr;
-        }
-        if (_vertexLayout)
-        {
-            _vertexLayout->Release();
-			_vertexLayout = nullptr;
-        }
-		_vs = nullptr;
-		_ps = nullptr;
 		if (_constantBuffer)
 		{
 			_constantBuffer->Release();
 			_constantBuffer = nullptr;
-		}
-
-		if (_sprite)
-		{
-			_sprite->Release();
-			delete _sprite;
-			_sprite = nullptr;
 		}
 
 		if (_root)
@@ -423,31 +376,15 @@ namespace SSB
 
         return true;
     }
-    void Map::Draw(ID3D11DeviceContext* dc)
-	{
-		UINT stride = sizeof(Vertex_PNCT);
-		UINT offset = 0;
-
-		g_dxWindow->GetDeviceContext()->UpdateSubresource(_vertexBuffer, NULL, NULL, &_vertexList.at(0), 0, 0);
-
-		dc->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
-		dc->IASetInputLayout(_vertexLayout);
-		dc->VSSetShader((ID3D11VertexShader*)_vs->GetShader(), NULL, 0);
-		dc->PSSetShader((ID3D11PixelShader*)_ps->GetShader(), NULL, 0);
-		dc->PSSetShaderResources(0, 1, _sprite->GetResource()->GetShaderResourceView());
-		ID3D11SamplerState* ss = _sprite->GetSamplerState();
-		dc->PSSetSamplers(0, 1, &ss);
-		dc->PSSetShaderResources(1, 1, _sprite->GetMaskResource()->GetShaderResourceView());
-		dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
-		dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
-
-		for (auto node : _drawingNodeList)
-		{
-			dc->IASetIndexBuffer(node->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-			dc->DrawIndexed(node->GetIndexList().size(), 0, 0);
-		}
-		_drawingNodeList.clear();
-	}
+ //   void Map::Draw(ID3D11DeviceContext* dc)
+	//{
+	//	for (auto node : _drawingNodeList)
+	//	{
+	//		dc->IASetIndexBuffer(node->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+	//		dc->DrawIndexed(node->GetIndexList().size(), 0, 0);
+	//	}
+	//	_drawingNodeList.clear();
+	//}
 
 	Map::Node::Node(Map& map, int leftTop, int rightTop, int leftBottom, int rightBottom, int depth) 
 		: _map(map), _leftTop(leftTop), _leftBottom(leftBottom), _rightTop(rightTop), _rightBottom(rightBottom), _layerDepth(depth)
@@ -490,15 +427,16 @@ namespace SSB
 			}
 		}
 
-		float heightMax = map._vertexList[_indexList[0]].position.y;
-		float heightMin = map._vertexList[_indexList[0]].position.y;
-		float widthMax = map._vertexList[_indexList[0]].position.x;
-		float widthMin = map._vertexList[_indexList[0]].position.x;
-		float depthMax = map._vertexList[_indexList[0]].position.z;
-		float depthMin = map._vertexList[_indexList[0]].position.z;
+		auto vertice = map._model.GetVertice();
+		float heightMax = vertice[_indexList[0]].position.y;
+		float heightMin = vertice[_indexList[0]].position.y;
+		float widthMax = vertice[_indexList[0]].position.x;
+		float widthMin = vertice[_indexList[0]].position.x;
+		float depthMax = vertice[_indexList[0]].position.z;
+		float depthMin = vertice[_indexList[0]].position.z;
 		for (auto index : _indexList)
 		{
-			Float4 tmp = map._vertexList[index].position;
+			Float4 tmp = vertice[index].position;
 			heightMax = fmax(heightMax, tmp.y);
 			heightMin = fmin(heightMin, tmp.y);
 			widthMax = fmax(widthMax, tmp.x);
@@ -510,7 +448,7 @@ namespace SSB
 		_width = fabs(widthMax - widthMin);
 		_height = fabs(heightMax - heightMin);
 		_depth = fabs(depthMax - depthMin);
-		Vector3 position{map._vertexList[_center].position.x, heightMin + _height / 2.0f, map._vertexList[_center].position.z};
+		Vector3 position{vertice[_center].position.x, heightMin + _height / 2.0f, vertice[_center].position.z};
 		_matrix = HMatrix44(Matrix33(), position);
 
 		class DebugBox : public DXObject

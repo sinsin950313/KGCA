@@ -50,9 +50,10 @@ namespace SSB
             _terrain->SetSprite(SpriteLoader::GetInstance().Load(L"KGCABK.bmp", L"Background", DXStateManager::kDefaultWrapSample));
             _terrain->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
             _terrain->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Main", "ps_5_0"));
-            _terrain->SetHeightMap(L"heightMap513.bmp");
+            //_terrain->SetHeightMap(L"heightMap513.bmp");
+            _terrain->SetSize(3, 3);
             _terrain->Init();
-            _terrain->Move({ 0, 0, 0 });
+            _terrain->SetPosition({ 0, 0, 0 });
         }
 
         _dCamera = new DebugCamera();

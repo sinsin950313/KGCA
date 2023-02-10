@@ -77,7 +77,9 @@ namespace SSB
 		void Register(VolumeType fromType, CollisionDetectorInterface* detector, VolumeType toType);
 		void AddCollider(CollisionSystemVolume* collider);
 		std::vector<CollisionSystemVolume*> GetCollidedObjects(CollisionSystemVolume* target);
+		std::vector<CollisionSystemVolume*> GetCollidedObjects(CollisionSystemVolume* target, VolumeType finalType);
 		std::vector<Vector3> GetIntersections(CollisionSystemVolume* volume);
+		std::vector<Vector3> GetIntersections(CollisionSystemVolume* volume, VolumeType finalType);
 		void Remove(CollisionSystemVolume* volume);
 		void Clear();
 

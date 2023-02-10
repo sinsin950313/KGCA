@@ -12,10 +12,11 @@ namespace SSB
 	protected:
 		struct DetectorRegisterData
 		{
+			VolumeType FromType;
 			CollisionDetectorInterface* Detector;
 			VolumeType ToType;
 		};
-		VolumeFactoryInterface(VolumeType fromType, std::vector<DetectorRegisterData> registerData);
+		VolumeFactoryInterface(std::vector<DetectorRegisterData> registerData);
 
 	protected:
 		virtual Volume1* Create() = 0;
@@ -25,6 +26,12 @@ namespace SSB
 
 	public:
 		virtual VolumeType GetType() = 0;
+	};
+
+	class CollisionSystemRayVolume : public CollisionSystemVolume
+	{
+	public:
+		operator RayData();
 	};
 
 	class RayVolumeFactory : public VolumeFactoryInterface

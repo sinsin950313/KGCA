@@ -5,16 +5,22 @@
 
 namespace SSB
 {
-	// For static dynamic system
+	// For Static-Dynamic system
 	class CollisionSystemVolume
 	{
 	private:
 		VolumeType _type;
-		Volume1* _volume;
 		bool _isStatic;
+
+	protected:
+		Volume1* _volume;
 
 	public:
 		CollisionSystemVolume(VolumeType type, Volume1* volume, bool isStatic = true);
+
+	private:
+		void UpdateToCollisionSystem();
+		Volume1* GetVolumeOrigin();
 
 	public:
 		void SetParent(VolumeInterface1* parent);
@@ -29,6 +35,13 @@ namespace SSB
 		void SetStatic();
 		void SetDynamic();
 		VolumeType GetType();
-		Volume1* GetVolumeOrigin();
+		bool IsStatic();
+		std::vector<Vector3> GetWorldBaseVertices();
+		std::vector<TriangleData> GetWorldBaseTriangles();
+
+	public:
+		operator AABBData();
+		operator OBBData();
+		operator SphereData();
 	};
 }

@@ -8,11 +8,11 @@ namespace SSB
 {
 	extern CollisionTree1* kCollisionSystem;
 
-	VolumeFactoryInterface::VolumeFactoryInterface(VolumeType fromType, std::vector<DetectorRegisterData> registerData)
+	VolumeFactoryInterface::VolumeFactoryInterface(std::vector<DetectorRegisterData> registerData)
 	{
 		for(auto data : registerData)
 		{
-			kCollisionSystem->Register(fromType, data.Detector, data.ToType);
+			kCollisionSystem->Register(data.FromType, data.Detector, data.ToType);
 		}
 	}
 	CollisionSystemVolume* VolumeFactoryInterface::New()
@@ -20,11 +20,12 @@ namespace SSB
 		return new CollisionSystemVolume(GetType(), Create(), true);
 	}
 
-	RayVolumeFactory::RayVolumeFactory() : VolumeFactoryInterface(Ray, {
-			{ new RayToSphereCollisionDetector, Sphere},
-			{ new RayToTriangleCollisionDetector, Triangle},
-			{ new RayToAABBCollisionDetector, AABB},
-			{ new RayToOBBCollisionDetector, OBB} })
+	RayVolumeFactory::RayVolumeFactory() : VolumeFactoryInterface({
+		{ RayType, new RayToSphereCollisionDetector, SphereType},
+		//{ RayType, new RayToAABBCollisionDetector, AABBType},
+		//{ RayType, new RayToOBBCollisionDetector, OBBType},
+		{ RayType, new RayToTriangleCollisionDetector, TriangleType},
+		})
 	{
 	}
 
@@ -39,12 +40,23 @@ namespace SSB
 	}
 	VolumeType RayVolumeFactory::GetType()
 	{
-		return Ray;
+		return RayType;
 	}
-	BoxVolumeFactory::BoxVolumeFactory() : VolumeFactoryInterface(AABB, {
-		{ new AABBToTriangleCollisionDetector, Triangle},
-		{ new AABBToOBBCollisionDetector, OBB},
-		{ new AABBToSphereCollisionDetector, Sphere}
+	BoxVolumeFactory::BoxVolumeFactory() : VolumeFactoryInterface({
+		//{ AABBType, new AABBToSphereCollisionDetector, SphereType},
+		{ AABBType, new AABBToAABBCollisionDetector, AABBType},
+		//{ AABBType, new AABBToOBBCollisionDetector, OBBType},
+		//{ AABBType, new AABBToTriangleCollisionDetector, TriangleType},
+
+		//{ OBBType, new OBBToSphereCollisionDetector, SphereType},
+		//{ OBBType, new OBBToAABBCollisionDetector, AABBType},
+		{ OBBType, new OBBToOBBCollisionDetector, OBBType},
+		//{ OBBType, new OBBToTriangleCollisionDetector, TriangleType},
+
+		// For custom volume collision detector part
+		{ BoxType, new BoxToSphereCollisionDetector, SphereType},
+		{ BoxType, new BoxToRayCollisionDetector, RayType},
+		{ BoxType, new BoxToBoxCollisionDetector, BoxType},
 		})
 	{
 	}
@@ -60,13 +72,13 @@ namespace SSB
 	}
 	VolumeType BoxVolumeFactory::GetType()
 	{
-		return Box;
+		return BoxType;
 	}
-	SphereVolumeFactory::SphereVolumeFactory() : VolumeFactoryInterface(Sphere, {
-		{ new SphereToAABBCollisionDetector, AABB},
-		{ new SphereToOBBCollisionDetector, OBB},
-		{ new SphereToSphereCollisionDetector, Sphere},
-		{ new SphereToTriangleCollisionDetector, Triangle}
+	SphereVolumeFactory::SphereVolumeFactory() : VolumeFactoryInterface({
+		{ SphereType, new SphereToSphereCollisionDetector, SphereType},
+		//{ SphereType, new SphereToAABBCollisionDetector, AABBType},
+		//{ SphereType, new SphereToOBBCollisionDetector, OBBType},
+		//{ SphereType, new SphereToTriangleCollisionDetector, TriangleType}
 		})
 	{
 	}
@@ -80,6 +92,10 @@ namespace SSB
 	}
 	VolumeType SphereVolumeFactory::GetType()
 	{
-		return Sphere;
+		return SphereType;
+	}
+	CollisionSystemRayVolume::operator RayData()
+	{
+		return ((Ray1Volume*)_volume)->operator SSB::RayData();
 	}
 }

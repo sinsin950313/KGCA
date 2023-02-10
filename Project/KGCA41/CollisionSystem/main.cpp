@@ -8,27 +8,43 @@ using namespace SSB;
 namespace SSB
 {
 	CollisionTree1* kCollisionSystem = nullptr;
-	DefaultCollisionCalculator kDefaultCollisionCalculator;
 }
 
 int main()
 {
 	QuadTree qt;
-	qt.SetScale(100, 100, 10);
+	qt.SetScale(100, 10, 100);
 	qt.Init();
 	kCollisionSystem = &qt;
 
-	BoxVolumeFactory factory;
+	BoxVolumeFactory boxFactory;
+	RayVolumeFactory rayFactory;
+	SphereVolumeFactory sphereFactory;
 
-	factory.Set(1, 1, 1);
-	CollisionSystemVolume* b1 = factory.New();
-	qt.AddStaticCollider(Box, b1->GetVolumeOrigin());
+	boxFactory.Set(1, 1, 1);
+	CollisionSystemVolume* b1 = boxFactory.New();
 
-	factory.Set(2, 2, 2);
-	CollisionSystemVolume* b2 = factory.New();
-	qt.AddDynamicCollider(Box, b2->GetVolumeOrigin());
+	boxFactory.Set(2, 2, 2);
+	CollisionSystemVolume* b2 = boxFactory.New();
+	b2->SetDynamic();
 
-	qt.GetCollidedObjects(b2->GetVolumeOrigin());
+	auto colObject = qt.GetCollidedObjects(b2);
+	b2->SetPosition({ 50, 0, 50 });
+
+	rayFactory.Set({ 0, 0, -10 }, { 0, 0, 1 });
+	CollisionSystemVolume* ray = rayFactory.New();
+	colObject = qt.GetCollidedObjects(ray);
+	auto intersection = qt.GetIntersections(ray);
+	b1->SetPosition({ 25, 0, 25 });
+
+	sphereFactory.Set(1);
+	CollisionSystemVolume* sphere = sphereFactory.New();
+	colObject = qt.GetCollidedObjects(ray);
+	intersection = qt.GetIntersections(ray);
+
+	b1->SetPosition({ 25, 0, 25 });
+	sphere->SetPosition({ 24, 0, 25 });
+	colObject = qt.GetCollidedObjects(b1);
 
 	int i = 0;
 }

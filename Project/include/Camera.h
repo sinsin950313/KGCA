@@ -27,31 +27,31 @@ namespace SSB
 		class CameraToSphereCollisionDetector : public CollisionDetectorInterface
 		{
 		public:
-			bool IsCollide(Volume1* camera, Volume1* Sphere) override;
-			bool IsIn(Volume1* camera, Volume1* Sphere) override;
-			std::vector<Vector3> GetIntersections(Volume1* camera, Volume1* Sphere) override;
+			bool IsCollide(CollisionSystemVolume* camera, CollisionSystemVolume* sphere) override;
+			bool IsIn(CollisionSystemVolume* camera, CollisionSystemVolume* sphere) override;
+			std::vector<Vector3> GetIntersections(CollisionSystemVolume* camera, CollisionSystemVolume* sphere) override;
 		};
 		class CameraToAABBCollisionDetector : public CollisionDetectorInterface
 		{
 		public:
-			bool IsCollide(Volume1* camera, Volume1* aabb) override;
-			bool IsIn(Volume1* camera, Volume1* aabb) override;
-			std::vector<Vector3> GetIntersections(Volume1* camera, Volume1* aabb) override;
+			bool IsCollide(CollisionSystemVolume* camera, CollisionSystemVolume* aabb) override;
+			bool IsIn(CollisionSystemVolume* camera, CollisionSystemVolume* aabb) override;
+			std::vector<Vector3> GetIntersections(CollisionSystemVolume* camera, CollisionSystemVolume* aabb) override;
 		};
 		class CameraToOBBCollisionDetector : public CollisionDetectorInterface
 		{
 		public:
-			bool IsCollide(Volume1* camera, Volume1* obb) override;
-			bool IsIn(Volume1* camera, Volume1* obb) override;
-			std::vector<Vector3> GetIntersections(Volume1* camera, Volume1* obb) override;
+			bool IsCollide(CollisionSystemVolume* camera, CollisionSystemVolume* obb) override;
+			bool IsIn(CollisionSystemVolume* camera, CollisionSystemVolume* obb) override;
+			std::vector<Vector3> GetIntersections(CollisionSystemVolume* camera, CollisionSystemVolume* obb) override;
 		};
 		//Register Triangle Volume Type
 		class CameraFinalCollisionDetector : public CollisionDetectorInterface
 		{
 		public:
-			bool IsCollide(Volume1* camera, Volume1* triangle) override;
-			bool IsIn(Volume1* camera, Volume1* triangle) override;
-			std::vector<Vector3> GetIntersections(Volume1* camera, Volume1* triangle) override;
+			bool IsCollide(CollisionSystemVolume* camera, CollisionSystemVolume* triangle) override;
+			bool IsIn(CollisionSystemVolume* camera, CollisionSystemVolume* triangle) override;
+			std::vector<Vector3> GetIntersections(CollisionSystemVolume* camera, CollisionSystemVolume* triangle) override;
 		};
 
 	private:

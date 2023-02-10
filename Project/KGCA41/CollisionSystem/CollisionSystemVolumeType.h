@@ -2,16 +2,16 @@
 
 namespace SSB
 {
-#define Dot 0
-#define Line 1
-#define Ray 2
-#define Segment 3
-#define Plane 4
-#define Triangle 5
-#define AABB 6
-#define OBB 7
-#define Box 8
-#define Sphere 9
+#define DotType 0
+#define LineType 1
+#define RayType 2
+#define SegmentType 3
+#define PlaneType 4
+#define TriangleType 5
+#define AABBType 6
+#define OBBType 7
+#define BoxType 8
+#define SphereType 9
 
 	typedef unsigned int VolumeType;
 }

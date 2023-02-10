@@ -1,4 +1,5 @@
 #include "CollisionTree1.h"
+#include "CollisionCalculator.h"
 
 namespace SSB
 {
@@ -15,7 +16,7 @@ namespace SSB
 		}
 		_childNodes.clear();
 	}
-	bool CollisionTree1::Node::RoughCollisionCheck(Volume1* target, Volume1* object)
+	bool CollisionTree1::Node::RoughCollisionCheck(CollisionSystemVolume* target, CollisionSystemVolume* object)
 	{
 		if (_ssColCheck.IsCollide(target, object))
 		{
@@ -33,7 +34,7 @@ namespace SSB
 	{
 		return _currentLayer;
 	}
-	void SSB::CollisionTree1::Node::AddStaticCollider(Volume1* object)
+	void SSB::CollisionTree1::Node::AddStaticCollider(CollisionSystemVolume* object)
 	{
 		bool in = false;
 		if (IsIn(object))
@@ -54,7 +55,7 @@ namespace SSB
 			_staticObjects.insert(object);
 		}
 	}
-	void SSB::CollisionTree1::Node::AddDynamicCollider(Volume1* object)
+	void SSB::CollisionTree1::Node::AddDynamicCollider(CollisionSystemVolume* object)
 	{
 		bool in = false;
 		if (IsIn(object))
@@ -75,9 +76,9 @@ namespace SSB
 			_dynamicObjects.insert(object);
 		}
 	}
-	std::vector<Volume1*> CollisionTree1::Node::GetCollidedObjects(Volume1* target)
+	std::vector<CollisionSystemVolume*> CollisionTree1::Node::GetCollidedObjects(CollisionSystemVolume* target)
 	{
-		std::vector<Volume1*> ret;
+		std::vector<CollisionSystemVolume*> ret;
 		for (auto node : _childNodes)
 		{
 			auto tmp = node->GetCollidedObjects(target);
@@ -121,60 +122,14 @@ namespace SSB
 
 		return ret;
 	}
-	std::vector<Vector3> CollisionTree1::Node::GetIntersections(Volume1* target)
-	{
-		std::vector<Vector3> ret;
-		for (auto node : _childNodes)
-		{
-			auto tmp = node->GetIntersections(target);
-			ret.insert(ret.end(), tmp.begin(), tmp.end());
-		}
-
-		VolumeType fromVolumeType = _owner->_volumeToTypeMap.find(target)->second;
-		for (auto object : _staticObjects)
-		{
-			if(RoughCollisionCheck(target, object))
-			{
-				VolumeType toVolumeType = _owner->_volumeToTypeMap.find(object)->second;
-				CollisionDetectorInterface* detector = _owner->_volumeTypeToDetectorMap.find(fromVolumeType)->second.find(toVolumeType)->second;
-				if (detector != nullptr)
-				{
-					if (detector->IsCollide(target, object))
-					{
-						auto returnList = detector->GetIntersections(target, object);
-						ret.insert(ret.end(), returnList.begin(), returnList.end());
-					}
-				}
-			}
-		}
-
-		for (auto object : _dynamicObjects)
-		{
-			if(RoughCollisionCheck(target, object))
-			{
-				VolumeType toVolumeType = _owner->_volumeToTypeMap.find(object)->second;
-				CollisionDetectorInterface* detector = _owner->_volumeTypeToDetectorMap.find(fromVolumeType)->second.find(toVolumeType)->second;
-				if (detector != nullptr)
-				{
-					if (detector->IsCollide(target, object))
-					{
-						auto returnList = detector->GetIntersections(target, object);
-						ret.insert(ret.end(), returnList.begin(), returnList.end());
-					}
-				}
-			}
-		}
-
-		return ret;
-	}
-	void CollisionTree1::Node::Remove(Volume1* volume)
+	void CollisionTree1::Node::Remove(CollisionSystemVolume* volume)
 	{
 		if (_staticObjects.find(volume) != _staticObjects.end())
 		{
 			_staticObjects.erase(volume);
 		}
 
-		if (_dynamicObjects.find(volume) != _staticObjects.end())
+		if (_dynamicObjects.find(volume) != _dynamicObjects.end())
 		{
 			_dynamicObjects.erase(volume);
 		}
@@ -259,70 +214,121 @@ namespace SSB
 			iter->second.insert(std::make_pair(toType, detector));
 		}
 	}
-	void CollisionTree1::AddStaticCollider(VolumeType type, Volume1* collider)
+	void CollisionTree1::AddCollider(CollisionSystemVolume* collider)
 	{
+		VolumeType type = collider->GetType();
 		_volumeToTypeMap.insert(std::make_pair(collider, type));
 
 		auto iter = _volumeTypeToVolumeSetMap.find(type);
 		if (iter == _volumeTypeToVolumeSetMap.end())
 		{
-			_volumeTypeToVolumeSetMap.insert(std::make_pair(type, std::set<Volume1*>()));
+			_volumeTypeToVolumeSetMap.insert(std::make_pair(type, std::set<CollisionSystemVolume*>()));
 			iter = _volumeTypeToVolumeSetMap.find(type);
 		}
 		iter->second.insert(collider);
 
-		_root->AddStaticCollider(collider);
-	}
-	void CollisionTree1::AddDynamicCollider(VolumeType type, Volume1* collider)
-	{
-		_volumeToTypeMap.insert(std::make_pair(collider, type));
-
-		auto iter = _volumeTypeToVolumeSetMap.find(type);
-		if (iter == _volumeTypeToVolumeSetMap.end())
+		if (collider->IsStatic())
 		{
-			_volumeTypeToVolumeSetMap.insert(std::make_pair(type, std::set<Volume1*>()));
-			iter = _volumeTypeToVolumeSetMap.find(type);
+			_root->AddStaticCollider(collider);
 		}
-		iter->second.insert(collider);
-
-		_root->AddDynamicCollider(collider);
-		_dynamicColliderList.insert(collider);
+		else
+		{
+			_root->AddDynamicCollider(collider);
+			_dynamicColliderList.insert(collider);
+		}
 	}
-	void CollisionTree1::UpdateDynamicCollider(Volume1* collider)
+	void CollisionTree1::UpdateDynamicCollider(CollisionSystemVolume* collider)
 	{
 		_root->AddDynamicCollider(collider);
 	}
-	std::vector<Volume1*> CollisionTree1::GetCollidedObjects(Volume1* target)
+	std::vector<CollisionSystemVolume*> CollisionTree1::GetCollidedObjects(CollisionSystemVolume* target)
 	{
-		std::vector<Volume1*> ret;
+		struct DataPack
+		{
+			CollisionSystemVolume* From;
+			VolumeType FromType;
+			CollisionSystemVolume* To;
+			VolumeType ToType;
+		};
+		std::vector<CollisionSystemVolume*> ret;
 		auto candidates = _root->GetCollidedObjects(target);
 
-		VolumeType fromVolumeType = GetVolumeType(target);
 		for (auto object : candidates)
 		{
-			VolumeType toVolumeType = GetVolumeType(object);
-			CollisionDetectorInterface* detector = GetCollisionDetector(fromVolumeType, toVolumeType);
+			if (object == target)
+			{
+				continue;
+			}
+
+			DataPack data{ target, GetVolumeType(target), object, GetVolumeType(object) };
+
+			CollisionDetectorInterface* detector = GetCollisionDetector(data.FromType, data.ToType);
 			if (detector == nullptr)
 			{
-				detector = GetCollisionDetector(fromVolumeType, Triangle);
+				data = { object, GetVolumeType(object), target, GetVolumeType(target) };
+				detector = GetCollisionDetector(data.FromType, data.ToType);
+			}
+
+			if (detector == nullptr)
+			{
+				data = { target, GetVolumeType(target), object, GetVolumeType(object) };
+				detector = GetCollisionDetector(data.FromType, TriangleType);
 			}
 
 			if (detector != nullptr)
 			{
-				if (detector->IsCollide(target, object))
+				if (detector->IsCollide(data.From, data.To))
 				{
-					ret.push_back(target);
+					ret.push_back(object);
 				}
 			}
 		}
 
 		return ret;
 	}
-	std::vector<Vector3> CollisionTree1::GetIntersections(Volume1* volume)
+	std::vector<Vector3> CollisionTree1::GetIntersections(CollisionSystemVolume* volume)
 	{
-		return _root->GetIntersections(volume);
+		std::vector<Vector3> ret;
+
+		struct DataPack
+		{
+			CollisionSystemVolume* From;
+			VolumeType FromType;
+			CollisionSystemVolume* To;
+			VolumeType ToType;
+		};
+		auto candidates = _root->GetCollidedObjects(volume);
+
+		for (auto object : candidates)
+		{
+			DataPack data{ volume, GetVolumeType(volume), object, GetVolumeType(object) };
+
+			CollisionDetectorInterface* detector = GetCollisionDetector(data.FromType, data.ToType);
+			if (detector == nullptr)
+			{
+				data = { object, GetVolumeType(object), volume, GetVolumeType(volume) };
+				detector = GetCollisionDetector(data.FromType, data.ToType);
+			}
+
+			if (detector == nullptr)
+			{
+				data = { volume, GetVolumeType(volume), object, GetVolumeType(object) };
+				detector = GetCollisionDetector(data.FromType, TriangleType);
+			}
+
+			if (detector != nullptr)
+			{
+				if (detector->IsCollide(data.From, data.To))
+				{
+					auto tmp = detector->GetIntersections(data.From, data.To);
+					ret.insert(ret.end(), tmp.begin(), tmp.end());
+				}
+			}
+		}
+
+		return ret;
 	}
-	VolumeType CollisionTree1::GetVolumeType(Volume1* volume)
+	VolumeType CollisionTree1::GetVolumeType(CollisionSystemVolume* volume)
 	{
 		return _volumeToTypeMap.find(volume)->second;
 	}
@@ -338,13 +344,15 @@ namespace SSB
 		}
 		return nullptr;
 	}
-	void CollisionTree1::Remove(Volume1* volume)
+	void CollisionTree1::Remove(CollisionSystemVolume* volume)
 	{
 		_root->Remove(volume);
 		if (_dynamicColliderList.find(volume) != _dynamicColliderList.end())
 		{
 			_dynamicColliderList.erase(volume);
 		}
+		_volumeToTypeMap.erase(volume);
+		_volumeTypeToVolumeSetMap.find(volume->GetType())->second.erase(volume);
 	}
 	void CollisionTree1::ClearDynamicObject()
 	{
@@ -383,10 +391,6 @@ namespace SSB
 	{
 		((QuadTreeNode*)_root)->SetPosition(position);
 	}
-	void QuadTree::SetRotation(float yaw, float pitch, float roll)
-	{
-		((QuadTreeNode*)_root)->SetRotation(yaw, pitch, roll);
-	}
 	void QuadTree::SetScale(float width, float height, float depth)
 	{
 		((QuadTreeNode*)_root)->SetScale(width, height, depth);
@@ -413,36 +417,32 @@ namespace SSB
 			}
 		}
 	}
+	extern DefaultCollisionCalculator kDefaultCollisionCalculator;
+	bool QuadTree::QuadTreeNode::IsIn(CollisionSystemVolume* target)
+	{
+		return kDefaultCollisionCalculator.IsIn(_volume->operator SSB::AABBData(), target->operator SSB::AABBData());
+	}
 	void QuadTree::QuadTreeNode::SetPosition(Vector3 position)
 	{
 		_volume->SetPosition(position);
-	}
-	void QuadTree::QuadTreeNode::SetRotation(float yaw, float pitch, float roll)
-	{
-		_volume->SetRotation(yaw, pitch, roll);
 	}
 	void QuadTree::QuadTreeNode::SetScale(float width, float height, float depth)
 	{
 		_volume->SetScale(width, height, depth);
 	}
-	bool QuadTree::QuadTreeNode::IsIn(Volume1* object)
-	{
-		VolumeType volumeType = _owner->GetVolumeType(object);
-		auto detector = _owner->GetCollisionDetector(AABB, volumeType);
-		if (detector != nullptr)
-		{
-			return detector->IsIn(_volume, object);
-		}
-		return false;
-	}
 	bool QuadTree::QuadTreeNode::Init()
 	{
 		if (_currentLayer + 1 < _owner->GetMaxLayer())
 		{
-			Vector3 center = _volume->GetLocalPosition();
-			float hWidth = _volume->GetLocalScale().GetX() / 2.0f;
-			float hHeight = _volume->GetLocalScale().GetY() / 2.0f;
-			float hDepth = _volume->GetLocalScale().GetZ() / 2.0f;
+			//Vector3 center = _volume->GetLocalPosition();
+			//float hWidth = _volume->GetLocalScale().GetX() / 2.0f;
+			////float hHeight = _volume->GetLocalScale().GetY() / 2.0f;
+			//float hHeight = _volume->GetLocalScale().GetY();
+			//float hDepth = _volume->GetLocalScale().GetZ() / 2.0f;
+			Vector3 center;
+			float hWidth = 0.5f;
+			float hHeight = 1;
+			float hDepth = 0.5f;
 
 			int lbnDx[4]{ -1, +0, -1, +0 };
 			int lbnDy[4]{ -1, -1, -1, -1 };
@@ -465,7 +465,7 @@ namespace SSB
 					center.GetY() + rtfDy[i] * hHeight,
 					center.GetZ() + rtfDz[i] * hDepth);
 
-				((QuadTreeNode*)_childNodes[i])->SetPosition((templbn + temprtf) / 2);
+				((QuadTreeNode*)_childNodes[i])->SetPosition(templbn + temprtf);
 				((QuadTreeNode*)_childNodes[i])->SetScale(hWidth, hHeight, hDepth);
 				_childNodes[i]->Init();
 			}

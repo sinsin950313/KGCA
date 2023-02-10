@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Volume1.h"
+#include "CollisionSystemVolume.h"
 #include <vector>
 #include <set>
 
@@ -9,136 +9,160 @@ namespace SSB
 	class CollisionDetectorInterface
 	{
 	public:
-		virtual bool IsCollide(Volume1* volumeA, Volume1* volumeB) = 0;
-		virtual bool IsIn(Volume1* volumeA, Volume1* volumeB) = 0;
-		virtual std::vector<Vector3> GetIntersections(Volume1* volumeA, Volume1* volumeB) = 0;
+		virtual bool IsCollide(CollisionSystemVolume* volumeA, CollisionSystemVolume* volumeB) = 0;
+		virtual bool IsIn(CollisionSystemVolume* volumeA, CollisionSystemVolume* volumeB) = 0;
+		virtual std::vector<Vector3> GetIntersections(CollisionSystemVolume* volumeA, CollisionSystemVolume* volumeB) = 0;
 	};
 
-	class AABBToTriangleCollisionDetector : public CollisionDetectorInterface
-	{
-	public:
-		bool IsCollide(Volume1* aabb, Volume1* triangle) override;
-		bool IsIn(Volume1* aabb, Volume1* triangle) override;
-		std::vector<Vector3> GetIntersections(Volume1* aabb, Volume1* triangle) override;
-	};
+	//class AABBToTriangleCollisionDetector : public CollisionDetectorInterface
+	//{
+	//public:
+	//	bool IsCollide(CollisionSystemVolume* aabb, CollisionSystemVolume* triangle) override;
+	//	bool IsIn(CollisionSystemVolume* aabb, CollisionSystemVolume* triangle) override;
+	//	std::vector<Vector3> GetIntersections(CollisionSystemVolume* aabb, CollisionSystemVolume* triangle) override;
+	//};
 
 	class AABBToAABBCollisionDetector : public CollisionDetectorInterface
 	{
 	public:
-		bool IsCollide(Volume1* aabb1, Volume1* aabb2) override;
-		bool IsIn(Volume1* aabb1, Volume1* aabb2) override;
-		std::vector<Vector3> GetIntersections(Volume1* aabb1, Volume1* aabb2) override;
+		bool IsCollide(CollisionSystemVolume* aabb1, CollisionSystemVolume* aabb2) override;
+		bool IsIn(CollisionSystemVolume* aabb1, CollisionSystemVolume* aabb2) override;
+		std::vector<Vector3> GetIntersections(CollisionSystemVolume* aabb1, CollisionSystemVolume* aabb2) override;
 	};
 
-	class AABBToOBBCollisionDetector : public CollisionDetectorInterface
-	{
-	public:
-		bool IsCollide(Volume1* aabb, Volume1* obb) override;
-		bool IsIn(Volume1* aabb, Volume1* obb) override;
-		std::vector<Vector3> GetIntersections(Volume1* aabb, Volume1* obb) override;
-	};
+	//class AABBToOBBCollisionDetector : public CollisionDetectorInterface
+	//{
+	//public:
+	//	bool IsCollide(CollisionSystemVolume* aabb, CollisionSystemVolume* obb) override;
+	//	bool IsIn(CollisionSystemVolume* aabb, CollisionSystemVolume* obb) override;
+	//	std::vector<Vector3> GetIntersections(CollisionSystemVolume* aabb, CollisionSystemVolume* obb) override;
+	//};
 
-	class AABBToSphereCollisionDetector : public CollisionDetectorInterface
-	{
-	public:
-		bool IsCollide(Volume1* aabb, Volume1* sphere) override;
-		bool IsIn(Volume1* aabb, Volume1* sphere) override;
-		std::vector<Vector3> GetIntersections(Volume1* aabb, Volume1* sphere) override;
-	};
+	//class AABBToSphereCollisionDetector : public CollisionDetectorInterface
+	//{
+	//public:
+	//	bool IsCollide(CollisionSystemVolume* aabb, CollisionSystemVolume* sphere) override;
+	//	bool IsIn(CollisionSystemVolume* aabb, CollisionSystemVolume* sphere) override;
+	//	std::vector<Vector3> GetIntersections(CollisionSystemVolume* aabb, CollisionSystemVolume* sphere) override;
+	//};
 
-	class OBBToTriangleCollisionDetector : public CollisionDetectorInterface
-	{
-	public:
-		bool IsCollide(Volume1* obb, Volume1* triangle) override;
-		bool IsIn(Volume1* obb, Volume1* triangle) override;
-		std::vector<Vector3> GetIntersections(Volume1* obb, Volume1* triangle) override;
-	};
+	//class OBBToTriangleCollisionDetector : public CollisionDetectorInterface
+	//{
+	//public:
+	//	bool IsCollide(CollisionSystemVolume* obb, CollisionSystemVolume* triangle) override;
+	//	bool IsIn(CollisionSystemVolume* obb, CollisionSystemVolume* triangle) override;
+	//	std::vector<Vector3> GetIntersections(CollisionSystemVolume* obb, CollisionSystemVolume* triangle) override;
+	//};
 
-	class OBBToAABBCollisionDetector : public CollisionDetectorInterface
-	{
-	public:
-		bool IsCollide(Volume1* obb, Volume1* aabb) override;
-		bool IsIn(Volume1* obb, Volume1* aabb) override;
-		std::vector<Vector3> GetIntersections(Volume1* obb, Volume1* aabb) override;
-	};
+	//class OBBToAABBCollisionDetector : public CollisionDetectorInterface
+	//{
+	//public:
+	//	bool IsCollide(CollisionSystemVolume* obb, CollisionSystemVolume* aabb) override;
+	//	bool IsIn(CollisionSystemVolume* obb, CollisionSystemVolume* aabb) override;
+	//	std::vector<Vector3> GetIntersections(CollisionSystemVolume* obb, CollisionSystemVolume* aabb) override;
+	//};
 
 	class OBBToOBBCollisionDetector : public CollisionDetectorInterface
 	{
 	public:
-		bool IsCollide(Volume1* obb1, Volume1* obb2) override;
-		bool IsIn(Volume1* obb1, Volume1* obb2) override;
-		std::vector<Vector3> GetIntersections(Volume1* obb1, Volume1* obb2) override;
+		bool IsCollide(CollisionSystemVolume* obb1, CollisionSystemVolume* obb2) override;
+		bool IsIn(CollisionSystemVolume* obb1, CollisionSystemVolume* obb2) override;
+		std::vector<Vector3> GetIntersections(CollisionSystemVolume* obb1, CollisionSystemVolume* obb2) override;
 	};
 
-	class OBBToSphereCollisionDetector : public CollisionDetectorInterface
-	{
-	public:
-		bool IsCollide(Volume1* obb, Volume1* sphere) override;
-		bool IsIn(Volume1* obb, Volume1* sphere) override;
-		std::vector<Vector3> GetIntersections(Volume1* obb, Volume1* sphere) override;
-	};
+	//class OBBToSphereCollisionDetector : public CollisionDetectorInterface
+	//{
+	//public:
+	//	bool IsCollide(CollisionSystemVolume* obb, CollisionSystemVolume* sphere) override;
+	//	bool IsIn(CollisionSystemVolume* obb, CollisionSystemVolume* sphere) override;
+	//	std::vector<Vector3> GetIntersections(CollisionSystemVolume* obb, CollisionSystemVolume* sphere) override;
+	//};
 
-	class SphereToTriangleCollisionDetector : public CollisionDetectorInterface
-	{
-	public:
-		bool IsCollide(Volume1* sphere, Volume1* triangle) override;
-		bool IsIn(Volume1* sphere, Volume1* triangle) override;
-		std::vector<Vector3> GetIntersections(Volume1* sphere, Volume1* triangle) override;
-	};
+	//class SphereToTriangleCollisionDetector : public CollisionDetectorInterface
+	//{
+	//public:
+	//	bool IsCollide(CollisionSystemVolume* sphere, CollisionSystemVolume* triangle) override;
+	//	bool IsIn(CollisionSystemVolume* sphere, CollisionSystemVolume* triangle) override;
+	//	std::vector<Vector3> GetIntersections(CollisionSystemVolume* sphere, CollisionSystemVolume* triangle) override;
+	//};
 
-	class SphereToAABBCollisionDetector : public CollisionDetectorInterface
-	{
-	public:
-		bool IsCollide(Volume1* sphere, Volume1* aabb) override;
-		bool IsIn(Volume1* sphere, Volume1* aabb) override;
-		std::vector<Vector3> GetIntersections(Volume1* sphere, Volume1* aabb) override;
-	};
+	//class SphereToAABBCollisionDetector : public CollisionDetectorInterface
+	//{
+	//public:
+	//	bool IsCollide(CollisionSystemVolume* sphere, CollisionSystemVolume* aabb) override;
+	//	bool IsIn(CollisionSystemVolume* sphere, CollisionSystemVolume* aabb) override;
+	//	std::vector<Vector3> GetIntersections(CollisionSystemVolume* sphere, CollisionSystemVolume* aabb) override;
+	//};
 
-	class SphereToOBBCollisionDetector : public CollisionDetectorInterface
-	{
-	public:
-		bool IsCollide(Volume1* sphere, Volume1* obb) override;
-		bool IsIn(Volume1* sphere, Volume1* obb) override;
-		std::vector<Vector3> GetIntersections(Volume1* sphere, Volume1* obb) override;
-	};
+	//class SphereToOBBCollisionDetector : public CollisionDetectorInterface
+	//{
+	//public:
+	//	bool IsCollide(CollisionSystemVolume* sphere, CollisionSystemVolume* obb) override;
+	//	bool IsIn(CollisionSystemVolume* sphere, CollisionSystemVolume* obb) override;
+	//	std::vector<Vector3> GetIntersections(CollisionSystemVolume* sphere, CollisionSystemVolume* obb) override;
+	//};
 
 	class SphereToSphereCollisionDetector : public CollisionDetectorInterface
 	{
 	public:
-		bool IsCollide(Volume1* sphere1, Volume1* sphere2) override;
-		bool IsIn(Volume1* sphere1, Volume1* sphere2) override;
-		std::vector<Vector3> GetIntersections(Volume1* sphere1, Volume1* sphere2) override;
+		bool IsCollide(CollisionSystemVolume* sphere1, CollisionSystemVolume* sphere2) override;
+		bool IsIn(CollisionSystemVolume* sphere1, CollisionSystemVolume* sphere2) override;
+		std::vector<Vector3> GetIntersections(CollisionSystemVolume* sphere1, CollisionSystemVolume* sphere2) override;
 	};
 
 	class RayToTriangleCollisionDetector : public CollisionDetectorInterface
 	{
 	public:
-		bool IsCollide(Volume1* ray, Volume1* triangle) override;
-		bool IsIn(Volume1* ray, Volume1* triangle) override;
-		std::vector<Vector3> GetIntersections(Volume1* ray, Volume1* triangle) override;
+		bool IsCollide(CollisionSystemVolume* ray, CollisionSystemVolume* triangle) override;
+		bool IsIn(CollisionSystemVolume* ray, CollisionSystemVolume* triangle) override;
+		std::vector<Vector3> GetIntersections(CollisionSystemVolume* ray, CollisionSystemVolume* triangle) override;
 	};
 
-	class RayToAABBCollisionDetector : public CollisionDetectorInterface
-	{
-	public:
-		bool IsCollide(Volume1* ray, Volume1* aabb) override;
-		bool IsIn(Volume1* ray, Volume1* aabb) override;
-		std::vector<Vector3> GetIntersections(Volume1* ray, Volume1* aabb) override;
-	};
+	//class RayToAABBCollisionDetector : public CollisionDetectorInterface
+	//{
+	//public:
+	//	bool IsCollide(CollisionSystemVolume* ray, CollisionSystemVolume* aabb) override;
+	//	bool IsIn(CollisionSystemVolume* ray, CollisionSystemVolume* aabb) override;
+	//	std::vector<Vector3> GetIntersections(CollisionSystemVolume* ray, CollisionSystemVolume* aabb) override;
+	//};
 
-	class RayToOBBCollisionDetector : public CollisionDetectorInterface
-	{
-	public:
-		bool IsCollide(Volume1* ray, Volume1* obb) override;
-		bool IsIn(Volume1* ray, Volume1* obb) override;
-		std::vector<Vector3> GetIntersections(Volume1* ray, Volume1* obb) override;
-	};
+	//class RayToOBBCollisionDetector : public CollisionDetectorInterface
+	//{
+	//public:
+	//	bool IsCollide(CollisionSystemVolume* ray, CollisionSystemVolume* obb) override;
+	//	bool IsIn(CollisionSystemVolume* ray, CollisionSystemVolume* obb) override;
+	//	std::vector<Vector3> GetIntersections(CollisionSystemVolume* ray, CollisionSystemVolume* obb) override;
+	//};
 
 	class RayToSphereCollisionDetector : public CollisionDetectorInterface
 	{
 	public:
-		bool IsCollide(Volume1* ray, Volume1* sphere) override;
-		bool IsIn(Volume1* ray, Volume1* sphere) override;
-		std::vector<Vector3> GetIntersections(Volume1* ray, Volume1* sphere) override;
+		bool IsCollide(CollisionSystemVolume* ray, CollisionSystemVolume* sphere) override;
+		bool IsIn(CollisionSystemVolume* ray, CollisionSystemVolume* sphere) override;
+		std::vector<Vector3> GetIntersections(CollisionSystemVolume* ray, CollisionSystemVolume* sphere) override;
+	};
+
+	class BoxToBoxCollisionDetector : public CollisionDetectorInterface
+	{
+	public:
+		bool IsCollide(CollisionSystemVolume* box1, CollisionSystemVolume* box2) override;
+		bool IsIn(CollisionSystemVolume* box1, CollisionSystemVolume* box2) override;
+		std::vector<Vector3> GetIntersections(CollisionSystemVolume* box1, CollisionSystemVolume* box2) override;
+	};
+
+	class BoxToRayCollisionDetector : public CollisionDetectorInterface
+	{
+	public:
+		bool IsCollide(CollisionSystemVolume* box, CollisionSystemVolume* ray) override;
+		bool IsIn(CollisionSystemVolume* box, CollisionSystemVolume* ray) override;
+		std::vector<Vector3> GetIntersections(CollisionSystemVolume* box, CollisionSystemVolume* ray) override;
+	};
+
+	class BoxToSphereCollisionDetector : public CollisionDetectorInterface
+	{
+	public:
+		bool IsCollide(CollisionSystemVolume* box, CollisionSystemVolume* sphere) override;
+		bool IsIn(CollisionSystemVolume* box, CollisionSystemVolume* sphere) override;
+		std::vector<Vector3> GetIntersections(CollisionSystemVolume* box, CollisionSystemVolume* sphere) override;
 	};
 }

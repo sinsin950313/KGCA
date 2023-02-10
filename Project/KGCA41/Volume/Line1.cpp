@@ -68,7 +68,7 @@ namespace SSB
 	}
 	Vector3 Ray1Volume::GetDirection(Matrix33 rotation)
 	{
-		return rotation.GetRow(0);
+		return rotation.GetRow(2);
 	}
 	Vector3 Ray1Volume::GetEnd(Vector3 origin, Vector3 direction)
 	{
@@ -131,7 +131,7 @@ namespace SSB
 	std::vector<Vector3> Ray1Volume::GetWorldBaseVertices()
 	{
 		auto origin = GetWorldPosition();
-		auto direction = GetWorldRotation().GetRow(2);
+		auto direction = GetWorldDirection();
 
 		Vector3 end = GetEnd(origin, direction);
 		return { origin , end };

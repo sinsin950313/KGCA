@@ -433,6 +433,9 @@ FodyWeavers.xsd
 
 *.idb
 
+include/*
+!include/*/*
+
 Resource/
 Naver MYBOX/
 

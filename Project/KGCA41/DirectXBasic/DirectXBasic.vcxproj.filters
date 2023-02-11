@@ -33,9 +33,6 @@
     <ClInclude Include="DXObject.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Model.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Shader.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
@@ -54,6 +51,9 @@
     <ClInclude Include="Map.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Model.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXWindow.cpp">
@@ -69,9 +69,6 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="DXObject.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Model.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
@@ -92,6 +89,9 @@
     <ClCompile Include="Map.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Model.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
@@ -100,5 +100,6 @@
     <FxCompile Include="..\..\Shader\Default3DPixelShader.hlsl" />
     <FxCompile Include="..\..\Shader\Default3DVertexShader.hlsl" />
     <FxCompile Include="..\..\Shader\DefaultPixelShader.hlsl" />
+    <FxCompile Include="..\..\Shader\Default3DMeshShader.hlsl" />
   </ItemGroup>
 </Project>

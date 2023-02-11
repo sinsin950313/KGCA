@@ -23,17 +23,17 @@ namespace SSB
 		_beforeTime = _timer->GetElapseTime();
 		_frames = 0;
 		_fps = 0.0f;
-        
+
         {
             _object = new DXObject();
             Model* model = new Box;
-            model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
-            model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "FormedMain", "ps_5_0"));
+            model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
+            model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
             _object->SetModel(model);
             _object->Init();
             _object->Move({ 0, 5, 0 });
         }
-        
+
         {
             _objectBack = new DXObject();
             Model* model = new Box;

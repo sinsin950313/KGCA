@@ -15,18 +15,18 @@ namespace SSB
 	{
 		Release();
 	}
-	bool DXObject::CreateConstantBuffer()
+	bool DXObject::CreateViewSpaceTransformBuffer()
 	{
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
-		desc.ByteWidth = sizeof(ConstantData);
+		desc.ByteWidth = sizeof(ViewSpaceTransformData);
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA sd;
 		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		sd.pSysMem = &_constantData;
-		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_constantBuffer);
+		sd.pSysMem = &_viewSpaceTransformData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_viewSpaceTransformBuffer);
 		if (FAILED(hr))
 		{
 			assert(SUCCEEDED(hr));
@@ -34,17 +34,17 @@ namespace SSB
 		}
 		return true;
 	}
-	void DXObject::UpdateConstantBuffer()
+	void DXObject::UpdateViewSpaceTransformBuffer()
 	{
-		_constantData.World = HMatrix44(_volume->GetWorldRotation(), _volume->GetWorldPosition()).Transpose();
-		_constantData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
-		_constantData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
+		_viewSpaceTransformData.World = HMatrix44(_volume->GetWorldRotation(), _volume->GetWorldPosition()).Transpose();
+		_viewSpaceTransformData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
+		_viewSpaceTransformData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
 
-		g_dxWindow->GetDeviceContext()->UpdateSubresource(_constantBuffer, 0, nullptr, &_constantData, 0, 0);
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_viewSpaceTransformBuffer, 0, nullptr, &_viewSpaceTransformData, 0, 0);
 
 		for (auto child : _childObjectList)
 		{
-			child->UpdateConstantBuffer();
+			child->UpdateViewSpaceTransformBuffer();
 		}
 	}
 	void DXObject::SetParent(DXObject* object)
@@ -130,7 +130,7 @@ namespace SSB
 			child->Init();
 		}
 
-		CreateConstantBuffer();
+		CreateViewSpaceTransformBuffer();
 
         return true;
     }
@@ -141,13 +141,18 @@ namespace SSB
 			child->Frame();
 		}
 
+		if (_model != nullptr)
+		{
+			_model->Frame();
+		}
+
 		return true;
 	}
 	bool DXObject::Render()
 	{
 		if (g_dxWindow->GetMainCamera()->IsRender(this))
 		{
-			UpdateConstantBuffer();
+			UpdateViewSpaceTransformBuffer();
 			g_dxWindow->AddDrawable(this);
 		}
 		else
@@ -170,10 +175,10 @@ namespace SSB
 			_volume = nullptr;
 		}
 
-		if (_constantBuffer)
+		if (_viewSpaceTransformBuffer)
 		{
-			_constantBuffer->Release();
-			_constantBuffer = nullptr;
+			_viewSpaceTransformBuffer->Release();
+			_viewSpaceTransformBuffer = nullptr;
 		}
 
 		if (_model)
@@ -235,7 +240,7 @@ namespace SSB
 
 			// Use Constant Buffer instead
 			dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
-			dc->VSSetConstantBuffers(0, 1, &_constantBuffer);
+			dc->VSSetConstantBuffers(0, 1, &_viewSpaceTransformBuffer);
 			_model->Render();
 		}
     }

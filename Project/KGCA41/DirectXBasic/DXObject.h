@@ -7,7 +7,7 @@
 
 namespace SSB
 {
-	struct ConstantData
+	struct ViewSpaceTransformData
 	{
 		Float44 World;
 		Float44 View;
@@ -25,8 +25,8 @@ namespace SSB
 
 		Model* _model;
 		Volume1* _volume;
-		ID3D11Buffer* _constantBuffer;
-		ConstantData _constantData;
+		ID3D11Buffer* _viewSpaceTransformBuffer;
+		ViewSpaceTransformData _viewSpaceTransformData;
 
 		DXObject* _parent;
 		std::vector<DXObject*> _childObjectList;
@@ -36,8 +36,8 @@ namespace SSB
 		virtual ~DXObject();
 
 	protected:
-		virtual bool CreateConstantBuffer();
-		virtual void UpdateConstantBuffer();
+		virtual bool CreateViewSpaceTransformBuffer();
+		virtual void UpdateViewSpaceTransformBuffer();
 
 	private:
 		void SetParent(DXObject* object);

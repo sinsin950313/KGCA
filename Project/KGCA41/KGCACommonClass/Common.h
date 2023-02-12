@@ -50,14 +50,13 @@ namespace SSB
 
 	static std::wstring mtw(std::string str)
 	{
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-		return conv.from_bytes(str);
+		std::wstring ret(str.begin(), str.end());
+		return ret;
 	}
 
 	static std::string wtm(std::wstring str)
 	{
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
-		return conv.to_bytes(str);
+		std::string ret(str.begin(), str.end());
+		return ret;
 	}
-
 };

@@ -60,7 +60,7 @@ bool SSB::FBXLoaderTest::Init()
 	swat->UpdateCurrentAnimation("strafe_2");
 	_objectList.push_back(swat);
 
-	//_camera = new ModelViewCamera();
+	_camera = new ModelViewCamera();
 	//_camera->SetTarget(_loader->_rootObject);
 	_camera = new DebugCamera();
 	ChangeMainCamera(_camera);

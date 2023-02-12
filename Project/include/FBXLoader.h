@@ -187,6 +187,15 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
+
+	private:
+		std::string _actionName;
+		int _endFrame;
+
+	public:
+		bool HasAnimation();
+		std::string GetDefaultActionName();
+		int GetEndFrame();
 	};
 	template<typename T>
 	inline T FBXLoader::Read(FbxLayerElementTemplate<T>* element, int pointIndex, int polygonIndex)

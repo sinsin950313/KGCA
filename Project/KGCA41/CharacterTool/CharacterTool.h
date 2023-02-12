@@ -1,40 +1,53 @@
-﻿
-// CharacterTool.h: CharacterTool 애플리케이션의 기본 헤더 파일
-//
 #pragma once
 
-#ifndef __AFXWIN_H__
-	#error "PCH에 대해 이 파일을 포함하기 전에 'pch.h'를 포함합니다."
-#endif
+#include "DXObject.h"
+#include "FBXLoader.h"
+#include "Common.h"
 
-#include "resource.h"       // 주 기호입니다.
-
-
-// CCharacterToolApp:
-// 이 클래스의 구현에 대해서는 CharacterTool.cpp을(를) 참조하세요.
-//
-
-class CCharacterToolApp : public CWinAppEx
+namespace SSB
 {
-public:
-	CCharacterToolApp() noexcept;
+	struct ActionData
+	{
+		std::string ActionFileName;
+		std::string ActionName;
+		int EndFrame;
+	};
 
+	class CharacterTool : public Common
+	{
+	private:
+		FBXLoader* _loader;
 
-// 재정의입니다.
-public:
-	virtual BOOL InitInstance();
-	virtual int ExitInstance();
+		std::string _objectFileName;
+		std::string _scriptFileName;
+		std::string _actionFileName;
+		std::string _actionName;
+		int _endFrame;
 
-// 구현입니다.
-	UINT  m_nAppLook;
-	BOOL  m_bHiColorIcons;
+		std::vector<ActionData> _actionList;
+		DXObject* _object;
 
-	virtual void PreLoadState();
-	virtual void LoadCustomState();
-	virtual void SaveCustomState();
+	private:
+		std::vector<ActionData>::iterator GetIterator(std::string actionName);
 
-	afx_msg void OnAppAbout();
-	DECLARE_MESSAGE_MAP()
-};
+	public:
+		void Export();
+		void Import();
 
-extern CCharacterToolApp theApp;
+	public:
+		void RegisterObjectFileName(std::string fileName);
+		void RegisterScriptFileName(std::string fileName);
+		void RegisterActionFileName(std::string fileName);
+		void RegisterActionName(std::string actionName);
+		void RegisterCurrentAction(std::string actionName);
+		void RegisterEndFrame(int frame);
+		void GenerateAction();
+		std::vector<ActionData> GetActionList();
+
+	public:
+		bool Init() override;
+		bool Render() override;
+		bool Frame() override;
+		bool Release() override;
+	};
+}

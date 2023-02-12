@@ -73,10 +73,11 @@ namespace SSB
 			rootObject = LoadObject(root);
 
 			FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>();
-			std::string animationName(animStack->GetName());
+			_actionName = animStack->GetName();
 			ExtractAnimationInfoData info = ExtractAnimationInfo(animStack);
+			_endFrame = info.End;
 
-			LoadAnimation(animationName, info);
+			LoadAnimation(_actionName, info);
 		}
 
 		return rootObject;
@@ -164,10 +165,11 @@ namespace SSB
 					animationRootObject = animationLoader.LoadObject(animationRoot);
 
 					FbxAnimStack* animStack = animationLoader._scene->GetSrcObject<FbxAnimStack>();
-					std::string animationName(animStack->GetName());
+					_actionName = animStack->GetName();
 					ExtractAnimationInfoData info = animationLoader.ExtractAnimationInfo(animStack);
 
-					animationLoader.LoadAnimation(animationName, info);
+					animationLoader.LoadAnimation(_actionName, info);
+					_endFrame = info.End;
 					delete animationRootObject;
 				}
 
@@ -360,11 +362,12 @@ namespace SSB
 						animationRootObject = animationLoader.LoadObject(animationRoot);
 
 						FbxAnimStack* animStack = animationLoader._scene->GetSrcObject<FbxAnimStack>();
-						std::string animationName(animStack->GetName());
+						_actionName = animStack->GetName();
 						ExtractAnimationInfoData info = animationLoader.ExtractAnimationInfo(animStack);
 
 						animationLoader._script = script;
-						animationLoader.LoadAnimation(animationName, info);
+						animationLoader.LoadAnimation(_actionName, info);
+						_endFrame = info.End;
 
 						delete animationRootObject;
 					}
@@ -879,6 +882,9 @@ namespace SSB
 		_skeletonIndexToObjectMap.clear();
 		_nodeToAnimationInfo.clear();
 
+		_actionName.clear();
+		_endFrame = 0;
+
 		return true;
 	}
 
@@ -911,6 +917,18 @@ namespace SSB
 		}
 
 		return true;
+	}
+	bool FBXLoader::HasAnimation()
+	{
+		return !_nodeToAnimationInfo.empty();
+	}
+	std::string FBXLoader::GetDefaultActionName()
+	{
+		return _actionName;
+	}
+	int FBXLoader::GetEndFrame()
+	{
+		return _endFrame;
 	}
 	void DXFBXRootObject::UpdateAnimatedBoneData(int boneIndex, HMatrix44 matrix)
 	{

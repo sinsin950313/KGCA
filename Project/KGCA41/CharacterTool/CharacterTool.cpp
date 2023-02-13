@@ -4,6 +4,7 @@
 #include "InputManager.h"
 #include <string>
 #include "CommonPath.h"
+#include "ShaderManager.h"
 
 namespace SSB
 {
@@ -22,7 +23,7 @@ namespace SSB
 	}
 	void CharacterTool::Export()
 	{
-		FILE* fp = fopen((wtm(kFBXPath) + _scriptFileName).c_str(), "w");
+		FILE* fp = fopen((wtm(kFBXScriptPath) + _scriptFileName).c_str(), "w");
 
 		{
 			char buffer[256];
@@ -67,6 +68,7 @@ namespace SSB
 		{
 			_object->Release();
 			delete  _object;
+			_object = nullptr;
 		}
 
 		if (!_scriptFileName.empty())
@@ -108,12 +110,15 @@ namespace SSB
 						tmp.clear();
 						++tabCount;
 					}
+					else if (buffer[j] == '\n')
+					{
+						str[tabCount] = tmp;
+					}
 					else
 					{
 						tmp += buffer[j];
 					}
 				}
-				str[tabCount] = tmp;
 
 				if (tabCount == 1)
 				{
@@ -150,10 +155,11 @@ namespace SSB
 		}
 		else if (!_actionFileName.empty())
 		{
-			_object = _loader->Load(_objectFileName, { _actionFileName });
+			_object = _loader->Load(_objectFileName, std::vector<std::string>{ _actionFileName });
 
 			ActionData data;
 			data.ActionFileName = _actionFileName;
+			data.ActionName = kNewActionName;
 			data.EndFrame = _loader->GetEndFrame();
 			_actionList.push_back(data);
 		}
@@ -164,6 +170,7 @@ namespace SSB
 			{
 				ActionData data;
 				data.ActionFileName = _actionFileName;
+				data.ActionName = kNewActionName;
 				data.EndFrame = _loader->GetEndFrame();
 				_actionList.push_back(data);
 			}
@@ -186,38 +193,39 @@ namespace SSB
 	{
 		_actionFileName = fileName;
 	}
-	void CharacterTool::RegisterActionName(std::string actionName)
+	void CharacterTool::ChangeActionName(std::string actionName)
 	{
-		_actionName = actionName;
+		_selectedActionDataPointer->ActionName = actionName;
 	}
-	void CharacterTool::RegisterCurrentAction(std::string actionName)
+	void CharacterTool::SelectCurrentAction(std::string actionName)
 	{
-		auto iter = GetIterator(actionName);
-		if (iter != _actionList.end())
+		_selectedActionDataPointer = GetIterator(actionName);
+		if (_selectedActionDataPointer != _actionList.end())
 		{
-			_actionFileName = iter->ActionFileName;
-			_actionName = iter->ActionName;
-			_endFrame = iter->EndFrame;
+			_object->UpdateCurrentAnimation(_selectedActionDataPointer->ActionName);
 		}
 	}
-	void CharacterTool::RegisterEndFrame(int frame)
+	void CharacterTool::ChangeEndFrame(int frame)
 	{
-		auto iter = GetIterator(_actionName);
-		iter->EndFrame = frame;
+		if (_selectedActionDataPointer != _actionList.end())
+		{
+			_selectedActionDataPointer->EndFrame = frame;
+			std::string currActionName = _selectedActionDataPointer->ActionName;
 
-		std::string tmp = _scriptFileName;
-		_scriptFileName = "TempScript.FBXScript";
-		Export();
+			const std::string tmpScriptFileName = "TempScript.FBXScript";
 
-		_actionList.clear();
-		Import();
+			_scriptFileName = tmpScriptFileName;
+			Export();
 
-		remove("TempScript.FBXScript");
-		_scriptFileName = tmp;
-	}
-	void CharacterTool::GenerateAction()
-	{
-		_actionList.push_back({ _actionFileName, _actionName, _endFrame });
+			_actionList.clear();
+			Import();
+
+			std::string path = wtm(kFBXScriptPath) + tmpScriptFileName;
+			int ret = remove(path.c_str());
+
+			_selectedActionDataPointer = GetIterator(currActionName);
+			_object->UpdateCurrentAnimation(_selectedActionDataPointer->ActionName);
+		}
 	}
 	std::vector<ActionData> CharacterTool::GetActionList()
 	{
@@ -228,8 +236,6 @@ namespace SSB
 		_objectFileName.clear();
 		_scriptFileName.clear();
 		_actionFileName.clear();
-		_actionName.clear();
-		_endFrame = 0;
 
 		_actionList.clear();
 		if (_object != nullptr)

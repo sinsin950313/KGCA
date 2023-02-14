@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{3B06CDE6-6802-481C-AD77-17C3463E8A96}</ProjectGuid>
+    <ProjectGuid>{522C4951-A895-43C1-8236-4B40245D442E}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
     <RootNamespace>CharacterToolWindow</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
@@ -183,8 +183,10 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="CharacterToolFormView.h" />
     <ClInclude Include="CharacterToolWindow.h" />
-    <ClInclude Include="ChildView.h" />
+    <ClInclude Include="CharacterToolWindowDoc.h" />
+    <ClInclude Include="CharacterToolWindowView.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="pch.h" />
@@ -192,8 +194,10 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CharacterToolFormView.cpp" />
     <ClCompile Include="CharacterToolWindow.cpp" />
-    <ClCompile Include="ChildView.cpp" />
+    <ClCompile Include="CharacterToolWindowDoc.cpp" />
+    <ClCompile Include="CharacterToolWindowView.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -206,11 +210,14 @@
     <ResourceCompile Include="CharacterToolWindow.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\CharacterToolWindow.rc2" />
+    <Image Include="res\CharacterToolWindow.ico" />
+    <Image Include="res\CharacterToolWindowDoc.ico" />
+    <Image Include="res\Toolbar.bmp" />
+    <Image Include="res\Toolbar256.bmp" />
+    <Image Include="res\userimages.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\CharacterToolWindow.ico" />
-    <Image Include="res\Toolbar.bmp" />
+    <None Include="res\CharacterToolWindow.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

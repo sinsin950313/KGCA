@@ -9,6 +9,8 @@
 #include "CharacterToolWindow.h"
 #include "MainFrm.h"
 
+#include "CharacterToolWindowDoc.h"
+#include "CharacterToolWindowView.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -17,8 +19,11 @@
 
 // CCharacterToolWindowApp
 
-BEGIN_MESSAGE_MAP(CCharacterToolWindowApp, CWinApp)
+BEGIN_MESSAGE_MAP(CCharacterToolWindowApp, CWinAppEx)
 	ON_COMMAND(ID_APP_ABOUT, &CCharacterToolWindowApp::OnAppAbout)
+	// 표준 파일을 기초로 하는 문서 명령입니다.
+	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
+	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
 END_MESSAGE_MAP()
 
 
@@ -26,6 +31,8 @@ END_MESSAGE_MAP()
 
 CCharacterToolWindowApp::CCharacterToolWindowApp() noexcept
 {
+	m_bHiColorIcons = TRUE;
+
 
 	// TODO: 아래 애플리케이션 ID 문자열을 고유 ID 문자열로 바꾸십시오(권장).
 	// 문자열에 대한 서식: CompanyName.ProductName.SubProduct.VersionInformation
@@ -44,7 +51,7 @@ CCharacterToolWindowApp theApp;
 
 BOOL CCharacterToolWindowApp::InitInstance()
 {
-	CWinApp::InitInstance();
+	CWinAppEx::InitInstance();
 
 
 	EnableTaskbarInteraction(FALSE);
@@ -60,33 +67,47 @@ BOOL CCharacterToolWindowApp::InitInstance()
 	// TODO: 이 문자열을 회사 또는 조직의 이름과 같은
 	// 적절한 내용으로 수정해야 합니다.
 	SetRegistryKey(_T("로컬 애플리케이션 마법사에서 생성된 애플리케이션"));
+	LoadStdProfileSettings(4);  // MRU를 포함하여 표준 INI 파일 옵션을 로드합니다.
 
 
-	// 주 창을 만들기 위해 이 코드에서는 새 프레임 창 개체를
-	// 만든 다음 이를 애플리케이션의 주 창 개체로 설정합니다.
-	CFrameWnd* pFrame = new CMainFrame;
-	if (!pFrame)
+	InitContextMenuManager();
+
+	InitKeyboardManager();
+
+	InitTooltipManager();
+	CMFCToolTipInfo ttParams;
+	ttParams.m_bVislManagerTheme = TRUE;
+	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
+		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
+
+	// 애플리케이션의 문서 템플릿을 등록합니다.  문서 템플릿은
+	//  문서, 프레임 창 및 뷰 사이의 연결 역할을 합니다.
+	CSingleDocTemplate* pDocTemplate;
+	pDocTemplate = new CSingleDocTemplate(
+		IDR_MAINFRAME,
+		RUNTIME_CLASS(CCharacterToolWindowDoc),
+		RUNTIME_CLASS(CMainFrame),       // 주 SDI 프레임 창입니다.
+		RUNTIME_CLASS(CCharacterToolWindowView));
+	if (!pDocTemplate)
 		return FALSE;
-	m_pMainWnd = pFrame;
-	// 프레임을 만들어 리소스와 함께 로드합니다.
-	pFrame->LoadFrame(IDR_MAINFRAME,
-		WS_OVERLAPPEDWINDOW | FWS_ADDTOTITLE, nullptr,
-		nullptr);
+	AddDocTemplate(pDocTemplate);
+
+
+	// 표준 셸 명령, DDE, 파일 열기에 대한 명령줄을 구문 분석합니다.
+	CCommandLineInfo cmdInfo;
+	ParseCommandLine(cmdInfo);
 
 
 
-
+	// 명령줄에 지정된 명령을 디스패치합니다.
+	// 응용 프로그램이 /RegServer, /Register, /Unregserver 또는 /Unregister로 시작된 경우 FALSE를 반환합니다.
+	if (!ProcessShellCommand(cmdInfo))
+		return FALSE;
 
 	// 창 하나만 초기화되었으므로 이를 표시하고 업데이트합니다.
-	pFrame->ShowWindow(SW_SHOW);
-	pFrame->UpdateWindow();
+	m_pMainWnd->ShowWindow(SW_SHOW);
+	m_pMainWnd->UpdateWindow();
 	return TRUE;
-}
-
-int CCharacterToolWindowApp::ExitInstance()
-{
-	//TODO: 추가한 추가 리소스를 처리합니다.
-	return CWinApp::ExitInstance();
 }
 
 // CCharacterToolWindowApp 메시지 처리기
@@ -129,6 +150,25 @@ void CCharacterToolWindowApp::OnAppAbout()
 {
 	CAboutDlg aboutDlg;
 	aboutDlg.DoModal();
+}
+
+// CCharacterToolWindowApp 사용자 지정 로드/저장 방법
+
+void CCharacterToolWindowApp::PreLoadState()
+{
+	BOOL bNameValid;
+	CString strName;
+	bNameValid = strName.LoadString(IDS_EDIT_MENU);
+	ASSERT(bNameValid);
+	GetContextMenuManager()->AddMenu(strName, IDR_POPUP_EDIT);
+}
+
+void CCharacterToolWindowApp::LoadCustomState()
+{
+}
+
+void CCharacterToolWindowApp::SaveCustomState()
+{
 }
 
 // CCharacterToolWindowApp 메시지 처리기

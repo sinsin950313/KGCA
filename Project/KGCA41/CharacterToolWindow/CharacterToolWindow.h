@@ -14,7 +14,7 @@
 // 이 클래스의 구현에 대해서는 CharacterToolWindow.cpp을(를) 참조하세요.
 //
 
-class CCharacterToolWindowApp : public CWinApp
+class CCharacterToolWindowApp : public CWinAppEx
 {
 public:
 	CCharacterToolWindowApp() noexcept;
@@ -23,11 +23,14 @@ public:
 // 재정의입니다.
 public:
 	virtual BOOL InitInstance();
-	virtual int ExitInstance();
 
 // 구현입니다.
+	BOOL  m_bHiColorIcons;
 
-public:
+	virtual void PreLoadState();
+	virtual void LoadCustomState();
+	virtual void SaveCustomState();
+
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
 };

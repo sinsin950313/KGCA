@@ -13,7 +13,7 @@ IMPLEMENT_DYNCREATE(CharacterToolFormView, CFormView)
 CharacterToolFormView::CharacterToolFormView()
 	: CFormView(IDD_CharacterToolFormView)
 {
-
+	//Create(NULL, NULL, WS_CHILD | WS_VISIBLE, CRect(0, 0, 300, 300), pParent, 0, NULL);
 }
 
 CharacterToolFormView::~CharacterToolFormView()
@@ -26,6 +26,7 @@ void CharacterToolFormView::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CharacterToolFormView, CFormView)
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -47,3 +48,14 @@ void CharacterToolFormView::Dump(CDumpContext& dc) const
 
 
 // CharacterToolFormView 메시지 처리기
+
+
+int CharacterToolFormView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CFormView::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
+
+	return 0;
+}

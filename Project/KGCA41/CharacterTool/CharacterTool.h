@@ -44,6 +44,7 @@ namespace SSB
 		void ChangeEndFrame(int frame);
 		std::vector<ActionData> GetActionList();
 		void SelectCurrentAction(std::string actionName);
+		void CutAnimataion();
 
 	public:
 		bool Init() override;

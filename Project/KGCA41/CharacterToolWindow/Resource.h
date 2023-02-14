@@ -25,6 +25,9 @@
 #define IDC_ActionListBox               1007
 #define IDC_ImportButton                1008
 #define IDC_ExportButton                1009
+#define IDC_LastFrameEditBox2           1010
+#define IDC_FrameCutButton              1011
+#define IDC_FrameChangeButton           1012
 
 // Next default values for new objects
 // 

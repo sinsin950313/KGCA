@@ -135,6 +135,18 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
+	DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI;
+
+	DWORD dwID = 0;
+	_tabbedPane.CreateEx(NULL, L"TAB", this, CRect(0, 0, 300, 300), TRUE, dwID, dwStyle);
+
+	_characterPane.CreateEx(NULL, L"인터페이스", this, CRect(0, 0, 300, 300), TRUE, 5554, dwStyle);
+	_characterPane.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&_characterPane);
+
+	_tabbedPane.AddTab(&_characterPane);
+
+
 	return 0;
 }
 

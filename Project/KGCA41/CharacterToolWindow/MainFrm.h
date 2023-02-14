@@ -4,8 +4,13 @@
 
 #pragma once
 
+#include "CharacterToolDockablePane.h"
+
 class CMainFrame : public CFrameWndEx
 {
+private:
+	CTabbedPane     _tabbedPane;
+	CharacterToolDockablePane _characterPane;
 	
 protected: // serialization에서만 만들어집니다.
 	CMainFrame() noexcept;

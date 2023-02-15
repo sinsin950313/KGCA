@@ -10,7 +10,7 @@ namespace SSB
 	{
 		std::string ActionFileName;
 		std::string ActionName;
-		int EndFrame;
+		unsigned int EndFrame = 0;
 	};
 
 	class CharacterTool : public Common
@@ -26,11 +26,15 @@ namespace SSB
 		std::vector<ActionData> _actionList;
 		std::vector<ActionData>::iterator _selectedActionDataPointer;
 
+		std::string _actionName;
+		unsigned int _lastFrame;
+
 	public:
 		const std::string kNewActionName = "NewAction";
 
 	private:
 		std::vector<ActionData>::iterator GetIterator(std::string actionName);
+		void Reload();
 
 	public:
 		void Export();
@@ -42,9 +46,11 @@ namespace SSB
 		void RegisterActionFileName(std::string fileName);
 		void RegisterActionName(std::string actionName);
 		void RegisterEndFrame(unsigned int frame);
-		void CutAnimataion();
+		void AddAction(std::string actionFileName);
+		void RemoveAction(std::string actionName);
 		void SelectCurrentAction(std::string actionName);
-		void ChangeSelectedActionData();
+		void CutAnimataion(std::string actionName, unsigned int lastFrame);
+		void ChangeSelectedActionData(std::string actionName, unsigned int lastFrame);
 		std::vector<ActionData> GetActionList();
 		//void ChangeActionName(std::string actionName);
 		//void ChangeEndFrame(int frame);

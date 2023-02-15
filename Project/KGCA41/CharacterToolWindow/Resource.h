@@ -42,7 +42,10 @@
 #define IDC_LastFrameEditBox            1010
 #define IDC_FrameCutButton              1011
 #define IDC_FrameChangeButton           1012
+#define IDC_ActionAddButton             1013
 #define IDC_ActionListControl           1014
+#define IDC_ActionAddButton2            1015
+#define IDC_ActionRemoveButton          1015
 #define IDC_ActionNameEditBox           1017
 
 // Next default values for new objects

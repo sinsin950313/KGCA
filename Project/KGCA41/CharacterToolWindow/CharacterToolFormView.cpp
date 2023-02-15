@@ -41,6 +41,8 @@ ON_BN_CLICKED(IDC_FrameChangeButton, &CharacterToolFormView::OnBnClickedFramecha
 ON_BN_CLICKED(IDC_ImportButton, &CharacterToolFormView::OnBnClickedImportbutton)
 ON_BN_CLICKED(IDC_ExportButton, &CharacterToolFormView::OnBnClickedExportbutton)
 ON_NOTIFY(LVN_ITEMCHANGED, IDC_ActionListControl, &CharacterToolFormView::OnLvnItemchangedActionlistcontrol)
+ON_BN_CLICKED(IDC_ActionAddButton, &CharacterToolFormView::OnBnClickedActionaddbutton)
+ON_BN_CLICKED(IDC_ActionRemoveButton, &CharacterToolFormView::OnBnClickedActionremovebutton)
 END_MESSAGE_MAP()
 
 
@@ -123,22 +125,15 @@ void CharacterToolFormView::OnBnClickedFramecutbutton()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
 
-	{
-		CString str;
-		_actionFileName.GetWindowTextW(str);
-		tool->RegisterActionFileName(std::string(CT2CA(str)));
-	}
-	{
-		CString str;
-		_actionName.GetWindowTextW(str);
-		tool->RegisterActionName(std::string(CT2CA(str)));
-	}
-	{
-		CString str;
-		_lastFrame.GetWindowTextW(str);
-		tool->RegisterEndFrame(_ttoi(str));
-	}
-	tool->CutAnimataion();
+	tool->SelectCurrentAction(std::string(CT2CA(_selectedActionName)));
+
+	CString actionName;
+	_actionName.GetWindowTextW(actionName);
+
+	CString frame;
+	_lastFrame.GetWindowTextW(frame);
+
+	tool->CutAnimataion(std::string(CT2CA(actionName)), _ttoi(frame));
 
 	UpdateActionList();
 }
@@ -149,22 +144,15 @@ void CharacterToolFormView::OnBnClickedFramechangebutton()
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
 
-	{
-		CString str;
-		_actionFileName.GetWindowTextW(str);
-		tool->RegisterActionFileName(std::string(CT2CA(str)));
-	}
-	{
-		CString str;
-		_actionName.GetWindowTextW(str);
-		tool->RegisterActionName(std::string(CT2CA(str)));
-	}
-	{
-		CString str;
-		_lastFrame.GetWindowTextW(str);
-		tool->RegisterEndFrame(_ttoi(str));
-	}
-	tool->ChangeSelectedActionData();
+	tool->SelectCurrentAction(std::string(CT2CA(_selectedActionName)));
+
+	CString actionName;
+	_actionName.GetWindowTextW(actionName);
+
+	CString frame;
+	_lastFrame.GetWindowTextW(frame);
+
+	tool->ChangeSelectedActionData(std::string(CT2CA(actionName)), _ttoi(frame));
 
 	UpdateActionList();
 }
@@ -236,8 +224,32 @@ void CharacterToolFormView::OnLvnItemchangedActionlistcontrol(NMHDR* pNMHDR, LRE
 	if (pNMLV && (pNMLV->uNewState == (UINT)(LVIS_FOCUSED | LVIS_SELECTED)))
 	{
 		int index = pNMLV->iItem;
-		auto actionName = _actionListControl.GetItemText(index, 0);
+		_selectedActionName = _actionListControl.GetItemText(index, 0);
 		SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
-		tool->SelectCurrentAction(std::string(CT2CA(actionName)));
+		tool->SelectCurrentAction(std::string(CT2CA(_selectedActionName)));
 	}
+}
+
+
+void CharacterToolFormView::OnBnClickedActionaddbutton()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
+
+	CString str;
+	_actionFileName.GetWindowTextW(str);
+	tool->AddAction(std::string(CT2CA(str)));
+
+	UpdateActionList();
+}
+
+
+void CharacterToolFormView::OnBnClickedActionremovebutton()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
+
+	tool->RemoveAction(std::string(CT2CA(_selectedActionName)));
+
+	UpdateActionList();
 }

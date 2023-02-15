@@ -5,6 +5,8 @@
 #include <string>
 #include "CommonPath.h"
 #include "ShaderManager.h"
+#include "CommonUtility.h"
+#include "Common.h"
 
 namespace SSB
 {
@@ -23,6 +25,18 @@ namespace SSB
 	}
 	void CharacterTool::Export()
 	{
+		if (_scriptFileName.empty())
+		{
+			_scriptFileName = "NewFBXScriptFile";
+		}
+		{
+			auto ret = SplitPath(mtw(_scriptFileName));
+			if (ret[3].empty() || ret[3] != L".FBXScript")
+			{
+				_scriptFileName = wtm(ret[2]) + ".FBXScript";
+			}
+		}
+
 		FILE* fp = fopen((wtm(kFBXScriptPath) + _scriptFileName).c_str(), "w");
 
 		{
@@ -63,6 +77,8 @@ namespace SSB
 	void CharacterTool::Import()
 	{
 		_loader->Init();
+
+		_actionList.clear();
 
 		if (_object != nullptr)
 		{
@@ -173,6 +189,10 @@ namespace SSB
 				data.ActionName = kNewActionName;
 				data.EndFrame = _loader->GetEndFrame();
 				_actionList.push_back(data);
+
+				Reload();
+
+				SelectCurrentAction(kNewActionName);
 			}
 		}
 
@@ -198,12 +218,41 @@ namespace SSB
 	}
 	void CharacterTool::RegisterActionName(std::string actionName)
 	{
+		_actionName = actionName;
 	}
 	void CharacterTool::RegisterEndFrame(unsigned int frame)
 	{
+		_lastFrame = frame;
 	}
-	void CharacterTool::CutAnimataion()
+	void CharacterTool::AddAction(std::string actionFileName)
 	{
+		_loader->Init();
+
+		if (_object != nullptr)
+		{
+			_object->Release();
+			delete  _object;
+			_object = nullptr;
+		}
+
+		_object = _loader->Load(_objectFileName, std::vector<std::string>{ actionFileName });
+		_object->Init();
+
+		ActionData data;
+		data.ActionFileName = actionFileName;
+		data.ActionName = kNewActionName;
+		data.EndFrame = _loader->GetEndFrame();
+		_actionList.push_back(data);
+
+		Reload();
+	}
+	void CharacterTool::RemoveAction(std::string actionName)
+	{
+		auto iter = GetIterator(actionName);
+		_actionList.erase(iter);
+
+		Reload();
+
 	}
 	//void CharacterTool::ChangeActionName(std::string actionName)
 	//{
@@ -217,31 +266,60 @@ namespace SSB
 			_object->UpdateCurrentAnimation(_selectedActionDataPointer->ActionName);
 		}
 	}
-	void CharacterTool::ChangeSelectedActionData()
+	void CharacterTool::CutAnimataion(std::string actionName, unsigned int lastFrame)
 	{
+		std::vector<ActionData> ret;
+		ActionData pivot = *_selectedActionDataPointer;
+		for (auto action : _actionList)
+		{
+			if (action.ActionName == pivot.ActionName)
+			{
+				{
+					ActionData data{ action.ActionFileName, actionName, lastFrame };
+					ret.push_back(data);
+				}
+				{
+					ActionData data{ action.ActionFileName, kNewActionName, pivot.EndFrame - lastFrame };
+					ret.push_back(data);
+				}
+			}
+			else
+			{
+				ret.push_back(action);
+			}
+		}
+
+		_actionList = ret;
+
+		Reload();
+
+		SelectCurrentAction(actionName);
 	}
-	//void CharacterTool::ChangeEndFrame(int frame)
-	//{
-	//	if (_selectedActionDataPointer != _actionList.end())
-	//	{
-	//		_selectedActionDataPointer->EndFrame = frame;
-	//		std::string currActionName = _selectedActionDataPointer->ActionName;
+	void CharacterTool::ChangeSelectedActionData(std::string actionName, unsigned int lastFrame)
+	{
+		if (_selectedActionDataPointer != _actionList.end())
+		{
+			_selectedActionDataPointer->ActionName = actionName;
+			_selectedActionDataPointer->EndFrame = lastFrame;
 
-	//		const std::string tmpScriptFileName = "TempScript.FBXScript";
+			Reload();
 
-	//		_scriptFileName = tmpScriptFileName;
-	//		Export();
+			SelectCurrentAction(actionName);
+		}
+	}
+	void CharacterTool::Reload()
+	{
+		const std::string tmpScriptFileName = "TempScript.FBXScript";
 
-	//		_actionList.clear();
-	//		Import();
+		_scriptFileName = tmpScriptFileName;
+		Export();
 
-	//		std::string path = wtm(kFBXScriptPath) + tmpScriptFileName;
-	//		int ret = remove(path.c_str());
+		_actionList.clear();
+		Import();
 
-	//		_selectedActionDataPointer = GetIterator(currActionName);
-	//		_object->UpdateCurrentAnimation(_selectedActionDataPointer->ActionName);
-	//	}
-	//}
+		std::string path = wtm(kFBXScriptPath) + tmpScriptFileName;
+		int ret = remove(path.c_str());
+	}
 	std::vector<ActionData> CharacterTool::GetActionList()
 	{
 		return _actionList;

@@ -40,6 +40,7 @@ private:
 	CEdit _actionName;
 	CEdit _lastFrame;
 	CListCtrl _actionListControl;
+	CString _selectedActionName;
 
 public:
 	afx_msg void OnBnClickedObjectfilenamebutton();
@@ -54,6 +55,8 @@ private:
 	void UpdateActionList();
 public:
 	afx_msg void OnLvnItemchangedActionlistcontrol(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedActionaddbutton();
+	afx_msg void OnBnClickedActionremovebutton();
 };
 
 

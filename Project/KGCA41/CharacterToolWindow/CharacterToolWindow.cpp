@@ -196,5 +196,6 @@ BOOL CCharacterToolWindowApp::OnIdle(LONG lCount)
 	_logic->Frame();
 	_logic->Render();
 
-	return CWinAppEx::OnIdle(lCount);
+	//return CWinAppEx::OnIdle(lCount);
+	return true;
 }

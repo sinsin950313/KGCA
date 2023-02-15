@@ -29,11 +29,17 @@ END_MESSAGE_MAP()
 
 // CCharacterToolWindowApp 생성
 
+SSB::CharacterTool* CCharacterToolWindowApp::GetTool()
+{
+	return _logic->GetTool();
+}
+
 CCharacterToolWindowApp::CCharacterToolWindowApp() noexcept
 {
 	m_bHiColorIcons = TRUE;
 
 
+	m_nAppLook = 0;
 	// TODO: 아래 애플리케이션 ID 문자열을 고유 ID 문자열로 바꾸십시오(권장).
 	// 문자열에 대한 서식: CompanyName.ProductName.SubProduct.VersionInformation
 	SetAppID(_T("CharacterToolWindow.AppID.NoVersion"));
@@ -107,6 +113,12 @@ BOOL CCharacterToolWindowApp::InitInstance()
 	// 창 하나만 초기화되었으므로 이를 표시하고 업데이트합니다.
 	m_pMainWnd->ShowWindow(SW_SHOW);
 	m_pMainWnd->UpdateWindow();
+
+	CMainFrame* frame = (CMainFrame*)AfxGetMainWnd();
+	CCharacterToolWindowView* view = (CCharacterToolWindowView*)frame->GetActiveView();
+	_logic = new SSB::CharacterToolMainLogic(view->m_hWnd);
+	_logic->Init();
+
 	return TRUE;
 }
 
@@ -175,3 +187,14 @@ void CCharacterToolWindowApp::SaveCustomState()
 
 
 
+
+
+BOOL CCharacterToolWindowApp::OnIdle(LONG lCount)
+{
+	// TODO: 여기에 특수화된 코드를 추가 및/또는 기본 클래스를 호출합니다.
+
+	_logic->Frame();
+	_logic->Render();
+
+	return CWinAppEx::OnIdle(lCount);
+}

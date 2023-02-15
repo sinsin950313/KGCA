@@ -23,8 +23,8 @@ namespace SSB
 
 		_tool.SelectCurrentAction(_tool.kNewActionName);
 
-		_tool.ChangeActionName("strafe");
-		_tool.ChangeEndFrame(20);
+		//_tool.ChangeActionName("strafe");
+		//_tool.ChangeEndFrame(20);
 
 		_tool.RegisterScriptFileName("CharacterToolResult.FBXScript");
 		_tool.Export();

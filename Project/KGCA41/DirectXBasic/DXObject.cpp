@@ -237,15 +237,15 @@ namespace SSB
 	}
 	bool DXObject::Render()
 	{
-		if (g_dxWindow->GetMainCamera()->IsRender(this))
+		//if (g_dxWindow->GetMainCamera()->IsRender(this))
 		{
 			UpdateConstantBuffer();
 			g_dxWindow->AddDrawable(this);
 		}
-		else
-		{
-			//OutputDebugString(L"Invisible\n");
-		}
+		//else
+		//{
+		//	//OutputDebugString(L"Invisible\n");
+		//}
 
 		_animation->Render();
 

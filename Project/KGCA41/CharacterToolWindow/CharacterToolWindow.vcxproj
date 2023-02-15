@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
-    <ProjectGuid>{522C4951-A895-43C1-8236-4B40245D442E}</ProjectGuid>
+    <ProjectGuid>{F15D7EE6-C507-43C8-96D8-E429CD464A2C}</ProjectGuid>
     <Keyword>MFCProj</Keyword>
     <RootNamespace>CharacterToolWindow</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
@@ -76,6 +76,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)\..\..\Output\Debug\$(ProjectName)</OutDir>
+    <IntDir>$(ProjectDir)\..\..\Output\Debug\$(ProjectName)</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -93,9 +95,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include;$(ProjectDir)\..\..\include\fmod;$(ProjectDir)\..\..\include\DXTK;$(ProjectDir)\..\..\include\FBX;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
+      <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib\Debug\FBX;$(ProjectDir)\..\..\lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>PhysicsMath.lib;Volume.lib;BasicWindow.lib;WindowUtility.lib;DirectXBasic.lib;FBXLoader.lib;CharacterTool.lib;libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib</AdditionalDependencies>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -185,6 +191,7 @@
   <ItemGroup>
     <ClInclude Include="CharacterToolDockablePane.h" />
     <ClInclude Include="CharacterToolFormView.h" />
+    <ClInclude Include="CharacterToolMainLogic.h" />
     <ClInclude Include="CharacterToolWindow.h" />
     <ClInclude Include="CharacterToolWindowDoc.h" />
     <ClInclude Include="CharacterToolWindowView.h" />
@@ -197,6 +204,7 @@
   <ItemGroup>
     <ClCompile Include="CharacterToolDockablePane.cpp" />
     <ClCompile Include="CharacterToolFormView.cpp" />
+    <ClCompile Include="CharacterToolMainLogic.cpp" />
     <ClCompile Include="CharacterToolWindow.cpp" />
     <ClCompile Include="CharacterToolWindowDoc.cpp" />
     <ClCompile Include="CharacterToolWindowView.cpp" />
@@ -217,9 +225,6 @@
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\Toolbar256.bmp" />
     <Image Include="res\userimages.bmp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\CharacterToolWindow.rc2" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

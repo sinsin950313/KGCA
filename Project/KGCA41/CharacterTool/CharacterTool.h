@@ -16,13 +16,13 @@ namespace SSB
 	class CharacterTool : public Common
 	{
 	private:
-		FBXLoader* _loader;
+		FBXLoader* _loader = nullptr;
 
 		std::string _objectFileName;
 		std::string _scriptFileName;
 		std::string _actionFileName;
 
-		DXObject* _object;
+		DXObject* _object = nullptr;
 		std::vector<ActionData> _actionList;
 		std::vector<ActionData>::iterator _selectedActionDataPointer;
 
@@ -40,11 +40,14 @@ namespace SSB
 		void RegisterObjectFileName(std::string fileName);
 		void RegisterScriptFileName(std::string fileName);
 		void RegisterActionFileName(std::string fileName);
-		void ChangeActionName(std::string actionName);
-		void ChangeEndFrame(int frame);
-		std::vector<ActionData> GetActionList();
-		void SelectCurrentAction(std::string actionName);
+		void RegisterActionName(std::string actionName);
+		void RegisterEndFrame(unsigned int frame);
 		void CutAnimataion();
+		void SelectCurrentAction(std::string actionName);
+		void ChangeSelectedActionData();
+		std::vector<ActionData> GetActionList();
+		//void ChangeActionName(std::string actionName);
+		//void ChangeEndFrame(int frame);
 
 	public:
 		bool Init() override;

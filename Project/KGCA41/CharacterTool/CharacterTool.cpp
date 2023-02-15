@@ -176,7 +176,10 @@ namespace SSB
 			}
 		}
 
-		_object->Init();
+		if (_object != nullptr)
+		{
+			_object->Init();
+		}
 
 		_scriptFileName.clear();
 		_actionFileName.clear();
@@ -193,10 +196,19 @@ namespace SSB
 	{
 		_actionFileName = fileName;
 	}
-	void CharacterTool::ChangeActionName(std::string actionName)
+	void CharacterTool::RegisterActionName(std::string actionName)
 	{
-		_selectedActionDataPointer->ActionName = actionName;
 	}
+	void CharacterTool::RegisterEndFrame(unsigned int frame)
+	{
+	}
+	void CharacterTool::CutAnimataion()
+	{
+	}
+	//void CharacterTool::ChangeActionName(std::string actionName)
+	//{
+	//	_selectedActionDataPointer->ActionName = actionName;
+	//}
 	void CharacterTool::SelectCurrentAction(std::string actionName)
 	{
 		_selectedActionDataPointer = GetIterator(actionName);
@@ -205,28 +217,31 @@ namespace SSB
 			_object->UpdateCurrentAnimation(_selectedActionDataPointer->ActionName);
 		}
 	}
-	void CharacterTool::ChangeEndFrame(int frame)
+	void CharacterTool::ChangeSelectedActionData()
 	{
-		if (_selectedActionDataPointer != _actionList.end())
-		{
-			_selectedActionDataPointer->EndFrame = frame;
-			std::string currActionName = _selectedActionDataPointer->ActionName;
-
-			const std::string tmpScriptFileName = "TempScript.FBXScript";
-
-			_scriptFileName = tmpScriptFileName;
-			Export();
-
-			_actionList.clear();
-			Import();
-
-			std::string path = wtm(kFBXScriptPath) + tmpScriptFileName;
-			int ret = remove(path.c_str());
-
-			_selectedActionDataPointer = GetIterator(currActionName);
-			_object->UpdateCurrentAnimation(_selectedActionDataPointer->ActionName);
-		}
 	}
+	//void CharacterTool::ChangeEndFrame(int frame)
+	//{
+	//	if (_selectedActionDataPointer != _actionList.end())
+	//	{
+	//		_selectedActionDataPointer->EndFrame = frame;
+	//		std::string currActionName = _selectedActionDataPointer->ActionName;
+
+	//		const std::string tmpScriptFileName = "TempScript.FBXScript";
+
+	//		_scriptFileName = tmpScriptFileName;
+	//		Export();
+
+	//		_actionList.clear();
+	//		Import();
+
+	//		std::string path = wtm(kFBXScriptPath) + tmpScriptFileName;
+	//		int ret = remove(path.c_str());
+
+	//		_selectedActionDataPointer = GetIterator(currActionName);
+	//		_object->UpdateCurrentAnimation(_selectedActionDataPointer->ActionName);
+	//	}
+	//}
 	std::vector<ActionData> CharacterTool::GetActionList()
 	{
 		return _actionList;

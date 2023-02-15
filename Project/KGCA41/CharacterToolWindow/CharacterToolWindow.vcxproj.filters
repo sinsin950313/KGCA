@@ -39,10 +39,13 @@
     <ClInclude Include="pch.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterToolFormView.h">
+    <ClInclude Include="CharacterToolDockablePane.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterToolDockablePane.h">
+    <ClInclude Include="CharacterToolMainLogic.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterToolFormView.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,10 +65,13 @@
     <ClCompile Include="pch.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterToolFormView.cpp">
+    <ClCompile Include="CharacterToolDockablePane.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterToolDockablePane.cpp">
+    <ClCompile Include="CharacterToolMainLogic.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CharacterToolFormView.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -90,10 +96,5 @@
     <Image Include="res\Toolbar256.bmp">
       <Filter>리소스 파일</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\CharacterToolWindow.rc2">
-      <Filter>리소스 파일</Filter>
-    </None>
   </ItemGroup>
 </Project>

@@ -8,6 +8,7 @@
 #endif
 
 #include "resource.h"       // 주 기호입니다.
+#include "CharacterToolMainLogic.h"
 
 
 // CCharacterToolWindowApp:
@@ -16,6 +17,12 @@
 
 class CCharacterToolWindowApp : public CWinAppEx
 {
+private:
+	SSB::CharacterToolMainLogic* _logic;
+
+public:
+	SSB::CharacterTool* GetTool();
+
 public:
 	CCharacterToolWindowApp() noexcept;
 
@@ -25,6 +32,7 @@ public:
 	virtual BOOL InitInstance();
 
 // 구현입니다.
+	UINT  m_nAppLook;
 	BOOL  m_bHiColorIcons;
 
 	virtual void PreLoadState();
@@ -33,6 +41,7 @@ public:
 
 	afx_msg void OnAppAbout();
 	DECLARE_MESSAGE_MAP()
+	virtual BOOL OnIdle(LONG lCount);
 };
 
 extern CCharacterToolWindowApp theApp;

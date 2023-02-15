@@ -8,9 +8,6 @@
 
 class CMainFrame : public CFrameWndEx
 {
-private:
-	CTabbedPane     _tabbedPane;
-	CharacterToolDockablePane _characterPane;
 	
 protected: // serialization에서만 만들어집니다.
 	CMainFrame() noexcept;
@@ -21,6 +18,8 @@ public:
 
 // 작업입니다.
 public:
+	CTabbedPane _tabbedPane;
+	CharacterToolDockablePane _characterToolPane;
 
 // 재정의입니다.
 public:
@@ -46,6 +45,8 @@ protected:
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnViewCustomize();
 	afx_msg LRESULT OnToolbarCreateNew(WPARAM wp, LPARAM lp);
+	afx_msg void OnApplicationLook(UINT id);
+	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
 };

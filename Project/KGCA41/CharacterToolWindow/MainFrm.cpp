@@ -24,6 +24,8 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_CREATE()
 	ON_COMMAND(ID_VIEW_CUSTOMIZE, &CMainFrame::OnViewCustomize)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
+	ON_COMMAND_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnApplicationLook)
+	ON_UPDATE_COMMAND_UI_RANGE(ID_VIEW_APPLOOK_WIN_2000, ID_VIEW_APPLOOK_WINDOWS_7, &CMainFrame::OnUpdateApplicationLook)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
@@ -39,6 +41,7 @@ static UINT indicators[] =
 CMainFrame::CMainFrame() noexcept
 {
 	// TODO: 여기에 멤버 초기화 코드를 추가합니다.
+	theApp.m_nAppLook = theApp.GetInt(_T("ApplicationLook"), ID_VIEW_APPLOOK_VS_2008);
 }
 
 CMainFrame::~CMainFrame()
@@ -102,6 +105,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	CDockingManager::SetDockingMode(DT_SMART);
 	// Visual Studio 2005 스타일 도킹 창 자동 숨김 동작을 활성화합니다.
 	EnableAutoHidePanes(CBRS_ALIGN_ANY);
+	// 보관된 값에 따라 비주얼 관리자 및 스타일을 설정합니다.
+	OnApplicationLook(theApp.m_nAppLook);
 
 	// 도구 모음 및 도킹 창 메뉴 바꾸기를 활성화합니다.
 	EnablePaneMenu(TRUE, ID_VIEW_CUSTOMIZE, strCustomize, ID_VIEW_TOOLBAR);
@@ -132,19 +137,28 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_APP_ABOUT);
 	lstBasicCommands.AddTail(ID_VIEW_STATUS_BAR);
 	lstBasicCommands.AddTail(ID_VIEW_TOOLBAR);
+	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2003);
+	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_VS_2005);
+	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_BLUE);
+	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_SILVER);
+	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_BLACK);
+	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_OFF_2007_AQUA);
+	lstBasicCommands.AddTail(ID_VIEW_APPLOOK_WINDOWS_7);
 
 	CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
 	DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN | CBRS_LEFT | CBRS_FLOAT_MULTI;
 
 	DWORD dwID = 0;
-	_tabbedPane.CreateEx(NULL, L"TAB", this, CRect(0, 0, 300, 300), TRUE, dwID, dwStyle);
+	_tabbedPane.CreateEx(NULL, L"TAB", this, CRect(0, 0, 400, 400), TRUE, dwID, dwStyle);
+	_tabbedPane.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&_tabbedPane);
 
-	_characterPane.CreateEx(NULL, L"인터페이스", this, CRect(0, 0, 300, 300), TRUE, 5554, dwStyle);
-	_characterPane.EnableDocking(CBRS_ALIGN_ANY);
-	DockPane(&_characterPane);
+	_characterToolPane.CreateEx(NULL, L"Character Editor", this, CRect(0, 0, 400, 400), TRUE, dwID, dwStyle);
+	_characterToolPane.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&_characterToolPane);
 
-	_tabbedPane.AddTab(&_characterPane);
+	_tabbedPane.AddTab(&_characterToolPane);
 
 
 	return 0;
@@ -202,6 +216,81 @@ LRESULT CMainFrame::OnToolbarCreateNew(WPARAM wp,LPARAM lp)
 
 	pUserToolbar->EnableCustomizeButton(TRUE, ID_VIEW_CUSTOMIZE, strCustomize);
 	return lres;
+}
+
+void CMainFrame::OnApplicationLook(UINT id)
+{
+	CWaitCursor wait;
+
+	theApp.m_nAppLook = id;
+
+	switch (theApp.m_nAppLook)
+	{
+	case ID_VIEW_APPLOOK_WIN_2000:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManager));
+		break;
+
+	case ID_VIEW_APPLOOK_OFF_XP:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOfficeXP));
+		break;
+
+	case ID_VIEW_APPLOOK_WIN_XP:
+		CMFCVisualManagerWindows::m_b3DTabsXPTheme = TRUE;
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows));
+		break;
+
+	case ID_VIEW_APPLOOK_OFF_2003:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2003));
+		CDockingManager::SetDockingMode(DT_SMART);
+		break;
+
+	case ID_VIEW_APPLOOK_VS_2005:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2005));
+		CDockingManager::SetDockingMode(DT_SMART);
+		break;
+
+	case ID_VIEW_APPLOOK_VS_2008:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerVS2008));
+		CDockingManager::SetDockingMode(DT_SMART);
+		break;
+
+	case ID_VIEW_APPLOOK_WINDOWS_7:
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerWindows7));
+		CDockingManager::SetDockingMode(DT_SMART);
+		break;
+
+	default:
+		switch (theApp.m_nAppLook)
+		{
+		case ID_VIEW_APPLOOK_OFF_2007_BLUE:
+			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_LunaBlue);
+			break;
+
+		case ID_VIEW_APPLOOK_OFF_2007_BLACK:
+			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_ObsidianBlack);
+			break;
+
+		case ID_VIEW_APPLOOK_OFF_2007_SILVER:
+			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Silver);
+			break;
+
+		case ID_VIEW_APPLOOK_OFF_2007_AQUA:
+			CMFCVisualManagerOffice2007::SetStyle(CMFCVisualManagerOffice2007::Office2007_Aqua);
+			break;
+		}
+
+		CMFCVisualManager::SetDefaultManager(RUNTIME_CLASS(CMFCVisualManagerOffice2007));
+		CDockingManager::SetDockingMode(DT_SMART);
+	}
+
+	RedrawWindow(nullptr, nullptr, RDW_ALLCHILDREN | RDW_INVALIDATE | RDW_UPDATENOW | RDW_FRAME | RDW_ERASE);
+
+	theApp.WriteInt(_T("ApplicationLook"), theApp.m_nAppLook);
+}
+
+void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
+{
+	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
 }
 
 

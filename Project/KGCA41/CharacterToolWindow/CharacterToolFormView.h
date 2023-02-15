@@ -8,6 +8,9 @@ class CharacterToolFormView : public CFormView
 {
 	DECLARE_DYNCREATE(CharacterToolFormView)
 
+public:
+	static CharacterToolFormView* CreateFormView(CWnd* parent);
+
 protected:
 	CharacterToolFormView();           // 동적 만들기에 사용되는 protected 생성자입니다.
 	virtual ~CharacterToolFormView();
@@ -28,7 +31,29 @@ protected:
 
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+	virtual void OnInitialUpdate();
+
+private:
+	CEdit _objectFileName;
+	CEdit _actionFileName;
+	CEdit _scriptFileName;
+	CEdit _actionName;
+	CEdit _lastFrame;
+	CListCtrl _actionListControl;
+
+public:
+	afx_msg void OnBnClickedObjectfilenamebutton();
+	afx_msg void OnBnClickedActionfilenamebutton();
+	afx_msg void OnBnClickedScriptfilenamebutton();
+	afx_msg void OnBnClickedFramecutbutton();
+	afx_msg void OnBnClickedFramechangebutton();
+	afx_msg void OnBnClickedImportbutton();
+	afx_msg void OnBnClickedExportbutton();
+
+private:
+	void UpdateActionList();
+public:
+	afx_msg void OnLvnItemchangedActionlistcontrol(NMHDR* pNMHDR, LRESULT* pResult);
 };
 
 

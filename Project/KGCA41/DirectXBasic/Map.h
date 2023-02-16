@@ -46,9 +46,6 @@ namespace SSB
 			float GetCoordinateHeight(int x, int z);
 			float Lerp(float start, float end, float param);
 
-		private:
-			void Build() override;
-
 		public:
 			void SetSize(float widthVertexCount, float heightVertexCount);
 			void SetHeightMap(std::wstring fileName);

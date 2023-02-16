@@ -13,48 +13,6 @@ namespace SSB
 	class Camera : public DXObject
 	{
 	private:
-		class Frustum : public Volume1
-		{
-		public:
-			std::vector<Vector3> GetWorldBaseVertices() override;
-			std::vector<TriangleData> GetWorldBaseTriangles() override;
-
-		public:
-			operator AABBData() override;
-			operator OBBData() override;
-			operator SphereData() override;
-		};
-		class CameraToSphereCollisionDetector : public CollisionDetectorInterface
-		{
-		public:
-			bool IsCollide(CollisionSystemVolume* camera, CollisionSystemVolume* sphere) override;
-			bool IsIn(CollisionSystemVolume* camera, CollisionSystemVolume* sphere) override;
-			std::vector<Vector3> GetIntersections(CollisionSystemVolume* camera, CollisionSystemVolume* sphere) override;
-		};
-		class CameraToAABBCollisionDetector : public CollisionDetectorInterface
-		{
-		public:
-			bool IsCollide(CollisionSystemVolume* camera, CollisionSystemVolume* aabb) override;
-			bool IsIn(CollisionSystemVolume* camera, CollisionSystemVolume* aabb) override;
-			std::vector<Vector3> GetIntersections(CollisionSystemVolume* camera, CollisionSystemVolume* aabb) override;
-		};
-		class CameraToOBBCollisionDetector : public CollisionDetectorInterface
-		{
-		public:
-			bool IsCollide(CollisionSystemVolume* camera, CollisionSystemVolume* obb) override;
-			bool IsIn(CollisionSystemVolume* camera, CollisionSystemVolume* obb) override;
-			std::vector<Vector3> GetIntersections(CollisionSystemVolume* camera, CollisionSystemVolume* obb) override;
-		};
-		//Register Triangle Volume Type
-		class CameraFinalCollisionDetector : public CollisionDetectorInterface
-		{
-		public:
-			bool IsCollide(CollisionSystemVolume* camera, CollisionSystemVolume* triangle) override;
-			bool IsIn(CollisionSystemVolume* camera, CollisionSystemVolume* triangle) override;
-			std::vector<Vector3> GetIntersections(CollisionSystemVolume* camera, CollisionSystemVolume* triangle) override;
-		};
-
-	private:
 		float _fov;
 		float _aspect;
 		float _near;

@@ -26,7 +26,8 @@ namespace SSB
 
         {
             _object = new DXObject();
-            Model* model = new Box;
+            Model* model = new Model;
+            model->RegisterMesh(0, new Box);
             model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
             model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
             _object->SetModel(model);
@@ -36,7 +37,8 @@ namespace SSB
 
         {
             _objectBack = new DXObject();
-            Model* model = new Box;
+            Model* model = new Model;
+            model->RegisterMesh(0, new Box);
             model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
             model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "FormedMain", "ps_5_0"));
             _objectBack->SetModel(model);

@@ -2,6 +2,7 @@
 #include "BasicWindow.h"
 #include "InputManager.h"
 #include "HCCalculator.h"
+#include "Sphere1.h"
 
 namespace SSB
 {
@@ -140,6 +141,7 @@ namespace SSB
 	}
 	bool Camera::Init()
 	{
+		SetVolume(new Sphere1Volume(1000));
 		return true;
 	}
 	bool Camera::Frame()

@@ -26,21 +26,21 @@ namespace SSB
 		Float2 texture;
 	};
 
+	typedef int MeshIndex;
+
 	struct MeshData
 	{
-		HMatrix44 TransformBuffer[255];
-		int MeshIndex = 0;
+		HMatrix44 BoneSpaceTransformBuffer[255];
+		MeshIndex MeshIndex = 0;
 		int padding[3];
 	};
 
+	static const int kAffectedBoneCount = 4;
 	struct SkinningVertexData
 	{
-		Vertex_PNCT Vertex;
-		int AffectedBoneIndex[4];
-		float Weight[4];
+		int AffectedBoneIndex[kAffectedBoneCount];
+		float Weight[kAffectedBoneCount];
 	};
-
-	typedef int MeshIndex;
 
 	class Mesh : public Common
 	{
@@ -55,7 +55,7 @@ namespace SSB
 		MeshData _meshData;
 		ID3D11Buffer* _meshDataBuffer;
 
-		std::vector<SkinningVertexData> _skinningData;
+		std::vector<SkinningVertexData> _skinningDataPerVertex;
 		ID3D11Buffer* _skinningDataBuffer;
 
 	private:
@@ -67,6 +67,8 @@ namespace SSB
 	public:
 		void SetVertexList(std::vector<Vertex_PNCT> vertexList);
 		void SetIndexList(std::vector<DWORD> indexList);
+		void SetMeshData(MeshData data);
+		void SetSkinninData(std::vector<SkinningVertexData> data);
 
 	public:
 		Vector3 GetMinVertex();
@@ -79,7 +81,7 @@ namespace SSB
 		bool Release() override;
 	};
 
-	const int kAnimationUnitMaxIndex = 255;
+	static const int kAnimationUnitMaxIndex = 255;
 	struct AnimationUnitInfo
 	{
 		HMatrix44 Matrix;
@@ -96,24 +98,17 @@ namespace SSB
 	class Animation : public Common
 	{
 	private:
-		struct AnimatedFrameInfo
-		{
-			HMatrix44 MeshUnit[kAnimationUnitMaxIndex];
-			HMatrix44 BoneUnit[kAnimationUnitMaxIndex];
-		};
-
-	private:
-		const AnimatedFrameInfo DefaultFrameInfo;
+		static const AnimationFrameInfo kDefaultFrameInfo;
 
 	private:
 		float _framePerSecond = 30;
 		Timer _animationTimer;
 
-		int _boneMaxIndex = 0;
-		int _meshMaxIndex = 0;
+		int _boneMaxCount = 0;
+		int _meshMaxCount = 0;
 		std::vector<AnimationFrameInfo> _data;
 
-		AnimatedFrameInfo _currentFrameInfo;
+		AnimationFrameInfo _currentFrameInfo;
 		ID3D11Buffer* _animatedFrameBuffer;
 
 	public:
@@ -127,8 +122,8 @@ namespace SSB
 
 	public:
 		void SetAnimationFrameData(std::vector<AnimationFrameInfo> data);
-		void SetMeshMaxIndex(int maxIndex);
-		void SetBoneMaxIndex(int maxIndex);
+		void SetMaximumMeshCount(int count);
+		void SetMaximumBoneCount(int count);
 
 	public:
 		bool Init() override;
@@ -194,31 +189,26 @@ namespace SSB
 		bool Release() override;
 	};
 
-	//class Direction : public Model
+	//class Direction : public Mesh
 	//{
-	//private:
-	//	void Build() override;
-	//};
-
-	//class Triangle : public Model
-	//{
-	//private:
-
-	//private:
-	//	void Build() override;
-	//};
-
-	//class Box : public Model
-	//{
-	//private:
-	//	float _width;
-	//	float _height;
-	//	float _depth;
-
 	//public:
-	//	Box(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
-
-	//private:
-	//	void Build() override;
+	//	Direction();
 	//};
+
+	class Triangle : public Mesh
+	{
+	public:
+		Triangle();
+	};
+
+	class Box : public Mesh
+	{
+	private:
+		float _width;
+		float _height;
+		float _depth;
+
+	public:
+		Box(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
+	};
 }

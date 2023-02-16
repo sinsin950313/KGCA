@@ -51,13 +51,13 @@ namespace SSB
 	{
 		D3D11_BUFFER_DESC bd;
 		ZeroMemory(&bd, sizeof(bd));
-		bd.ByteWidth = sizeof(SkinningData);
+		bd.ByteWidth = sizeof(SkinningVertexData);
 		bd.Usage = D3D11_USAGE_DEFAULT;
 		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA sd;
 		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		sd.pSysMem = &_skinningData;
+		sd.pSysMem = &_skinningDataPerVertex;
 		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_skinningDataBuffer);
 		if (FAILED(hr))
 		{
@@ -93,6 +93,14 @@ namespace SSB
 	{
 		_indexList = indexList;
 	}
+	void Mesh::SetMeshData(MeshData data)
+	{
+		_meshData = data;
+	}
+	void Mesh::SetSkinninData(std::vector<SkinningVertexData> data)
+	{
+		_skinningDataPerVertex = data;
+	}
 	Vector3 Mesh::GetMinVertex()
 	{
 		return _minVertex;
@@ -107,10 +115,11 @@ namespace SSB
         CreateIndexBuffer();
 		CreateSkinningDataBuffer();
 		CreateBoneSpaceTransformBuffer();
+		return true;
 	}
 	bool Mesh::Frame()
 	{
-
+		return true;
 	}
 	bool Mesh::Render()
 	{
@@ -139,6 +148,7 @@ namespace SSB
 		dc->VSSetConstantBuffers(2, 1, &_meshDataBuffer);
 
 		dc->DrawIndexed(_indexList.size(), 0, 0);
+		return true;
 	}
 	bool Mesh::Release()
 	{
@@ -153,10 +163,14 @@ namespace SSB
 			_indexBuffer = nullptr;
         }
 		_indexList.clear();
+		return true;
 	}
+
+	const AnimationFrameInfo Animation::kDefaultFrameInfo;
 
 	Animation::Animation()
 	{
+		_data.push_back(AnimationFrameInfo());
 	}
 	Animation::~Animation()
 	{
@@ -166,7 +180,7 @@ namespace SSB
 	{
 		D3D11_BUFFER_DESC bd;
 		ZeroMemory(&bd, sizeof(bd));
-		bd.ByteWidth = sizeof(AnimatedFrameInfo);
+		bd.ByteWidth = sizeof(AnimationFrameInfo);
 		bd.Usage = D3D11_USAGE_DEFAULT;
 		bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 
@@ -216,14 +230,14 @@ namespace SSB
 		afterTime = afterIndex / _framePerSecond;
 		float t = (animationElapseTime - beforeTime) / (afterTime - beforeTime);
 
-		for (int i = 0; i < _meshMaxIndex; ++i)
+		for (int i = 0; i < _meshMaxCount; ++i)
 		{
-			_currentFrameInfo.MeshUnit[i] = GetInterpolate(_data[beforeIndex].MeshUnit[i], _data[afterIndex].MeshUnit[i], t);
+			_currentFrameInfo.MeshUnit[i].Matrix = GetInterpolate(_data[beforeIndex].MeshUnit[i], _data[afterIndex].MeshUnit[i], t);
 		}
 
-		for (int i = 0; i < _boneMaxIndex; ++i)
+		for (int i = 0; i < _boneMaxCount; ++i)
 		{
-			_currentFrameInfo.BoneUnit[i] = GetInterpolate(_data[beforeIndex].BoneUnit[i], _data[afterIndex].BoneUnit[i], t);
+			_currentFrameInfo.BoneUnit[i].Matrix = GetInterpolate(_data[beforeIndex].BoneUnit[i], _data[afterIndex].BoneUnit[i], t);
 		}
 
 		g_dxWindow->GetDeviceContext()->UpdateSubresource(_animatedFrameBuffer, 0, nullptr, &_currentFrameInfo, 0, 0);
@@ -231,13 +245,22 @@ namespace SSB
 	bool Animation::Init()
 	{
 		_animationTimer.Init();
-		_currentFrameInfo = DefaultFrameInfo;
+		_currentFrameInfo = kDefaultFrameInfo;
+		CreateAnimatedFrameInfoBuffer();
 
 		return true;
 	}
 	void Animation::SetAnimationFrameData(std::vector<AnimationFrameInfo> data)
 	{
 		_data = data;
+	}
+	void Animation::SetMaximumMeshCount(int count)
+	{
+		_meshMaxCount = count;
+	}
+	void Animation::SetMaximumBoneCount(int count)
+	{
+		_boneMaxCount = count;
 	}
 	bool Animation::Frame()
 	{
@@ -258,16 +281,6 @@ namespace SSB
 		_animationTimer.Release();
 
 		return true;
-	}
-
-	void Animation::SetMeshMaxIndex(int maxIndex)
-	{
-		_meshMaxIndex = maxIndex;
-	}
-
-	void Animation::SetBoneMaxIndex(int maxIndex)
-	{
-		_boneMaxIndex = maxIndex;
 	}
 
 	Model::Model()
@@ -372,10 +385,10 @@ namespace SSB
 	}
 	bool Model::Init()
 	{
-		//if (_animation && _animation != &DefaultAnimation)
-		//{
-		//	_animation->Init();
-		//}
+		for (auto iter : _animations)
+		{
+			iter.second->Init();
+		}
 
         CreateVertexLayout();
 
@@ -464,68 +477,77 @@ namespace SSB
 		return false;
 	}
 
-	//Box::Box(float width, float height, float depth)
-	//	: _width(width), _height(height), _depth(depth)
-	//{
-	//}
-	//void Box::Build()
-	//{
-	//	_vertexList.resize(24);
-	//	// ¾Õ¸é
-	//	_vertexList[0] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
-	//	_vertexList[1] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
-	//	_vertexList[2] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
-	//	_vertexList[3] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
-	//	// µÞ¸é
-	//	_vertexList[4] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
-	//	_vertexList[5] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
-	//	_vertexList[6] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
-	//	_vertexList[7] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
+	Box::Box(float width, float height, float depth)
+		: _width(width), _height(height), _depth(depth)
+	{
+		std::vector<Vertex_PNCT> vertexList;
+		vertexList.resize(24);
+		// ¾Õ¸é
+		vertexList[0] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
+		vertexList[1] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
+		vertexList[2] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
+		vertexList[3] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.5f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
+		// µÞ¸é
+		vertexList[4] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.0f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
+		vertexList[5] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
+		vertexList[6] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
+		vertexList[7] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 1.0f}, Float4{0.0f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
 
-	//	// ¿À¸¥ÂÊ
-	//	_vertexList[8] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
-	//	_vertexList[9] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
-	//	_vertexList[10] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
-	//	_vertexList[11] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
+		// ¿À¸¥ÂÊ
+		vertexList[8] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
+		vertexList[9] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
+		vertexList[10] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
+		vertexList[11] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.0f, 0.0f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
 
-	//	// ¿ÞÂÊ
-	//	_vertexList[12] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
-	//	_vertexList[13] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
-	//	_vertexList[14] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
-	//	_vertexList[15] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
+		// ¿ÞÂÊ
+		vertexList[12] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.0f} };
+		vertexList[13] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.0f} };
+		vertexList[14] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
+		vertexList[15] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{-1.0f, 0.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
 
-	//	// À­¸é
-	//	_vertexList[16] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
-	//	_vertexList[17] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
-	//	_vertexList[18] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
-	//	_vertexList[19] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
+		// À­¸é
+		vertexList[16] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
+		vertexList[17] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
+		vertexList[18] = Vertex_PNCT{ Float4{0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
+		vertexList[19] = Vertex_PNCT{ Float4{-0.5f * _width, 0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 1.0f}, Float4{0.5f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
 
-	//	// ¾Æ·§¸é
-	//	_vertexList[20] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
-	//	_vertexList[21] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
-	//	_vertexList[22] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
-	//	_vertexList[23] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
+		// ¾Æ·§¸é
+		vertexList[20] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.0f} };
+		vertexList[21] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, -0.5f * _depth, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.0f} };
+		vertexList[22] = Vertex_PNCT{ Float4{0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.5f, 0.5f} };
+		vertexList[23] = Vertex_PNCT{ Float4{-0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float2{0.0f, 0.5f} };
 
-	//	_indexList.resize(36);
-	//	int iIndex = 0;
-	//	_indexList[iIndex++] = 0; 	_indexList[iIndex++] = 1; 	_indexList[iIndex++] = 2; 	_indexList[iIndex++] = 0;	_indexList[iIndex++] = 2; 	_indexList[iIndex++] = 3;
-	//	_indexList[iIndex++] = 4; 	_indexList[iIndex++] = 5; 	_indexList[iIndex++] = 6; 	_indexList[iIndex++] = 4;	_indexList[iIndex++] = 6; 	_indexList[iIndex++] = 7;
-	//	_indexList[iIndex++] = 8; 	_indexList[iIndex++] = 9; 	_indexList[iIndex++] = 10; _indexList[iIndex++] = 8;	_indexList[iIndex++] = 10; _indexList[iIndex++] = 11;
-	//	_indexList[iIndex++] = 12; _indexList[iIndex++] = 13; _indexList[iIndex++] = 14; _indexList[iIndex++] = 12;	_indexList[iIndex++] = 14; _indexList[iIndex++] = 15;
-	//	_indexList[iIndex++] = 16; _indexList[iIndex++] = 17; _indexList[iIndex++] = 18; _indexList[iIndex++] = 16;	_indexList[iIndex++] = 18; _indexList[iIndex++] = 19;
-	//	_indexList[iIndex++] = 20; _indexList[iIndex++] = 21; _indexList[iIndex++] = 22; _indexList[iIndex++] = 20;	_indexList[iIndex++] = 22; _indexList[iIndex++] = 23;
-	//}
-	//void Triangle::Build()
-	//{
-	//	_vertexList.resize(3);
-	//	_vertexList[0] = Vertex_PNCT{ Float4{+0.0f, +0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 0.0f}, Float2{0, 0} };
-	//	_vertexList[1] = Vertex_PNCT{ Float4{+0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 0.0f}, Float2{0, 0} };
-	//	_vertexList[2] = Vertex_PNCT{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 0.0f}, Float4{0, 0} };
+		SetVertexList(vertexList);
 
-	//	_indexList.resize(3);
-	//	int iIndex = 0;
-	//	_indexList[iIndex++] = 0;
-	//	_indexList[iIndex++] = 1;
-	//	_indexList[iIndex++] = 2;
-	//}
+		std::vector<DWORD> indexList;
+		indexList.resize(36);
+		int iIndex = 0;
+		indexList[iIndex++] = 0; 	indexList[iIndex++] = 1; 	indexList[iIndex++] = 2; 	indexList[iIndex++] = 0;	indexList[iIndex++] = 2; 	indexList[iIndex++] = 3;
+		indexList[iIndex++] = 4; 	indexList[iIndex++] = 5; 	indexList[iIndex++] = 6; 	indexList[iIndex++] = 4;	indexList[iIndex++] = 6; 	indexList[iIndex++] = 7;
+		indexList[iIndex++] = 8; 	indexList[iIndex++] = 9; 	indexList[iIndex++] = 10; indexList[iIndex++] = 8;	indexList[iIndex++] = 10; indexList[iIndex++] = 11;
+		indexList[iIndex++] = 12; indexList[iIndex++] = 13; indexList[iIndex++] = 14; indexList[iIndex++] = 12;	indexList[iIndex++] = 14; indexList[iIndex++] = 15;
+		indexList[iIndex++] = 16; indexList[iIndex++] = 17; indexList[iIndex++] = 18; indexList[iIndex++] = 16;	indexList[iIndex++] = 18; indexList[iIndex++] = 19;
+		indexList[iIndex++] = 20; indexList[iIndex++] = 21; indexList[iIndex++] = 22; indexList[iIndex++] = 20;	indexList[iIndex++] = 22; indexList[iIndex++] = 23;
+
+		SetIndexList(indexList);
+	}
+	Triangle::Triangle()
+	{
+		std::vector<Vertex_PNCT> vertexList;
+		vertexList.resize(3);
+		vertexList[0] = Vertex_PNCT{ Float4{+0.0f, +0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 0.0f}, Float2{0, 0} };
+		vertexList[1] = Vertex_PNCT{ Float4{+0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 0.0f}, Float2{0, 0} };
+		vertexList[2] = Vertex_PNCT{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 0.0f}, Float4{0, 0} };
+
+		SetVertexList(vertexList);
+
+		std::vector<DWORD> indexList;
+		indexList.resize(3);
+		int iIndex = 0;
+		indexList[iIndex++] = 0;
+		indexList[iIndex++] = 1;
+		indexList[iIndex++] = 2;
+
+		SetIndexList(indexList);
+	}
 }

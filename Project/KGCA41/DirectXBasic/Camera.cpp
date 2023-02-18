@@ -3,13 +3,38 @@
 #include "InputManager.h"
 #include "HCCalculator.h"
 #include "Sphere1.h"
+#include "DXWindow.h"
 
 namespace SSB
 {
-	extern BasicWindow* g_Window;
+	extern DXWindow* g_dxWindow;
 
 	Camera::Camera()
 	{
+	}
+	void Camera::CreateCameraBuffer()
+	{
+		D3D11_BUFFER_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
+		desc.ByteWidth = sizeof(ToViewSpaceTransformData);
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+		sd.pSysMem = &_toViewSpaceTransformData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_toViewSpaceTransformBuffer);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+		}
+	}
+	void Camera::UpdateCameraBuffer()
+	{
+		_toViewSpaceTransformData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
+		_toViewSpaceTransformData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
+
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_toViewSpaceTransformBuffer, 0, nullptr, &_toViewSpaceTransformData, 0, 0);
 	}
 	void Camera::GetPlane(Float4 ret[6])
 	{
@@ -114,7 +139,7 @@ namespace SSB
 		float fNearPlane = 1.0f;
 		float fFarPlane = 1000.0f;
 		float fovy = 3.141592f * 0.25;
-		float Aspect = ((float)g_Window->GetClientWidth()) / g_Window->GetClientHeight();
+		float Aspect = ((float)g_dxWindow->GetClientWidth()) / g_dxWindow->GetClientHeight();
 
 		h = 1 / tan(fovy * 0.5f);  // 1/tans(x) = cot(x)
 		w = h / Aspect;
@@ -141,16 +166,24 @@ namespace SSB
 	}
 	bool Camera::Init()
 	{
+		if (_toViewSpaceTransformBuffer == nullptr)
+		{
+			CreateCameraBuffer();
+		}
 		SetVolume(new Sphere1Volume(1000));
 		return true;
 	}
 	bool Camera::Frame()
 	{
+		UpdateCameraBuffer();
+
 		return true;
 	}
 	bool Camera::Render()
 	{
-		return false;
+		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(0, 1, &_toViewSpaceTransformBuffer);
+
+		return true;
 	}
 	bool Camera::Release()
 	{

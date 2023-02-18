@@ -11,13 +11,6 @@
 
 namespace SSB
 {
-	struct Vertex_PCT
-	{
-		Float4 position;
-		Float4 color;
-		Float2 texture;
-	};
-
 	struct Vertex_PNCT
 	{
 		Float4 position;
@@ -45,6 +38,7 @@ namespace SSB
 	class Mesh : public Common
 	{
 	private:
+		ID3D11InputLayout* _vertexLayout;
 		std::vector<Vertex_PNCT> _vertexList;
 		ID3D11Buffer* _vertexBuffer;
 		std::vector<DWORD> _indexList;
@@ -52,13 +46,18 @@ namespace SSB
 		Vector3 _minVertex;
 		Vector3 _maxVertex;
 
-		MeshData _meshData;
-		ID3D11Buffer* _meshDataBuffer;
-
 		std::vector<SkinningVertexData> _skinningDataPerVertex;
 		ID3D11Buffer* _skinningDataBuffer;
 
+		MeshData _meshData;
+		ID3D11Buffer* _meshDataBuffer;
+
+		VertexShader* _vs;
+		PixelShader* _ps;
+
 	private:
+		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count);
+		bool CreateVertexLayout();
 		bool CreateVertexBuffer();
 		bool CreateIndexBuffer();
 		bool CreateSkinningDataBuffer();
@@ -69,6 +68,8 @@ namespace SSB
 		void SetIndexList(std::vector<DWORD> indexList);
 		void SetMeshData(MeshData data);
 		void SetSkinninData(std::vector<SkinningVertexData> data);
+		void SetVertexShader(VertexShader* shader);
+		void SetPixelShader(PixelShader* shader);
 
 	public:
 		Vector3 GetMinVertex();
@@ -141,9 +142,6 @@ namespace SSB
 		static Animation DefaultAnimation;
 
 	private:
-		ID3D11InputLayout* _vertexLayout;
-		Shader* _vs;
-		Shader* _ps;
 		std::vector<Vector3> _meshElementMinMaxVertexList;
 		Vector3 _minVertex;
 		Vector3 _maxVertex;
@@ -163,10 +161,6 @@ namespace SSB
 
 	private:
 		void SizeCheck();
-		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count);
-
-	private:
-		bool CreateVertexLayout();
 
 	public:
 		//std::vector<Vertex_PNCT>& GetVertexList() { return _vertexList; }
@@ -176,8 +170,8 @@ namespace SSB
 		void RegisterMesh(MeshIndex index, Mesh* mesh);
 		void RegisterAnimation(AnimationName name, Animation* animation);
 		void SetCurrentAnimation(AnimationName name);
-		void SetVertexShader(Shader* shader);
-		void SetPixelShader(Shader* shader);
+		void SetVertexShader(VertexShader* shader);
+		void SetPixelShader(PixelShader* shader);
 
 	public:
 		operator OBBData();

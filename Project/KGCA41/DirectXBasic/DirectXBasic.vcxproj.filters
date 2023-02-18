@@ -65,16 +65,10 @@
     <ClCompile Include="DXStateManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="DXObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Texture.cpp">
@@ -92,9 +86,16 @@
     <ClCompile Include="Model.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="ShaderManager.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
+    <None Include="..\..\Shader\VertexShaderStageBufferData.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Shader\Default3DPixelShader.hlsl" />

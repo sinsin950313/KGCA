@@ -893,6 +893,8 @@ namespace SSB
 	{
 		UINT stride = sizeof(Vertex);
 		UINT offset = 0;
+
+		g_dxWindow->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		g_dxWindow->GetDeviceContext()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 		g_dxWindow->GetDeviceContext()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		g_dxWindow->GetDeviceContext()->IASetInputLayout(_inputLayout);

@@ -7,11 +7,9 @@
 
 namespace SSB
 {
-	struct ViewSpaceTransformData
+	struct ObjectToWorldTransformData
 	{
 		Float44 World;
-		Float44 View;
-		Float44 Projection;
 	};
 
 	class DXObject : public DXDrawableInterface
@@ -25,8 +23,8 @@ namespace SSB
 
 		Model* _model;
 		Volume1* _volume;
-		ID3D11Buffer* _viewSpaceTransformBuffer;
-		ViewSpaceTransformData _viewSpaceTransformData;
+		ID3D11Buffer* _objectToWorldTransformBuffer;
+		ObjectToWorldTransformData _objectToWorldTransformData;
 
 		DXObject* _parent;
 		std::vector<DXObject*> _childObjectList;
@@ -35,9 +33,9 @@ namespace SSB
 		DXObject();
 		virtual ~DXObject();
 
-	protected:
-		virtual bool CreateViewSpaceTransformBuffer();
-		virtual void UpdateViewSpaceTransformBuffer();
+	private:
+		bool CreateObjectTransformBuffer();
+		void UpdateObjectTransformBuffer();
 
 	private:
 		void SetParent(DXObject* object);

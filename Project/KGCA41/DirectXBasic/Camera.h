@@ -10,21 +10,34 @@
 namespace SSB
 {
 	enum class ECollideState { In, Cross, Out };
+
+	struct ToViewSpaceTransformData
+	{
+		Float44 View;
+		Float44 Projection;
+	};
+
 	class Camera : public DXObject
 	{
+	private:
+		ToViewSpaceTransformData _toViewSpaceTransformData;
+		ID3D11Buffer* _toViewSpaceTransformBuffer;
+
+	protected:
+		HMatrix44 _matrix;
+
 	private:
 		float _fov;
 		float _aspect;
 		float _near;
 		float _far;
 
-	protected:
-		HMatrix44 _matrix;
-
 	public:
 		Camera();
 
 	private:
+		void CreateCameraBuffer();
+		void UpdateCameraBuffer();
 		void GetPlane(Float4 ret[6]);
 
 	public:

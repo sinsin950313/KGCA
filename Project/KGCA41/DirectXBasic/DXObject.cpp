@@ -15,18 +15,18 @@ namespace SSB
 	{
 		Release();
 	}
-	bool DXObject::CreateViewSpaceTransformBuffer()
+	bool DXObject::CreateObjectTransformBuffer()
 	{
 		D3D11_BUFFER_DESC desc;
 		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
-		desc.ByteWidth = sizeof(ViewSpaceTransformData);
+		desc.ByteWidth = sizeof(ObjectToWorldTransformData);
 		desc.Usage = D3D11_USAGE_DEFAULT;
 		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA sd;
 		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		sd.pSysMem = &_viewSpaceTransformData;
-		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_viewSpaceTransformBuffer);
+		sd.pSysMem = &_objectToWorldTransformData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_objectToWorldTransformBuffer);
 		if (FAILED(hr))
 		{
 			assert(SUCCEEDED(hr));
@@ -34,17 +34,15 @@ namespace SSB
 		}
 		return true;
 	}
-	void DXObject::UpdateViewSpaceTransformBuffer()
+	void DXObject::UpdateObjectTransformBuffer()
 	{
-		_viewSpaceTransformData.World = HMatrix44(_volume->GetWorldRotation(), _volume->GetWorldPosition()).Transpose();
-		_viewSpaceTransformData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
-		_viewSpaceTransformData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
+		_objectToWorldTransformData.World = HMatrix44(_volume->GetWorldRotation(), _volume->GetWorldPosition()).Transpose();
 
-		g_dxWindow->GetDeviceContext()->UpdateSubresource(_viewSpaceTransformBuffer, 0, nullptr, &_viewSpaceTransformData, 0, 0);
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_objectToWorldTransformBuffer, 0, nullptr, &_objectToWorldTransformData, 0, 0);
 
 		for (auto child : _childObjectList)
 		{
-			child->UpdateViewSpaceTransformBuffer();
+			child->UpdateObjectTransformBuffer();
 		}
 	}
 	void DXObject::SetParent(DXObject* object)
@@ -130,7 +128,7 @@ namespace SSB
 			child->Init();
 		}
 
-		CreateViewSpaceTransformBuffer();
+		CreateObjectTransformBuffer();
 
         return true;
     }
@@ -152,7 +150,7 @@ namespace SSB
 	{
 		if (g_dxWindow->GetMainCamera()->IsRender(this))
 		{
-			UpdateViewSpaceTransformBuffer();
+			UpdateObjectTransformBuffer();
 			g_dxWindow->AddDrawable(this);
 		}
 		else
@@ -175,10 +173,10 @@ namespace SSB
 			_volume = nullptr;
 		}
 
-		if (_viewSpaceTransformBuffer)
+		if (_objectToWorldTransformBuffer)
 		{
-			_viewSpaceTransformBuffer->Release();
-			_viewSpaceTransformBuffer = nullptr;
+			_objectToWorldTransformBuffer->Release();
+			_objectToWorldTransformBuffer = nullptr;
 		}
 
 		if (_model)
@@ -240,7 +238,7 @@ namespace SSB
 
 			// Use Constant Buffer instead
 			dc->OMSetBlendState(DXStateManager::GetInstance().GetBlendState(DXStateManager::kDefaultBlend), 0, -1);
-			dc->VSSetConstantBuffers(0, 1, &_viewSpaceTransformBuffer);
+			dc->VSSetConstantBuffers(1, 1, &_objectToWorldTransformBuffer);
 			_model->Render();
 		}
     }

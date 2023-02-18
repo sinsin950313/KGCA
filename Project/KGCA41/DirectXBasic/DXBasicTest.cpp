@@ -35,16 +35,16 @@ namespace SSB
             _object->Move({ 0, 5, 0 });
         }
 
-        {
-            _objectBack = new DXObject();
-            Model* model = new Model;
-            model->RegisterMesh(0, new Box);
-            model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
-            model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "FormedMain", "ps_5_0"));
-            _objectBack->SetModel(model);
-            _objectBack->Init();
-            _objectBack->Move({ 0, 0, 5 });
-        }
+        //{
+        //    _objectBack = new DXObject();
+        //    Model* model = new Model;
+        //    model->RegisterMesh(0, new Box);
+        //    model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+        //    model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "FormedMain", "ps_5_0"));
+        //    _objectBack->SetModel(model);
+        //    _objectBack->Init();
+        //    _objectBack->Move({ 0, 0, 5 });
+        //}
 
         //{
         //    _terrain = new Map();
@@ -79,6 +79,8 @@ namespace SSB
         DXWindow::Frame();
         InputManager::GetInstance().Frame();
 
+        _mCamera->Frame();
+
 		_timer->Frame();
 		++_frames;
 		if (1000.0f < _timer->GetElapseTime() - _beforeTime)
@@ -91,7 +93,7 @@ namespace SSB
         _object->Frame();
         //_terrain->Frame();
         //_objectBack->Rotate(0.001f, 0, 0);
-        _objectBack->Frame();
+        //_objectBack->Frame();
 
         return false;
     }
@@ -104,12 +106,12 @@ namespace SSB
             delete _object;
             _object = nullptr;
         }
-        if (_objectBack)
-        {
-            _objectBack->Release();
-            delete _objectBack;
-            _objectBack = nullptr;
-        }
+        //if (_objectBack)
+        //{
+        //    _objectBack->Release();
+        //    delete _objectBack;
+        //    _objectBack = nullptr;
+        //}
         //if (_terrain)
         //{
         //    _terrain->Release();
@@ -143,9 +145,10 @@ namespace SSB
     bool SSB::DXBasicTest::PreRender()
     {
         DXWindow::PreRender();
+        _mCamera->Render();
         _object->Render();
         //_terrain->Render();
-        _objectBack->Render();
+        //_objectBack->Render();
         return true;
     }
 }

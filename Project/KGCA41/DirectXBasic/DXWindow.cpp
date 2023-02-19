@@ -136,7 +136,10 @@ namespace SSB
 		_screen.SetDepthStencilTexture(_renderTarget->GetDepthStencilTexture());
 		_screen.Init();
 
-		_mainCamera = &_defaultCamera;
+		if (_mainCamera == nullptr)
+		{
+			_mainCamera = &_defaultCamera;
+		}
 
 		UpdateResize();
 
@@ -264,6 +267,8 @@ namespace SSB
 
 	bool DXWindow::MainRender()
 	{
+		_mainCamera->Render();
+
 		DrawObjects();
 
 		_renderTarget2D->BeginDraw();

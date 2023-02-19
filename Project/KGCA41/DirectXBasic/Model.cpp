@@ -9,6 +9,16 @@ namespace SSB
 	const AnimationName kDefaultAnimaionName = "DefaultAnimation";
 	Animation Model::DefaultAnimation;
 
+	Mesh::Mesh()
+	{
+		_sprite = SpriteLoader::GetInstance().GetDefaultSprite();
+	}
+
+	Mesh::~Mesh()
+	{
+		Release();
+	}
+
 	void Mesh::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
 		*desc = new D3D11_INPUT_ELEMENT_DESC[6];
@@ -142,6 +152,10 @@ namespace SSB
 	{
 		_ps = shader;
 	}
+	void Mesh::SetSprite(Sprite* sprite)
+	{
+		_sprite = sprite;
+	}
 	Vector3 Mesh::GetMinVertex()
 	{
 		return _minVertex;
@@ -169,6 +183,14 @@ namespace SSB
 
 		dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		dc->IASetInputLayout(_vertexLayout);
+
+		//for(int i = 0; i < _sprites.size(); ++i)
+		{
+			dc->PSSetShaderResources(0, 1, _sprite->GetResource()->GetShaderResourceView());
+			ID3D11SamplerState* ss = _sprite->GetSamplerState();
+			dc->PSSetSamplers(0, 1, &ss);
+			dc->PSSetShaderResources(1, 1, _sprite->GetMaskResource()->GetShaderResourceView());
+		}
 
 		// Need to separate this
 		_vs->Render();
@@ -212,6 +234,17 @@ namespace SSB
             _vertexLayout->Release();
 			_vertexLayout = nullptr;
         }
+
+		//for (auto sprite : _sprites)
+		{
+			if (_sprite && _sprite != &(SpriteLoader::GetInstance()._defaultSprite))
+			{
+				_sprite->Release();
+				delete _sprite;
+				_sprite = nullptr;
+			}
+		}
+
 		_vs = nullptr;
 		_ps = nullptr;
 
@@ -325,6 +358,11 @@ namespace SSB
 	{
 		_boneMaxCount = count;
 	}
+	void Animation::SetFrameInterval(FrameIndex start, FrameIndex end)
+	{
+		_startFrame = start;
+		_endFrame = end;
+	}
 	bool Animation::Frame()
 	{
 		_animationTimer.Frame();
@@ -348,7 +386,6 @@ namespace SSB
 
 	Model::Model()
 	{
-		_sprite = SpriteLoader::GetInstance().GetDefaultSprite();
 		//_sprites.push_back(SpriteLoader::GetInstance().GetDefaultSprite());
 		_animations.insert(std::make_pair(kDefaultAnimaionName, &DefaultAnimation));
 		_currentAnimation = &DefaultAnimation;
@@ -413,10 +450,6 @@ namespace SSB
 			tmp.GetX(), tmp.GetY(), tmp.GetZ()
 		};
 	}
-	void Model::SetSprite(Sprite* sprite)
-	{
-		_sprite = sprite;
-	}
 	bool Model::Init()
 	{
 		for (auto iter : _animations)
@@ -446,13 +479,6 @@ namespace SSB
 	bool Model::Render()
 	{
 		auto dc = g_dxWindow->GetDeviceContext();
-		//for(int i = 0; i < _sprites.size(); ++i)
-		{
-			dc->PSSetShaderResources(0, 1, _sprite->GetResource()->GetShaderResourceView());
-			ID3D11SamplerState* ss = _sprite->GetSamplerState();
-			dc->PSSetSamplers(0, 1, &ss);
-			dc->PSSetShaderResources(1, 1, _sprite->GetMaskResource()->GetShaderResourceView());
-		}
 
 		_currentAnimation->Render();
 
@@ -482,16 +508,6 @@ namespace SSB
 			mesh.second->Release();
 		}
 		_meshElementMinMaxVertexList.clear();
-
-		//for (auto sprite : _sprites)
-		{
-			if (_sprite && _sprite != &(SpriteLoader::GetInstance()._defaultSprite))
-			{
-				_sprite->Release();
-				delete _sprite;
-				_sprite = nullptr;
-			}
-		}
 
 		return false;
 	}

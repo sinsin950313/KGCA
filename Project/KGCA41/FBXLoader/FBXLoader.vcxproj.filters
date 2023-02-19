@@ -26,15 +26,14 @@
     <ClCompile Include="FBXLoader.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="FBXLoaderTest.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="FBXLoaderTest.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Shader\Default3DObject.hlsl" />
-    <FxCompile Include="..\..\Shader\Default3DMeshObject.hlsl" />
+    <FxCompile Include="..\..\Shader\Default3DMeshShader.hlsl" />
   </ItemGroup>
 </Project>

@@ -55,6 +55,14 @@ namespace SSB
 		VertexShader* _vs;
 		PixelShader* _ps;
 
+	protected:
+		//std::vector<Sprite*> _sprites;
+		Sprite* _sprite;
+
+	public:
+		Mesh();
+		virtual ~Mesh();
+
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count);
 		bool CreateVertexLayout();
@@ -70,6 +78,8 @@ namespace SSB
 		void SetSkinninData(std::vector<SkinningVertexData> data);
 		void SetVertexShader(VertexShader* shader);
 		void SetPixelShader(PixelShader* shader);
+		void SetSprite(Sprite* sprite);
+		//Sprite* GetSprite() { return _sprite; }
 
 	public:
 		Vector3 GetMinVertex();
@@ -96,6 +106,8 @@ namespace SSB
 		AnimationUnitInfo BoneUnit[kAnimationUnitMaxIndex];
 	};
 
+	typedef unsigned int FrameIndex;
+
 	class Animation : public Common
 	{
 	private:
@@ -108,6 +120,9 @@ namespace SSB
 		int _boneMaxCount = 0;
 		int _meshMaxCount = 0;
 		std::vector<AnimationFrameInfo> _data;
+
+		FrameIndex _startFrame;
+		FrameIndex _endFrame;
 
 		AnimationFrameInfo _currentFrameInfo;
 		ID3D11Buffer* _animatedFrameBuffer;
@@ -125,6 +140,7 @@ namespace SSB
 		void SetAnimationFrameData(std::vector<AnimationFrameInfo> data);
 		void SetMaximumMeshCount(int count);
 		void SetMaximumBoneCount(int count);
+		void SetFrameInterval(FrameIndex start, FrameIndex end);
 
 	public:
 		bool Init() override;
@@ -151,10 +167,6 @@ namespace SSB
 		std::map<AnimationName, Animation*> _animations;
 		Animation* _currentAnimation;
 
-	protected:
-		//std::vector<Sprite*> _sprites;
-		Sprite* _sprite;
-
 	public:
 		Model();
 		virtual ~Model();
@@ -165,8 +177,6 @@ namespace SSB
 	public:
 		//std::vector<Vertex_PNCT>& GetVertexList() { return _vertexList; }
 		//std::vector<DWORD>& GetIndexList() { return _indexList; }
-		void SetSprite(Sprite* sprite);
-		//Sprite* GetSprite() { return _sprite; }
 		void RegisterMesh(MeshIndex index, Mesh* mesh);
 		void RegisterAnimation(AnimationName name, Animation* animation);
 		void SetCurrentAnimation(AnimationName name);

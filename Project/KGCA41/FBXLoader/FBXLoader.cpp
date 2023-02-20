@@ -20,6 +20,45 @@ namespace SSB
 		Release();
 	}
 
+	void FBXLoader::ExtractMaterial()
+	{
+		int count = _scene->GetMaterialCount();
+		for (int i = 0; i < count; ++i)
+		{
+			FbxSurfaceMaterial* material = _scene->GetMaterial(i);
+			if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
+			{
+				FbxSurfacePhong* phongMaterial = (FbxSurfacePhong*)material;
+				FbxDouble3 ambient = phongMaterial->Ambient;
+				FbxDouble3 diffuse = phongMaterial->Diffuse;
+				FbxDouble3 specular = phongMaterial->Specular;
+			}
+			else
+			{
+				assert(false);
+			}
+		}
+	}
+
+	void FBXLoader::ExtractTexture()
+	{
+		int count = _scene->GetMaterialCount();
+		for (int i = 0; i < count; ++i)
+		{
+			FbxSurfaceMaterial* material = _scene->GetMaterial(i);
+			auto prop = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
+			if (prop.IsValid())
+			{
+				const FbxFileTexture* tex = prop.GetSrcObject<FbxFileTexture>(0);
+				if (tex)
+				{
+					auto fileName = tex->GetFileName();
+					int i = 0;
+				}
+			}
+		}
+	}
+
 	FbxNode* FBXLoader::PreLoad(std::string fileName)
 	{
 		_importer = FbxImporter::Create(_manager, "");
@@ -41,6 +80,9 @@ namespace SSB
 
 		FbxSystemUnit::m.ConvertScene(_scene);
 		FbxAxisSystem::MayaZUp.ConvertScene(_scene);
+
+		ExtractMaterial();
+		ExtractTexture();
 
 		FbxNode* root = _scene->GetRootNode();
 
@@ -135,9 +177,6 @@ namespace SSB
 			};
 			verticeList.push_back(vertex);
 		}
-
-		int layerCount = fbxMesh->GetLayerCount();
-		assert(layerCount == 1);
 
 		int polygonCount = fbxMesh->GetPolygonCount();
 		auto colors = fbxMesh->GetLayer(0)->GetVertexColors();
@@ -257,25 +296,10 @@ namespace SSB
 		}
 	}
 
-	void FBXLoader::ExtractMaterial(FbxNode* node)
-	{
-		_indexToMaterialMap.clear();
-		int count = node->GetMaterialCount();
-		assert(count == 1);
-
-		for (int i = 0; i < count; ++i)
-		{
-			FbxSurfaceMaterial* surface = node->GetMaterial(i);
-			_indexToMaterialMap.insert(std::make_pair(i, surface));
-		}
-	}
-
 	void FBXLoader::ParseMesh()
 	{
 		for (auto iter : _meshNodeToMeshIndexMap)
 		{
-			ExtractMaterial(iter.first);
-
 			Mesh* mesh = new Mesh;
 
 			FbxNode* node = iter.first;

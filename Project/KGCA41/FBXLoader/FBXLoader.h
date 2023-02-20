@@ -49,12 +49,13 @@ namespace SSB
 		~FBXLoader();
 
 	private:
+		void ExtractMaterial();
+		void ExtractTexture();
 		FbxNode* PreLoad(std::string fileName);
 		void ParseNode(FbxNode* node);
 		void RegisterBoneNode(FbxNode* node);
 		void RegisterMeshNode(FbxNode* node);
 		std::vector<Script> ParseScript(std::string fileName);
-		void ExtractMaterial(FbxNode* node);
 		void ExtractMeshVertex(FbxMesh* fbxMesh, Mesh* mesh, FbxAMatrix geometricMatrix, FbxAMatrix normalLocalMatrix);
 		void ExtractMeshVertexIndex(FbxMesh* fbxMesh, Mesh* mesh);
 		void RegisterMesh(Mesh* mesh);

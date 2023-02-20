@@ -50,21 +50,21 @@ bool SSB::FBXLoaderTest::Init()
 	//}
 
 	// Multi Material = Multi Texture Test
-	//{
-	//	_loader->Init();
-	//	auto meshData = _loader->LoadMesh("Ship.FBX");
-	//	Model* model = new Model;
-	//	for (auto mesh : meshData)
-	//	{
-	//		model->RegisterMesh(mesh.first, mesh.second);
-	//	}
-	//	model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
-	//	model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
-	//	DXObject* object = new DXObject;
-	//	object->SetModel(model);
-	//	object->Init();
-	//	_objectList.push_back(object);
-	//}
+	{
+		_loader->Init();
+		auto meshData = _loader->LoadMesh("Ship.FBX");
+		Model* model = new Model;
+		for (auto mesh : meshData)
+		{
+			model->RegisterMesh(mesh.first, mesh.second);
+		}
+		model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
+		model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
+		DXObject* object = new DXObject;
+		object->SetModel(model);
+		object->Init();
+		_objectList.push_back(object);
+	}
 
 	// Object Animation Testing
 	//{

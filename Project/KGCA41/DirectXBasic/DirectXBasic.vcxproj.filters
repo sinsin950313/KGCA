@@ -102,11 +102,13 @@
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
     <None Include="..\..\Shader\VertexShaderStageBufferData.hlsli" />
+    <None Include="..\..\Shader\LightBufferData.hlsli" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\..\Shader\Default3DPixelShader.hlsl" />
     <FxCompile Include="..\..\Shader\Default3DVertexShader.hlsl" />
     <FxCompile Include="..\..\Shader\DefaultPixelShader.hlsl" />
     <FxCompile Include="..\..\Shader\Default3DMeshShader.hlsl" />
+    <FxCompile Include="..\..\Shader\Light.hlsl" />
   </ItemGroup>
 </Project>

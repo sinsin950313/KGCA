@@ -54,6 +54,7 @@ namespace SSB
 		std::vector<ActionData> GetActionList();
 		//void ChangeActionName(std::string actionName);
 		//void ChangeEndFrame(int frame);
+		DXObject* GetTargetObject();
 
 	public:
 		bool Init() override;

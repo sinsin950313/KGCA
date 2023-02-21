@@ -15,10 +15,16 @@ bool SSB::FBXLoaderTest::Init()
 
 	_loader = new FBXLoader();
 
-	//_loader->Init();
+	_loader->Init();
+
 	//DXObject* box = _loader->Load("box.FBX");
-	//box->Init();
-	//_objectList.push_back(box);
+	DXObject* box = new DXObject;
+	box->SetAdditionalModel(new Box());
+
+	box->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+	box->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "FormedMain", "ps_5_0"));
+	box->Init();
+	_objectList.push_back(box);
 
 	//_loader->Init();
 	//DXObject* multiCameras = _loader->Load("MultiCameras.FBX");
@@ -54,11 +60,11 @@ bool SSB::FBXLoaderTest::Init()
 	//swat1->UpdateCurrentAnimation("mixamo.com");
 	//_objectList.push_back(swat1);
 
-	_loader->Init();
-	DXObject* swat = _loader->Load("Swat.FBX", std::vector<std::string>{ "Swat@walking_backwards.fbx", "Swat@strafe_2.fbx", "Swat@strafe.fbx"}, "Swat.FBXScript");
-	swat->Init();
-	swat->UpdateCurrentAnimation("strafe_2");
-	_objectList.push_back(swat);
+	//_loader->Init();
+	//DXObject* swat = _loader->Load("Swat.FBX", std::vector<std::string>{ "Swat@walking_backwards.fbx", "Swat@strafe_2.fbx", "Swat@strafe.fbx"}, "Swat.FBXScript");
+	//swat->Init();
+	//swat->UpdateCurrentAnimation("strafe_2");
+	//_objectList.push_back(swat);
 
 	//_camera = new ModelViewCamera();
 	//_camera->SetTarget(_loader->_rootObject);
@@ -77,6 +83,7 @@ bool SSB::FBXLoaderTest::Frame()
 
 	for (auto object : _objectList)
 	{
+		object->Rotate(0, 0.001f);
 		object->Frame();
 	}
 

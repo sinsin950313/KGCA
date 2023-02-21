@@ -100,5 +100,7 @@
     <FxCompile Include="..\..\Shader\Default3DPixelShader.hlsl" />
     <FxCompile Include="..\..\Shader\Default3DVertexShader.hlsl" />
     <FxCompile Include="..\..\Shader\DefaultPixelShader.hlsl" />
+    <FxCompile Include="..\..\Shader\Default3DObject.hlsl" />
+    <FxCompile Include="..\..\Shader\Default3DMeshObject.hlsl" />
   </ItemGroup>
 </Project>

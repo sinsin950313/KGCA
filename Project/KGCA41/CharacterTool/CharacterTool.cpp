@@ -199,6 +199,7 @@ namespace SSB
 		if (_object != nullptr)
 		{
 			_object->Init();
+		_object->UpdatePosition({ 0, 0, 0 });
 		}
 
 		_scriptFileName.clear();
@@ -237,6 +238,7 @@ namespace SSB
 
 		_object = _loader->Load(_objectFileName, std::vector<std::string>{ actionFileName });
 		_object->Init();
+		_object->UpdatePosition({ 0, 0, 0 });
 
 		ActionData data;
 		data.ActionFileName = actionFileName;
@@ -323,6 +325,10 @@ namespace SSB
 	std::vector<ActionData> CharacterTool::GetActionList()
 	{
 		return _actionList;
+	}
+	DXObject* CharacterTool::GetTargetObject()
+	{
+		return _object;
 	}
 	bool CharacterTool::Init()
 	{

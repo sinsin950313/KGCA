@@ -3,6 +3,7 @@
 #include "DXWindow.h"
 #include "CharacterTool.h"
 #include "Camera.h"
+#include "DXObject.h"
 
 namespace SSB
 {
@@ -11,6 +12,9 @@ namespace SSB
 	private:
 		CharacterTool _tool;
 		Camera* _camera;
+		bool _playInEditor = true;
+		bool _isObjectSetting = false;
+		DXObject* _object = nullptr;
 
 	public:
 		CharacterToolMainLogic(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);

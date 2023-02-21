@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CharacterToolMainLogic.h"
 #include "FBXLoader.h"
+#include "InputManager.h"
 
 namespace SSB
 {
@@ -32,6 +33,7 @@ namespace SSB
 
 		//_tool.SelectCurrentAction("backward");
 
+		//_camera = new ModelViewCamera();
 		_camera = new DebugCamera();
 		ChangeMainCamera(_camera);
 		GetMainCamera()->Move({ 0, 0, -10 });
@@ -44,6 +46,47 @@ namespace SSB
 
 		_tool.Frame();
 		_camera->Frame();
+
+		if (_object != _tool.GetTargetObject())
+		{
+			_object = _tool.GetTargetObject();
+			_isObjectSetting = false;
+		}
+
+		if (!_isObjectSetting)
+		{
+			//_camera->SetTarget(_object);
+			GetMainCamera()->Move({ 0, 0, -10 });
+			_isObjectSetting = true;
+		}
+
+		Vector3 direction;
+		if (_playInEditor)
+		{
+			if(InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
+			{
+				direction += {0, 0, 1};
+			}
+			if(InputManager::GetInstance().GetKeyState('A') == EKeyState::KEY_HOLD)
+			{
+				direction += {-1, 0, 0};
+			}
+			if(InputManager::GetInstance().GetKeyState('S') == EKeyState::KEY_HOLD)
+			{
+				direction += {1, 0, 0};
+			}
+			if(InputManager::GetInstance().GetKeyState('D') == EKeyState::KEY_HOLD)
+			{
+				direction += {0, 0, -1};
+			}
+
+			if (_object != nullptr)
+			{
+				_object->Rotate(0, 0.1f);
+				_object->Move(direction * 100);
+				_object->Frame();
+			}
+		}
 
 		return true;
 	}

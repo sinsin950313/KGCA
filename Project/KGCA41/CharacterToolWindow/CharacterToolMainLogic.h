@@ -11,9 +11,10 @@ namespace SSB
 	{
 	private:
 		CharacterTool _tool;
-		Camera* _camera;
+		DebugCamera* _toolCamera;
+		ModelViewCamera* _pieCamera;
 		bool _playInEditor = true;
-		bool _isObjectSetting = false;
+		bool _isPIEChanged = false;
 		DXObject* _object = nullptr;
 
 	public:
@@ -30,5 +31,6 @@ namespace SSB
 
 	public:
 		CharacterTool* GetTool();
+		void ChangePIEState();
 	};
 }

@@ -465,8 +465,7 @@ namespace SSB
 					((DXFBXMeshObject*)childObject)->SetMeshIndex(meshIndex);
 					_meshDataMap.insert(std::make_pair(node->GetChild(i), meshIndex + 1));
 					// Need to Remove
-					//childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshObject.hlsl", "VS", "vs_5_0"));
-					childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DObject.hlsl", "VS", "vs_5_0"));
+					childObject->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshObject.hlsl", "VS", "vs_5_0"));
 					childObject->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshObject.hlsl", "PS", "ps_5_0"));
 				}
 				else if (attribute == FbxNodeAttribute::eSkeleton)

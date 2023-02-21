@@ -15,16 +15,10 @@ bool SSB::FBXLoaderTest::Init()
 
 	_loader = new FBXLoader();
 
-	_loader->Init();
-
+	//_loader->Init();
 	//DXObject* box = _loader->Load("box.FBX");
-	DXObject* box = new DXObject;
-	box->SetAdditionalModel(new Box());
-
-	box->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
-	box->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "FormedMain", "ps_5_0"));
-	box->Init();
-	_objectList.push_back(box);
+	//box->Init();
+	//_objectList.push_back(box);
 
 	//_loader->Init();
 	//DXObject* multiCameras = _loader->Load("MultiCameras.FBX");

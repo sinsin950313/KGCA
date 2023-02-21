@@ -106,6 +106,7 @@ namespace SSB
 
 	private:
 		bool CreateVertexLayout();
+		HMatrix44 GetParentMatrix();
 
 	protected:
 		std::vector<Model*> GetModel() { return _models; }

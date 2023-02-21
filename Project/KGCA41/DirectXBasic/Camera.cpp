@@ -154,6 +154,11 @@ namespace SSB
 	{
 		return false;
 	}
+	void Camera::SetPosition(Vector3 position)
+	{
+		Matrix33 rot = _matrix;
+		_matrix = HMatrix44(rot, position);
+	}
 	bool Camera::IsRender(DXObject* object)
 	{
 		OBB obbData = object->GetOBB();

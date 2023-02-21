@@ -87,7 +87,7 @@ struct PS_input
 
 float4 PS(PS_input input) : SV_TARGET
 {
-	return float4(0, 0, 0, 1);
-	//return g_txTextureA.Sample(g_sampleA, input.t);
+	//return float4(0, 0, 0, 1);
+	return g_txTextureA.Sample(g_sampleA, input.t);
 	//return input.n;
 }

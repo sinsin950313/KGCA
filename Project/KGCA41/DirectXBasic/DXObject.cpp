@@ -82,6 +82,15 @@ namespace SSB
 		//}
 		return true;
     }
+	HMatrix44 DXObject::GetParentMatrix()
+	{
+		HMatrix44 matrix = _matrix;
+		if (_parent != nullptr)
+		{
+			matrix = _parent->GetParentMatrix() * matrix;
+		}
+		return matrix;
+	}
 	bool DXObject::CreateConstantBuffer()
 	{
 		D3D11_BUFFER_DESC desc;
@@ -103,7 +112,7 @@ namespace SSB
 	}
 	void DXObject::UpdateConstantBuffer()
 	{
-		_constantData.World = GetMatrix().Transpose();
+		_constantData.World = (GetParentMatrix() * GetMatrix()).Transpose();
 		_constantData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
 		_constantData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
 

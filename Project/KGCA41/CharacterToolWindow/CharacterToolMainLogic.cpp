@@ -34,9 +34,11 @@ namespace SSB
 		//_tool.SelectCurrentAction("backward");
 
 		//_camera = new ModelViewCamera();
-		_camera = new DebugCamera();
-		ChangeMainCamera(_camera);
+		_toolCamera = new DebugCamera();
+		ChangeMainCamera(_toolCamera);
 		GetMainCamera()->Move({ 0, 0, -10 });
+
+		_pieCamera = new ModelViewCamera();
 
 		return true;
 	}
@@ -45,24 +47,23 @@ namespace SSB
 		DXWindow::Frame();
 
 		_tool.Frame();
-		_camera->Frame();
 
 		if (_object != _tool.GetTargetObject())
 		{
 			_object = _tool.GetTargetObject();
-			_isObjectSetting = false;
-		}
-
-		if (!_isObjectSetting)
-		{
-			//_camera->SetTarget(_object);
-			GetMainCamera()->Move({ 0, 0, -10 });
-			_isObjectSetting = true;
 		}
 
 		Vector3 direction;
 		if (_playInEditor)
 		{
+			if (!_isPIEChanged)
+			{
+				ChangeMainCamera(_pieCamera);
+				_pieCamera->SetTarget(_object);
+				GetMainCamera()->Move({ 0, 0, -10 });
+				_isPIEChanged = false;
+			}
+
 			if(InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
 			{
 				direction += {0, 0, 1};
@@ -73,18 +74,30 @@ namespace SSB
 			}
 			if(InputManager::GetInstance().GetKeyState('S') == EKeyState::KEY_HOLD)
 			{
-				direction += {1, 0, 0};
+				direction += {0, 0, -1};
 			}
 			if(InputManager::GetInstance().GetKeyState('D') == EKeyState::KEY_HOLD)
 			{
-				direction += {0, 0, -1};
+				direction += {1, 0, 0};
 			}
 
 			if (_object != nullptr)
 			{
-				_object->Rotate(0, 0.1f);
-				_object->Move(direction * 100);
+				_object->Move(direction * 1);
 				_object->Frame();
+			}
+		}
+		else
+		{
+			if (_isPIEChanged)
+			{
+				ChangeMainCamera(_toolCamera);
+				if (_object != nullptr)
+				{
+					_object->UpdatePosition({ 0, 0, 0 });
+				}
+				_toolCamera->SetPosition({ 0, 0, -10 });
+				_isPIEChanged = false;
 			}
 		}
 
@@ -93,7 +106,8 @@ namespace SSB
 	bool CharacterToolMainLogic::Release()
 	{
 		_tool.Release();
-		_camera->Release();
+		_toolCamera->Release();
+		_pieCamera->Release();
 
 		DXWindow::Release();
 		return true;
@@ -103,12 +117,18 @@ namespace SSB
 		DXWindow::PreRender();
 
 		_tool.Render();
-		_camera->Render();
+		_toolCamera->Render();
+		_pieCamera->Render();
 
 		return true;
 	}
 	CharacterTool* SSB::CharacterToolMainLogic::GetTool()
 	{
 		return &_tool;
+	}
+	void SSB::CharacterToolMainLogic::ChangePIEState()
+	{
+		_playInEditor = !_playInEditor;
+		_isPIEChanged = !_isPIEChanged;
 	}
 }

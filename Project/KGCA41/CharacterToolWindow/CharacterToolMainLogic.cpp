@@ -2,9 +2,13 @@
 #include "CharacterToolMainLogic.h"
 #include "FBXLoader.h"
 #include "InputManager.h"
+#include "ShaderManager.h"
+#include "DXStateManager.h"
 
 namespace SSB
 {
+	DXObject CharacterToolMainLogic::DefaultObject;
+
 	CharacterToolMainLogic::CharacterToolMainLogic(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow)
 	{
 	}
@@ -16,29 +20,27 @@ namespace SSB
 		DXWindow::Init();
 
 		_tool.Init();
-		//_tool.RegisterObjectFileName("Swat.FBX");
-		//_tool.RegisterScriptFileName("CharacterToolTest.FBXScript");
-		//_tool.Import();
 
-		//_tool.RegisterActionFileName("Swat@strafe.fbx");
-		//_tool.Import();
-
-		//_tool.SelectCurrentAction(_tool.kNewActionName);
-
-		////_tool.ChangeActionName("strafe");
-		////_tool.ChangeEndFrame(20);
-
-		//_tool.RegisterScriptFileName("CharacterToolResult.FBXScript");
-		//_tool.Export();
-
-		//_tool.SelectCurrentAction("backward");
-
-		//_camera = new ModelViewCamera();
 		_toolCamera = new DebugCamera();
 		ChangeMainCamera(_toolCamera);
 		GetMainCamera()->Move({ 0, 0, -10 });
 
 		_pieCamera = new ModelViewCamera();
+
+        DefaultObject.SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+        DefaultObject.SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Main", "ps_5_0"));
+		DefaultObject.Init();
+		_object = &DefaultObject;
+
+        _terrain = new Map();
+        SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"KGCABK.bmp", L"Background", { 0, 0, 1024, 768 });
+        _terrain->SetSprite(SpriteLoader::GetInstance().Load(L"KGCABK.bmp", L"Background", DXStateManager::kDefaultWrapSample));
+        _terrain->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+        _terrain->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader.hlsl", "Main", "ps_5_0"));
+		_terrain->SetSize(513, 513);
+        //_terrain->SetHeightMap(L"heightMap513.bmp");
+        _terrain->Init();
+        _terrain->Move({ 0, 0, 0 });
 
 		return true;
 	}
@@ -47,16 +49,26 @@ namespace SSB
 		DXWindow::Frame();
 
 		_tool.Frame();
-
 		if (_object != _tool.GetTargetObject())
 		{
 			_object = _tool.GetTargetObject();
+			//if (_object != nullptr)
+			//{
+			//	Matrix33 rot = Quaternion::GetRotateQuaternion(Vector3(0, 1, 0), 3.1415f).GetRotateMatrix();
+			//	_object->SetModelOffset(HMatrix44(rot, Vector3()));
+			//	_object->Init();
+			//}
+			_isPIEChanged = true;
+		}
+		if (_object == nullptr)
+		{
+			_object = &DefaultObject;
 		}
 
 		Vector3 direction;
 		if (_playInEditor)
 		{
-			if (!_isPIEChanged)
+			if (_isPIEChanged)
 			{
 				ChangeMainCamera(_pieCamera);
 				_pieCamera->SetTarget(_object);
@@ -83,8 +95,37 @@ namespace SSB
 
 			if (_object != nullptr)
 			{
-				_object->Move(direction * 1);
+				Vector3 cameraForward = _pieCamera->GetMatrix().GetRow(2).operator SSB::Vector3() * direction.GetZ();
+				Vector3 right = _pieCamera->GetMatrix().GetRow(0).operator SSB::Vector3() * direction.GetX();
+				Vector3 movementDirection = cameraForward + right;
+				_object->Move(movementDirection);
+
+				if(0 < cameraForward.Length())
+				{
+					Vector3 cameraForward = _pieCamera->GetMatrix().GetRow(2);
+					cameraForward = Vector3(cameraForward.GetX(), 0, cameraForward.GetZ());
+					cameraForward.Normalize();
+
+					Vector3 forward = _object->GetMatrix().GetRow(2);
+					forward = Vector3(forward.GetX(), 0, forward.GetZ());
+					forward.Normalize();
+
+					float radian = acos(forward.Dot(cameraForward));
+					if (!isnan(radian))
+					{
+						Vector3 cross = forward.Cross(cameraForward);
+						if (cross.GetY() < 0)
+						{
+							radian = -radian;
+						}
+						_object->Rotate(0, radian);
+					}
+				}
+
 				_object->Frame();
+
+				HVector4 pos = _object->GetMatrix().GetRow(3);
+				_object->UpdatePosition({ pos.GetX(), _terrain->GetHeight(pos.GetX(), pos.GetZ()), pos.GetZ() });
 			}
 		}
 		else
@@ -119,6 +160,10 @@ namespace SSB
 		_tool.Render();
 		_toolCamera->Render();
 		_pieCamera->Render();
+		if (_playInEditor)
+		{
+			_terrain->Render();
+		}
 
 		return true;
 	}

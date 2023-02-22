@@ -66,12 +66,15 @@ namespace SSB
 		DXObject _vTarget;
 		DXObject* _target;
 
+		float _rotXTotal = 0;
+		float _rotYTotal = 0;
+
 	public:
 		ModelViewCamera();
 
 	public:
 		//void Move(float deltaZ, float deltaX);
-		void Rotate(float yaw, float pitch = 0.0f);
+		//void Rotate(float yaw, float pitch = 0.0f);
 		void SetTarget(DXObject* target);
 
 	public:

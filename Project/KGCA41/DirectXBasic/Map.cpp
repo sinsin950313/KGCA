@@ -269,60 +269,61 @@ namespace SSB
 	}
 	float Map::GetHeight(float x, float z)
 	{
-		float cellX = (float)(_widthVertexCount * _cellDistance / 2.0f + x);
-		float cellZ = (float)(_heightVertexCount * _cellDistance / 2.0f - z);
+		//float cellX = (float)(_widthVertexCount * _cellDistance / 2.0f + x);
+		//float cellZ = (float)(_heightVertexCount * _cellDistance / 2.0f - z);
 
-		cellX /= (float)_cellDistance;
-		cellZ /= (float)_cellDistance;
+		//cellX /= (float)_cellDistance;
+		//cellZ /= (float)_cellDistance;
 
-		int coordX = cellX;
-		if (coordX < 0.0f)
-		{
-			coordX = 0.0f;
-		}
-		if (_heightVertexCount - 2 < coordX)
-		{
-			coordX = _heightVertexCount - 2;
-		}
+		//int coordX = cellX;
+		//if (coordX < 0.0f)
+		//{
+		//	coordX = 0.0f;
+		//}
+		//if (_heightVertexCount - 2 < coordX)
+		//{
+		//	coordX = _heightVertexCount - 2;
+		//}
 
-		int coordZ = cellZ;
-		if (coordZ < 0.0f)
-		{
-			coordZ = 0.0f;
-		}
-		if (_widthVertexCount - 2 < coordZ)
-		{
-			coordZ = _widthVertexCount - 2;
-		}
+		//int coordZ = cellZ;
+		//if (coordZ < 0.0f)
+		//{
+		//	coordZ = 0.0f;
+		//}
+		//if (_widthVertexCount - 2 < coordZ)
+		//{
+		//	coordZ = _widthVertexCount - 2;
+		//}
 
-		//  A   B
-		//  *---*
-		//  | / |
-		//  *---*  
-		//  C   D
-		float A = GetCoordinateHeight(coordX, coordZ);
-		float B = GetCoordinateHeight(coordX, coordZ + 1);
-		float C = GetCoordinateHeight(coordX + 1, coordZ);
-		float D = GetCoordinateHeight(coordX + 1, coordZ + 1);
+		////  A   B
+		////  *---*
+		////  | / |
+		////  *---*  
+		////  C   D
+		//float A = GetCoordinateHeight(coordX, coordZ);
+		//float B = GetCoordinateHeight(coordX, coordZ + 1);
+		//float C = GetCoordinateHeight(coordX + 1, coordZ);
+		//float D = GetCoordinateHeight(coordX + 1, coordZ + 1);
 
-		float deltaX = cellX - coordX;
-		float deltaZ = cellZ - coordZ;
-		float height = 0.0f;
-		if (deltaX + deltaZ < 1.0f)  //ABC
-		{
-			float uy = B - A; // A->B
-			float vy = C - A; // A->C	
-							  // 두 정점의 높이값의 차이를 비교하여 델타X의 값에 따라 보간값을 찾는다.		
-			height = A + Lerp(0.0f, uy, deltaX) + Lerp(0.0f, vy, deltaZ);
-		}
-		else // DCB
-		{
-			float uy = C - D; // D->C
-			float vy = B - D; // D->B
-							  // 두 정점의 높이값의 차이를 비교하여 델타Z의 값에 따라 보간값을 찾는다.		
-			height = D + Lerp(0.0f, uy, 1.0f - deltaX) + Lerp(0.0f, vy, 1.0f - deltaZ);
-		}
-		return height;
+		//float deltaX = cellX - coordX;
+		//float deltaZ = cellZ - coordZ;
+		//float height = 0.0f;
+		//if (deltaX + deltaZ < 1.0f)  //ABC
+		//{
+		//	float uy = B - A; // A->B
+		//	float vy = C - A; // A->C	
+		//					  // 두 정점의 높이값의 차이를 비교하여 델타X의 값에 따라 보간값을 찾는다.		
+		//	height = A + Lerp(0.0f, uy, deltaX) + Lerp(0.0f, vy, deltaZ);
+		//}
+		//else // DCB
+		//{
+		//	float uy = C - D; // D->C
+		//	float vy = B - D; // D->B
+		//					  // 두 정점의 높이값의 차이를 비교하여 델타Z의 값에 따라 보간값을 찾는다.		
+		//	height = D + Lerp(0.0f, uy, 1.0f - deltaX) + Lerp(0.0f, vy, 1.0f - deltaZ);
+		//}
+		//return height;
+		return 0;
 	}
 	bool Map::Init()
     {

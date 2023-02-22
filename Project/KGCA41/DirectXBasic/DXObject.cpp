@@ -199,7 +199,10 @@ namespace SSB
 	}
 	void DXObject::Rotate(float pitch, float yaw)
 	{
-		_matrix = _matrix * HMatrix44::RotateFromXAxis(pitch) * HMatrix44::RotateFromYAxis(yaw);
+		Vector3 pos = _matrix.GetRow(3);
+		HMatrix44 invTrans (Matrix33(), pos * -1);
+		HMatrix44 trans (Matrix33(), pos);
+		_matrix = _matrix * invTrans * HMatrix44::RotateFromXAxis(pitch) * HMatrix44::RotateFromYAxis(yaw) * trans;
 	}
 	OBB DXObject::GetOBB()
 	{
@@ -209,6 +212,17 @@ namespace SSB
 		ret.Depth = 1.0f;
 		ret.Matrix = _matrix;
 		return ret;
+	}
+	void DXObject::SetModelOffset(HMatrix44 matrix)
+	{
+		for (auto model : _models)
+		{
+			model->SetModelOffset(matrix);
+		}
+		for (auto child : _childObjectList)
+		{
+			child->SetModelOffset(matrix);
+		}
 	}
 	bool DXObject::Init()
     {

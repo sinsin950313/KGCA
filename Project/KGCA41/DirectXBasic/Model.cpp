@@ -1,4 +1,5 @@
 #include "Model.h"
+#include "HCCalculator.h"
 
 namespace SSB
 {
@@ -114,7 +115,16 @@ namespace SSB
 	bool Model::Init()
 	{
 		Build();
+		for (int i = 0; i < _vertexList.size(); ++i)
+		{
+			HVector4 data = ((HVector4)_vertexList[i].position) * _offset;
+			_vertexList[i] = { data.GetX(), data.GetY(), data.GetZ(), data.GetW() };
+		}
 		return false;
+	}
+	void Model::SetModelOffset(HMatrix44 matrix)
+	{
+		_offset = matrix;
 	}
 	bool Model::Frame()
 	{

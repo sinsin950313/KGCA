@@ -124,6 +124,7 @@ namespace SSB
 		void Move(Vector3 vec);
 		void Rotate(float pitch, float yaw);
 		OBB GetOBB();
+		void SetModelOffset(HMatrix44 matrix);
 
 	public:
 		bool Init() override;

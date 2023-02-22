@@ -5,6 +5,7 @@
 #include "Vector.h"
 #include "Texture.h"
 #include "TextureManager.h"
+#include "Matrix.h"
 
 namespace SSB
 {
@@ -29,6 +30,7 @@ namespace SSB
 		std::vector<Vertex_PNCT> _vertexList;
 		std::vector<DWORD> _indexList;
 		Sprite* _sprite;
+		HMatrix44 _offset;
 
 	public:
 		Model() : _sprite(SpriteLoader::GetInstance().GetDefaultSprite()) { }
@@ -42,6 +44,7 @@ namespace SSB
 		std::vector<DWORD>& GetIndexList() { return _indexList; }
 		void SetSprite(Sprite* sprite) { _sprite = sprite; }
 		Sprite* GetSprite() { return _sprite; }
+		void SetModelOffset(HMatrix44 matrix);
 
 	public:
 		bool Init() override;

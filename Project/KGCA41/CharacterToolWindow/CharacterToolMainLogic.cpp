@@ -4,6 +4,7 @@
 #include "InputManager.h"
 #include "ShaderManager.h"
 #include "DXStateManager.h"
+#include "HCCalculator.h"
 
 namespace SSB
 {
@@ -52,12 +53,11 @@ namespace SSB
 		if (_object != _tool.GetTargetObject())
 		{
 			_object = _tool.GetTargetObject();
-			//if (_object != nullptr)
-			//{
-			//	Matrix33 rot = Quaternion::GetRotateQuaternion(Vector3(0, 1, 0), 3.1415f).GetRotateMatrix();
-			//	_object->SetModelOffset(HMatrix44(rot, Vector3()));
-			//	_object->Init();
-			//}
+			if (_object != nullptr)
+			{
+				Matrix33 rot = Quaternion::GetRotateQuaternion(Vector3(0, 1, 0), 3.1415f).GetRotateMatrix();
+				_object->SetModelOffset(HMatrix44(rot, Vector3()));
+			}
 			_isPIEChanged = true;
 		}
 		if (_object == nullptr)
@@ -95,29 +95,38 @@ namespace SSB
 
 			if (_object != nullptr)
 			{
-				Vector3 cameraForward = _pieCamera->GetMatrix().GetRow(2).operator SSB::Vector3() * direction.GetZ();
-				Vector3 right = _pieCamera->GetMatrix().GetRow(0).operator SSB::Vector3() * direction.GetX();
-				Vector3 movementDirection = cameraForward + right;
+				Vector3 cameraForward = _pieCamera->GetMatrix().GetRow(2);
+				cameraForward = Vector3(cameraForward.GetX(), 0, cameraForward.GetZ());
+				cameraForward.Normalize();
+				cameraForward = cameraForward * direction.GetZ();
+
+				Vector3 cameraRight = _pieCamera->GetMatrix().GetRow(0);
+				cameraRight = Vector3(cameraRight.GetX(), 0, cameraRight.GetZ());
+				cameraRight.Normalize();
+				cameraRight = cameraRight * direction.GetX();
+
+				Vector3 movementDirection = cameraForward + cameraRight;
 				_object->Move(movementDirection);
 
-				if(0 < cameraForward.Length())
+				if(0 < direction.Length())
 				{
+					direction.Normalize();
+
 					Vector3 cameraForward = _pieCamera->GetMatrix().GetRow(2);
 					cameraForward = Vector3(cameraForward.GetX(), 0, cameraForward.GetZ());
 					cameraForward.Normalize();
+					Quaternion dirToCamSpace = Quaternion::GetRotateQuaternion(Vector3(0, 0, 1), cameraForward);
+					direction = direction * dirToCamSpace.GetRotateMatrix();
 
 					Vector3 forward = _object->GetMatrix().GetRow(2);
 					forward = Vector3(forward.GetX(), 0, forward.GetZ());
 					forward.Normalize();
 
-					float radian = acos(forward.Dot(cameraForward));
+					Quaternion quat = Quaternion::GetRotateQuaternion(forward, direction);
+					float radian = acos(quat._f.w) * 2;
+
 					if (!isnan(radian))
 					{
-						Vector3 cross = forward.Cross(cameraForward);
-						if (cross.GetY() < 0)
-						{
-							radian = -radian;
-						}
 						_object->Rotate(0, radian);
 					}
 				}

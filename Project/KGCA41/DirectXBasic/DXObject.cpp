@@ -112,7 +112,7 @@ namespace SSB
 	}
 	void DXObject::UpdateConstantBuffer()
 	{
-		_constantData.World = (GetParentMatrix() * GetMatrix()).Transpose();
+		_constantData.World = (_offset * GetParentMatrix() * GetMatrix()).Transpose();
 		_constantData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
 		_constantData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
 
@@ -215,6 +215,7 @@ namespace SSB
 	}
 	void DXObject::SetModelOffset(HMatrix44 matrix)
 	{
+		_offset = matrix;
 		for (auto model : _models)
 		{
 			model->SetModelOffset(matrix);

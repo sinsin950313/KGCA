@@ -92,6 +92,8 @@ namespace SSB
 		ID3D11Buffer* _currentDrawVertexBuffer;
 		ID3D11Buffer* _currentDrawIndexBuffer;
 
+		HMatrix44 _offset;
+
 	public:
 		DXObject();
 		virtual ~DXObject() { Release(); }

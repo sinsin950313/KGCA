@@ -50,7 +50,7 @@ namespace SSB
 
 	private:
 		void ExtractMaterial();
-		void ExtractTexture();
+		void ExtractTexture(FbxSurfaceMaterial* material);
 		FbxNode* PreLoad(std::string fileName);
 		void ParseNode(FbxNode* node);
 		void RegisterBoneNode(FbxNode* node);

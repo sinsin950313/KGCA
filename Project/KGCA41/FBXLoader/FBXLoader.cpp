@@ -26,6 +26,8 @@ namespace SSB
 		for (int i = 0; i < count; ++i)
 		{
 			FbxSurfaceMaterial* material = _scene->GetMaterial(i);
+			_indexToMaterialMap.insert(std::make_pair(i, material));
+
 			if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
 			{
 				FbxSurfacePhong* phongMaterial = (FbxSurfacePhong*)material;
@@ -37,23 +39,28 @@ namespace SSB
 			{
 				assert(false);
 			}
+
+			ExtractTexture(material);
 		}
 	}
 
-	void FBXLoader::ExtractTexture()
+	void FBXLoader::ExtractTexture(FbxSurfaceMaterial* material)
 	{
-		int count = _scene->GetMaterialCount();
-		for (int i = 0; i < count; ++i)
+		for (int i = 0; i < FbxLayerElement::sTypeTextureCount; ++i)
 		{
-			FbxSurfaceMaterial* material = _scene->GetMaterial(i);
-			auto prop = material->FindProperty(FbxSurfaceMaterial::sDiffuse);
+			FbxProperty prop = material->FindProperty(FbxLayerElement::sTextureChannelNames[i]);
 			if (prop.IsValid())
 			{
-				const FbxFileTexture* tex = prop.GetSrcObject<FbxFileTexture>(0);
-				if (tex)
+				int textureCount = prop.GetSrcObjectCount<FbxTexture>();
+				for (int j = 0; j < textureCount; ++j)
 				{
-					auto fileName = tex->GetFileName();
-					int i = 0;
+					FbxLayeredTexture* layeredTexture = prop.GetSrcObject<FbxLayeredTexture>(j);
+					if (layeredTexture)
+					{
+						// layered texture but what is origin resource?
+						FbxFileTexture* fileTexture = FbxCast<FbxFileTexture>(layeredTexture);
+						auto fileName = fileTexture->GetFileName();
+					}
 				}
 			}
 		}
@@ -82,7 +89,6 @@ namespace SSB
 		FbxAxisSystem::MayaZUp.ConvertScene(_scene);
 
 		ExtractMaterial();
-		ExtractTexture();
 
 		FbxNode* root = _scene->GetRootNode();
 

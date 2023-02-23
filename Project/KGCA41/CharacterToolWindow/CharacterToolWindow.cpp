@@ -34,6 +34,11 @@ SSB::CharacterTool* CCharacterToolWindowApp::GetTool()
 	return _logic->GetTool();
 }
 
+SSB::CharacterToolMainLogic* CCharacterToolWindowApp::GetLogic()
+{
+	return _logic;
+}
+
 CCharacterToolWindowApp::CCharacterToolWindowApp() noexcept
 {
 	m_bHiColorIcons = TRUE;

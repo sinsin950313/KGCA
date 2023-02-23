@@ -57,6 +57,7 @@ public:
 	afx_msg void OnLvnItemchangedActionlistcontrol(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedActionaddbutton();
 	afx_msg void OnBnClickedActionremovebutton();
+	afx_msg void OnBnClickedPiebutton();
 };
 
 

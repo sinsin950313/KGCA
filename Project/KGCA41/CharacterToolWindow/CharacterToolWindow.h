@@ -22,6 +22,7 @@ private:
 
 public:
 	SSB::CharacterTool* GetTool();
+	SSB::CharacterToolMainLogic* GetLogic();
 
 public:
 	CCharacterToolWindowApp() noexcept;

@@ -16,10 +16,12 @@ namespace SSB
 		CharacterTool _tool;
 		DebugCamera* _toolCamera;
 		ModelViewCamera* _pieCamera;
-		bool _playInEditor = true;
-		bool _isPIEChanged = true;
+		bool _playInEditor = false;
+		bool _isPIEChanged = false;
 		DXObject* _object = nullptr;
 		Map* _terrain;
+		std::string _currentActionName;
+		std::string _hopeActionName = "Idle";
 
 	public:
 		CharacterToolMainLogic(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);

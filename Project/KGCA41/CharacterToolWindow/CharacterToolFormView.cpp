@@ -43,6 +43,7 @@ ON_BN_CLICKED(IDC_ExportButton, &CharacterToolFormView::OnBnClickedExportbutton)
 ON_NOTIFY(LVN_ITEMCHANGED, IDC_ActionListControl, &CharacterToolFormView::OnLvnItemchangedActionlistcontrol)
 ON_BN_CLICKED(IDC_ActionAddButton, &CharacterToolFormView::OnBnClickedActionaddbutton)
 ON_BN_CLICKED(IDC_ActionRemoveButton, &CharacterToolFormView::OnBnClickedActionremovebutton)
+ON_BN_CLICKED(IDC_PIEButton, &CharacterToolFormView::OnBnClickedPiebutton)
 END_MESSAGE_MAP()
 
 
@@ -252,4 +253,13 @@ void CharacterToolFormView::OnBnClickedActionremovebutton()
 	tool->RemoveAction(std::string(CT2CA(_selectedActionName)));
 
 	UpdateActionList();
+}
+
+
+void CharacterToolFormView::OnBnClickedPiebutton()
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	SSB::CharacterToolMainLogic* logic = ((CCharacterToolWindowApp*)AfxGetApp())->GetLogic();
+
+	logic->ChangePIEState();
 }

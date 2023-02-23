@@ -74,6 +74,7 @@ namespace SSB
 				_pieCamera->SetTarget(_object);
 				GetMainCamera()->Move({ 0, 0, -10 });
 				_isPIEChanged = false;
+				_object->UpdateCurrentAnimation("Idle");
 			}
 
 			if(InputManager::GetInstance().GetKeyState('W') == EKeyState::KEY_HOLD)
@@ -95,6 +96,8 @@ namespace SSB
 
 			if (_object != nullptr)
 			{
+				_hopeActionName = "Idle";
+
 				Vector3 cameraForward = _pieCamera->GetMatrix().GetRow(2);
 				cameraForward = Vector3(cameraForward.GetX(), 0, cameraForward.GetZ());
 				cameraForward.Normalize();
@@ -129,8 +132,20 @@ namespace SSB
 					{
 						_object->Rotate(0, radian);
 					}
+
+					_hopeActionName = "Run";
 				}
 
+				if (InputManager::GetInstance().GetKeyState(VK_SPACE) == EKeyState::KEY_HOLD)
+				{
+					_hopeActionName = "Jump";
+				}
+
+				if (_currentActionName != _hopeActionName)
+				{
+					_object->UpdateCurrentAnimation(_hopeActionName);
+					_currentActionName = _hopeActionName;
+				}
 				_object->Frame();
 
 				HVector4 pos = _object->GetMatrix().GetRow(3);

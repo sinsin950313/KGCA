@@ -5,6 +5,7 @@
 #include <vector>
 #include "Model.h"
 #include "DXObject.h"
+#include <set>
 
 namespace SSB
 {
@@ -38,6 +39,7 @@ namespace SSB
 		float _tickPerFrame = 160;
 
 		std::map<int, FbxSurfaceMaterial*> _indexToMaterialMap;
+		std::map<FbxSurfaceMaterial*, std::string> _materialToTextureNameMap;
 		std::map<FbxNode*, int> _skeletonNodeToSkeletonIndexMap;
 		std::map<FbxNode*, int> _meshNodeToMeshIndexMap;
 
@@ -50,6 +52,7 @@ namespace SSB
 
 	private:
 		void ExtractMaterial();
+		void ExtractTextureFileName(FbxTexture* texture, std::set<std::string>& textureFileNameSet);
 		void ExtractTexture(FbxSurfaceMaterial* material);
 		FbxNode* PreLoad(std::string fileName);
 		void ParseNode(FbxNode* node);

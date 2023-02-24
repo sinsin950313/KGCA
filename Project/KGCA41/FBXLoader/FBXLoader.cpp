@@ -44,26 +44,48 @@ namespace SSB
 		}
 	}
 
+	void FBXLoader::ExtractTextureFileName(FbxTexture* texture, std::set<std::string>& textureFileNameSet)
+	{
+		FbxFileTexture* fileTexture = texture->GetSrcObject<FbxFileTexture>(0);
+		std::string fileFullPath = fileTexture->GetFileName();
+		auto splitedPath = SplitPath(mtw(fileFullPath));
+		std::wstring fileName = splitedPath[2] + splitedPath[3];
+		textureFileNameSet.insert(wtm(fileName));
+	}
+
 	void FBXLoader::ExtractTexture(FbxSurfaceMaterial* material)
 	{
+		std::set<std::string> textureFileNameSet;
 		for (int i = 0; i < FbxLayerElement::sTypeTextureCount; ++i)
 		{
 			FbxProperty prop = material->FindProperty(FbxLayerElement::sTextureChannelNames[i]);
 			if (prop.IsValid())
 			{
-				int textureCount = prop.GetSrcObjectCount<FbxTexture>();
-				for (int j = 0; j < textureCount; ++j)
+				int layeredTextureCount = prop.GetSrcObjectCount<FbxLayeredTexture>();
+				for (int j = 0; j < layeredTextureCount; ++j)
 				{
 					FbxLayeredTexture* layeredTexture = prop.GetSrcObject<FbxLayeredTexture>(j);
 					if (layeredTexture)
 					{
-						// layered texture but what is origin resource?
-						FbxFileTexture* fileTexture = FbxCast<FbxFileTexture>(layeredTexture);
-						auto fileName = fileTexture->GetFileName();
+						int layeredTextureCount = layeredTexture->GetSrcObjectCount();
+						for (int k = 0; k < layeredTextureCount; ++k)
+						{
+							FbxTexture* texture = layeredTexture->GetSrcObject<FbxTexture>(k);
+							ExtractTextureFileName(texture, textureFileNameSet);
+						}
 					}
+				}
+
+				int textureCount = prop.GetSrcObjectCount<FbxTexture>();
+				for (int j = 0; j < textureCount; ++j)
+				{
+					FbxTexture* texture = prop.GetSrcObject<FbxTexture>(0);
+					ExtractTextureFileName(texture, textureFileNameSet);
 				}
 			}
 		}
+
+		// So what should I do?
 	}
 
 	FbxNode* FBXLoader::PreLoad(std::string fileName)

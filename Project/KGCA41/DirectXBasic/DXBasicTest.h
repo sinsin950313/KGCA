@@ -1,11 +1,9 @@
 #pragma once
 #include "DXWindow.h"
+#include "Timer.h"
 
 namespace SSB
 {
-	class DXObject;
-	class Map;
-
 	class DXBasicTest : public DXWindow
 	{
 	private:
@@ -13,7 +11,7 @@ namespace SSB
 		//DXObject* _objectBack;
 		//Map* _terrain;
 		DebugCamera* _dCamera;
-		ModelViewCamera* _mCamera;
+		//ModelViewCamera* _mCamera;
 
 		Timer* _timer;
 		int _frames;

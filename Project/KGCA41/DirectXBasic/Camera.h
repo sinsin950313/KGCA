@@ -13,6 +13,7 @@ namespace SSB
 
 	struct ToViewSpaceTransformData
 	{
+		Float44 Position;
 		Float44 View;
 		Float44 Projection;
 	};

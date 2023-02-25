@@ -1,8 +1,8 @@
 struct VS_in
 {
 	float4 p : Position;
-	float4 n : Normal;
 	float4 c : Color;
+	float4 n : Normal;
 	float2 t : Texture;
 
 	int4 AffectingBoneIndex : AffectingBoneIndex;
@@ -11,8 +11,9 @@ struct VS_in
 
 cbuffer ViewSpaceTransform : register(b0)
 {
-	matrix View : packoffset(c0);
-	matrix Projection : packoffset(c4);
+	matrix Position : packoffset(c0);
+	matrix View : packoffset(c4);
+	matrix Projection : packoffset(c8);
 };
 
 cbuffer ObjectToWorldTransform : register(b1)

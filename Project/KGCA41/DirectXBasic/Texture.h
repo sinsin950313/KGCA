@@ -21,7 +21,7 @@ namespace SSB
 
 	public:
 		ID3D11Resource* GetResource() const { return _textureResource; }
-		ID3D11ShaderResourceView** GetShaderResourceView() { return &_textureResourceView; }
+		ID3D11ShaderResourceView* GetShaderResourceView() { return _textureResourceView; }
 		UINT GetWidth() { return _desc.Width; }
 		UINT GetHeight() { return _desc.Height; }
 

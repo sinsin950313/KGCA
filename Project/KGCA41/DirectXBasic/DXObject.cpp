@@ -11,10 +11,12 @@ namespace SSB
 	{
 		_volume = &DefaultVolume;
 	}
+
 	DXObject::~DXObject()
 	{
 		Release();
 	}
+
 	bool DXObject::CreateObjectTransformBuffer()
 	{
 		D3D11_BUFFER_DESC desc;
@@ -34,6 +36,7 @@ namespace SSB
 		}
 		return true;
 	}
+
 	void DXObject::UpdateObjectTransformBuffer()
 	{
 		_objectToWorldTransformData.World = HMatrix44(_volume->GetWorldRotation(), _volume->GetWorldPosition()).Transpose();
@@ -45,11 +48,13 @@ namespace SSB
 			child->UpdateObjectTransformBuffer();
 		}
 	}
+
 	void DXObject::SetParent(DXObject* object)
 	{
 		_parent = object;
 		_volume->SetParent(object->_volume);
 	}
+
 	void DXObject::SetModel(Model* model)
 	{
 		if (_model)
@@ -58,11 +63,13 @@ namespace SSB
 		}
 		_model = model;
 	}
+
 	void DXObject::AddChildObject(DXObject* child)
 	{
 		_childObjectList.push_back(child);
 		child->SetParent(this);
 	}
+
 	void DXObject::SetVolume(Volume1* volume)
 	{
 		if (volume == nullptr)
@@ -80,10 +87,12 @@ namespace SSB
 
 		_volume = volume;
 	}
+
 	void DXObject::Move(Vector3 vec)
 	{
 		_volume->AddPosition(vec);
 	}
+
 	void DXObject::SetPosition(Vector3 vec)
 	{
 		_volume->SetPosition(vec);
@@ -92,18 +101,22 @@ namespace SSB
 	//{
 	//	_volume->Rotate(Quaternion(yaw, pitch, roll));
 	//}
+
 	Vector3 DXObject::GetPosition()
 	{
 		return _volume->GetWorldPosition();
 	}
+
 	Vector3 DXObject::GetDirection()
 	{
 		return _volume->GetWorldRotation().GetRow(3);
 	}
+
 	HMatrix44 DXObject::GetWorldMatrix()
 	{
 		return HMatrix44(_volume->GetWorldRotation(), _volume->GetWorldPosition());
 	}
+
 	DXObject::operator OBBData()
 	{
 		OBBData data = _volume->operator SSB::OBBData();
@@ -116,6 +129,7 @@ namespace SSB
 		}
 		return data;
 	}
+
 	bool DXObject::Init()
     {
 		if(_model != nullptr)
@@ -132,6 +146,7 @@ namespace SSB
 
         return true;
     }
+
     bool DXObject::Frame()
     {
 		for (auto child : _childObjectList)
@@ -146,6 +161,7 @@ namespace SSB
 
 		return true;
 	}
+
 	bool DXObject::Render()
 	{
 		if (g_dxWindow->GetMainCamera()->IsRender(this))
@@ -165,6 +181,7 @@ namespace SSB
 
 		return true;
 	}
+
 	bool DXObject::Release()
 	{
 		if (_volume && _volume != &DefaultVolume)

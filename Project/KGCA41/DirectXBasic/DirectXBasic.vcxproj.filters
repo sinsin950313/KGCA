@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Shader">
+      <UniqueIdentifier>{59773423-4cda-42cd-8abb-1d4bf8f5045a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXWindow.h">
@@ -57,6 +60,15 @@
     <ClInclude Include="Light.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DXWindow.cpp">
@@ -98,17 +110,40 @@
     <ClCompile Include="Light.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
-    <None Include="..\..\Shader\VertexShaderStageBufferData.hlsli" />
-    <None Include="..\..\Shader\LightBufferData.hlsli" />
+    <None Include="..\..\Shader\LightBufferData.hlsli">
+      <Filter>Shader</Filter>
+    </None>
+    <None Include="..\..\Shader\VertexShaderStageBufferData.hlsli">
+      <Filter>Shader</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\Shader\Default3DPixelShader.hlsl" />
-    <FxCompile Include="..\..\Shader\Default3DVertexShader.hlsl" />
-    <FxCompile Include="..\..\Shader\DefaultPixelShader.hlsl" />
-    <FxCompile Include="..\..\Shader\Default3DMeshShader.hlsl" />
-    <FxCompile Include="..\..\Shader\Light.hlsl" />
+    <FxCompile Include="..\..\Shader\Default3DMeshShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Shader\Default3DPixelShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Shader\Default3DVertexShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Shader\DefaultPixelShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Shader\Light.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\Shader\BoxMeshShader.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

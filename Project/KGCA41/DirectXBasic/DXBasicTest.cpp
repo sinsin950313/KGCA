@@ -12,7 +12,7 @@ namespace SSB
     {
         Release();
     }
-    bool SSB::DXBasicTest::Init()
+    bool DXBasicTest::Init()
     {
         DXWindow::Init();
         InputManager::GetInstance().Set(g_dxWindow->GetWindowHandle());
@@ -28,8 +28,8 @@ namespace SSB
             _object = new DXObject();
             Model* model = new Model;
             model->RegisterMesh(0, new Box);
-            model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
-            model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
+            model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"BoxMeshShader.hlsl", "VSMain", "vs_5_0"));
+            model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"BoxMeshShader.hlsl", "PSMain", "ps_5_0"));
             _object->SetModel(model);
             _object->Init();
             _object->Move({ 0, 5, 0 });
@@ -62,14 +62,14 @@ namespace SSB
         _dCamera = new DebugCamera();
         _dCamera->Init();
 
-        _mCamera = new ModelViewCamera();
-        _mCamera->Init();
-        _mCamera->SetTarget(_object);
+        //_mCamera = new ModelViewCamera();
+        //_mCamera->Init();
+        //_mCamera->SetTarget(_object);
         ChangeMainCamera(_dCamera);
         
-        HVector4 pos = _object->GetPosition();
+        //HVector4 pos = _object->GetPosition();
         //_object->SetPosition({ pos.GetX(), _terrain->GetHeight(pos.GetX(), pos.GetZ()), pos.GetZ() });
-        GetMainCamera()->Move(_object->GetPosition());
+        //GetMainCamera()->Move(_object->GetPosition());
 
         return false;
     }
@@ -79,7 +79,7 @@ namespace SSB
         DXWindow::Frame();
         InputManager::GetInstance().Frame();
 
-        _mCamera->Frame();
+        //_mCamera->Frame();
 
 		_timer->Frame();
 		++_frames;
@@ -117,19 +117,19 @@ namespace SSB
         //    _terrain->Release();
         //    delete _terrain;
         //    _terrain = nullptr;
-        //}
+        ////}
         if(_dCamera)
         {
             _dCamera->Release();
             delete _dCamera;
             _dCamera = nullptr;
         }
-        if (_mCamera)
-        {
-            _mCamera->Release();
-            delete _mCamera;
-            _mCamera = nullptr;
-        }
+        //if (_mCamera)
+        //{
+        //    _mCamera->Release();
+        //    delete _mCamera;
+        //    _mCamera = nullptr;
+        //}
         if (_timer)
         {
             _timer->Release();
@@ -145,7 +145,7 @@ namespace SSB
     bool SSB::DXBasicTest::PreRender()
     {
         DXWindow::PreRender();
-        _mCamera->Render();
+        //_mCamera->Render();
         _object->Render();
         //_terrain->Render();
         //_objectBack->Render();

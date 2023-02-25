@@ -180,6 +180,7 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Animation.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DXBasicTest.h" />
     <ClInclude Include="DXDrawableInterface.h" />
@@ -189,6 +190,8 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
     <ClInclude Include="DXWindow.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Map.h" />
+    <ClInclude Include="Mesh.h" />
+    <ClInclude Include="Mesh.hpp" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShaderManager.h" />
@@ -196,6 +199,7 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
     <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="DXBasicTest.cpp" />
     <ClCompile Include="DXObject.cpp" />
@@ -204,6 +208,7 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="DXWindow.cpp" />
     <ClCompile Include="Map.cpp" />
+    <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShaderManager.cpp" />
@@ -216,6 +221,9 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\..\Shader\BoxMeshShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="..\..\Shader\Default3DMeshShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </FxCompile>

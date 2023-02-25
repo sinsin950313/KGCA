@@ -71,7 +71,10 @@ namespace SSB
 						for (int k = 0; k < layeredTextureCount; ++k)
 						{
 							FbxTexture* texture = layeredTexture->GetSrcObject<FbxTexture>(k);
-							ExtractTextureFileName(texture, textureFileNameSet);
+							if (texture != nullptr)
+							{
+								ExtractTextureFileName(texture, textureFileNameSet);
+							}
 						}
 					}
 				}
@@ -80,7 +83,10 @@ namespace SSB
 				for (int j = 0; j < textureCount; ++j)
 				{
 					FbxTexture* texture = prop.GetSrcObject<FbxTexture>(0);
-					ExtractTextureFileName(texture, textureFileNameSet);
+					if (texture != nullptr)
+					{
+						ExtractTextureFileName(texture, textureFileNameSet);
+					}
 				}
 			}
 		}

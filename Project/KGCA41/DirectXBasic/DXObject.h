@@ -4,6 +4,7 @@
 #include "Matrix.h"
 #include "Model.h"
 #include "Volume1.h"
+#include "VolumeType.h"
 
 namespace SSB
 {

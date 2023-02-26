@@ -2,10 +2,10 @@
 
 #include "Common.h"
 #include <fbxsdk.h>
-#include <vector>
+#include <map>
 #include "Model.h"
-#include "DXObject.h"
-#include <set>
+#include "Mesh.h"
+#include "Material.h"
 
 namespace SSB
 {
@@ -23,74 +23,68 @@ namespace SSB
 		//	Animation* Animation;
 		//	std::map<std::string, ActionInfo> FrameInfo;
 		//};
-		struct Script
-		{
-			std::string ActionName;
-			FrameIndex StartFrame;
-			FrameIndex EndFrame;
-		};
 
 	private:
 		FbxManager* _manager;
 		FbxImporter* _importer;
 		FbxScene* _scene;
 
-		float _frameSpeed = 30.0f;
-		float _tickPerFrame = 160;
-
-		std::map<int, FbxSurfaceMaterial*> _indexToMaterialMap;
-		std::map<FbxSurfaceMaterial*, std::string> _materialToTextureNameMap;
+		FbxNode* _root;
 		std::map<FbxNode*, int> _skeletonNodeToSkeletonIndexMap;
 		std::map<FbxNode*, int> _meshNodeToMeshIndexMap;
 
-		AnimationFrameInfo _animationInfo;
-		std::map<MeshIndex, Mesh*> _meshInfo;
+		std::map<MaterialIndex, Material*> _indexToMaterialMap;
+
+		std::map<MeshIndex, MeshInterface*> _indexToMeshMap;
+
+		//float _frameSpeed = 30.0f;
+		//float _tickPerFrame = 160;
+		//AnimationFrameInfo _animationInfo;
 
 	public:
 		FBXLoader();
 		~FBXLoader();
 
 	private:
-		void ExtractMaterial();
-		void ExtractTextureFileName(FbxTexture* texture, std::set<std::string>& textureFileNameSet);
-		void ExtractTexture(FbxSurfaceMaterial* material);
-		FbxNode* PreLoad(std::string fileName);
+		void PreLoad(std::string fileName);
 		void ParseNode(FbxNode* node);
 		void RegisterBoneNode(FbxNode* node);
 		void RegisterMeshNode(FbxNode* node);
-		std::vector<Script> ParseScript(std::string fileName);
-		void ExtractMeshVertex(FbxMesh* fbxMesh, Mesh* mesh, FbxAMatrix geometricMatrix, FbxAMatrix normalLocalMatrix);
-		void ExtractMeshVertexIndex(FbxMesh* fbxMesh, Mesh* mesh);
-		void RegisterMesh(Mesh* mesh);
-		void RegisterMaterialToMesh(Mesh* mesh);
-		void ParseMesh();
-		void ParseAnimation();
-		FbxVector2 Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex);
 
-		//void ExtractSkeletonData(FbxNode* node);
-		//HMatrix44 Convert(FbxAMatrix matrix);
-		//ExtractAnimationInfoData ExtractAnimationInfo(FbxAnimStack* animStack);
-		//void SaveFrame(std::string name, FbxTime timer);
-		//void ParseNode(FbxNode* node, DXObject* object, DXFBXRootObject* rootObject);
-		//void ParseMesh(FbxNode* node, FbxMesh* mesh, DXObject* object);
-		//void NewModel(FbxNode* node, int layerIndex, int materialIndex, std::map<int, FBXModel*>& modelMap);
-		//void ParseMeshSkinningData(DXFBXMeshObject* object, FbxMesh* mesh);
-		//DXFBXRootObject* LoadObject(FbxNode* root);
-		//virtual void LoadAnimation(std::string animationName, ExtractAnimationInfoData info);
-		//int GetSubMaterialIndex(int iPoly, FbxLayerElementMaterial* pMaterialSetList);
+		void ExtractMaterial();
+		void ExtractTexture(FbxProperty* fbxProperty, Material* material, TextureType textureType);
+		void ExtractTextureFileName(FbxTexture* texture, Material* material, TextureType textureType);
+
+		struct MeshTransformData
+		{
+			FbxAMatrix Geomatric;
+			FbxAMatrix NormalLocal;
+		};
+		struct MeshVertexInfo
+		{
+			MeshInterface* Mesh;
+			int MeshVertexSize;
+		};
+		void ParseMesh();
+		MeshTransformData CalculateTransformData(FbxNode* node);
+		MeshVertexInfo GetMeshVertexInfo();
+		void ExtractMeshVertex(FbxMesh* fbxMesh, MeshTransformData transformData, MeshVertexInfo meshVertexInfo);
+		void ExtractMeshVertexIndex(FbxMesh* fbxMesh, MeshInterface* mesh);
+		void RegisterMesh(MeshInterface* mesh);
+
+		//void ParseAnimation();
+
+		FbxVector2 Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex);
 
 	private:
 		template<typename T>
 		T Read(FbxLayerElementTemplate<T>* element, int position, int index);
 
 	public:
-		//AnimationFrameInfo LoadAnimation(std::string fileName);
-		std::map<MeshIndex, Mesh*> LoadMesh(std::string fileName);
-
-		//DXObject* Load(std::string fileName);
-		//DXObject* Load(std::string fileName, std::string scriptFileName);
-		//DXObject* Load(std::string fileName, std::vector<std::string> animationFileNameList);
-		//DXObject* Load(std::string fileName, std::vector<std::string> animationFileNameList, std::string animationScriptFileName);
+		void SetFileName(std::string fileName);
+		std::map<MaterialIndex, Material*> LoadMaterial();
+		Model* LoadModel();
+		//Animation* LoadAnimation();
 
 	public:
 		bool Init() override;
@@ -98,6 +92,7 @@ namespace SSB
 		bool Render() override;
 		bool Release() override;
 	};
+
 	template<typename T>
 	inline T FBXLoader::Read(FbxLayerElementTemplate<T>* element, int pointIndex, int polygonIndex)
 	{

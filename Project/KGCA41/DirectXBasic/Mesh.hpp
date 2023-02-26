@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DXWindow.h"
+#include "Mesh.h"
 
 namespace SSB
 {
@@ -73,9 +74,38 @@ namespace SSB
 		return true;
 	}
 	template<typename VertexType>
-	void Mesh<VertexType>::SetVertexList(std::vector<VertexType> vertexList)
+	void Mesh<VertexType>::SetVertexList(void* vertexDataBlock, int count)
 	{
-		_vertexList = vertexList;
+		_vertexList.resize(count);
+		for (int i = 0; i < count; ++i)
+		{
+			VertexType vertex;
+			memcpy(&vertex, &((VertexType*)vertexDataBlock)[i], sizeof(VertexType));
+			_vertexList[i] = vertex;
+		}
+
+		float minX = (std::numeric_limits<float>::max)();
+		float minY = (std::numeric_limits<float>::max)();
+		float minZ = (std::numeric_limits<float>::max)();
+
+		float maxX = (std::numeric_limits<float>::min)();
+		float maxY = (std::numeric_limits<float>::min)();
+		float maxZ = (std::numeric_limits<float>::min)();
+		
+		for (auto vertex : _vertexList)
+		{
+			float x = vertex.Position.x;
+			float y = vertex.Position.y;
+			float z = vertex.Position.z;
+
+			minX = min(minX, x);
+			minY = min(minY, y);
+			minZ = min(minZ, z);
+
+			maxX = max(minX, x);
+			maxY = max(minY, y);
+			maxZ = max(minZ, z);
+		}
 	}
 	template<typename VertexType>
 	void Mesh<VertexType>::SetIndexList(std::vector<IndexForMeshVertice> indexList)
@@ -83,30 +113,35 @@ namespace SSB
 		_indexList = indexList;
 	}
 	template<typename VertexType>
+	inline void Mesh<VertexType>::SetAdditionalSubMesh(MeshInterface* mesh)
+	{
+		_subMeshes.push_back(mesh);
+	}
+	template<typename VertexType>
 	void Mesh<VertexType>::SetVertexShader(VertexShader* shader)
 	{
 		_vs = shader;
 	}
-	template<typename VertexType>
-	void Mesh<VertexType>::SetPixelShader(PixelShader* shader)
-	{
-		_ps = shader;
-	}
-	template<typename VertexType>
-	void Mesh<VertexType>::SetSpriteData(std::map<IndexForMeshTexture, Sprite*> spriteData)
-	{
-		_resourceCount = spriteData.size();
+	//template<typename VertexType>
+	//void Mesh<VertexType>::SetPixelShader(PixelShader* shader)
+	//{
+	//	_ps = shader;
+	//}
+	//template<typename VertexType>
+	//void SetTextureData(std::map<IndexForMaterial, TextureResource*> textureData)
+	//{
+	//	_resourceCount = textureData.size();
 
-		_shaderResourceViewList = new ID3D11ShaderResourceView*[_resourceCount];
-		_samplerStateList = new ID3D11SamplerState * [_resourceCount];
+	//	_shaderResourceViewList = new ID3D11ShaderResourceView*[_resourceCount];
+	//	_samplerStateList = new ID3D11SamplerState * [_resourceCount];
 
-		for (int i = 0; i < _resourceCount; ++i)
-		{
-			auto iter = spriteData.find(i)->second;
-			_shaderResourceViewList[i] = iter->GetResource()->GetShaderResourceView();
-			_samplerStateList[i] = iter->GetSamplerState();
-		}
-	}
+	//	for (int i = 0; i < _resourceCount; ++i)
+	//	{
+	//		auto iter = textureData.find(i)->second;
+	//		_shaderResourceViewList[i] = iter->GetResource()->GetShaderResourceView();
+	//		_samplerStateList[i] = iter->GetSamplerState();
+	//	}
+	//}
 	template<typename VertexType>
 	Vector3 Mesh<VertexType>::GetMinVertex()
 	{
@@ -146,11 +181,16 @@ namespace SSB
 		dc->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		_vs->Render();
 
-		dc->PSSetSamplers(0, _resourceCount, _samplerStateList);
-		dc->PSSetShaderResources(0, _resourceCount, _shaderResourceViewList);
-		_ps->Render();
+		//dc->PSSetSamplers(0, _resourceCount, _samplerStateList);
+		//dc->PSSetShaderResources(0, _resourceCount, _shaderResourceViewList);
+		//_ps->Render();
 
 		dc->DrawIndexed(_indexList.size(), 0, 0);
+
+		for (auto subMesh : _subMeshes)
+		{
+			subMesh->Render();
+		}
 
 		return true;
 	}
@@ -180,27 +220,27 @@ namespace SSB
 		}
 
 		_vs = nullptr;
-		_ps = nullptr;
+		//_ps = nullptr;
 
-		if (_samplerStateList != nullptr)
-		{
-			for (int i = 0; i < _resourceCount; ++i)
-			{
-				_samplerStateList[i] = nullptr;
-			}
-			delete _samplerStateList;
-			_samplerStateList = nullptr;
-		}
+		//if (_samplerStateList != nullptr)
+		//{
+		//	for (int i = 0; i < _resourceCount; ++i)
+		//	{
+		//		_samplerStateList[i] = nullptr;
+		//	}
+		//	delete _samplerStateList;
+		//	_samplerStateList = nullptr;
+		//}
 
-		if (_shaderResourceViewList != nullptr)
-		{
-			for (int i = 0; i < _resourceCount; ++i)
-			{
-				_shaderResourceViewList[i] = nullptr;
-			}
-			delete _shaderResourceViewList;
-			_shaderResourceViewList = nullptr;
-		}
+		//if (_shaderResourceViewList != nullptr)
+		//{
+		//	for (int i = 0; i < _resourceCount; ++i)
+		//	{
+		//		_shaderResourceViewList[i] = nullptr;
+		//	}
+		//	delete _shaderResourceViewList;
+		//	_shaderResourceViewList = nullptr;
+		//}
 
 		return true;
 	}

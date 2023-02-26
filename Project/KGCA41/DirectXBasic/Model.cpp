@@ -6,14 +6,14 @@ namespace SSB
 {
     extern DXWindow* g_dxWindow;
 
-	const AnimationName kDefaultAnimaionName = "DefaultAnimation";
-	Animation Model::DefaultAnimation;
+	//const AnimationName kDefaultAnimaionName = "DefaultAnimation";
+	//Animation Model::DefaultAnimation;
 
 	Model::Model()
 	{
 		//_sprites.push_back(SpriteLoader::GetInstance().GetDefaultSprite());
-		_animations.insert(std::make_pair(kDefaultAnimaionName, &DefaultAnimation));
-		_currentAnimation = &DefaultAnimation;
+		//_animations.insert(std::make_pair(kDefaultAnimaionName, &DefaultAnimation));
+		//_currentAnimation = &DefaultAnimation;
 	}
 	Model::~Model()
 	{
@@ -41,20 +41,25 @@ namespace SSB
 		_minVertex = { minX, minY, minZ };
 		_maxVertex = { maxX, maxY, maxZ };
 	}
-	void Model::RegisterMesh(IndexForMesh index, MeshInterface* mesh)
+	void Model::RegisterMesh(MeshIndex index, MeshInterface* mesh)
 	{
 		_meshes.insert(std::make_pair(index, mesh));
 	}
-	void Model::RegisterAnimation(AnimationName name, Animation* animation)
+	void Model::RegisterMaterial(MaterialIndex index, Material* material)
 	{
-		_animations.insert(std::make_pair(name, animation));
+		_materials.insert(std::make_pair(index, material));
 	}
-	void Model::SetCurrentAnimation(AnimationName name)
-	{
-		_currentAnimation = _animations.find(name)->second;
-	}
+	//void Model::RegisterAnimation(AnimationName name, Animation* animation)
+	//{
+	//	_animations.insert(std::make_pair(name, animation));
+	//}
+	//void Model::SetCurrentAnimation(AnimationName name)
+	//{
+	//	_currentAnimation = _animations.find(name)->second;
+	//}
 	void Model::SetVertexShader(VertexShader* shader)
 	{
+		_vs = shader;
 		for (auto mesh : _meshes)
 		{
 			mesh.second->SetVertexShader(shader);
@@ -62,10 +67,7 @@ namespace SSB
 	}
 	void Model::SetPixelShader(PixelShader* shader)
 	{
-		for (auto mesh : _meshes)
-		{
-			mesh.second->SetPixelShader(shader);
-		}
+		_ps = shader;
 	}
 	Model::operator OBBData()
 	{
@@ -77,10 +79,10 @@ namespace SSB
 	}
 	bool Model::Init()
 	{
-		for (auto iter : _animations)
-		{
-			iter.second->Init();
-		}
+		//for (auto iter : _animations)
+		//{
+		//	iter.second->Init();
+		//}
 
 		for (auto mesh : _meshes)
 		{
@@ -94,38 +96,53 @@ namespace SSB
 	}
 	bool Model::Frame()
 	{
-		_currentAnimation->Frame();
+		//_currentAnimation->Frame();
+
+		for (auto material : _materials)
+		{
+			material.second->Frame();
+		}
+
 		for (auto mesh : _meshes)
 		{
 			mesh.second->Frame();
 		}
+
 		return false;
 	}
 	bool Model::Render()
 	{
 		auto dc = g_dxWindow->GetDeviceContext();
 
-		_currentAnimation->Render();
+		//_currentAnimation->Render();
+
+		for (auto material : _materials)
+		{
+			material.second->Render();
+		}
 
 		for (auto mesh : _meshes)
 		{
 			mesh.second->Render();
 		}
 
+		_vs->Render();
+		_ps->Render();
+
 		return false;
 	}
 	bool Model::Release()
 	{
-		_currentAnimation = &DefaultAnimation;
-		for (auto animation : _animations)
-		{
-			if (animation.second != &DefaultAnimation)
-			{
-				animation.second->Release();
-				delete animation.second;
-			}
-		}
-		_animations.clear();
+		//_currentAnimation = &DefaultAnimation;
+		//for (auto animation : _animations)
+		//{
+		//	if (animation.second != &DefaultAnimation)
+		//	{
+		//		animation.second->Release();
+		//		delete animation.second;
+		//	}
+		//}
+		//_animations.clear();
 
 
 		for (auto mesh : _meshes)
@@ -133,6 +150,9 @@ namespace SSB
 			mesh.second->Release();
 		}
 		_meshElementMinMaxVertexList.clear();
+
+		_vs = nullptr;
+		_ps = nullptr;
 
 		return false;
 	}

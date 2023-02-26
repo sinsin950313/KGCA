@@ -32,6 +32,27 @@ namespace SSB
 		bool Release() override;
 	};
 
+	class Texture : public Common
+	{
+	private:
+		TextureResource* _resource;
+		ID3D11SamplerState* _samplerState;
+
+	public:
+		Texture(TextureResource* resource, ID3D11SamplerState* samplerState);
+		~Texture();
+
+	public:
+		TextureResource* GetResource() { return _resource; }
+		ID3D11SamplerState* GetSamplerState() { return _samplerState; }
+
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Render() override;
+		bool Release() override;
+	};
+
 	struct TexturePartCoordinate
 	{
 		UINT left;

@@ -201,4 +201,29 @@ namespace SSB
         Sprite::Release();
 		return true;
 	}
+    Texture::Texture(TextureResource* resource, ID3D11SamplerState* samplerState) : _resource(resource), _samplerState(samplerState)
+    {
+    }
+    Texture::~Texture()
+    {
+        Release();
+    }
+    bool Texture::Init()
+    {
+        return false;
+    }
+    bool Texture::Frame()
+    {
+        return false;
+    }
+    bool Texture::Render()
+    {
+        return false;
+    }
+    bool Texture::Release()
+    {
+        _resource = nullptr;
+        _samplerState = nullptr;
+        return true;
+    }
 }

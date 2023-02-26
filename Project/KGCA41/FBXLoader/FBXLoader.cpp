@@ -6,6 +6,7 @@
 #include "HCCalculator.h"
 #include "DXObject.h"
 #include "CommonPath.h"
+#include "TextureManager.h"
 
 namespace SSB
 {
@@ -20,81 +21,7 @@ namespace SSB
 		Release();
 	}
 
-	void FBXLoader::ExtractMaterial()
-	{
-		int count = _scene->GetMaterialCount();
-		for (int i = 0; i < count; ++i)
-		{
-			FbxSurfaceMaterial* material = _scene->GetMaterial(i);
-			_indexToMaterialMap.insert(std::make_pair(i, material));
-
-			if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
-			{
-				FbxSurfacePhong* phongMaterial = (FbxSurfacePhong*)material;
-				FbxDouble3 ambient = phongMaterial->Ambient;
-				FbxDouble3 diffuse = phongMaterial->Diffuse;
-				FbxDouble3 specular = phongMaterial->Specular;
-			}
-			else
-			{
-				assert(false);
-			}
-
-			ExtractTexture(material);
-		}
-	}
-
-	void FBXLoader::ExtractTextureFileName(FbxTexture* texture, std::set<std::string>& textureFileNameSet)
-	{
-		FbxFileTexture* fileTexture = texture->GetSrcObject<FbxFileTexture>(0);
-		std::string fileFullPath = fileTexture->GetFileName();
-		auto splitedPath = SplitPath(mtw(fileFullPath));
-		std::wstring fileName = splitedPath[2] + splitedPath[3];
-		textureFileNameSet.insert(wtm(fileName));
-	}
-
-	void FBXLoader::ExtractTexture(FbxSurfaceMaterial* material)
-	{
-		std::set<std::string> textureFileNameSet;
-		for (int i = 0; i < FbxLayerElement::sTypeTextureCount; ++i)
-		{
-			FbxProperty prop = material->FindProperty(FbxLayerElement::sTextureChannelNames[i]);
-			if (prop.IsValid())
-			{
-				int layeredTextureCount = prop.GetSrcObjectCount<FbxLayeredTexture>();
-				for (int j = 0; j < layeredTextureCount; ++j)
-				{
-					FbxLayeredTexture* layeredTexture = prop.GetSrcObject<FbxLayeredTexture>(j);
-					if (layeredTexture)
-					{
-						int layeredTextureCount = layeredTexture->GetSrcObjectCount();
-						for (int k = 0; k < layeredTextureCount; ++k)
-						{
-							FbxTexture* texture = layeredTexture->GetSrcObject<FbxTexture>(k);
-							if (texture != nullptr)
-							{
-								ExtractTextureFileName(texture, textureFileNameSet);
-							}
-						}
-					}
-				}
-
-				int textureCount = prop.GetSrcObjectCount<FbxTexture>();
-				for (int j = 0; j < textureCount; ++j)
-				{
-					FbxTexture* texture = prop.GetSrcObject<FbxTexture>(0);
-					if (texture != nullptr)
-					{
-						ExtractTextureFileName(texture, textureFileNameSet);
-					}
-				}
-			}
-		}
-
-		// So what should I do?
-	}
-
-	FbxNode* FBXLoader::PreLoad(std::string fileName)
+	void FBXLoader::PreLoad(std::string fileName)
 	{
 		_importer = FbxImporter::Create(_manager, "");
 		bool ret = _importer->Initialize((wtm(kFBXPath) + fileName).c_str());
@@ -115,12 +42,7 @@ namespace SSB
 
 		FbxSystemUnit::m.ConvertScene(_scene);
 		FbxAxisSystem::MayaZUp.ConvertScene(_scene);
-
-		ExtractMaterial();
-
-		FbxNode* root = _scene->GetRootNode();
-
-		return root;
+		_root = _scene->GetRootNode();
 	}
 
 	void FBXLoader::ParseNode(FbxNode* node)
@@ -164,55 +86,183 @@ namespace SSB
 		}
 	}
 
-	std::vector<FBXLoader::Script> FBXLoader::ParseScript(std::string fileName)
+	void FBXLoader::ExtractMaterial()
 	{
-		std::vector<Script> ret;
+		int count = _scene->GetMaterialCount();
+		for (int i = 0; i < count; ++i)
+		{
+			Material* material = new Material;
+			material->Init();
 
-		std::wstring fileFullPath = kFBXScriptPath + mtw(fileName);
+			FbxSurfaceMaterial* fbxMaterial = _scene->GetMaterial(i);
 
-        FILE* fp_src;
-        _wfopen_s(&fp_src, fileFullPath.c_str(), _T("rt"));
-        if (fp_src == NULL) return ret;
+			if (fbxMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId))
+			{
+				FbxSurfaceLambert* lambertMaterial = (FbxSurfaceLambert*)material;
 
-        TCHAR pBuffer[256] = { 0 };
-        _fgetts(pBuffer, _countof(pBuffer), fp_src);
+				//FbxDouble3 emissive = lambertMaterial->Emissive;
+				//FbxDouble emissiveFactor = lambertMaterial->EmissiveFactor;
 
-        int iNumFBXAction = 0;
-        _stscanf_s(pBuffer, _T("%d"), &iNumFBXAction);
+				//FbxDouble3 ambient = lambertMaterial->Ambient;
+				//FbxDouble ambientFactor = lambertMaterial->AmbientFactor;
 
-        for (int iCnt = 0; iCnt < iNumFBXAction; iCnt++)
-        {
-			TCHAR pTemp[256] = { 0 };
-            int iNumFrame = 0;
-            Script script;
+				{
+					FbxDouble3 diffuse = lambertMaterial->Diffuse;
+					FbxProperty prop = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
+					ExtractTexture(&prop, material, kDiffuse);
+					FbxDouble diffuseFactor = lambertMaterial->DiffuseFactor;
+				}
 
-            _fgetts(pBuffer, _countof(pBuffer), fp_src);
-            _stscanf_s(pBuffer, _T("%s %d"), pTemp, (unsigned int)_countof(pTemp), &iNumFrame);
-			script.ActionName = wtm(std::wstring(pTemp));
-			script.EndFrame = iNumFrame;
+				//FbxDouble3 normal = lambertMaterial->NormalMap;
+			}
 
-			ret.push_back(script);
-        }
-        fclose(fp_src);
+			if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId))
+			{
+				FbxSurfacePhong* phongMaterial = (FbxSurfacePhong*)material;
 
-		return ret;
+				//FbxDouble3 specular = phongMaterial->Specular;
+				//FbxDouble specularFactor = phongMaterial->SpecularFactor;
+
+				//FbxDouble shininess = phongMaterial->Shininess;
+
+				//FbxDouble3 reflection = phongMaterial->Reflection;
+				//FbxDouble reflectionFactor = phongMaterial->ReflectionFactor;
+			}
+
+			_indexToMaterialMap.insert(std::make_pair(i, material));
+		}
 	}
 
-	void FBXLoader::ExtractMeshVertex(FbxMesh* fbxMesh, Mesh* mesh, FbxAMatrix geometricMatrix, FbxAMatrix normalLocalMatrix)
+	void FBXLoader::ExtractTexture(FbxProperty* fbxProperty, Material* material, TextureType textureType)
 	{
-		int vertexCount = fbxMesh->GetControlPointsCount();
-		auto vertice = fbxMesh->GetControlPoints();
-		std::vector<Vertex_PNCT> verticeList;
-		for (int i = 0; i < vertexCount; ++i)
+		if (fbxProperty->IsValid())
 		{
-			Vertex_PNCT vertex
+			//int layeredTextureCount = fbxProperty->GetSrcObjectCount<FbxLayeredTexture>();
+			//for (int j = 0; j < layeredTextureCount; ++j)
+			//{
+			//	FbxLayeredTexture* layeredTexture = fbxProperty->GetSrcObject<FbxLayeredTexture>(j);
+			//	if (layeredTexture)
+			//	{
+			//		int layeredTextureCount = layeredTexture->GetSrcObjectCount();
+			//		for (int k = 0; k < layeredTextureCount; ++k)
+			//		{
+			//			FbxTexture* texture = layeredTexture->GetSrcObject<FbxTexture>(k);
+			//			if (texture != nullptr)
+			//			{
+			//				ExtractTextureFileName(texture, textureFileNameSet);
+			//			}
+			//		}
+			//	}
+			//}
+
+			int textureCount = fbxProperty->GetSrcObjectCount<FbxTexture>();
+			for (int j = 0; j < textureCount; ++j)
 			{
-				{ vertice[i].mData[0], vertice[i].mData[2], vertice[i].mData[1], 1 },
-			};
-			verticeList.push_back(vertex);
+				FbxTexture* texture = fbxProperty->GetSrcObject<FbxTexture>(j);
+				if (texture != nullptr)
+				{
+					ExtractTextureFileName(texture, material, textureType);
+				}
+			}
+		}
+	}
+
+	void FBXLoader::ExtractTextureFileName(FbxTexture* texture, Material* material, TextureType textureType)
+	{
+		FbxFileTexture* fileTexture = texture->GetSrcObject<FbxFileTexture>(0);
+		std::string fileFullPath = fileTexture->GetFileName();
+		auto splitedPath = SplitPath(mtw(fileFullPath));
+		std::wstring fileName = splitedPath[2] + splitedPath[3];
+		material->SetTexture(textureType, TextureLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
+	}
+
+	void FBXLoader::ParseMesh()
+	{
+		for (auto iter : _meshNodeToMeshIndexMap)
+		{
+			FbxNode* node = iter.first;
+			MeshTransformData transformData = CalculateTransformData(node);
+
+			FbxMesh* fbxMesh = node->GetMesh();
+			MeshVertexInfo info = GetMeshVertexInfo();
+
+			ExtractMeshVertex(fbxMesh, transformData, info);
+			ExtractMeshVertexIndex(fbxMesh, info.Mesh);
+			RegisterMesh(info.Mesh);
+		}
+	}
+
+	FBXLoader::MeshTransformData FBXLoader::CalculateTransformData(FbxNode* node)
+	{
+		FbxAMatrix geometricMatrix;
+		FbxVector4 trans = node->GetGeometricTranslation(FbxNode::eSourcePivot);
+		FbxVector4 rot = node->GetGeometricRotation(FbxNode::eSourcePivot);
+		FbxVector4 sca = node->GetGeometricScaling(FbxNode::eSourcePivot);
+		geometricMatrix.SetT(trans);
+		geometricMatrix.SetR(rot);
+		geometricMatrix.SetS(sca);
+
+		FbxAMatrix normalLocalMatrix = geometricMatrix;
+		normalLocalMatrix = normalLocalMatrix.Inverse();
+		normalLocalMatrix = normalLocalMatrix.Transpose();
+
+		return { geometricMatrix, normalLocalMatrix };
+	}
+
+	FBXLoader::MeshVertexInfo FBXLoader::GetMeshVertexInfo()
+	{
+		MeshVertexInfo info;
+		if (1 < _indexToMaterialMap.size())
+		{
+			if (_skeletonNodeToSkeletonIndexMap.empty())
+			{
+				info.Mesh = new Mesh_Vertex_PCNTs;
+				info.MeshVertexSize = sizeof(Vertex_PCNTs);
+			}
+			else
+			{
+				info.Mesh = new Mesh_Vertex_PCNTs_Skinning;
+				info.MeshVertexSize = sizeof(Vertex_PCNTs_Skinning);
+			}
+		}
+		else
+		{
+			if (_skeletonNodeToSkeletonIndexMap.empty())
+			{
+				info.Mesh = new Mesh_Vertex_PCNT;
+				info.MeshVertexSize = sizeof(Vertex_PCNT);
+			}
+			else
+			{
+				info.Mesh = new Mesh_Vertex_PCNT_Skinning;
+				info.MeshVertexSize = sizeof(Vertex_PCNT_Skinning);
+			}
 		}
 
+		return info;
+	}
+
+	void FBXLoader::ExtractMeshVertex(FbxMesh* fbxMesh, MeshTransformData transformData, MeshVertexInfo meshVertexInfo)
+	{
+		int vertexCount = fbxMesh->GetControlPointsCount();
+
+		class CustomUniquePointer
+		{
+		private:
+			void* _ptr;
+
+		public:
+			CustomUniquePointer(void* ptr) : _ptr(ptr) { }
+			~CustomUniquePointer() { delete _ptr; }
+			void* operator*() { return _ptr; }
+		};
+		CustomUniquePointer vertexDataBlock(malloc(meshVertexInfo.MeshVertexSize * vertexCount));
+
+		auto vertice = fbxMesh->GetControlPoints();
 		int polygonCount = fbxMesh->GetPolygonCount();
+
+		int layerCount = fbxMesh->GetLayerCount();
+
 		auto colors = fbxMesh->GetLayer(0)->GetVertexColors();
 		auto UVs = fbxMesh->GetLayer(0)->GetUVs();
 		auto normals = fbxMesh->GetLayer(0)->GetNormals();
@@ -237,7 +287,7 @@ namespace SSB
 					int vertexIndex = polygonVertexIndex[iIndex];
 
 					FbxVector4 v = vertice[vertexIndex];
-					v = geometricMatrix.MultT(v);
+					v = transformData.Geomatric.MultT(v);
 
 					FbxColor c = { 0, 0, 0, 1 };
 					if (colors)
@@ -255,26 +305,29 @@ namespace SSB
 					if (normals)
 					{
 						n = Read<FbxVector4>(normals, vertexIndex, iPoly);
-						n = normalLocalMatrix.MultT(n);
+						n = transformData.NormalLocal.MultT(n);
 					}
 
-					Vertex_PNCT vertex
+					Vertex_PCNT vertex
 					{
-						{ v.mData[0], v.mData[2], v.mData[1], 1 },
+						{
+							{ v.mData[0], v.mData[2], v.mData[1], 1 },
+							{ c.mRed, c.mGreen, c.mBlue, c.mAlpha }
+						},
 						{ n.mData[0], n.mData[2], n.mData[1], 1 },
-						{ c.mRed, c.mGreen, c.mBlue, c.mAlpha },
 						{ texture.mData[0], 1 - texture.mData[1] }
 					};
 
-					verticeList[vertexIndex] = vertex;
+					void* ptr = *vertexDataBlock;
+					memcpy(ptr + , &vertex, sizeof(Vertex_PCNT));
 				}
 			}
 		}
 
-		mesh->SetVertexList(verticeList);
+		meshVertexInfo.Mesh->SetVertexList(*vertexDataBlock, vertexCount);
 	}
 
-	void FBXLoader::ExtractMeshVertexIndex(FbxMesh* fbxMesh, Mesh* mesh)
+	void FBXLoader::ExtractMeshVertexIndex(FbxMesh* fbxMesh, MeshInterface* mesh)
 	{
 		std::vector<DWORD> vertexIndexList;
 		int polygonCount = fbxMesh->GetPolygonCount();
@@ -298,78 +351,9 @@ namespace SSB
 		mesh->SetIndexList(vertexIndexList);
 	}
 
-	void FBXLoader::RegisterMesh(Mesh* mesh)
+	void FBXLoader::RegisterMesh(MeshInterface* mesh)
 	{
-		_meshInfo.insert(std::make_pair(_meshInfo.size(), mesh));
-	}
-
-	void FBXLoader::RegisterMaterialToMesh(Mesh* mesh)
-	{
-		for (auto material : _indexToMaterialMap)
-		{
-			FbxSurfaceMaterial* surface = material.second;
-			if (surface)
-			{
-				auto prop = surface->FindProperty(FbxSurfaceMaterial::sDiffuse);
-				if (prop.IsValid())
-				{
-					const FbxFileTexture* tex = prop.GetSrcObject<FbxFileTexture>(0);
-					if (tex)
-					{
-						auto filePath = tex->GetFileName();
-						auto splitedPath = SplitPath(std::wstring(mtw(filePath)));
-						if (splitedPath[3] == L".tga" || splitedPath[3] == L".TGA")
-						{
-							splitedPath[3] = L".DDS";
-						}
-						std::wstring fileName = splitedPath[2] + splitedPath[3];
-						mesh->SetSprite(SpriteLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
-					}
-				}
-			}
-		}
-	}
-
-	void FBXLoader::ParseMesh()
-	{
-		for (auto iter : _meshNodeToMeshIndexMap)
-		{
-			Mesh* mesh = new Mesh;
-
-			FbxNode* node = iter.first;
-			FbxMesh* fbxMesh = node->GetMesh();
-
-			FbxAMatrix geometricMatrix;
-			FbxVector4 trans = node->GetGeometricTranslation(FbxNode::eSourcePivot);
-			FbxVector4 rot = node->GetGeometricRotation(FbxNode::eSourcePivot);
-			FbxVector4 sca = node->GetGeometricScaling(FbxNode::eSourcePivot);
-			geometricMatrix.SetT(trans);
-			geometricMatrix.SetR(rot);
-			geometricMatrix.SetS(sca);
-
-			FbxAMatrix normalLocalMatrix = geometricMatrix;
-			normalLocalMatrix = normalLocalMatrix.Inverse();
-			normalLocalMatrix = normalLocalMatrix.Transpose();
-
-			ExtractMeshVertex(fbxMesh, mesh, geometricMatrix, normalLocalMatrix);
-			ExtractMeshVertexIndex(fbxMesh, mesh);
-			RegisterMesh(mesh);
-			RegisterMaterialToMesh(mesh);
-		}
-	}
-
-	//AnimationFrameInfo FBXLoader::LoadAnimation(std::string fileName)
-	//{
-	//	FbxNode* root = PreLoad(fileName);
-	//}
-
-	std::map<MeshIndex, Mesh*> FBXLoader::LoadMesh(std::string fileName)
-	{
-		FbxNode* root = PreLoad(fileName);
-		ParseNode(root);
-		ParseMesh();
-
-		return _meshInfo;
+		_indexToMeshMap.insert(std::make_pair(_indexToMeshMap.size(), mesh));
 	}
 
 	FbxVector2 SSB::FBXLoader::Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex)
@@ -413,16 +397,39 @@ namespace SSB
 		return t;
 	}
 
+	void FBXLoader::SetFileName(std::string fileName)
+	{
+		PreLoad(fileName);
+		ParseNode(_root);
+	}
+
+	std::map<MaterialIndex, Material*> FBXLoader::LoadMaterial()
+	{
+		ExtractMaterial();
+
+		return _indexToMaterialMap;
+	}
+
+	Model* FBXLoader::LoadModel()
+	{
+		ParseMesh();
+
+		Model* ret = new Model;
+
+		return ret;
+	}
+
 	bool SSB::FBXLoader::Init()
 	{
-		_frameSpeed = 30.0f;
-		_tickPerFrame = 160;
+		//_frameSpeed = 30.0f;
+		//_tickPerFrame = 160;
 
+		_root = nullptr;
 		_skeletonNodeToSkeletonIndexMap.clear();
 		_meshNodeToMeshIndexMap.clear();
 
-		_animationInfo = AnimationFrameInfo();
-		_meshInfo.clear();
+		//_animationInfo = AnimationFrameInfo();
+		//_meshInfo.clear();
 
 		return true;
 	}

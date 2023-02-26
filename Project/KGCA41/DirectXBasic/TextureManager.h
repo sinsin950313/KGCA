@@ -47,6 +47,28 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 	};
+
+	class TextureLoader : public Common
+	{
+	private:
+		static TextureLoader _instance;
+		TextureLoader();
+
+	public:
+		static TextureLoader& GetInstance();
+		~TextureLoader();
+
+	public:
+		Texture* Load(std::wstring resourceFileName, std::string samplerName);
+
+	private:
+		bool Init() override;
+		bool Release() override;
+
+	public:
+		bool Frame() override;
+		bool Render() override;
+	};
 	
 	struct SpriteData
 	{

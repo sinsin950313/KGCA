@@ -1,22 +1,24 @@
 #pragma once
 
+#include <d3d11.h>
+#include "Common.h"
 #include "Vector.h"
 #include "Matrix.h"
-#include <d3d11.h>
-#include "Texture.h"
 #include "Shader.h"
+#include <vector>
 
 namespace SSB
 {
 	typedef DWORD IndexForMeshVertice;
-	typedef unsigned int IndexForMeshTexture;
+	typedef int MeshIndex;
 
 	class MeshInterface : public Common
 	{
 	public:
 		virtual void SetVertexShader(VertexShader* shader) = 0;
-		virtual void SetPixelShader(PixelShader* shader) = 0;
-		virtual void SetSpriteData(std::map<IndexForMeshTexture, Sprite*> spriteData) = 0;
+		virtual void SetVertexList(void* vertexDataBlock, int count) = 0;
+		virtual void SetIndexList(std::vector<IndexForMeshVertice> indexList) =0;
+		virtual void SetAdditionalSubMesh(MeshInterface* mesh) = 0;
 
 	public:
 		virtual Vector3 GetMinVertex() = 0;
@@ -32,15 +34,13 @@ namespace SSB
 		ID3D11Buffer* _vertexBuffer;
 		std::vector<IndexForMeshVertice> _indexList;
 		ID3D11Buffer* _indexBuffer;
+
 		Vector3 _minVertex;
 		Vector3 _maxVertex;
 
-		VertexShader* _vs;
-		PixelShader* _ps;
+		std::vector<MeshInterface*> _subMeshes;
 
-		int _resourceCount;
-		ID3D11SamplerState** _samplerStateList;
-		ID3D11ShaderResourceView** _shaderResourceViewList;
+		VertexShader* _vs;
 
 	public:
 		Mesh();
@@ -55,13 +55,10 @@ namespace SSB
 		virtual void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) = 0;
 
 	public:
-		void SetVertexList(std::vector<VertexType> vertexList);
-		void SetIndexList(std::vector<IndexForMeshVertice> indexList);
-
-	public:
+		void SetVertexList(void* vertexDataBlock, int count) override;
+		void SetIndexList(std::vector<IndexForMeshVertice> indexList) override;
+		void SetAdditionalSubMesh(MeshInterface* mesh) override;
 		void SetVertexShader(VertexShader* shader) override;
-		void SetPixelShader(PixelShader* shader) override;
-		void SetSpriteData(std::map<IndexForMeshTexture, Sprite*> spriteData) override;
 
 	public:
 		Vector3 GetMinVertex() override;
@@ -129,9 +126,9 @@ namespace SSB
 
 	struct Vertex_PCNTs : public Vertex_PCNT
 	{
-		unsigned int TextureIndex;
+		unsigned int MaterialIndex;
 	};
-	class Mesh_Vertex_PCNTs : Mesh<Vertex_PCNTs>
+	class Mesh_Vertex_PCNTs : public Mesh<Vertex_PCNTs>
 	{
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -141,7 +138,7 @@ namespace SSB
 	{
 		int AffectedBoneIndex[kAffectedBoneCount];
 		float Weight[kAffectedBoneCount];
-		unsigned int TextureIndex;
+		unsigned int MaterialIndex;
 	};
 	class Mesh_Vertex_PCNTs_Skinning : public Mesh<Vertex_PCNTs_Skinning>
 	{

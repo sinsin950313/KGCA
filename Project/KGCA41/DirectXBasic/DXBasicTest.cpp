@@ -25,13 +25,15 @@ namespace SSB
 		_fps = 0.0f;
 
         {
-            _object = new DXObject();
             Model* model = new Model;
+            model->Init();
             model->RegisterMesh(0, new Box);
             model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"BoxMeshShader.hlsl", "VSMain", "vs_5_0"));
             model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"BoxMeshShader.hlsl", "PSMain", "ps_5_0"));
-            _object->SetModel(model);
+
+            _object = new DXObject();
             _object->Init();
+            _object->SetModel(model);
             _object->Move({ 0, 5, 0 });
         }
 

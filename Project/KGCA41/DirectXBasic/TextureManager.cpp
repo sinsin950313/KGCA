@@ -387,4 +387,41 @@ namespace SSB
         _spriteActionDatas.clear();
         return true;
     }
+    TextureLoader::TextureLoader()
+    {
+        Init();
+    }
+    TextureLoader& TextureLoader::GetInstance()
+    {
+        return _instance;
+    }
+    TextureLoader::~TextureLoader()
+    {
+        Release();
+    }
+    Texture* TextureLoader::Load(std::wstring resourceFileName, std::string samplerName)
+    {
+		TextureResource* resource = TextureResourceManager::GetInstance().Load(resourceFileName);
+        ID3D11SamplerState* sampler = DXStateManager::GetInstance().GetSamplerState(samplerName);
+
+        Texture* texture = new Texture(resource, sampler);
+
+        return texture;
+    }
+    bool TextureLoader::Init()
+    {
+        return false;
+    }
+    bool TextureLoader::Release()
+    {
+        return false;
+    }
+    bool TextureLoader::Frame()
+    {
+        return false;
+    }
+    bool TextureLoader::Render()
+    {
+        return false;
+    }
 }

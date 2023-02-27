@@ -147,10 +147,13 @@
   <ItemGroup>
     <ClInclude Include="FBXLoader.h" />
     <ClInclude Include="FBXLoaderTest.h" />
+    <ClInclude Include="FBXMesh.h" />
+    <ClInclude Include="FBXMesh.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FBXLoader.cpp" />
     <ClCompile Include="FBXLoaderTest.cpp" />
+    <ClCompile Include="FBXMesh.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>

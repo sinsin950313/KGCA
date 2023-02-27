@@ -145,6 +145,8 @@ namespace SSB
 
 	bool Mesh_Vertex_PCNTs_Skinning::Init()
 	{
+		Build();
+
 		Mesh<Vertex_PCNTs_Skinning>::Init();
 
 		CreateBoneSpaceTransformBuffer();
@@ -176,6 +178,9 @@ namespace SSB
 
 	Box::Box(float width, float height, float depth)
 		: _width(width), _height(height), _depth(depth)
+	{
+	}
+	void Box::Build()
 	{
 		std::vector<Vertex_PCNT> vertexList;
 		vertexList.resize(24);
@@ -214,7 +219,7 @@ namespace SSB
 		vertexList[22] = Vertex_PCNT{ Float4{0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float2{0.5f, 0.5f} };
 		vertexList[23] = Vertex_PCNT{ Float4{-0.5f * _width, -0.5f * _height, 0.5f * _depth, 1.0f}, Float4{0.0f, 0.5f, 0.5f, 1.0f}, Float4{0.0f, -1.0f, 0.0f, 1.0f}, Float2{0.0f, 0.5f} };
 
-		SetVertexList(&vertexList.at(0), 24);
+		SetVertexList(vertexList);
 
 		std::vector<DWORD> indexList;
 		indexList.resize(36);
@@ -230,13 +235,16 @@ namespace SSB
 	}
 	Triangle::Triangle()
 	{
+	}
+	void Triangle::Build()
+	{
 		std::vector<Vertex_PCNT> vertexList;
 		vertexList.resize(3);
 		vertexList[0] = Vertex_PCNT{ Float4{+0.0f, +0.5f, 0.5f, 1.0f}, Float4{1.0f, 0.0f, 0.0f, 0.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float2{0, 0} };
 		vertexList[1] = Vertex_PCNT{ Float4{+0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 1.0f, 0.0f, 0.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float2{0, 0} };
 		vertexList[2] = Vertex_PCNT{ Float4{-0.5f, -0.5f, 0.5f, 1.0f}, Float4{0.0f, 0.0f, 1.0f, 0.0f}, Float4{0.0f, 0.0f, -1.0f, 1.0f}, Float4{0, 0} };
 
-		SetVertexList(&vertexList.at(0), 3);
+		SetVertexList(vertexList);
 
 		std::vector<DWORD> indexList;
 		indexList.resize(3);

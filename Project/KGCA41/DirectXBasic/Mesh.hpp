@@ -17,6 +17,16 @@ namespace SSB
 		Release();
 	}
 	template<typename VertexType>
+	inline void Mesh<VertexType>::SetVertexList(std::vector<VertexType> vertexList)
+	{
+		_vertexList = vertexList;
+	}
+	template<typename VertexType>
+	inline void Mesh<VertexType>::SetIndexList(std::vector<IndexForMeshVertice> indexList)
+	{
+		_indexList = indexList;
+	}
+	template<typename VertexType>
 	bool Mesh<VertexType>::CreateVertexLayout()
 	{
 		D3D11_INPUT_ELEMENT_DESC* inputElementDesc;
@@ -72,45 +82,6 @@ namespace SSB
 			return false;
 		}
 		return true;
-	}
-	template<typename VertexType>
-	void Mesh<VertexType>::SetVertexList(void* vertexDataBlock, int count)
-	{
-		_vertexList.resize(count);
-		for (int i = 0; i < count; ++i)
-		{
-			VertexType vertex;
-			memcpy(&vertex, &((VertexType*)vertexDataBlock)[i], sizeof(VertexType));
-			_vertexList[i] = vertex;
-		}
-
-		float minX = (std::numeric_limits<float>::max)();
-		float minY = (std::numeric_limits<float>::max)();
-		float minZ = (std::numeric_limits<float>::max)();
-
-		float maxX = (std::numeric_limits<float>::min)();
-		float maxY = (std::numeric_limits<float>::min)();
-		float maxZ = (std::numeric_limits<float>::min)();
-		
-		for (auto vertex : _vertexList)
-		{
-			float x = vertex.Position.x;
-			float y = vertex.Position.y;
-			float z = vertex.Position.z;
-
-			minX = min(minX, x);
-			minY = min(minY, y);
-			minZ = min(minZ, z);
-
-			maxX = max(minX, x);
-			maxY = max(minY, y);
-			maxZ = max(minZ, z);
-		}
-	}
-	template<typename VertexType>
-	void Mesh<VertexType>::SetIndexList(std::vector<IndexForMeshVertice> indexList)
-	{
-		_indexList = indexList;
 	}
 	template<typename VertexType>
 	inline void Mesh<VertexType>::SetAdditionalSubMesh(MeshInterface* mesh)

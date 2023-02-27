@@ -7,6 +7,7 @@
 #include "DXObject.h"
 #include "CommonPath.h"
 #include "TextureManager.h"
+#include "FBXMesh.h"
 
 namespace SSB
 {
@@ -98,7 +99,7 @@ namespace SSB
 
 			if (fbxMaterial->GetClassId().Is(FbxSurfaceLambert::ClassId))
 			{
-				FbxSurfaceLambert* lambertMaterial = (FbxSurfaceLambert*)material;
+				FbxSurfaceLambert* lambertMaterial = (FbxSurfaceLambert*)fbxMaterial;
 
 				//FbxDouble3 emissive = lambertMaterial->Emissive;
 				//FbxDouble emissiveFactor = lambertMaterial->EmissiveFactor;
@@ -118,7 +119,7 @@ namespace SSB
 
 			if (fbxMaterial->GetClassId().Is(FbxSurfacePhong::ClassId))
 			{
-				FbxSurfacePhong* phongMaterial = (FbxSurfacePhong*)material;
+				FbxSurfacePhong* phongMaterial = (FbxSurfacePhong*)fbxMaterial;
 
 				//FbxDouble3 specular = phongMaterial->Specular;
 				//FbxDouble specularFactor = phongMaterial->SpecularFactor;
@@ -180,221 +181,45 @@ namespace SSB
 	{
 		for (auto iter : _meshNodeToMeshIndexMap)
 		{
-			FbxNode* node = iter.first;
-			MeshTransformData transformData = CalculateTransformData(node);
+			MeshInterface* mesh = nullptr;
 
-			FbxMesh* fbxMesh = node->GetMesh();
-			MeshVertexInfo info = GetMeshVertexInfo();
-
-			ExtractMeshVertex(fbxMesh, transformData, info);
-			ExtractMeshVertexIndex(fbxMesh, info.Mesh);
-			RegisterMesh(info.Mesh);
-		}
-	}
-
-	FBXLoader::MeshTransformData FBXLoader::CalculateTransformData(FbxNode* node)
-	{
-		FbxAMatrix geometricMatrix;
-		FbxVector4 trans = node->GetGeometricTranslation(FbxNode::eSourcePivot);
-		FbxVector4 rot = node->GetGeometricRotation(FbxNode::eSourcePivot);
-		FbxVector4 sca = node->GetGeometricScaling(FbxNode::eSourcePivot);
-		geometricMatrix.SetT(trans);
-		geometricMatrix.SetR(rot);
-		geometricMatrix.SetS(sca);
-
-		FbxAMatrix normalLocalMatrix = geometricMatrix;
-		normalLocalMatrix = normalLocalMatrix.Inverse();
-		normalLocalMatrix = normalLocalMatrix.Transpose();
-
-		return { geometricMatrix, normalLocalMatrix };
-	}
-
-	FBXLoader::MeshVertexInfo FBXLoader::GetMeshVertexInfo()
-	{
-		MeshVertexInfo info;
-		if (1 < _indexToMaterialMap.size())
-		{
-			if (_skeletonNodeToSkeletonIndexMap.empty())
+			FbxMesh* fbxMesh = iter.first->GetMesh();
+			if (1 < fbxMesh->GetElementMaterialCount())
 			{
-				info.Mesh = new Mesh_Vertex_PCNTs;
-				info.MeshVertexSize = sizeof(Vertex_PCNTs);
-			}
-			else
-			{
-				info.Mesh = new Mesh_Vertex_PCNTs_Skinning;
-				info.MeshVertexSize = sizeof(Vertex_PCNTs_Skinning);
-			}
-		}
-		else
-		{
-			if (_skeletonNodeToSkeletonIndexMap.empty())
-			{
-				info.Mesh = new Mesh_Vertex_PCNT;
-				info.MeshVertexSize = sizeof(Vertex_PCNT);
-			}
-			else
-			{
-				info.Mesh = new Mesh_Vertex_PCNT_Skinning;
-				info.MeshVertexSize = sizeof(Vertex_PCNT_Skinning);
-			}
-		}
-
-		return info;
-	}
-
-	void FBXLoader::ExtractMeshVertex(FbxMesh* fbxMesh, MeshTransformData transformData, MeshVertexInfo meshVertexInfo)
-	{
-		int vertexCount = fbxMesh->GetControlPointsCount();
-
-		class CustomUniquePointer
-		{
-		private:
-			void* _ptr;
-
-		public:
-			CustomUniquePointer(void* ptr) : _ptr(ptr) { }
-			~CustomUniquePointer() { delete _ptr; }
-			void* operator*() { return _ptr; }
-		};
-		CustomUniquePointer vertexDataBlock(malloc(meshVertexInfo.MeshVertexSize * vertexCount));
-
-		auto vertice = fbxMesh->GetControlPoints();
-		int polygonCount = fbxMesh->GetPolygonCount();
-
-		int layerCount = fbxMesh->GetLayerCount();
-
-		auto colors = fbxMesh->GetLayer(0)->GetVertexColors();
-		auto UVs = fbxMesh->GetLayer(0)->GetUVs();
-		auto normals = fbxMesh->GetLayer(0)->GetNormals();
-		for (int iPoly = 0; iPoly < polygonCount; ++iPoly)
-		{
-			int polygonSize = fbxMesh->GetPolygonSize(iPoly);
-			int faceCount = polygonSize - 2;
-			for (int iFace = 0; iFace < faceCount; ++iFace)
-			{
-				int polygonVertexIndex[3];
-				polygonVertexIndex[0] = fbxMesh->GetPolygonVertex(iPoly, 0);
-				polygonVertexIndex[1] = fbxMesh->GetPolygonVertex(iPoly, iFace + 2);
-				polygonVertexIndex[2] = fbxMesh->GetPolygonVertex(iPoly, iFace + 1); 
-
-				int iUVIndex[3];
-				iUVIndex[0] = fbxMesh->GetTextureUVIndex(iPoly, 0);
-				iUVIndex[1] = fbxMesh->GetTextureUVIndex(iPoly, iFace + 2);
-				iUVIndex[2] = fbxMesh->GetTextureUVIndex(iPoly, iFace + 1);
-
-				for (int iIndex = 0; iIndex < 3; ++iIndex)
+				if (_skeletonNodeToSkeletonIndexMap.empty())
 				{
-					int vertexIndex = polygonVertexIndex[iIndex];
-
-					FbxVector4 v = vertice[vertexIndex];
-					v = transformData.Geomatric.MultT(v);
-
-					FbxColor c = { 0, 0, 0, 1 };
-					if (colors)
-					{
-						c = Read<FbxColor>(colors, vertexIndex, iPoly);
-					}
-
-					FbxVector2 texture{ 0, 0 };
-					if (UVs)
-					{
-						texture = Read(UVs, vertexIndex, iUVIndex[iIndex]);
-					}
-
-					FbxVector4 n{ 0, 0, 0, 0 };
-					if (normals)
-					{
-						n = Read<FbxVector4>(normals, vertexIndex, iPoly);
-						n = transformData.NormalLocal.MultT(n);
-					}
-
-					Vertex_PCNT vertex
-					{
-						{
-							{ v.mData[0], v.mData[2], v.mData[1], 1 },
-							{ c.mRed, c.mGreen, c.mBlue, c.mAlpha }
-						},
-						{ n.mData[0], n.mData[2], n.mData[1], 1 },
-						{ texture.mData[0], 1 - texture.mData[1] }
-					};
-
-					void* ptr = *vertexDataBlock;
-					memcpy(ptr + , &vertex, sizeof(Vertex_PCNT));
+					mesh = new FBXMesh_PCNTs;
+					static_cast<FBXMesh_PCNTs*>(mesh)->InitialFBXMesh(fbxMesh);
+				}
+				else
+				{
+					mesh = new FBXMesh_PCNTs_Skinning;
+					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->InitialFBXMesh(fbxMesh);
 				}
 			}
-		}
-
-		meshVertexInfo.Mesh->SetVertexList(*vertexDataBlock, vertexCount);
-	}
-
-	void FBXLoader::ExtractMeshVertexIndex(FbxMesh* fbxMesh, MeshInterface* mesh)
-	{
-		std::vector<DWORD> vertexIndexList;
-		int polygonCount = fbxMesh->GetPolygonCount();
-		for (int iPoly = 0; iPoly < polygonCount; ++iPoly)
-		{
-			int polygonSize = fbxMesh->GetPolygonSize(iPoly);
-			int faceCount = polygonSize - 2;
-			for (int iFace = 0; iFace < faceCount; ++iFace)
+			else
 			{
-				int iCornerIndex[3];
-				iCornerIndex[0] = fbxMesh->GetPolygonVertex(iPoly, 0);
-				iCornerIndex[1] = fbxMesh->GetPolygonVertex(iPoly, iFace + 2);
-				iCornerIndex[2] = fbxMesh->GetPolygonVertex(iPoly, iFace + 1);
-
-				vertexIndexList.push_back(iCornerIndex[0]);
-				vertexIndexList.push_back(iCornerIndex[1]);
-				vertexIndexList.push_back(iCornerIndex[2]);
+				if (_skeletonNodeToSkeletonIndexMap.empty())
+				{
+					mesh = new FBXMesh_PCNT;
+					static_cast<FBXMesh_PCNT*>(mesh)->InitialFBXMesh(fbxMesh);
+				}
+				else
+				{
+					mesh = new FBXMesh_PCNT_Skinning;
+					static_cast<FBXMesh_PCNT_Skinning*>(mesh)->InitialFBXMesh(fbxMesh);
+				}
 			}
-		}
 
-		mesh->SetIndexList(vertexIndexList);
+			mesh->Init();
+
+			RegisterMesh(mesh);
+		}
 	}
 
 	void FBXLoader::RegisterMesh(MeshInterface* mesh)
 	{
 		_indexToMeshMap.insert(std::make_pair(_indexToMeshMap.size(), mesh));
-	}
-
-	FbxVector2 SSB::FBXLoader::Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex)
-	{
-		FbxVector2 t;
-		FbxLayerElement::EMappingMode mode = element->GetMappingMode();
-		switch (mode)
-		{
-		case FbxLayerElementUV::eByControlPoint:
-		{
-			switch (element->GetReferenceMode())
-			{
-			case FbxLayerElementUV::eDirect:
-			{
-				t = element->GetDirectArray().GetAt(pointIndex);
-				break;
-			}
-			case FbxLayerElementUV::eIndexToDirect:
-			{
-				int index = element->GetIndexArray().GetAt(pointIndex);
-				t = element->GetDirectArray().GetAt(index);
-				break;
-			}
-			break;
-			}
-		}
-		case FbxLayerElementUV::eByPolygonVertex:
-		{
-			switch (element->GetReferenceMode())
-			{
-			case FbxLayerElementUV::eDirect:
-			case FbxLayerElementUV::eIndexToDirect:
-			{
-				t = element->GetDirectArray().GetAt(polygonIndex);
-				break;
-			}
-			}
-			break;
-		}
-		}
-		return t;
 	}
 
 	void FBXLoader::SetFileName(std::string fileName)
@@ -415,6 +240,10 @@ namespace SSB
 		ParseMesh();
 
 		Model* ret = new Model;
+		for (auto mesh : _indexToMeshMap)
+		{
+			ret->RegisterMesh(mesh.first, mesh.second);
+		}
 
 		return ret;
 	}

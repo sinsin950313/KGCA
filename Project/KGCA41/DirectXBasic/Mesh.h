@@ -14,10 +14,13 @@ namespace SSB
 
 	class MeshInterface : public Common
 	{
+	protected:
+		virtual void Build() = 0;
+
 	public:
 		virtual void SetVertexShader(VertexShader* shader) = 0;
-		virtual void SetVertexList(void* vertexDataBlock, int count) = 0;
-		virtual void SetIndexList(std::vector<IndexForMeshVertice> indexList) =0;
+		//virtual void SetVertexList(void* vertexDataBlock, int count) = 0;
+		//virtual void SetIndexList(std::vector<IndexForMeshVertice> indexList) =0;
 		virtual void SetAdditionalSubMesh(MeshInterface* mesh) = 0;
 
 	public:
@@ -52,11 +55,13 @@ namespace SSB
 		bool CreateIndexBuffer();
 
 	protected:
+		void SetVertexList(std::vector<VertexType> vertexList);
+		void SetIndexList(std::vector<IndexForMeshVertice> indexList);
+
+	protected:
 		virtual void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) = 0;
 
 	public:
-		void SetVertexList(void* vertexDataBlock, int count) override;
-		void SetIndexList(std::vector<IndexForMeshVertice> indexList) override;
 		void SetAdditionalSubMesh(MeshInterface* mesh) override;
 		void SetVertexShader(VertexShader* shader) override;
 
@@ -171,6 +176,9 @@ namespace SSB
 	{
 	public:
 		Triangle();
+
+	private:
+		void Build() override;
 	};
 
 	class Box : public Mesh_Vertex_PCNT
@@ -182,6 +190,9 @@ namespace SSB
 
 	public:
 		Box(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
+
+	private:
+		void Build() override;
 	};
 }
 

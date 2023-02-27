@@ -142,6 +142,7 @@
       <Command>if not exist "$(ProjectDir)\..\..\include\" mkdir "$(ProjectDir)\..\..\include\"
 
 copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
+copy "$(ProjectDir)\*.hpp" "$(ProjectDir)\..\..\include\"
 
 if not exist "$(ProjectDir)\..\..\lib\Debug\" mkdir "$(ProjectDir)\..\..\lib\Debug"
 

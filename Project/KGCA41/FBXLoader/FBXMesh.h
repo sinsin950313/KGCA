@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Mesh.h"
+#include "Mesh.hpp"
 #include <fbxsdk.h>
 
 namespace SSB
@@ -24,24 +25,39 @@ namespace SSB
 	class FBXLayerElementReader : public FBXMeshInterface
 	{
 	protected:
-		void ExtractMeshVertexIndex();
+		template<typename VertexType>
+		class VertexRefiner
+		{
+			std::vector<VertexType> _vertexList;
+			std::vector<IndexForMeshVertice> _indexList;
+
+		private:
+			IndexForMeshVertice AddVertex(VertexType vertex);
+
+		public:
+			void Refine(FbxMesh* fbxMesh, std::vector<VertexType> vertexList);
+
+		public:
+			std::vector<VertexType> GetVertexList();
+			std::vector<IndexForMeshVertice> GetIndexList();
+		};
 
 	protected:
 		template<typename T>
-		T Read(FbxLayerElementTemplate<T>* element, int position, int index);
+		T Read(FbxLayerElementTemplate<T>* element, int pointIndex, int polygonIndex);
 		FbxVector2 Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex);
 
 		template<typename VertexType>
 		void ExtractMeshVertexPosition(FbxMesh* fbxMesh, std::vector<VertexType>& vertexList);
 
 		template<typename VertexType>
-		void ExtractMeshVertexColor(FbxMesh* fbxMesh, std::vector<VertexType>& vertexList);
+		void ExtractMeshVertexColor(FbxMesh* fbxMesh, int layerCount, std::vector<VertexType>& vertexList);
 
 		template<typename VertexType>
-		void ExtractMeshVertexNormal(FbxMesh* fbxMesh, std::vector<VertexType>& vertexList);
+		void ExtractMeshVertexNormal(FbxMesh* fbxMesh, int layerCount, std::vector<VertexType>& vertexList);
 
 		template<typename VertexType>
-		void ExtractMeshVertexTextureUV(FbxMesh* fbxMesh, std::vector<VertexType>& vertexList);
+		void ExtractMeshVertexTextureUV(FbxMesh* fbxMesh, int layerCount, std::vector<VertexType>& vertexList);
 
 		template<typename VertexType>
 		void ExtractMeshVertexSkinningData(FbxMesh* fbxMesh, std::vector<VertexType>& vertexList);

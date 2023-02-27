@@ -262,37 +262,45 @@ namespace SSB
 	template<typename VertexType>
 	inline void FBXLayerElementReader::ExtractMeshVertexSkinningData(FbxMesh* fbxMesh, std::vector<VertexType>& vertexList)
 	{
-		//int deformerCount = fbxMesh->GetDeformerCount(FbxDeformer::eSkin);
-		//for (int iDeformer = 0; iDeformer < deformerCount; ++iDeformer)
-		//{
-		//	FbxDeformer* deformer = fbxMesh->GetDeformer(iDeformer, FbxDeformer::eSkin);
-		//	FbxSkin* skin = (FbxSkin*)deformer;
-		//	int clusterCount = skin->GetClusterCount();
-		//	for (int iCluster = 0; iCluster < clusterCount; ++iCluster)
-		//	{
-		//		FbxCluster* cluster = skin->GetCluster(iCluster);
-		//		int boneIndex = _skeletonDataMap.find(cluster->GetLink())->second;
+	//	object->_skinningDataPerVertex.resize(mesh->GetControlPointsCount());
+	//	if (mesh->GetDeformerCount() == 0)
+	//	{
+	//		object->_meshConstantData.MeshParam.MeshWeight = 1;
+	//	}
+	//	else
+	//	{
+	//		int deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
+	//		for (int iDeformer = 0; iDeformer < deformerCount; ++iDeformer)
+	//		{
+	//			FbxDeformer* deformer = mesh->GetDeformer(iDeformer, FbxDeformer::eSkin);
+	//			FbxSkin* skin = (FbxSkin*)deformer;
+	//			int clusterCount = skin->GetClusterCount();
+	//			for (int iCluster = 0; iCluster < clusterCount; ++iCluster)
+	//			{
+	//				FbxCluster* cluster = skin->GetCluster(iCluster);
+	//				int boneIndex = _skeletonDataMap.find(cluster->GetLink())->second;
 
-		//		FbxAMatrix linkMatrix;
-		//		cluster->GetTransformLinkMatrix(linkMatrix);
+	//				FbxAMatrix linkMatrix;
+	//				cluster->GetTransformLinkMatrix(linkMatrix);
 
-		//		FbxAMatrix adjustMatrix;
-		//		cluster->GetTransformMatrix(adjustMatrix);
+	//				FbxAMatrix adjustMatrix;
+	//				cluster->GetTransformMatrix(adjustMatrix);
 
-		//		FbxAMatrix fbxBoneSpaceMatrix = linkMatrix.Inverse() * adjustMatrix;
-		//		HMatrix44 toBoneSpaceMatrix = Convert(fbxBoneSpaceMatrix);
-		//		object->SetBoneSpaceTransformMatrix(boneIndex, toBoneSpaceMatrix);
+	//				FbxAMatrix fbxBoneSpaceMatrix = linkMatrix.Inverse() * adjustMatrix;
+	//				HMatrix44 toBoneSpaceMatrix = Convert(fbxBoneSpaceMatrix);
+	//				object->SetBoneSpaceTransformMatrix(boneIndex, toBoneSpaceMatrix);
 
-		//		int controlPointCount = cluster->GetControlPointIndicesCount();
-		//		int* controlPointIndice = cluster->GetControlPointIndices();
-		//		double* controlPointWeights = cluster->GetControlPointWeights();
-		//		for (int iControlPoint = 0; iControlPoint < controlPointCount; ++iControlPoint)
-		//		{
-		//			int vertexIndex = controlPointIndice[iControlPoint];
-		//			float weight = controlPointWeights[iControlPoint];
-		//			object->LinkMeshWithBone(vertexIndex, boneIndex, weight);
-		//		}
-		//	}
-		//}
+	//				int controlPointCount = cluster->GetControlPointIndicesCount();
+	//				int* controlPointIndice = cluster->GetControlPointIndices();
+	//				double* controlPointWeights = cluster->GetControlPointWeights();
+	//				for (int iControlPoint = 0; iControlPoint < controlPointCount; ++iControlPoint)
+	//				{
+	//					int vertexIndex = controlPointIndice[iControlPoint];
+	//					float weight = controlPointWeights[iControlPoint];
+	//					object->LinkMeshWithBone(vertexIndex, boneIndex, weight);
+	//				}
+	//			}
+	//		}
+	//	}
 	}
 }

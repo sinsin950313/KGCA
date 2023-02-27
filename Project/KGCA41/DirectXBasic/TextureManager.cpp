@@ -387,6 +387,9 @@ namespace SSB
         _spriteActionDatas.clear();
         return true;
     }
+
+	TextureLoader TextureLoader::_instance;
+
     TextureLoader::TextureLoader()
     {
         Init();

@@ -186,7 +186,7 @@ namespace SSB
 			FbxMesh* fbxMesh = iter.first->GetMesh();
 			if (1 < fbxMesh->GetElementMaterialCount())
 			{
-				if (_skeletonNodeToSkeletonIndexMap.empty())
+				if (fbxMesh->GetDeformerCount() == 0)
 				{
 					mesh = new FBXMesh_PCNTs;
 					static_cast<FBXMesh_PCNTs*>(mesh)->InitialFBXMesh(fbxMesh);
@@ -199,7 +199,7 @@ namespace SSB
 			}
 			else
 			{
-				if (_skeletonNodeToSkeletonIndexMap.empty())
+				if (fbxMesh->GetDeformerCount() == 0)
 				{
 					mesh = new FBXMesh_PCNT;
 					static_cast<FBXMesh_PCNT*>(mesh)->InitialFBXMesh(fbxMesh);

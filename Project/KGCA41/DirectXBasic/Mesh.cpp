@@ -145,8 +145,6 @@ namespace SSB
 
 	bool Mesh_Vertex_PCNTs_Skinning::Init()
 	{
-		Build();
-
 		Mesh<Vertex_PCNTs_Skinning>::Init();
 
 		CreateBoneSpaceTransformBuffer();

@@ -89,7 +89,7 @@ namespace SSB
 		_subMeshes.push_back(mesh);
 	}
 	template<typename VertexType>
-	void Mesh<VertexType>::InitialVertexShader(VertexShader* shader)
+	void Mesh<VertexType>::SetVertexShader(VertexShader* shader)
 	{
 		_vs = shader;
 	}

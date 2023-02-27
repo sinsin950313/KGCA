@@ -62,7 +62,7 @@ namespace SSB
 		_vs = shader;
 		for (auto mesh : _meshes)
 		{
-			mesh.second->SetVertexShader(shader);
+			mesh.second->InitialVertexShader(shader);
 		}
 	}
 	void Model::SetPixelShader(PixelShader* shader)

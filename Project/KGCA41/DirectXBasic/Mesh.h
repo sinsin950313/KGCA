@@ -18,7 +18,7 @@ namespace SSB
 		virtual void Build() = 0;
 
 	public:
-		virtual void SetVertexShader(VertexShader* shader) = 0;
+		virtual void InitialVertexShader(VertexShader* shader) = 0;
 		//virtual void SetVertexList(void* vertexDataBlock, int count) = 0;
 		//virtual void SetIndexList(std::vector<IndexForMeshVertice> indexList) =0;
 		virtual void SetAdditionalSubMesh(MeshInterface* mesh) = 0;
@@ -63,7 +63,7 @@ namespace SSB
 
 	public:
 		void SetAdditionalSubMesh(MeshInterface* mesh) override;
-		void SetVertexShader(VertexShader* shader) override;
+		void InitialVertexShader(VertexShader* shader) override;
 
 	public:
 		Vector3 GetMinVertex() override;

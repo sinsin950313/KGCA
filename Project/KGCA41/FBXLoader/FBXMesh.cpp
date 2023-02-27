@@ -20,30 +20,6 @@ namespace SSB
 		return { geometricMatrix, normalLocalMatrix };
 	}
 
-	void FBXLayerElementReader::ExtractMeshVertexIndex()
-	{
-		std::vector<DWORD> vertexIndexList;
-		int polygonCount = _fbxMesh->GetPolygonCount();
-		for (int iPoly = 0; iPoly < polygonCount; ++iPoly)
-		{
-			int polygonSize = _fbxMesh->GetPolygonSize(iPoly);
-			int faceCount = polygonSize - 2;
-			for (int iFace = 0; iFace < faceCount; ++iFace)
-			{
-				int iCornerIndex[3];
-				iCornerIndex[0] = _fbxMesh->GetPolygonVertex(iPoly, 0);
-				iCornerIndex[1] = _fbxMesh->GetPolygonVertex(iPoly, iFace + 2);
-				iCornerIndex[2] = _fbxMesh->GetPolygonVertex(iPoly, iFace + 1);
-
-				vertexIndexList.push_back(iCornerIndex[0]);
-				vertexIndexList.push_back(iCornerIndex[1]);
-				vertexIndexList.push_back(iCornerIndex[2]);
-			}
-		}
-
-		SetIndexList(vertexIndexList);
-	}
-
 	FbxVector2 FBXLayerElementReader::Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex)
 	{
 		FbxVector2 t;
@@ -88,28 +64,150 @@ namespace SSB
 	void FBXMesh_PCNT::Build()
 	{
 		auto transformData = CalculateTransformData(_fbxMesh->GetNode());
-
-		for (int i = 0; i < _fbxMesh->GetLayerCount(); ++i)
 		{
-			? ? ? ;
-			ExtractMeshVertexPosition(transformData.Geomatric);
-			ExtractMeshVertexColor();
-			ExtractMeshVertexNormal(transformData.NormalLocal);
-			ExtractMeshVertexTexture();
-			ExtractMeshVertexIndex();
+			std::vector<Vertex_PCNT> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, 0, vertice);
+
+			VertexRefiner<Vertex_PCNT> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			SetVertexList(refiner.GetVertexList());
+			SetIndexList(refiner.GetIndexList());
+		}
+
+		for (int i = 1; i < _fbxMesh->GetLayerCount(); ++i)
+		{
+			FBXMesh_PCNT* subMesh = new FBXMesh_PCNT;
+
+			std::vector<Vertex_PCNT> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, i, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, i, vertice);
+
+			VertexRefiner<Vertex_PCNT> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			subMesh->SetVertexList(refiner.GetVertexList());
+			subMesh->SetIndexList(refiner.GetIndexList());
+
+			SetAdditionalSubMesh(subMesh);
 		}
 	}
 	void FBXMesh_PCNT::InitialFBXMesh(FbxMesh* fbxMesh)
 	{
 		_fbxMesh = fbxMesh;
 	}
+	void FBXMesh_PCNTs::Build()
+	{
+		auto transformData = CalculateTransformData(_fbxMesh->GetNode());
+		{
+			std::vector<Vertex_PCNTs> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, 0, vertice);
+
+			VertexRefiner<Vertex_PCNTs> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			SetVertexList(refiner.GetVertexList());
+			SetIndexList(refiner.GetIndexList());
+		}
+
+		for (int i = 1; i < _fbxMesh->GetLayerCount(); ++i)
+		{
+			FBXMesh_PCNTs* subMesh = new FBXMesh_PCNTs;
+
+			std::vector<Vertex_PCNTs> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, i, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, i, vertice);
+
+			VertexRefiner<Vertex_PCNTs> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			subMesh->SetVertexList(refiner.GetVertexList());
+			subMesh->SetIndexList(refiner.GetIndexList());
+
+			SetAdditionalSubMesh(subMesh);
+		}
+	}
 	void FBXMesh_PCNTs::InitialFBXMesh(FbxMesh* fbxMesh)
 	{
 		_fbxMesh = fbxMesh;
 	}
+	void FBXMesh_PCNT_Skinning::Build()
+	{
+		auto transformData = CalculateTransformData(_fbxMesh->GetNode());
+		{
+			std::vector<Vertex_PCNT_Skinning> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, 0, vertice);
+
+			VertexRefiner<Vertex_PCNT_Skinning> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			SetVertexList(refiner.GetVertexList());
+			SetIndexList(refiner.GetIndexList());
+		}
+
+		for (int i = 1; i < _fbxMesh->GetLayerCount(); ++i)
+		{
+			FBXMesh_PCNT_Skinning* subMesh = new FBXMesh_PCNT_Skinning;
+
+			std::vector<Vertex_PCNT_Skinning> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, i, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, i, vertice);
+
+			VertexRefiner<Vertex_PCNT_Skinning> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			subMesh->SetVertexList(refiner.GetVertexList());
+			subMesh->SetIndexList(refiner.GetIndexList());
+
+			SetAdditionalSubMesh(subMesh);
+		}
+	}
 	void FBXMesh_PCNT_Skinning::InitialFBXMesh(FbxMesh* fbxMesh)
 	{
 		_fbxMesh = fbxMesh;
+	}
+	void FBXMesh_PCNTs_Skinning::Build()
+	{
+		auto transformData = CalculateTransformData(_fbxMesh->GetNode());
+		{
+			std::vector<Vertex_PCNTs_Skinning> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, 0, vertice);
+
+			VertexRefiner<Vertex_PCNTs_Skinning> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			SetVertexList(refiner.GetVertexList());
+			SetIndexList(refiner.GetIndexList());
+		}
+
+		for (int i = 1; i < _fbxMesh->GetLayerCount(); ++i)
+		{
+			FBXMesh_PCNTs_Skinning* subMesh = new FBXMesh_PCNTs_Skinning;
+
+			std::vector<Vertex_PCNTs_Skinning> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, i, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, i, vertice);
+
+			VertexRefiner<Vertex_PCNTs_Skinning> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			subMesh->SetVertexList(refiner.GetVertexList());
+			subMesh->SetIndexList(refiner.GetIndexList());
+
+			SetAdditionalSubMesh(subMesh);
+		}
 	}
 	void FBXMesh_PCNTs_Skinning::InitialFBXMesh(FbxMesh* fbxMesh)
 	{

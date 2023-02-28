@@ -25,8 +25,8 @@ namespace SSB
 		~Material();
 
 	public:
-		void SetMaterialIndex(MaterialIndex materialIndex);
-		void SetTexture(TextureType textureType, Texture* texture);
+		void Initialize_SetMaterialIndex(MaterialIndex materialIndex);
+		void Initialize_SetTexture(TextureType textureType, Texture* texture);
 
 	public:
 		bool Init() override;

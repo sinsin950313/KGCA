@@ -40,9 +40,11 @@ namespace SSB
 		void SizeCheck();
 
 	public:
-		void RegisterMesh(MeshIndex index, MeshInterface* mesh);
-		void RegisterMaterial(MaterialIndex index, Material* material);
-		//void RegisterAnimation(AnimationName name, Animation* animation);
+		void Initialize_RegisterMaterial(MaterialIndex index, Material* material);
+		void Initialize_RegisterMesh(MeshIndex index, MeshInterface* mesh);
+		//void Initialize_RegisterAnimation(AnimationName name, Animation* animation);
+
+	public:
 		//void SetCurrentAnimation(AnimationName name);
 		void SetVertexShader(VertexShader* shader);
 		void SetPixelShader(PixelShader* shader);

@@ -3,7 +3,7 @@ struct VS_in
 	float4 Position : Position;
 	float4 Color : Color;
 	float4 Normal : Normal;
-	float4 Texture : Texture;
+	float2 Texture : Texture;
 };
 
 cbuffer ViewSpaceTransform : register(b0)

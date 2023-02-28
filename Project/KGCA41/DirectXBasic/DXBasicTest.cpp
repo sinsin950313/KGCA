@@ -25,9 +25,12 @@ namespace SSB
 		_fps = 0.0f;
 
         {
+            MeshInterface* box = new Box;
+            box->Init();
+
             Model* model = new Model;
+            model->Initialize_RegisterMesh(0, box);
             model->Init();
-            model->RegisterMesh(0, new Box);
             model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"BoxMeshShader.hlsl", "VSMain", "vs_5_0"));
             model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"BoxMeshShader.hlsl", "PSMain", "ps_5_0"));
 

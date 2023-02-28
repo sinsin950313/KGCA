@@ -41,11 +41,11 @@ namespace SSB
 		_minVertex = { minX, minY, minZ };
 		_maxVertex = { maxX, maxY, maxZ };
 	}
-	void Model::RegisterMesh(MeshIndex index, MeshInterface* mesh)
+	void Model::Initialize_RegisterMesh(MeshIndex index, MeshInterface* mesh)
 	{
 		_meshes.insert(std::make_pair(index, mesh));
 	}
-	void Model::RegisterMaterial(MaterialIndex index, Material* material)
+	void Model::Initialize_RegisterMaterial(MaterialIndex index, Material* material)
 	{
 		_materials.insert(std::make_pair(index, material));
 	}
@@ -62,7 +62,7 @@ namespace SSB
 		_vs = shader;
 		for (auto mesh : _meshes)
 		{
-			mesh.second->InitialVertexShader(shader);
+			mesh.second->SetVertexShader(shader);
 		}
 	}
 	void Model::SetPixelShader(PixelShader* shader)
@@ -86,7 +86,6 @@ namespace SSB
 
 		for (auto mesh : _meshes)
 		{
-			mesh.second->Init();
 			_meshElementMinMaxVertexList.push_back(mesh.second->GetMaxVertex());
 			_meshElementMinMaxVertexList.push_back(mesh.second->GetMinVertex());
 		}
@@ -116,6 +115,9 @@ namespace SSB
 
 		//_currentAnimation->Render();
 
+		_vs->Render();
+		_ps->Render();
+
 		for (auto material : _materials)
 		{
 			material.second->Render();
@@ -125,9 +127,6 @@ namespace SSB
 		{
 			mesh.second->Render();
 		}
-
-		_vs->Render();
-		_ps->Render();
 
 		return false;
 	}

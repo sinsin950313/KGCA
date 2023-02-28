@@ -132,16 +132,6 @@ namespace SSB
 
 	bool DXObject::Init()
     {
-		if(_model != nullptr)
-		{
-			_model->Init();
-		}
-
-		for (auto child : _childObjectList)
-		{
-			child->Init();
-		}
-
 		CreateObjectTransformBuffer();
 
         return true;

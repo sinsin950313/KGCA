@@ -15,13 +15,17 @@ namespace SSB
 	class MeshInterface : public Common
 	{
 	protected:
+		virtual void InitialVertexShader() = 0;
+		virtual bool CreateVertexLayout() = 0;
+		virtual bool CreateVertexBuffer() = 0;
+		virtual bool CreateIndexBuffer() = 0;
 		virtual void Build() = 0;
 
 	public:
-		virtual void InitialVertexShader(VertexShader* shader) = 0;
-		//virtual void SetVertexList(void* vertexDataBlock, int count) = 0;
-		//virtual void SetIndexList(std::vector<IndexForMeshVertice> indexList) =0;
-		virtual void SetAdditionalSubMesh(MeshInterface* mesh) = 0;
+		virtual void Initialize_AddSubMesh(MeshInterface* mesh) = 0;
+
+	public:
+		virtual void SetVertexShader(VertexShader* shader) = 0;
 
 	public:
 		virtual Vector3 GetMinVertex() = 0;
@@ -50,9 +54,9 @@ namespace SSB
 		virtual ~Mesh();
 
 	private:
-		bool CreateVertexLayout();
-		bool CreateVertexBuffer();
-		bool CreateIndexBuffer();
+		bool CreateVertexLayout() override;
+		bool CreateVertexBuffer() override;
+		bool CreateIndexBuffer() override;
 
 	protected:
 		void SetVertexList(std::vector<VertexType> vertexList);
@@ -62,8 +66,10 @@ namespace SSB
 		virtual void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) = 0;
 
 	public:
-		void SetAdditionalSubMesh(MeshInterface* mesh) override;
-		void InitialVertexShader(VertexShader* shader) override;
+		void Initialize_AddSubMesh(MeshInterface* mesh) override;
+
+	public:
+		void SetVertexShader(VertexShader* shader) override;
 
 	public:
 		Vector3 GetMinVertex() override;
@@ -85,6 +91,7 @@ namespace SSB
 	{
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
+		void InitialVertexShader() override;
 	};
 
 	struct Vertex_PCNT : public Vertex_PC
@@ -96,6 +103,7 @@ namespace SSB
 	{
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
+		void InitialVertexShader() override;
 	};
 
 	static const int kAffectedBoneCount = 4;
@@ -116,6 +124,7 @@ namespace SSB
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
+		void InitialVertexShader() override;
 
 	private:
 		bool CreateBoneSpaceTransformBuffer();
@@ -137,6 +146,7 @@ namespace SSB
 	{
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
+		void InitialVertexShader() override;
 	};
 
 	struct Vertex_PCNTs_Skinning : public Vertex_PCNT
@@ -153,6 +163,7 @@ namespace SSB
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
+		void InitialVertexShader() override;
 
 	private:
 		bool CreateBoneSpaceTransformBuffer();

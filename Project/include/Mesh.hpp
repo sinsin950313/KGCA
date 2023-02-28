@@ -27,6 +27,11 @@ namespace SSB
 		_indexList = indexList;
 	}
 	template<typename VertexType>
+	void Mesh<VertexType>::SetVertexShader(VertexShader* shader)
+	{
+		_vs = shader;
+	}
+	template<typename VertexType>
 	bool Mesh<VertexType>::CreateVertexLayout()
 	{
 		D3D11_INPUT_ELEMENT_DESC* inputElementDesc;
@@ -84,14 +89,9 @@ namespace SSB
 		return true;
 	}
 	template<typename VertexType>
-	inline void Mesh<VertexType>::SetAdditionalSubMesh(MeshInterface* mesh)
+	inline void Mesh<VertexType>::Initialize_AddSubMesh(MeshInterface* mesh)
 	{
 		_subMeshes.push_back(mesh);
-	}
-	template<typename VertexType>
-	void Mesh<VertexType>::SetVertexShader(VertexShader* shader)
-	{
-		_vs = shader;
 	}
 	//template<typename VertexType>
 	//void Mesh<VertexType>::SetPixelShader(PixelShader* shader)
@@ -126,6 +126,7 @@ namespace SSB
 	template<typename VertexType>
 	bool Mesh<VertexType>::Init()
 	{
+		InitialVertexShader();
 		Build();
 		CreateVertexBuffer();
 		CreateIndexBuffer();

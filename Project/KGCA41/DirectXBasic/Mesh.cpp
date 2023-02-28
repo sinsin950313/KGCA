@@ -1,5 +1,6 @@
 #include "Mesh.h"
 #include "Mesh.hpp"
+#include "ShaderManager.h"
 
 namespace SSB
 {
@@ -10,6 +11,11 @@ namespace SSB
 		*desc = new D3D11_INPUT_ELEMENT_DESC[count];
 		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[2] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+	}
+
+	void Mesh_Vertex_PC::InitialVertexShader()
+	{
+		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PC.hlsl", "VS", "vs_5_0"));
 	}
 
 	void Mesh_Vertex_PCNT::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
@@ -23,6 +29,11 @@ namespace SSB
 		(*desc)[3] = { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 
+	void Mesh_Vertex_PCNT::InitialVertexShader()
+	{
+		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
+	}
+
 	void Mesh_Vertex_PCNT_Skinning::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
 		count = 6;
@@ -34,6 +45,11 @@ namespace SSB
 		(*desc)[3] = { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[4] = { "AffectingBoneIndex", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[5] = { "Weight", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+	}
+
+	void Mesh_Vertex_PCNT_Skinning::InitialVertexShader()
+	{
+		//SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT_Skinning.hlsl", "VS", "vs_5_0"));
 	}
 
 	bool Mesh_Vertex_PCNT_Skinning::CreateBoneSpaceTransformBuffer()
@@ -104,6 +120,11 @@ namespace SSB
 		(*desc)[4] = { "MaterialIndex", 0, DXGI_FORMAT_R32_UINT, 0, 76, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 
+	void Mesh_Vertex_PCNTs::InitialVertexShader()
+	{
+		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs.hlsl", "VS", "vs_5_0"));
+	}
+
 	void Mesh_Vertex_PCNTs_Skinning::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
 		count = 7;
@@ -116,6 +137,11 @@ namespace SSB
 		(*desc)[4] = { "AffectingBoneIndex", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[5] = { "Weight", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[6] = { "MaterialIndex", 0, DXGI_FORMAT_R32_UINT, 0, 76, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+	}
+
+	void Mesh_Vertex_PCNTs_Skinning::InitialVertexShader()
+	{
+		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs_Skinning.hlsl", "VS", "vs_5_0"));
 	}
 
 	bool Mesh_Vertex_PCNTs_Skinning::CreateBoneSpaceTransformBuffer()

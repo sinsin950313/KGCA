@@ -16,25 +16,18 @@ namespace SSB
 		delete _textureArray;
 	}
 
-	void Material::SetMaterialIndex(MaterialIndex materialIndex)
+	void Material::Initialize_SetMaterialIndex(MaterialIndex materialIndex)
 	{
 		_materialIndex = materialIndex;
 	}
 
-	void Material::SetTexture(TextureType textureType, Texture* texture)
+	void Material::Initialize_SetTexture(TextureType textureType, Texture* texture)
 	{
 		_textureArray[textureType] = texture;
 	}
 
 	bool Material::Init()
 	{
-		_materialIndex = -1;
-
-		for (int i = 0; i < kTextureTypeCount; ++i)
-		{
-			_textureArray[i] = nullptr;
-		}
-
 		return true;
 	}
 

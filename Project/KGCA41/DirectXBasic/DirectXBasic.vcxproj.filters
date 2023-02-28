@@ -151,5 +151,8 @@
     <FxCompile Include="..\..\Shader\BoxMeshShader.hlsl">
       <Filter>Shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\..\Shader\DefaultVertexShader_PC.hlsl">
+      <Filter>Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

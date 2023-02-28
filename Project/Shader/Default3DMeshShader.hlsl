@@ -43,8 +43,8 @@ SamplerState g_sampleA : register(s0);
 struct PS_input
 {
 	float4 p : SV_POSITION;
-	float4 n : NORMAL;
 	float4 c : COLOR0;
+	float4 n : NORMAL;
 	float2 t : TEXCOORD0;
 };
 

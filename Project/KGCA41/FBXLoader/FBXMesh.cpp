@@ -92,10 +92,10 @@ namespace SSB
 			subMesh->SetVertexList(refiner.GetVertexList());
 			subMesh->SetIndexList(refiner.GetIndexList());
 
-			SetAdditionalSubMesh(subMesh);
+			Initialize_AddSubMesh(subMesh);
 		}
 	}
-	void FBXMesh_PCNT::InitialFBXMesh(FbxMesh* fbxMesh)
+	void FBXMesh_PCNT::Initialize_SetFBXMesh(FbxMesh* fbxMesh)
 	{
 		_fbxMesh = fbxMesh;
 	}
@@ -130,10 +130,10 @@ namespace SSB
 			subMesh->SetVertexList(refiner.GetVertexList());
 			subMesh->SetIndexList(refiner.GetIndexList());
 
-			SetAdditionalSubMesh(subMesh);
+			Initialize_AddSubMesh(subMesh);
 		}
 	}
-	void FBXMesh_PCNTs::InitialFBXMesh(FbxMesh* fbxMesh)
+	void FBXMesh_PCNTs::Initialize_SetFBXMesh(FbxMesh* fbxMesh)
 	{
 		_fbxMesh = fbxMesh;
 	}
@@ -168,10 +168,10 @@ namespace SSB
 			subMesh->SetVertexList(refiner.GetVertexList());
 			subMesh->SetIndexList(refiner.GetIndexList());
 
-			SetAdditionalSubMesh(subMesh);
+			Initialize_AddSubMesh(subMesh);
 		}
 	}
-	void FBXMesh_PCNT_Skinning::InitialFBXMesh(FbxMesh* fbxMesh)
+	void FBXMesh_PCNT_Skinning::Initialize_SetFBXMesh(FbxMesh* fbxMesh)
 	{
 		_fbxMesh = fbxMesh;
 	}
@@ -206,10 +206,10 @@ namespace SSB
 			subMesh->SetVertexList(refiner.GetVertexList());
 			subMesh->SetIndexList(refiner.GetIndexList());
 
-			SetAdditionalSubMesh(subMesh);
+			Initialize_AddSubMesh(subMesh);
 		}
 	}
-	void FBXMesh_PCNTs_Skinning::InitialFBXMesh(FbxMesh* fbxMesh)
+	void FBXMesh_PCNTs_Skinning::Initialize_SetFBXMesh(FbxMesh* fbxMesh)
 	{
 		_fbxMesh = fbxMesh;
 	}

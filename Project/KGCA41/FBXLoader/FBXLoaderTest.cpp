@@ -19,31 +19,35 @@ bool SSB::FBXLoaderTest::Init()
 	{
 		_loader->Init();
 		_loader->SetFileName("box.FBX");
+
 		Model* model = _loader->LoadModel();
-		model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
-		model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
+		model->Init();
+		model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
+		model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "PS", "ps_5_0"));
+
 		DXObject* object = new DXObject;
-		object->SetModel(model);
 		object->Init();
+		object->SetModel(model);
+
 		_objectList.push_back(object);
 	}
 
 	// Multi Material = Multi Texture Test
-	//{
-	//	_loader->Init();
-	//	auto meshData = _loader->LoadMesh("MultiCameras.FBX");
-	//	Model* model = new Model;
-	//	for (auto mesh : meshData)
-	//	{
-	//		model->RegisterMesh(mesh.first, mesh.second);
-	//	}
-	//	model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
-	//	model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
-	//	DXObject* object = new DXObject;
-	//	object->SetModel(model);
-	//	object->Init();
-	//	_objectList.push_back(object);
-	//}
+	{
+		_loader->Init();
+		_loader->SetFileName("MultiCameras.FBX");
+
+		Model* model = _loader->LoadModel();
+		model->Init();
+		model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
+		model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "PS", "ps_5_0"));
+
+		DXObject* object = new DXObject;
+		object->Init();
+		object->SetModel(model);
+
+		_objectList.push_back(object);
+	}
 
 	// Multi Material = Multi Texture Test
 	//{

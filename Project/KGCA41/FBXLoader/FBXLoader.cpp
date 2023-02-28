@@ -93,7 +93,6 @@ namespace SSB
 		for (int i = 0; i < count; ++i)
 		{
 			Material* material = new Material;
-			material->Init();
 
 			FbxSurfaceMaterial* fbxMaterial = _scene->GetMaterial(i);
 
@@ -109,7 +108,8 @@ namespace SSB
 
 				{
 					FbxDouble3 diffuse = lambertMaterial->Diffuse;
-					FbxProperty prop = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
+					//FbxProperty prop = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
+					FbxProperty prop = fbxMaterial->FindProperty(FbxLayerElement::sTextureNames[]);
 					ExtractTexture(&prop, material, kDiffuse);
 					FbxDouble diffuseFactor = lambertMaterial->DiffuseFactor;
 				}
@@ -129,6 +129,7 @@ namespace SSB
 				//FbxDouble3 reflection = phongMaterial->Reflection;
 				//FbxDouble reflectionFactor = phongMaterial->ReflectionFactor;
 			}
+			material->Init();
 
 			_indexToMaterialMap.insert(std::make_pair(i, material));
 		}
@@ -170,11 +171,17 @@ namespace SSB
 
 	void FBXLoader::ExtractTextureFileName(FbxTexture* texture, Material* material, TextureType textureType)
 	{
-		FbxFileTexture* fileTexture = texture->GetSrcObject<FbxFileTexture>(0);
-		std::string fileFullPath = fileTexture->GetFileName();
-		auto splitedPath = SplitPath(mtw(fileFullPath));
-		std::wstring fileName = splitedPath[2] + splitedPath[3];
-		material->SetTexture(textureType, TextureLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
+		for (int i = 0; i < texture->GetSrcObjectCount<FbxFileTexture>(); ++i)
+		{
+			FbxFileTexture* fileTexture = texture->GetSrcObject<FbxFileTexture>(i);
+			if (fileTexture != nullptr)
+			{
+				std::string fileFullPath = fileTexture->GetFileName();
+				auto splitedPath = SplitPath(mtw(fileFullPath));
+				std::wstring fileName = splitedPath[2] + splitedPath[3];
+				material->Initialize_SetTexture(textureType, TextureLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
+			}
+		}
 	}
 
 	void FBXLoader::ParseMesh()
@@ -189,12 +196,12 @@ namespace SSB
 				if (fbxMesh->GetDeformerCount() == 0)
 				{
 					mesh = new FBXMesh_PCNTs;
-					static_cast<FBXMesh_PCNTs*>(mesh)->InitialFBXMesh(fbxMesh);
+					static_cast<FBXMesh_PCNTs*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
 				}
 				else
 				{
 					mesh = new FBXMesh_PCNTs_Skinning;
-					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->InitialFBXMesh(fbxMesh);
+					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
 				}
 			}
 			else
@@ -202,12 +209,12 @@ namespace SSB
 				if (fbxMesh->GetDeformerCount() == 0)
 				{
 					mesh = new FBXMesh_PCNT;
-					static_cast<FBXMesh_PCNT*>(mesh)->InitialFBXMesh(fbxMesh);
+					static_cast<FBXMesh_PCNT*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
 				}
 				else
 				{
 					mesh = new FBXMesh_PCNT_Skinning;
-					static_cast<FBXMesh_PCNT_Skinning*>(mesh)->InitialFBXMesh(fbxMesh);
+					static_cast<FBXMesh_PCNT_Skinning*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
 				}
 			}
 
@@ -237,12 +244,19 @@ namespace SSB
 
 	Model* FBXLoader::LoadModel()
 	{
+		ExtractMaterial();
+
 		ParseMesh();
 
 		Model* ret = new Model;
 		for (auto mesh : _indexToMeshMap)
 		{
-			ret->RegisterMesh(mesh.first, mesh.second);
+			ret->Initialize_RegisterMesh(mesh.first, mesh.second);
+		}
+
+		for (auto material : _indexToMaterialMap)
+		{
+			ret->Initialize_RegisterMaterial(material.first, material.second);
 		}
 
 		return ret;

@@ -13,6 +13,11 @@ cbuffer Camera : register(b0)
 	matrix g_Projection : packoffset(c8);
 };
 
+cbuffer ObjectToWorldTransform : register(b1)
+{
+	matrix World : packoffset(c0);
+}
+
 struct VS_out
 {
 	float4 p : SV_POSITION;
@@ -23,7 +28,7 @@ struct VS_out
 
 VS_out VS(VS_in input)
 {
-	float4 pos = mul(input.Position, g_World);
+	float4 pos = mul(input.Position, World);
 	pos = mul(pos, g_View);
 	pos = mul(pos, g_Projection);
 

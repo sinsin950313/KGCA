@@ -19,7 +19,7 @@ namespace SSB
 		MeshTransformData CalculateTransformData(FbxNode* node);
 
 	public:
-		virtual void InitialFBXMesh(FbxMesh* fbxMesh) = 0;
+		virtual void Initialize_SetFBXMesh(FbxMesh* fbxMesh) = 0;
 	};
 
 	class FBXLayerElementReader : public FBXMeshInterface
@@ -72,7 +72,7 @@ namespace SSB
 		void Build() override;
 
 	public:
-		void InitialFBXMesh(FbxMesh* fbxMesh) override;
+		void Initialize_SetFBXMesh(FbxMesh* fbxMesh) override;
 	};
 
 	class FBXMesh_PCNTs : public Mesh_Vertex_PCNTs, public FBXLayerElementReader
@@ -84,7 +84,7 @@ namespace SSB
 		void Build() override;
 
 	public:
-		void InitialFBXMesh(FbxMesh* fbxMesh) override;
+		void Initialize_SetFBXMesh(FbxMesh* fbxMesh) override;
 	};
 
 	class FBXMesh_PCNT_Skinning : public Mesh_Vertex_PCNT_Skinning, public FBXLayerElementReader
@@ -96,7 +96,7 @@ namespace SSB
 		void Build() override;
 
 	public:
-		void InitialFBXMesh(FbxMesh* fbxMesh) override;
+		void Initialize_SetFBXMesh(FbxMesh* fbxMesh) override;
 	};
 
 	class FBXMesh_PCNTs_Skinning : public Mesh_Vertex_PCNTs_Skinning, public FBXLayerElementReader
@@ -108,6 +108,6 @@ namespace SSB
 		void Build() override;
 
 	public:
-		void InitialFBXMesh(FbxMesh* fbxMesh) override;
+		void Initialize_SetFBXMesh(FbxMesh* fbxMesh) override;
 	};
 }

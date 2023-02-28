@@ -69,31 +69,10 @@ namespace SSB
 	template<typename VertexType>
 	inline void FBXLayerElementReader::VertexRefiner<VertexType>::Refine(FbxMesh* fbxMesh, std::vector<VertexType> vertexList)
 	{
-		int polygonCount = fbxMesh->GetPolygonCount();
-		for (int iPoly = 0; iPoly < polygonCount; ++iPoly)
+		for (auto vertex : vertexList)
 		{
-			int polygonSize = fbxMesh->GetPolygonSize(iPoly);
-			int faceCount = polygonSize - 2;
-			for (int iFace = 0; iFace < faceCount; ++iFace)
-			{
-				{
-					int iCornerIndex = fbxMesh->GetPolygonVertex(iPoly, 0);
-					IndexForMeshVertice index = AddVertex(vertexList[iCornerIndex]);
-					_indexList.push_back(index);
-				}
-
-				{
-					int iCornerIndex = fbxMesh->GetPolygonVertex(iPoly, iFace + 2);
-					IndexForMeshVertice index = AddVertex(vertexList[iCornerIndex]);
-					_indexList.push_back(index);
-				}
-
-				{
-					int iCornerIndex = fbxMesh->GetPolygonVertex(iPoly, iFace + 1);
-					IndexForMeshVertice index = AddVertex(vertexList[iCornerIndex]);
-					_indexList.push_back(index);
-				}
-			}
+			IndexForMeshVertice index = AddVertex(vertex);
+			_indexList.push_back(index);
 		}
 	}
 	template<typename VertexType>

@@ -93,6 +93,7 @@ namespace SSB
 		for (int i = 0; i < count; ++i)
 		{
 			Material* material = new Material;
+			material->Initialize_SetMaterialIndex(i);
 
 			FbxSurfaceMaterial* fbxMaterial = _scene->GetMaterial(i);
 
@@ -108,9 +109,13 @@ namespace SSB
 
 				{
 					FbxDouble3 diffuse = lambertMaterial->Diffuse;
-					//FbxProperty prop = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
-					FbxProperty prop = fbxMaterial->FindProperty(FbxLayerElement::sTextureNames[]);
-					ExtractTexture(&prop, material, kDiffuse);
+					FbxProperty prop = fbxMaterial->FindProperty(FbxSurfaceMaterial::sDiffuse);
+					if (prop.IsValid())
+					{
+						FbxFileTexture* fileTexture = prop.GetSrcObject<FbxFileTexture>();
+						ExtractTextureFileName(fileTexture, material, kDiffuse);
+					}
+					//ExtractTexture(&prop, material, kDiffuse);
 					FbxDouble diffuseFactor = lambertMaterial->DiffuseFactor;
 				}
 
@@ -135,53 +140,61 @@ namespace SSB
 		}
 	}
 
-	void FBXLoader::ExtractTexture(FbxProperty* fbxProperty, Material* material, TextureType textureType)
-	{
-		if (fbxProperty->IsValid())
-		{
-			//int layeredTextureCount = fbxProperty->GetSrcObjectCount<FbxLayeredTexture>();
-			//for (int j = 0; j < layeredTextureCount; ++j)
-			//{
-			//	FbxLayeredTexture* layeredTexture = fbxProperty->GetSrcObject<FbxLayeredTexture>(j);
-			//	if (layeredTexture)
-			//	{
-			//		int layeredTextureCount = layeredTexture->GetSrcObjectCount();
-			//		for (int k = 0; k < layeredTextureCount; ++k)
-			//		{
-			//			FbxTexture* texture = layeredTexture->GetSrcObject<FbxTexture>(k);
-			//			if (texture != nullptr)
-			//			{
-			//				ExtractTextureFileName(texture, textureFileNameSet);
-			//			}
-			//		}
-			//	}
-			//}
+	//void FBXLoader::ExtractTexture(FbxProperty* fbxProperty, Material* material, TextureType textureType)
+	//{
+	//	if (fbxProperty->IsValid())
+	//	{
+	//		//int layeredTextureCount = fbxProperty->GetSrcObjectCount<FbxLayeredTexture>();
+	//		//for (int j = 0; j < layeredTextureCount; ++j)
+	//		//{
+	//		//	FbxLayeredTexture* layeredTexture = fbxProperty->GetSrcObject<FbxLayeredTexture>(j);
+	//		//	if (layeredTexture)
+	//		//	{
+	//		//		int layeredTextureCount = layeredTexture->GetSrcObjectCount();
+	//		//		for (int k = 0; k < layeredTextureCount; ++k)
+	//		//		{
+	//		//			FbxTexture* texture = layeredTexture->GetSrcObject<FbxTexture>(k);
+	//		//			if (texture != nullptr)
+	//		//			{
+	//		//				ExtractTextureFileName(texture, textureFileNameSet);
+	//		//			}
+	//		//		}
+	//		//	}
+	//		//}
 
-			int textureCount = fbxProperty->GetSrcObjectCount<FbxTexture>();
-			for (int j = 0; j < textureCount; ++j)
-			{
-				FbxTexture* texture = fbxProperty->GetSrcObject<FbxTexture>(j);
-				if (texture != nullptr)
-				{
-					ExtractTextureFileName(texture, material, textureType);
-				}
-			}
-		}
-	}
+	//		int textureCount = fbxProperty->GetSrcObjectCount<FbxTexture>();
+	//		for (int j = 0; j < textureCount; ++j)
+	//		{
+	//			FbxTexture* texture = fbxProperty->GetSrcObject<FbxTexture>(j);
+	//			if (texture != nullptr)
+	//			{
+	//				ExtractTextureFileName(texture, material, textureType);
+	//			}
+	//		}
+	//	}
+	//}
 
-	void FBXLoader::ExtractTextureFileName(FbxTexture* texture, Material* material, TextureType textureType)
+	//void FBXLoader::ExtractTextureFileName(FbxTexture* texture, Material* material, TextureType textureType)
+	//{
+	//	for (int i = 0; i < texture->GetSrcObjectCount<FbxFileTexture>(); ++i)
+	//	{
+	//		FbxFileTexture* fileTexture = texture->GetSrcObject<FbxFileTexture>();
+	//		if (fileTexture != nullptr)
+	//		{
+	//			std::string fileFullPath = fileTexture->GetFileName();
+	//			auto splitedPath = SplitPath(mtw(fileFullPath));
+	//			std::wstring fileName = splitedPath[2] + splitedPath[3];
+	//			material->Initialize_SetTexture(textureType, TextureLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
+	//		}
+	//	}
+	//}
+
+	void FBXLoader::ExtractTextureFileName(FbxFileTexture* texture, Material* material, TextureType textureType)
 	{
-		for (int i = 0; i < texture->GetSrcObjectCount<FbxFileTexture>(); ++i)
-		{
-			FbxFileTexture* fileTexture = texture->GetSrcObject<FbxFileTexture>(i);
-			if (fileTexture != nullptr)
-			{
-				std::string fileFullPath = fileTexture->GetFileName();
-				auto splitedPath = SplitPath(mtw(fileFullPath));
-				std::wstring fileName = splitedPath[2] + splitedPath[3];
-				material->Initialize_SetTexture(textureType, TextureLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
-			}
-		}
+		std::string fileFullPath = texture->GetFileName();
+		auto splitedPath = SplitPath(mtw(fileFullPath));
+		std::wstring fileName = splitedPath[2] + splitedPath[3];
+		material->Initialize_SetTexture(textureType, TextureLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
 	}
 
 	void FBXLoader::ParseMesh()
@@ -191,7 +204,8 @@ namespace SSB
 			MeshInterface* mesh = nullptr;
 
 			FbxMesh* fbxMesh = iter.first->GetMesh();
-			if (1 < fbxMesh->GetElementMaterialCount())
+			//if (1 < fbxMesh->GetElementMaterialCount())
+			if (1 < _indexToMaterialMap.size())
 			{
 				if (fbxMesh->GetDeformerCount() == 0)
 				{

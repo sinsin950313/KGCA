@@ -52,8 +52,9 @@ namespace SSB
 		void RegisterMeshNode(FbxNode* node);
 
 		void ExtractMaterial();
-		void ExtractTexture(FbxProperty* fbxProperty, Material* material, TextureType textureType);
-		void ExtractTextureFileName(FbxTexture* texture, Material* material, TextureType textureType);
+		//void ExtractTexture(FbxProperty* fbxProperty, Material* material, TextureType textureType);
+		//void ExtractTextureFileName(FbxTexture* texture, Material* material, TextureType textureType);
+		void ExtractTextureFileName(FbxFileTexture* texture, Material* material, TextureType textureType);
 
 		void ParseMesh();
 		void RegisterMesh(MeshInterface* mesh);

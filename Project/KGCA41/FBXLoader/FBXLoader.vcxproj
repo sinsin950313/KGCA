@@ -145,8 +145,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FBXBone.h" />
     <ClInclude Include="FBXLoader.h" />
     <ClInclude Include="FBXLoaderTest.h" />
+    <ClInclude Include="FBXMaterial.h" />
     <ClInclude Include="FBXMesh.h" />
     <ClInclude Include="FBXMesh.hpp" />
   </ItemGroup>

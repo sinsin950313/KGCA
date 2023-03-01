@@ -6,14 +6,10 @@ namespace SSB
 {
     extern DXWindow* g_dxWindow;
 
-	//const AnimationName kDefaultAnimaionName = "DefaultAnimation";
-	//Animation Model::DefaultAnimation;
+	Animation Model::DefaultAnimation;
 
 	Model::Model()
 	{
-		//_sprites.push_back(SpriteLoader::GetInstance().GetDefaultSprite());
-		//_animations.insert(std::make_pair(kDefaultAnimaionName, &DefaultAnimation));
-		//_currentAnimation = &DefaultAnimation;
 	}
 	Model::~Model()
 	{
@@ -49,14 +45,21 @@ namespace SSB
 	{
 		_materials.insert(std::make_pair(index, material));
 	}
-	//void Model::RegisterAnimation(AnimationName name, Animation* animation)
-	//{
-	//	_animations.insert(std::make_pair(name, animation));
-	//}
-	//void Model::SetCurrentAnimation(AnimationName name)
-	//{
-	//	_currentAnimation = _animations.find(name)->second;
-	//}
+	void Model::Initialize_RegisterAnimation(AnimationName name, Animation* animation)
+	{
+		_animations.insert(std::make_pair(name, animation));
+	}
+	void Model::SetCurrentAnimation(AnimationName name)
+	{
+		if (_animations.find(name) != _animations.end())
+		{
+			_currentAnimation = _animations.find(name)->second;
+		}
+		else
+		{
+			_currentAnimation = &DefaultAnimation;
+		}
+	}
 	void Model::SetVertexShader(VertexShader* shader)
 	{
 		_vs = shader;
@@ -79,10 +82,8 @@ namespace SSB
 	}
 	bool Model::Init()
 	{
-		//for (auto iter : _animations)
-		//{
-		//	iter.second->Init();
-		//}
+		DefaultAnimation.Init();
+		_currentAnimation = &DefaultAnimation;
 
 		for (auto mesh : _meshes)
 		{
@@ -95,7 +96,7 @@ namespace SSB
 	}
 	bool Model::Frame()
 	{
-		//_currentAnimation->Frame();
+		_currentAnimation->Frame();
 
 		for (auto material : _materials)
 		{
@@ -113,7 +114,7 @@ namespace SSB
 	{
 		auto dc = g_dxWindow->GetDeviceContext();
 
-		//_currentAnimation->Render();
+		_currentAnimation->Render();
 
 		_vs->Render();
 		_ps->Render();
@@ -132,22 +133,30 @@ namespace SSB
 	}
 	bool Model::Release()
 	{
-		//_currentAnimation = &DefaultAnimation;
-		//for (auto animation : _animations)
-		//{
-		//	if (animation.second != &DefaultAnimation)
-		//	{
-		//		animation.second->Release();
-		//		delete animation.second;
-		//	}
-		//}
-		//_animations.clear();
+		for (auto material : _materials)
+		{
+			material.second->Release();
+			delete material.second;
+		}
+		_materials.clear();
 
+		_currentAnimation = &DefaultAnimation;
+		for (auto animation : _animations)
+		{
+			if (animation.second != &DefaultAnimation)
+			{
+				animation.second->Release();
+				delete animation.second;
+			}
+		}
+		_animations.clear();
 
 		for (auto mesh : _meshes)
 		{
 			mesh.second->Release();
+			delete mesh.second;
 		}
+		_meshes.clear();
 		_meshElementMinMaxVertexList.clear();
 
 		_vs = nullptr;

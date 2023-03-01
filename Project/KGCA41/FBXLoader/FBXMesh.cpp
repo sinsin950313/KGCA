@@ -1,5 +1,6 @@
 #include "FBXMesh.h"
 #include "FBXMesh.hpp"
+#include "CommonUtility.h"
 
 namespace SSB
 {
@@ -18,6 +19,78 @@ namespace SSB
 		normalLocalMatrix = normalLocalMatrix.Transpose();
 
 		return { geometricMatrix, normalLocalMatrix };
+	}
+
+	MaterialIndex FBXLayerElementReader::GetMaterialIndex(FbxMesh* fbxMesh, int polygonIndex, int layerIndex, std::map<FBXMaterialKey, FBXMaterialData>& fbxMaterialKeyToFbxMaterialDataMap)
+	{
+		FbxLayer* layer = fbxMesh->GetLayer(layerIndex);
+		FbxLayerElementMaterial* materialSet = layer->GetMaterials();
+		int subMaterialIndex = GetSubMaterialIndex(polygonIndex, materialSet);
+
+		MaterialIndex ret = -1;
+		FbxSurfaceMaterial* surface = fbxMesh->GetNode()->GetMaterial(subMaterialIndex);
+		if (surface)
+		{
+			auto prop = surface->FindProperty(FbxSurfaceMaterial::sDiffuse);
+			if (prop.IsValid())
+			{
+				const FbxFileTexture* tex = prop.GetSrcObject<FbxFileTexture>(layerIndex);
+				if (tex)
+				{
+					auto filePath = tex->GetFileName();
+					auto splitedPath = SplitPath(mtw(filePath));
+					std::wstring fileName = splitedPath[2] + splitedPath[3];
+					ret = fbxMaterialKeyToFbxMaterialDataMap.find(wtm(fileName))->second.Index;
+				}
+			}
+		}
+
+		assert(ret != -1);
+
+		return ret;
+	}
+
+	int FBXLayerElementReader::GetSubMaterialIndex(int iPoly, FbxLayerElementMaterial* pMaterialSetList)
+	{
+		int iSubMtrl = 0;
+		if (pMaterialSetList != nullptr)
+		{
+			switch (pMaterialSetList->GetMappingMode())
+			{
+			case FbxLayerElement::eByPolygon:
+			{
+				switch (pMaterialSetList->GetReferenceMode())
+				{
+				case FbxLayerElement::eIndex:
+				{
+					iSubMtrl = iPoly;
+				}break;
+				case FbxLayerElement::eIndexToDirect:
+				{
+					iSubMtrl = pMaterialSetList->GetIndexArray().GetAt(iPoly);
+				}break;
+				}
+			}
+			default:
+			{
+				break;
+			}
+			}
+		}
+		return iSubMtrl;
+	}
+
+	HMatrix44 FBXLayerElementReader::Convert(FbxAMatrix matrix)
+	{
+		HMatrix44 ret
+		{
+			(float)matrix.Get(0, 0), (float)matrix.Get(0, 2), (float)matrix.Get(0, 1), 0,
+			(float)matrix.Get(2, 0), (float)matrix.Get(2, 2), (float)matrix.Get(2, 1), 0,
+			(float)matrix.Get(1, 0), (float)matrix.Get(1, 2), (float)matrix.Get(1, 1), 0,
+			(float)matrix.Get(3, 0), (float)matrix.Get(3, 2), (float)matrix.Get(3, 1), 1,
+		};
+
+		return ret;
 	}
 
 	FbxVector2 FBXLayerElementReader::Read(FbxLayerElementUV* element, int pointIndex, int polygonIndex)
@@ -107,7 +180,7 @@ namespace SSB
 			ExtractMeshVertexPosition(_fbxMesh, vertice);
 			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
-			ExtractMeshVertexTextureUV(_fbxMesh, 0, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, 0, _fbxMaterialKeyToFbxMaterialMap, vertice);
 
 			VertexRefiner<Vertex_PCNTs> refiner;
 			refiner.Refine(_fbxMesh, vertice);
@@ -123,7 +196,7 @@ namespace SSB
 			ExtractMeshVertexPosition(_fbxMesh, vertice);
 			ExtractMeshVertexColor(_fbxMesh, i, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
-			ExtractMeshVertexTextureUV(_fbxMesh, i, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, i, _fbxMaterialKeyToFbxMaterialMap, vertice);
 
 			VertexRefiner<Vertex_PCNTs> refiner;
 			refiner.Refine(_fbxMesh, vertice);
@@ -137,6 +210,10 @@ namespace SSB
 	{
 		_fbxMesh = fbxMesh;
 	}
+	void FBXMesh_PCNTs::Initialize_SetMaterialData(std::map<FBXMaterialKey, FBXMaterialData> fbxMaterialKeyToFbxMaterialMap)
+	{
+		_fbxMaterialKeyToFbxMaterialMap = fbxMaterialKeyToFbxMaterialMap;
+	}
 	void FBXMesh_PCNT_Skinning::Build()
 	{
 		auto transformData = CalculateTransformData(_fbxMesh->GetNode());
@@ -146,6 +223,7 @@ namespace SSB
 			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
 			ExtractMeshVertexTextureUV(_fbxMesh, 0, vertice);
+			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice);
 
 			VertexRefiner<Vertex_PCNT_Skinning> refiner;
 			refiner.Refine(_fbxMesh, vertice);
@@ -162,6 +240,7 @@ namespace SSB
 			ExtractMeshVertexColor(_fbxMesh, i, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
 			ExtractMeshVertexTextureUV(_fbxMesh, i, vertice);
+			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice);
 
 			VertexRefiner<Vertex_PCNT_Skinning> refiner;
 			refiner.Refine(_fbxMesh, vertice);
@@ -175,6 +254,10 @@ namespace SSB
 	{
 		_fbxMesh = fbxMesh;
 	}
+	void FBXMesh_PCNT_Skinning::Initialize_SetBoneData(std::map<FBXBoneKey, FBXBoneData>& fbxBoneKeyToFbxBoneDataMap)
+	{
+		fbxBoneKeyToFbxBoneDataMap = fbxBoneKeyToFbxBoneDataMap;
+	}
 	void FBXMesh_PCNTs_Skinning::Build()
 	{
 		auto transformData = CalculateTransformData(_fbxMesh->GetNode());
@@ -183,7 +266,8 @@ namespace SSB
 			ExtractMeshVertexPosition(_fbxMesh, vertice);
 			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
-			ExtractMeshVertexTextureUV(_fbxMesh, 0, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, 0, _fbxMaterialKeyToFbxMaterialMap, vertice);
+			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice);
 
 			VertexRefiner<Vertex_PCNTs_Skinning> refiner;
 			refiner.Refine(_fbxMesh, vertice);
@@ -199,7 +283,8 @@ namespace SSB
 			ExtractMeshVertexPosition(_fbxMesh, vertice);
 			ExtractMeshVertexColor(_fbxMesh, i, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
-			ExtractMeshVertexTextureUV(_fbxMesh, i, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, i, _fbxMaterialKeyToFbxMaterialMap, vertice);
+			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice);
 
 			VertexRefiner<Vertex_PCNTs_Skinning> refiner;
 			refiner.Refine(_fbxMesh, vertice);
@@ -212,5 +297,13 @@ namespace SSB
 	void FBXMesh_PCNTs_Skinning::Initialize_SetFBXMesh(FbxMesh* fbxMesh)
 	{
 		_fbxMesh = fbxMesh;
+	}
+	void FBXMesh_PCNTs_Skinning::Initialize_SetMaterialData(std::map<FBXMaterialKey, FBXMaterialData> fbxMaterialKeyToFbxMaterialMap)
+	{
+		_fbxMaterialKeyToFbxMaterialMap = fbxMaterialKeyToFbxMaterialMap;
+	}
+	void FBXMesh_PCNTs_Skinning::Initialize_SetBoneData(std::map<FBXBoneKey, FBXBoneData>& fbxBoneKeyToFbxBoneDataMap)
+	{
+		_fbxBoneKeyToFbxBoneDataMap = fbxBoneKeyToFbxBoneDataMap;
 	}
 }

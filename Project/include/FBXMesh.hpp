@@ -198,7 +198,7 @@ namespace SSB
 	}
 
 	template<typename VertexType>
-	void FBXLayerElementReader::ExtractMeshVertexTextureUV(FbxMesh* fbxMesh, int layerCount, std::vector<VertexType>& vertexList)
+	inline void FBXLayerElementReader::ExtractMeshVertexTextureUV(FbxMesh* fbxMesh, int layerCount, std::vector<VertexType>& vertexList)
 	{
 		auto vertice = fbxMesh->GetControlPoints();
 		int polygonCount = fbxMesh->GetPolygonCount();
@@ -238,40 +238,90 @@ namespace SSB
 			}
 		}
 	}
+
 	template<typename VertexType>
-	inline void FBXLayerElementReader::ExtractMeshVertexSkinningData(FbxMesh* fbxMesh, std::vector<VertexType>& vertexList)
+	void FBXLayerElementReader::ExtractMeshVertexTextureUV(FbxMesh* fbxMesh, int layerCount, std::map<FBXMaterialKey, FBXMaterialData>& indexToMaterialMap, std::vector<VertexType>& vertexList)
 	{
-		//int deformerCount = fbxMesh->GetDeformerCount(FbxDeformer::eSkin);
-		//for (int iDeformer = 0; iDeformer < deformerCount; ++iDeformer)
-		//{
-		//	FbxDeformer* deformer = fbxMesh->GetDeformer(iDeformer, FbxDeformer::eSkin);
-		//	FbxSkin* skin = (FbxSkin*)deformer;
-		//	int clusterCount = skin->GetClusterCount();
-		//	for (int iCluster = 0; iCluster < clusterCount; ++iCluster)
-		//	{
-		//		FbxCluster* cluster = skin->GetCluster(iCluster);
-		//		int boneIndex = _skeletonDataMap.find(cluster->GetLink())->second;
+		auto vertice = fbxMesh->GetControlPoints();
+		int polygonCount = fbxMesh->GetPolygonCount();
 
-		//		FbxAMatrix linkMatrix;
-		//		cluster->GetTransformLinkMatrix(linkMatrix);
+		int vertexCount = 0;
+		auto UVs = fbxMesh->GetLayer(layerCount)->GetUVs();
+		for (int iPoly = 0; iPoly < polygonCount; ++iPoly)
+		{
+			int polygonSize = fbxMesh->GetPolygonSize(iPoly);
+			int faceCount = polygonSize - 2;
+			for (int iFace = 0; iFace < faceCount; ++iFace)
+			{
+				int polygonVertexIndex[3];
+				polygonVertexIndex[0] = fbxMesh->GetPolygonVertex(iPoly, 0);
+				polygonVertexIndex[1] = fbxMesh->GetPolygonVertex(iPoly, iFace + 2);
+				polygonVertexIndex[2] = fbxMesh->GetPolygonVertex(iPoly, iFace + 1); 
 
-		//		FbxAMatrix adjustMatrix;
-		//		cluster->GetTransformMatrix(adjustMatrix);
+				int iUVIndex[3];
+				iUVIndex[0] = fbxMesh->GetTextureUVIndex(iPoly, 0);
+				iUVIndex[1] = fbxMesh->GetTextureUVIndex(iPoly, iFace + 2);
+				iUVIndex[2] = fbxMesh->GetTextureUVIndex(iPoly, iFace + 1);
 
-		//		FbxAMatrix fbxBoneSpaceMatrix = linkMatrix.Inverse() * adjustMatrix;
-		//		HMatrix44 toBoneSpaceMatrix = Convert(fbxBoneSpaceMatrix);
-		//		object->SetBoneSpaceTransformMatrix(boneIndex, toBoneSpaceMatrix);
+				for (int iIndex = 0; iIndex < 3; ++iIndex)
+				{
+					int vertexIndex = polygonVertexIndex[iIndex];
+					FbxVector2 texture{ 0, 0 };
+					if (UVs)
+					{
+						texture = Read(UVs, vertexIndex, iUVIndex[iIndex]);
+					}
 
-		//		int controlPointCount = cluster->GetControlPointIndicesCount();
-		//		int* controlPointIndice = cluster->GetControlPointIndices();
-		//		double* controlPointWeights = cluster->GetControlPointWeights();
-		//		for (int iControlPoint = 0; iControlPoint < controlPointCount; ++iControlPoint)
-		//		{
-		//			int vertexIndex = controlPointIndice[iControlPoint];
-		//			float weight = controlPointWeights[iControlPoint];
-		//			object->LinkMeshWithBone(vertexIndex, boneIndex, weight);
-		//		}
-		//	}
-		//}
+					VertexType vertex;
+					vertex.TextureUV = { (float)texture.mData[0], 1 - (float)texture.mData[1] };
+					vertex.MaterialIndex = GetMaterialIndex(fbxMesh, iPoly, layerCount, indexToMaterialMap);
+					vertexList[vertexCount].TextureUV = vertex.TextureUV;
+					++vertexCount;
+				}
+			}
+		}
+	}
+	template<typename VertexType>
+	inline void FBXLayerElementReader::ExtractMeshVertexSkinningData(FbxMesh* fbxMesh, std::map<FBXBoneKey, FBXBoneData>& fbxBoneKeyToFbxBoneData, std::vector<VertexType>& vertexList)
+	{
+		int deformerCount = fbxMesh->GetDeformerCount(FbxDeformer::eSkin);
+		for (int iDeformer = 0; iDeformer < deformerCount; ++iDeformer)
+		{
+			FbxDeformer* deformer = fbxMesh->GetDeformer(iDeformer, FbxDeformer::eSkin);
+			FbxSkin* skin = (FbxSkin*)deformer;
+			int clusterCount = skin->GetClusterCount();
+			for (int iCluster = 0; iCluster < clusterCount; ++iCluster)
+			{
+				FbxCluster* cluster = skin->GetCluster(iCluster);
+				int boneIndex = fbxBoneKeyToFbxBoneData.find(cluster->GetLink())->second.FBXBoneIndex;
+
+				int controlPointCount = cluster->GetControlPointIndicesCount();
+				int* controlPointIndice = cluster->GetControlPointIndices();
+				double* controlPointWeights = cluster->GetControlPointWeights();
+				for (int iControlPoint = 0; iControlPoint < controlPointCount; ++iControlPoint)
+				{
+					int vertexIndex = controlPointIndice[iControlPoint];
+					float weight = controlPointWeights[iControlPoint];
+
+					VertexType& data = vertexList[vertexIndex];
+					for (int i = 0; i < 4; ++i)
+					{
+						if (data.Weight[i] < weight)
+						{
+							for (int j = 3; i < j; --j)
+							{
+								data.AffectedBoneIndex[j] = data.AffectedBoneIndex[j - 1];
+								data.Weight[j] = data.Weight[j - 1];
+							}
+
+							data.AffectedBoneIndex[i] = boneIndex;
+							data.Weight[i] = weight;
+
+							break;
+						}
+					}
+				}
+			}
+		}
 	}
 }

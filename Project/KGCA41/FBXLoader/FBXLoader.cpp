@@ -75,7 +75,9 @@ namespace SSB
 	{
 		if (_skeletonNodeToSkeletonIndexMap.find(node) == _skeletonNodeToSkeletonIndexMap.end())
 		{
-			_skeletonNodeToSkeletonIndexMap.insert(std::make_pair(node, _skeletonNodeToSkeletonIndexMap.size()));
+			int index = _skeletonNodeToSkeletonIndexMap.size();
+			_skeletonNodeToSkeletonIndexMap.insert(std::make_pair(node, index));
+			_fbxBoneKeyToFbxBoneMap.insert(std::make_pair(node, FBXBoneData{ index }));
 		}
 	}
 
@@ -92,6 +94,8 @@ namespace SSB
 		int count = _scene->GetMaterialCount();
 		for (int i = 0; i < count; ++i)
 		{
+			FBXMaterialKey key;
+
 			Material* material = new Material;
 			material->Initialize_SetMaterialIndex(i);
 
@@ -113,7 +117,9 @@ namespace SSB
 					if (prop.IsValid())
 					{
 						FbxFileTexture* fileTexture = prop.GetSrcObject<FbxFileTexture>();
-						ExtractTextureFileName(fileTexture, material, kDiffuse);
+						std::wstring fileName = ExtractTextureFileName(fileTexture, material);
+						material->Initialize_SetTexture(kDiffuse, TextureLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
+						key = wtm(fileName);
 					}
 					//ExtractTexture(&prop, material, kDiffuse);
 					FbxDouble diffuseFactor = lambertMaterial->DiffuseFactor;
@@ -136,7 +142,7 @@ namespace SSB
 			}
 			material->Init();
 
-			_indexToMaterialMap.insert(std::make_pair(i, material));
+			_fbxMaterialKeyToFbxMaterialMap.insert(std::make_pair(key, FBXMaterialData{i, material}));
 		}
 	}
 
@@ -189,12 +195,12 @@ namespace SSB
 	//	}
 	//}
 
-	void FBXLoader::ExtractTextureFileName(FbxFileTexture* texture, Material* material, TextureType textureType)
+	std::wstring FBXLoader::ExtractTextureFileName(FbxFileTexture* texture, Material* material)
 	{
 		std::string fileFullPath = texture->GetFileName();
 		auto splitedPath = SplitPath(mtw(fileFullPath));
 		std::wstring fileName = splitedPath[2] + splitedPath[3];
-		material->Initialize_SetTexture(textureType, TextureLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
+		return fileName;
 	}
 
 	void FBXLoader::ParseMesh()
@@ -205,30 +211,45 @@ namespace SSB
 
 			FbxMesh* fbxMesh = iter.first->GetMesh();
 			//if (1 < fbxMesh->GetElementMaterialCount())
-			if (1 < _indexToMaterialMap.size())
+			if (1 < _fbxMaterialKeyToFbxMaterialMap.size())
 			{
-				if (fbxMesh->GetDeformerCount() == 0)
+				if (fbxMesh->GetSrcObject<FbxAnimStack>() == nullptr)
 				{
 					mesh = new FBXMesh_PCNTs;
 					static_cast<FBXMesh_PCNTs*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+					static_cast<FBXMesh_PCNTs*>(mesh)->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
+				}
+				else if (fbxMesh->GetDeformerCount() == 0)
+				{
+					mesh = new FBXMesh_PCNTs_Animatable;
+					static_cast<FBXMesh_PCNTs_Animatable*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+					static_cast<FBXMesh_PCNTs_Animatable*>(mesh)->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
 				}
 				else
 				{
 					mesh = new FBXMesh_PCNTs_Skinning;
 					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
+					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetBoneData(_fbxBoneKeyToFbxBoneMap);
 				}
 			}
 			else
 			{
-				if (fbxMesh->GetDeformerCount() == 0)
+				if (fbxMesh->GetSrcObject<FbxAnimStack>() == nullptr)
 				{
 					mesh = new FBXMesh_PCNT;
 					static_cast<FBXMesh_PCNT*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+				}
+				if (fbxMesh->GetDeformerCount() == 0)
+				{
+					mesh = new FBXMesh_PCNT_Animatable;
+					static_cast<FBXMesh_PCNT_Animatable*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
 				}
 				else
 				{
 					mesh = new FBXMesh_PCNT_Skinning;
 					static_cast<FBXMesh_PCNT_Skinning*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+					static_cast<FBXMesh_PCNT_Skinning*>(mesh)->Initialize_SetBoneData(_fbxBoneKeyToFbxBoneMap);
 				}
 			}
 
@@ -243,6 +264,79 @@ namespace SSB
 		_indexToMeshMap.insert(std::make_pair(_indexToMeshMap.size(), mesh));
 	}
 
+	void FBXLoader::ParseAnimation()
+	{
+		int animStackCount = _scene->GetSrcObjectCount<FbxAnimStack>();
+		for(int i = 0; i < animStackCount; ++i)
+		{
+			FbxAnimStack* animStack = _scene->GetSrcObject<FbxAnimStack>(i);
+			std::string animationName(animStack->GetName());
+
+			FbxString fbxStr(animStack->GetName());
+			FbxTakeInfo* info = _scene->GetTakeInfo(fbxStr);
+
+			FbxTimeSpan timeSpan = info->mLocalTimeSpan;
+			FbxTime startTime = timeSpan.GetStart();
+			FbxTime endTime = timeSpan.GetStop();
+			FbxTime duration = timeSpan.GetDirection();
+
+			FbxLongLong startFrame = startTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
+			FbxLongLong endFrame = endTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
+			FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
+
+			int animationUnitCount = 0;
+			std::vector<AnimationFrameInfo> data;
+			for (FbxLongLong t = startFrame; t <= endFrame; ++t)
+			{
+				FbxTime time;
+				time.SetFrame(t, timeMode);
+
+				std::map<FbxNode*, int>* dataMap;
+				if ()
+				{
+					dataMap = &_meshNodeToMeshIndexMap;
+				}
+				else
+				{
+					dataMap = &_skeletonNodeToSkeletonIndexMap;
+				}
+				animationUnitCount = dataMap->size();
+
+				for (auto node : *dataMap)
+				{
+					AnimationFrameInfo actionFrameInfo;
+
+					AnimationUnitInfo unitInfo;
+					unitInfo.Matrix = Convert(node.first->EvaluateGlobalTransform(time));
+					Decompose(unitInfo.Matrix, unitInfo.Scale, unitInfo.Rotate, unitInfo.Translate);
+
+					actionFrameInfo.AnimationUnit[node.second] = unitInfo;
+				}
+			}
+			Animation* animation = new Animation;
+
+			animation->Initialize_SetAnimationFrameData(data);
+			animation->Initialize_SetAnimationUnitMaximumCount(animationUnitCount);
+			animation->Initialize_SetFrameInterval(startFrame, endFrame);
+			animation->Init();
+
+			_animations.insert(std::make_pair(animationName, animation));
+		}
+	}
+
+	HMatrix44 FBXLoader::Convert(FbxAMatrix matrix)
+	{
+		HMatrix44 ret
+		{
+			(float)matrix.Get(0, 0), (float)matrix.Get(0, 2), (float)matrix.Get(0, 1), 0,
+			(float)matrix.Get(2, 0), (float)matrix.Get(2, 2), (float)matrix.Get(2, 1), 0,
+			(float)matrix.Get(1, 0), (float)matrix.Get(1, 2), (float)matrix.Get(1, 1), 0,
+			(float)matrix.Get(3, 0), (float)matrix.Get(3, 2), (float)matrix.Get(3, 1), 1,
+		};
+
+		return ret;
+	}
+
 	void FBXLoader::SetFileName(std::string fileName)
 	{
 		PreLoad(fileName);
@@ -253,33 +347,45 @@ namespace SSB
 	{
 		ExtractMaterial();
 
-		return _indexToMaterialMap;
-	}
-
-	Model* FBXLoader::LoadModel()
-	{
-		ExtractMaterial();
-
-		ParseMesh();
-
-		Model* ret = new Model;
-		for (auto mesh : _indexToMeshMap)
+		std::map<MaterialIndex, Material*> ret;
+		for (auto materialData : _fbxMaterialKeyToFbxMaterialMap)
 		{
-			ret->Initialize_RegisterMesh(mesh.first, mesh.second);
-		}
-
-		for (auto material : _indexToMaterialMap)
-		{
-			ret->Initialize_RegisterMaterial(material.first, material.second);
+			ret.insert(std::make_pair(materialData.second.Index, materialData.second.MeshMaterial));
 		}
 
 		return ret;
 	}
 
+	Model* FBXLoader::LoadModel()
+	{
+		Model* ret = new Model;
+		auto materialMap = LoadMaterial();
+		for (auto material : materialMap)
+		{
+			ret->Initialize_RegisterMaterial(material.first, material.second);
+		}
+
+		ParseMesh();
+
+		for (auto mesh : _indexToMeshMap)
+		{
+			ret->Initialize_RegisterMesh(mesh.first, mesh.second);
+		}
+
+		return ret;
+	}
+
+	std::map<std::string, Animation*> FBXLoader::LoadAnimation()
+	{
+		ParseAnimation();
+
+		return _animations;
+	}
+
 	bool SSB::FBXLoader::Init()
 	{
-		//_frameSpeed = 30.0f;
-		//_tickPerFrame = 160;
+		_frameSpeed = 30.0f;
+		_tickPerFrame = 160;
 
 		_root = nullptr;
 		_skeletonNodeToSkeletonIndexMap.clear();

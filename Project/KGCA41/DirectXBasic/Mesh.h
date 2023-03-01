@@ -106,6 +106,17 @@ namespace SSB
 		void InitialVertexShader() override;
 	};
 
+	struct Vertex_PCNT_Animatable : public Vertex_PCNT
+	{
+		int MeshIndex;
+	};
+	class Mesh_Vertex_PCNT_Animatable : public Mesh<Vertex_PCNT_Animatable>
+	{
+	private:
+		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
+		void InitialVertexShader() override;
+	};
+
 	static const int kAffectedBoneCount = 4;
 	struct Vertex_PCNT_Skinning : public Vertex_PCNT
 	{
@@ -143,6 +154,17 @@ namespace SSB
 		unsigned int MaterialIndex;
 	};
 	class Mesh_Vertex_PCNTs : public Mesh<Vertex_PCNTs>
+	{
+	private:
+		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
+		void InitialVertexShader() override;
+	};
+
+	struct Vertex_PCNTs_Animatable : public Vertex_PCNTs
+	{
+		int MeshIndex;
+	};
+	class Mesh_Vertex_PCNTs_Animatable : public Mesh<Vertex_PCNTs_Animatable>
 	{
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;

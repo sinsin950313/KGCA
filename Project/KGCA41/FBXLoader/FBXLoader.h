@@ -6,6 +6,8 @@
 #include "Model.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "FBXMaterial.h"
+#include "FBXBone.h"
 
 namespace SSB
 {
@@ -33,13 +35,14 @@ namespace SSB
 		std::map<FbxNode*, int> _skeletonNodeToSkeletonIndexMap;
 		std::map<FbxNode*, int> _meshNodeToMeshIndexMap;
 
-		std::map<MaterialIndex, Material*> _indexToMaterialMap;
+		std::map<FBXBoneKey, FBXBoneData> _fbxBoneKeyToFbxBoneMap;
+		std::map<FBXMaterialKey, FBXMaterialData> _fbxMaterialKeyToFbxMaterialMap;
 
 		std::map<MeshIndex, MeshInterface*> _indexToMeshMap;
 
-		//float _frameSpeed = 30.0f;
-		//float _tickPerFrame = 160;
-		//AnimationFrameInfo _animationInfo;
+		float _frameSpeed = 30.0f;
+		float _tickPerFrame = 160;
+		std::map<std::string, Animation*> _animations;
 
 	public:
 		FBXLoader();
@@ -54,18 +57,19 @@ namespace SSB
 		void ExtractMaterial();
 		//void ExtractTexture(FbxProperty* fbxProperty, Material* material, TextureType textureType);
 		//void ExtractTextureFileName(FbxTexture* texture, Material* material, TextureType textureType);
-		void ExtractTextureFileName(FbxFileTexture* texture, Material* material, TextureType textureType);
+		std::wstring ExtractTextureFileName(FbxFileTexture* texture, Material* material);
 
 		void ParseMesh();
 		void RegisterMesh(MeshInterface* mesh);
 
-		//void ParseAnimation();
+		void ParseAnimation();
+		HMatrix44 Convert(FbxAMatrix matrix);
 
 	public:
 		void SetFileName(std::string fileName);
 		std::map<MaterialIndex, Material*> LoadMaterial();
 		Model* LoadModel();
-		//Animation* LoadAnimation();
+		std::map<std::string, Animation*> LoadAnimation();
 
 	public:
 		bool Init() override;

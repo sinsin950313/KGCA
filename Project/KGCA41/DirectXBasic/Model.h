@@ -10,13 +10,12 @@
 
 namespace SSB
 {
-	//typedef std::string AnimationName;
-	//extern const AnimationName kDefaultAnimaionName;
+	typedef std::string AnimationName;
 
 	class Model : public Common
 	{
-	//private:
-	//	static Animation DefaultAnimation;
+	private:
+		static Animation DefaultAnimation;
 
 	private:
 		std::vector<Vector3> _meshElementMinMaxVertexList;
@@ -26,8 +25,8 @@ namespace SSB
 		std::map<MaterialIndex, Material*> _materials;
 		std::map<MeshIndex, MeshInterface*> _meshes;
 
-		//std::map<AnimationName, Animation*> _animations;
-		//Animation* _currentAnimation;
+		std::map<AnimationName, Animation*> _animations;
+		Animation* _currentAnimation;
 
 		VertexShader* _vs;
 		PixelShader* _ps;
@@ -42,10 +41,10 @@ namespace SSB
 	public:
 		void Initialize_RegisterMaterial(MaterialIndex index, Material* material);
 		void Initialize_RegisterMesh(MeshIndex index, MeshInterface* mesh);
-		//void Initialize_RegisterAnimation(AnimationName name, Animation* animation);
+		void Initialize_RegisterAnimation(AnimationName name, Animation* animation);
 
 	public:
-		//void SetCurrentAnimation(AnimationName name);
+		void SetCurrentAnimation(AnimationName name);
 		void SetVertexShader(VertexShader* shader);
 		void SetPixelShader(PixelShader* shader);
 

@@ -223,12 +223,15 @@ namespace SSB
 			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
 			ExtractMeshVertexTextureUV(_fbxMesh, 0, vertice);
-			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice);
+
+			MeshToBoneSpaceTransformData transformData;
+			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
 
 			VertexRefiner<Vertex_PCNT_Skinning> refiner;
 			refiner.Refine(_fbxMesh, vertice);
 			SetVertexList(refiner.GetVertexList());
 			SetIndexList(refiner.GetIndexList());
+			SetMeshData(transformData);
 		}
 
 		for (int i = 1; i < _fbxMesh->GetLayerCount(); ++i)
@@ -240,12 +243,15 @@ namespace SSB
 			ExtractMeshVertexColor(_fbxMesh, i, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
 			ExtractMeshVertexTextureUV(_fbxMesh, i, vertice);
-			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice);
+
+			MeshToBoneSpaceTransformData transformData;
+			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
 
 			VertexRefiner<Vertex_PCNT_Skinning> refiner;
 			refiner.Refine(_fbxMesh, vertice);
 			subMesh->SetVertexList(refiner.GetVertexList());
 			subMesh->SetIndexList(refiner.GetIndexList());
+			SetMeshData(transformData);
 
 			Initialize_AddSubMesh(subMesh);
 		}
@@ -267,12 +273,15 @@ namespace SSB
 			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
 			ExtractMeshVertexTextureUV(_fbxMesh, 0, _fbxMaterialKeyToFbxMaterialMap, vertice);
-			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice);
+
+			MeshToBoneSpaceTransformData transformData;
+			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
 
 			VertexRefiner<Vertex_PCNTs_Skinning> refiner;
 			refiner.Refine(_fbxMesh, vertice);
 			SetVertexList(refiner.GetVertexList());
 			SetIndexList(refiner.GetIndexList());
+			SetMeshData(transformData);
 		}
 
 		for (int i = 1; i < _fbxMesh->GetLayerCount(); ++i)
@@ -284,12 +293,15 @@ namespace SSB
 			ExtractMeshVertexColor(_fbxMesh, i, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
 			ExtractMeshVertexTextureUV(_fbxMesh, i, _fbxMaterialKeyToFbxMaterialMap, vertice);
-			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice);
+
+			MeshToBoneSpaceTransformData transformData;
+			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
 
 			VertexRefiner<Vertex_PCNTs_Skinning> refiner;
 			refiner.Refine(_fbxMesh, vertice);
 			subMesh->SetVertexList(refiner.GetVertexList());
 			subMesh->SetIndexList(refiner.GetIndexList());
+			SetMeshData(transformData);
 
 			Initialize_AddSubMesh(subMesh);
 		}
@@ -305,5 +317,83 @@ namespace SSB
 	void FBXMesh_PCNTs_Skinning::Initialize_SetBoneData(std::map<FBXBoneKey, FBXBoneData>& fbxBoneKeyToFbxBoneDataMap)
 	{
 		_fbxBoneKeyToFbxBoneDataMap = fbxBoneKeyToFbxBoneDataMap;
+	}
+	void FBXMesh_PCNT_Animatable::Build()
+	{
+		auto transformData = CalculateTransformData(_fbxMesh->GetNode());
+		{
+			std::vector<Vertex_PCNT> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
+
+			VertexRefiner<Vertex_PCNT> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			SetVertexList(refiner.GetVertexList());
+			SetIndexList(refiner.GetIndexList());
+		}
+
+		for (int i = 1; i < _fbxMesh->GetLayerCount(); ++i)
+		{
+			FBXMesh_PCNT_Animatable* subMesh = new FBXMesh_PCNT_Animatable;
+
+			std::vector<Vertex_PCNT> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, i, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
+
+			VertexRefiner<Vertex_PCNT> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			subMesh->SetVertexList(refiner.GetVertexList());
+			subMesh->SetIndexList(refiner.GetIndexList());
+
+			Initialize_AddSubMesh(subMesh);
+		}
+	}
+	void FBXMesh_PCNT_Animatable::Initialize_SetFBXMesh(FbxMesh* fbxMesh)
+	{
+		_fbxMesh = fbxMesh;
+	}
+	void FBXMesh_PCNTs_Animatable::Build()
+	{
+		auto transformData = CalculateTransformData(_fbxMesh->GetNode());
+		{
+			std::vector<Vertex_PCNTs> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, 0, _fbxMaterialKeyToFbxMaterialMap, vertice);
+
+			VertexRefiner<Vertex_PCNTs> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			SetVertexList(refiner.GetVertexList());
+			SetIndexList(refiner.GetIndexList());
+		}
+
+		for (int i = 1; i < _fbxMesh->GetLayerCount(); ++i)
+		{
+			FBXMesh_PCNTs_Animatable* subMesh = new FBXMesh_PCNTs_Animatable;
+
+			std::vector<Vertex_PCNTs> vertice;
+			ExtractMeshVertexPosition(_fbxMesh, vertice);
+			ExtractMeshVertexColor(_fbxMesh, i, vertice);
+			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, i, _fbxMaterialKeyToFbxMaterialMap, vertice);
+
+			VertexRefiner<Vertex_PCNTs> refiner;
+			refiner.Refine(_fbxMesh, vertice);
+			subMesh->SetVertexList(refiner.GetVertexList());
+			subMesh->SetIndexList(refiner.GetIndexList());
+
+			Initialize_AddSubMesh(subMesh);
+		}
+	}
+	void FBXMesh_PCNTs_Animatable::Initialize_SetFBXMesh(FbxMesh* fbxMesh)
+	{
+		_fbxMesh = fbxMesh;
+	}
+	void FBXMesh_PCNTs_Animatable::Initialize_SetMaterialData(std::map<FBXMaterialKey, FBXMaterialData> fbxMaterialKeyToFbxMaterialMap)
+	{
+		_fbxMaterialKeyToFbxMaterialMap = fbxMaterialKeyToFbxMaterialMap;
 	}
 }

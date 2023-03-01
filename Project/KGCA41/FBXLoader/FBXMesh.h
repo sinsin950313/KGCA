@@ -70,13 +70,13 @@ namespace SSB
 		void ExtractMeshVertexTextureUV(FbxMesh* fbxMesh, int layerCount, std::map<FBXMaterialKey, FBXMaterialData>& fbxMaterialKeyToFbxMaterialData, std::vector<VertexType>& vertexList);
 
 		template<typename VertexType>
-		void ExtractMeshVertexSkinningData(FbxMesh* fbxMesh, std::map<FBXBoneKey, FBXBoneData>& fbxBoneKeyToFbxBoneData, std::vector<VertexType>& vertexList);
+		void ExtractMeshVertexSkinningData(FbxMesh* fbxMesh, std::map<FBXBoneKey, FBXBoneData>& fbxBoneKeyToFbxBoneData, std::vector<VertexType>& vertexList, MeshToBoneSpaceTransformData& transformData);
 	};
 
 	class FBXMesh_PCNT : public Mesh_Vertex_PCNT, public FBXLayerElementReader
 	{
 	private:
-		FbxMesh* _fbxMesh;
+		FbxMesh* _fbxMesh = nullptr;
 
 	private:
 		void Build() override;
@@ -88,14 +88,13 @@ namespace SSB
 	class FBXMesh_PCNT_Animatable : public Mesh_Vertex_PCNT_Animatable, public FBXLayerElementReader
 	{
 	private:
-		FbxMesh* _fbxMesh;
+		FbxMesh* _fbxMesh = nullptr;
 
 	private:
 		void Build() override;
 
 	public:
 		void Initialize_SetFBXMesh(FbxMesh* fbxMesh) override;
-		void Initialize_SetMeshIndex(int index);
 	};
 
 	class FBXMultiTextureInterface
@@ -107,7 +106,7 @@ namespace SSB
 	class FBXMesh_PCNTs : public Mesh_Vertex_PCNTs, public FBXLayerElementReader, public FBXMultiTextureInterface
 	{
 	private:
-		FbxMesh* _fbxMesh;
+		FbxMesh* _fbxMesh = nullptr;
 		std::map<FBXMaterialKey, FBXMaterialData> _fbxMaterialKeyToFbxMaterialMap;
 
 	private:
@@ -121,7 +120,7 @@ namespace SSB
 	class FBXMesh_PCNTs_Animatable : public Mesh_Vertex_PCNTs_Animatable, public FBXLayerElementReader, public FBXMultiTextureInterface
 	{
 	private:
-		FbxMesh* _fbxMesh;
+		FbxMesh* _fbxMesh = nullptr;
 		std::map<FBXMaterialKey, FBXMaterialData> _fbxMaterialKeyToFbxMaterialMap;
 
 	private:
@@ -130,7 +129,6 @@ namespace SSB
 	public:
 		void Initialize_SetFBXMesh(FbxMesh* fbxMesh) override;
 		void Initialize_SetMaterialData(std::map<FBXMaterialKey, FBXMaterialData> fbxMaterialKeyToFbxMaterialMap) override;
-		void Initialize_SetMeshIndex(int index);
 	};
 
 	class FBXSkinningMeshInterface
@@ -142,7 +140,7 @@ namespace SSB
 	class FBXMesh_PCNT_Skinning : public Mesh_Vertex_PCNT_Skinning, public FBXLayerElementReader, public FBXSkinningMeshInterface
 	{
 	private:
-		FbxMesh* _fbxMesh;
+		FbxMesh* _fbxMesh = nullptr;
 		std::map<FBXBoneKey, FBXBoneData> _fbxBoneKeyToFbxBoneDataMap;
 
 	private:
@@ -157,7 +155,7 @@ namespace SSB
 		: public Mesh_Vertex_PCNTs_Skinning, public FBXLayerElementReader, public FBXMultiTextureInterface, public FBXSkinningMeshInterface
 	{
 	private:
-		FbxMesh* _fbxMesh;
+		FbxMesh* _fbxMesh = nullptr;
 		std::map<FBXMaterialKey, FBXMaterialData> _fbxMaterialKeyToFbxMaterialMap;
 		std::map<FBXBoneKey, FBXBoneData> _fbxBoneKeyToFbxBoneDataMap;
 

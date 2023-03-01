@@ -73,10 +73,10 @@ namespace SSB
 
 	void FBXLoader::RegisterBoneNode(FbxNode* node)
 	{
-		if (_skeletonNodeToSkeletonIndexMap.find(node) == _skeletonNodeToSkeletonIndexMap.end())
+		if (_boneNodeToBoneIndexMap.find(node) == _boneNodeToBoneIndexMap.end())
 		{
-			int index = _skeletonNodeToSkeletonIndexMap.size();
-			_skeletonNodeToSkeletonIndexMap.insert(std::make_pair(node, index));
+			int index = _boneNodeToBoneIndexMap.size();
+			_boneNodeToBoneIndexMap.insert(std::make_pair(node, index));
 			_fbxBoneKeyToFbxBoneMap.insert(std::make_pair(node, FBXBoneData{ index }));
 		}
 	}
@@ -284,25 +284,13 @@ namespace SSB
 			FbxLongLong endFrame = endTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
 			FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
 
-			int animationUnitCount = 0;
 			std::vector<AnimationFrameInfo> data;
 			for (FbxLongLong t = startFrame; t <= endFrame; ++t)
 			{
 				FbxTime time;
 				time.SetFrame(t, timeMode);
 
-				std::map<FbxNode*, int>* dataMap;
-				if ()
-				{
-					dataMap = &_meshNodeToMeshIndexMap;
-				}
-				else
-				{
-					dataMap = &_skeletonNodeToSkeletonIndexMap;
-				}
-				animationUnitCount = dataMap->size();
-
-				for (auto node : *dataMap)
+				for (auto node : _boneNodeToBoneIndexMap)
 				{
 					AnimationFrameInfo actionFrameInfo;
 
@@ -310,13 +298,24 @@ namespace SSB
 					unitInfo.Matrix = Convert(node.first->EvaluateGlobalTransform(time));
 					Decompose(unitInfo.Matrix, unitInfo.Scale, unitInfo.Rotate, unitInfo.Translate);
 
-					actionFrameInfo.AnimationUnit[node.second] = unitInfo;
+					actionFrameInfo.BoneAnimationUnit[node.second] = unitInfo;
+				}
+
+				for (auto node : _meshNodeToMeshIndexMap)
+				{
+					AnimationFrameInfo actionFrameInfo;
+
+					AnimationUnitInfo unitInfo;
+					unitInfo.Matrix = Convert(node.first->EvaluateGlobalTransform(time));
+					Decompose(unitInfo.Matrix, unitInfo.Scale, unitInfo.Rotate, unitInfo.Translate);
+
+					actionFrameInfo.BoneAnimationUnit[node.second] = unitInfo;
 				}
 			}
 			Animation* animation = new Animation;
 
 			animation->Initialize_SetAnimationFrameData(data);
-			animation->Initialize_SetAnimationUnitMaximumCount(animationUnitCount);
+			animation->Initialize_SetAnimationUnitMaximumCount(_boneNodeToBoneIndexMap.size(), _meshNodeToMeshIndexMap.size());
 			animation->Initialize_SetFrameInterval(startFrame, endFrame);
 			animation->Init();
 
@@ -388,7 +387,7 @@ namespace SSB
 		_tickPerFrame = 160;
 
 		_root = nullptr;
-		_skeletonNodeToSkeletonIndexMap.clear();
+		_boneNodeToBoneIndexMap.clear();
 		_meshNodeToMeshIndexMap.clear();
 
 		//_animationInfo = AnimationFrameInfo();

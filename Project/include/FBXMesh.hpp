@@ -282,7 +282,7 @@ namespace SSB
 		}
 	}
 	template<typename VertexType>
-	inline void FBXLayerElementReader::ExtractMeshVertexSkinningData(FbxMesh* fbxMesh, std::map<FBXBoneKey, FBXBoneData>& fbxBoneKeyToFbxBoneData, std::vector<VertexType>& vertexList)
+	inline void FBXLayerElementReader::ExtractMeshVertexSkinningData(FbxMesh* fbxMesh, std::map<FBXBoneKey, FBXBoneData>& fbxBoneKeyToFbxBoneData, std::vector<VertexType>& vertexList, MeshToBoneSpaceTransformData& transformData)
 	{
 		int deformerCount = fbxMesh->GetDeformerCount(FbxDeformer::eSkin);
 		for (int iDeformer = 0; iDeformer < deformerCount; ++iDeformer)
@@ -294,6 +294,18 @@ namespace SSB
 			{
 				FbxCluster* cluster = skin->GetCluster(iCluster);
 				int boneIndex = fbxBoneKeyToFbxBoneData.find(cluster->GetLink())->second.FBXBoneIndex;
+
+				{
+					FbxAMatrix linkMatrix;
+					cluster->GetTransformLinkMatrix(linkMatrix);
+
+					FbxAMatrix adjustMatrix;
+					cluster->GetTransformMatrix(adjustMatrix);
+
+					FbxAMatrix fbxBoneSpaceMatrix = linkMatrix.Inverse() * adjustMatrix;
+					HMatrix44 toBoneSpaceMatrix = Convert(fbxBoneSpaceMatrix);
+					transformData.BoneSpaceTransformBuffer[boneIndex] = toBoneSpaceMatrix;
+				}
 
 				int controlPointCount = cluster->GetControlPointIndicesCount();
 				int* controlPointIndice = cluster->GetControlPointIndices();

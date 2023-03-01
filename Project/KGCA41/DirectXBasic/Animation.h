@@ -22,7 +22,8 @@ namespace SSB
 	};
 	struct AnimationFrameInfo
 	{
-		AnimationUnitInfo AnimationUnit[kAnimationUnitMaxIndex];
+		AnimationUnitInfo BoneAnimationUnit[kAnimationUnitMaxIndex];
+		AnimationUnitInfo MeshAnimationUnit[kAnimationUnitMaxIndex];
 	};
 
 	typedef unsigned int FrameIndex;
@@ -36,7 +37,8 @@ namespace SSB
 		float _framePerSecond = 30;
 		Timer _animationTimer;
 
-		int _animationUnitMaxCount = 0;
+		int _boneAnimationUnitMaxCount = 0;
+		int _meshAnimationUnitMaxCount = 0;
 		std::vector<AnimationFrameInfo> _data;
 
 		FrameIndex _startFrame;
@@ -57,7 +59,7 @@ namespace SSB
 	public:
 		void Initialize_SetAnimationFrameData(std::vector<AnimationFrameInfo> data);
 		void Initialize_SetFrameInterval(FrameIndex start, FrameIndex end);
-		void Initialize_SetAnimationUnitMaximumCount(int count);
+		void Initialize_SetAnimationUnitMaximumCount(int boneCount, int meshCount);
 
 	public:
 		bool Init() override;

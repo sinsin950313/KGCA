@@ -38,9 +38,9 @@ namespace SSB
 	private:
 		ID3D11InputLayout* _vertexLayout;
 		std::vector<VertexType> _vertexList;
-		ID3D11Buffer* _vertexBuffer;
+		ID3D11Buffer* _vertexBuffer = nullptr;
 		std::vector<IndexForMeshVertice> _indexList;
-		ID3D11Buffer* _indexBuffer;
+		ID3D11Buffer* _indexBuffer = nullptr;
 
 		Vector3 _minVertex;
 		Vector3 _maxVertex;
@@ -106,15 +106,30 @@ namespace SSB
 		void InitialVertexShader() override;
 	};
 
-	struct Vertex_PCNT_Animatable : public Vertex_PCNT
+	struct MeshData : public Vertex_PCNT
 	{
 		int MeshIndex;
 	};
-	class Mesh_Vertex_PCNT_Animatable : public Mesh<Vertex_PCNT_Animatable>
+	class Mesh_Vertex_PCNT_Animatable : public Mesh<Vertex_PCNT>
 	{
+	private:
+		MeshData _meshData;
+		ID3D11Buffer* _meshBuffer = nullptr;
+
+	private:
+		bool CreateMeshBuffer();
+
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
+
+	public:
+		void Initialize_SetMeshData(MeshData meshData);
+
+	public:
+		bool Init() override;
+		bool Render() override;
+		bool Release() override;
 	};
 
 	static const int kAffectedBoneCount = 4;
@@ -131,7 +146,7 @@ namespace SSB
 	{
 	private:
 		MeshToBoneSpaceTransformData _boneSpaceTransformData;
-		ID3D11Buffer* _boneSpaceTransformBuffer;
+		ID3D11Buffer* _boneSpaceTransformBuffer = nullptr;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -160,15 +175,26 @@ namespace SSB
 		void InitialVertexShader() override;
 	};
 
-	struct Vertex_PCNTs_Animatable : public Vertex_PCNTs
+	class Mesh_Vertex_PCNTs_Animatable : public Mesh<Vertex_PCNTs>
 	{
-		int MeshIndex;
-	};
-	class Mesh_Vertex_PCNTs_Animatable : public Mesh<Vertex_PCNTs_Animatable>
-	{
+	private:
+		MeshData _meshData;
+		ID3D11Buffer* _meshBuffer = nullptr;
+
+	private:
+		bool CreateMeshBuffer();
+
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
+
+	public:
+		void Initialize_SetMeshData(MeshData meshData);
+
+	public:
+		bool Init() override;
+		bool Render() override;
+		bool Release() override;
 	};
 
 	struct Vertex_PCNTs_Skinning : public Vertex_PCNT
@@ -181,7 +207,7 @@ namespace SSB
 	{
 	private:
 		MeshToBoneSpaceTransformData _boneSpaceTransformData;
-		ID3D11Buffer* _boneSpaceTransformBuffer;
+		ID3D11Buffer* _boneSpaceTransformBuffer = nullptr;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;

@@ -26,12 +26,81 @@ namespace SSB
 		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[1] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[2] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[3] = { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[3] = { "Diffuse", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 
 	void Mesh_Vertex_PCNT::InitialVertexShader()
 	{
 		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
+	}
+
+	bool Mesh_Vertex_PCNT_Animatable::CreateMeshBuffer()
+	{
+		D3D11_BUFFER_DESC bd;
+		ZeroMemory(&bd, sizeof(bd));
+		bd.ByteWidth = sizeof(MeshData);
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+		sd.pSysMem = &_meshData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_meshBuffer);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+		return true;
+	}
+
+	void Mesh_Vertex_PCNT_Animatable::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
+	{
+		count = 5;
+
+		*desc = new D3D11_INPUT_ELEMENT_DESC[count];
+		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[1] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[2] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[3] = { "Diffuse", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[4] = { "MeshIndex", 0, DXGI_FORMAT_R32_SINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+	}
+
+	void Mesh_Vertex_PCNT_Animatable::Initialize_SetMeshData(MeshData meshData)
+	{
+		_meshData = meshData;
+	}
+
+	bool Mesh_Vertex_PCNT_Animatable::Init()
+	{
+		Mesh<Vertex_PCNT>::Init();
+		CreateMeshBuffer();
+
+		return true;
+	}
+
+	bool Mesh_Vertex_PCNT_Animatable::Render()
+	{
+		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(, 1, &_meshBuffer);
+		Mesh<Vertex_PCNT>::Render();
+		return true;
+	}
+
+	bool Mesh_Vertex_PCNT_Animatable::Release()
+	{
+		if (_meshBuffer != nullptr)
+		{
+			_meshBuffer->Release();
+			_meshBuffer = nullptr;
+		}
+
+		Mesh<Vertex_PCNT>::Release();
+		return true;
+	}
+
+	void Mesh_Vertex_PCNT_Animatable::InitialVertexShader()
+	{
+		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT_Animatable.hlsl", "VS", "vs_5_0"));
 	}
 
 	void Mesh_Vertex_PCNT_Skinning::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
@@ -42,7 +111,7 @@ namespace SSB
 		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[1] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[2] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[3] = { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[3] = { "Diffuse", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[4] = { "AffectingBoneIndex", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[5] = { "Weight", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
@@ -88,9 +157,9 @@ namespace SSB
 
 	bool Mesh_Vertex_PCNT_Skinning::Render()
 	{
-		Mesh<Vertex_PCNT_Skinning>::Render();
-
 		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(3, 1, &_boneSpaceTransformBuffer);
+
+		Mesh<Vertex_PCNT_Skinning>::Render();
 
 		return true;
 	}
@@ -105,6 +174,8 @@ namespace SSB
 			_boneSpaceTransformBuffer = nullptr;
 		}
 
+		Mesh<Vertex_PCNT_Skinning>::Release();
+
 		return true;
 	}
 
@@ -116,13 +187,83 @@ namespace SSB
 		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[1] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[2] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[3] = { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[3] = { "Diffuse", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[4] = { "MaterialIndex", 0, DXGI_FORMAT_R32_UINT, 0, 76, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 
 	void Mesh_Vertex_PCNTs::InitialVertexShader()
 	{
 		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs.hlsl", "VS", "vs_5_0"));
+	}
+
+	bool Mesh_Vertex_PCNTs_Animatable::CreateMeshBuffer()
+	{
+		D3D11_BUFFER_DESC bd;
+		ZeroMemory(&bd, sizeof(bd));
+		bd.ByteWidth = sizeof(MeshData);
+		bd.Usage = D3D11_USAGE_DEFAULT;
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+		sd.pSysMem = &_meshData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_meshBuffer);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+			return false;
+		}
+		return true;
+	}
+
+	void Mesh_Vertex_PCNTs_Animatable::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
+	{
+		count = 6;
+
+		*desc = new D3D11_INPUT_ELEMENT_DESC[count];
+		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[1] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[2] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[3] = { "Diffuse", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[4] = { "MaterialIndex", 0, DXGI_FORMAT_R32_UINT, 0, 76, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[5] = { "MeshIndex", 0, DXGI_FORMAT_R32_SINT, 0, 80, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+	}
+
+	void Mesh_Vertex_PCNTs_Animatable::InitialVertexShader()
+	{
+		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs_Animatable.hlsl", "VS", "vs_5_0"));
+	}
+
+	void Mesh_Vertex_PCNTs_Animatable::Initialize_SetMeshData(MeshData meshData)
+	{
+		_meshData = meshData;
+	}
+
+	bool Mesh_Vertex_PCNTs_Animatable::Init()
+	{
+		Mesh<Vertex_PCNTs>::Init();
+		CreateMeshBuffer();
+		return true;
+	}
+
+	bool Mesh_Vertex_PCNTs_Animatable::Render()
+	{
+		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(, 1, &_meshBuffer);
+
+		Mesh<Vertex_PCNTs>::Render();
+		return true;
+	}
+
+	bool Mesh_Vertex_PCNTs_Animatable::Release()
+	{
+		if (_meshBuffer != nullptr)
+		{
+			_meshBuffer->Release();
+			_meshBuffer = nullptr;
+		}
+
+		Mesh<Vertex_PCNTs>::Release();
+		return true;
 	}
 
 	void Mesh_Vertex_PCNTs_Skinning::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
@@ -133,7 +274,7 @@ namespace SSB
 		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[1] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[2] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[3] = { "Texture", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[3] = { "Diffuse", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[4] = { "AffectingBoneIndex", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[5] = { "Weight", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[6] = { "MaterialIndex", 0, DXGI_FORMAT_R32_UINT, 0, 76, D3D11_INPUT_PER_VERTEX_DATA, 0 };
@@ -180,9 +321,9 @@ namespace SSB
 
 	bool Mesh_Vertex_PCNTs_Skinning::Render()
 	{
-		Mesh<Vertex_PCNTs_Skinning>::Render();
-
 		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(3, 1, &_boneSpaceTransformBuffer);
+
+		Mesh<Vertex_PCNTs_Skinning>::Render();
 
 		return true;
 	}
@@ -196,6 +337,8 @@ namespace SSB
 			_boneSpaceTransformBuffer->Release();
 			_boneSpaceTransformBuffer = nullptr;
 		}
+
+		Mesh<Vertex_PCNTs_Skinning>::Release();
 
 		return true;
 	}

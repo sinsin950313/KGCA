@@ -70,9 +70,13 @@ namespace SSB
 		afterTime = afterIndex / _framePerSecond;
 		float t = (animationElapseTime - beforeTime) / (afterTime - beforeTime);
 
-		for (int i = 0; i < _animationUnitMaxCount; ++i)
+		for (int i = 0; i < _boneAnimationUnitMaxCount; ++i)
 		{
-			_currentFrameInfo.AnimationUnit[i].Matrix = GetInterpolate(_data[beforeIndex].AnimationUnit[i], _data[afterIndex].AnimationUnit[i], t);
+			_currentFrameInfo.BoneAnimationUnit[i].Matrix = GetInterpolate(_data[beforeIndex].BoneAnimationUnit[i], _data[afterIndex].BoneAnimationUnit[i], t);
+		}
+		for (int i = 0; i < _meshAnimationUnitMaxCount; ++i)
+		{
+			_currentFrameInfo.MeshAnimationUnit[i].Matrix = GetInterpolate(_data[beforeIndex].MeshAnimationUnit[i], _data[afterIndex].MeshAnimationUnit[i], t);
 		}
 
 		g_dxWindow->GetDeviceContext()->UpdateSubresource(_animatedFrameBuffer, 0, nullptr, &_currentFrameInfo, 0, 0);
@@ -94,9 +98,10 @@ namespace SSB
 		_startFrame = start;
 		_endFrame = end;
 	}
-	void Animation::Initialize_SetAnimationUnitMaximumCount(int count)
+	void Animation::Initialize_SetAnimationUnitMaximumCount(int boneCount, int meshCount)
 	{
-		_animationUnitMaxCount = count;
+		_boneAnimationUnitMaxCount = boneCount;
+		_meshAnimationUnitMaxCount = meshCount;
 	}
 	bool Animation::Frame()
 	{

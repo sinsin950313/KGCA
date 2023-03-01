@@ -32,7 +32,7 @@ namespace SSB
 		FbxScene* _scene;
 
 		FbxNode* _root;
-		std::map<FbxNode*, int> _skeletonNodeToSkeletonIndexMap;
+		std::map<FbxNode*, int> _boneNodeToBoneIndexMap;
 		std::map<FbxNode*, int> _meshNodeToMeshIndexMap;
 
 		std::map<FBXBoneKey, FBXBoneData> _fbxBoneKeyToFbxBoneMap;

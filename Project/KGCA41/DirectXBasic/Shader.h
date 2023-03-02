@@ -10,6 +10,7 @@ namespace SSB
 	class Shader : public Common
 	{
 	private:
+		std::string _fileName;
 		ID3D11DeviceChild* _shader;
 		ID3DBlob* _code;
 
@@ -18,9 +19,10 @@ namespace SSB
 
 	public:
 		ID3DBlob* GetCode() { return _code; }
+		std::string GetFileName();
 
 	public:
-		Shader(ID3D11DeviceChild* shader, ID3DBlob* code);
+		Shader(ID3D11DeviceChild* shader, ID3DBlob* code, std::string fileName);
 		virtual ~Shader();
 
 	public:
@@ -32,7 +34,7 @@ namespace SSB
 	class VertexShader : public Shader
 	{
 	public:
-		VertexShader(ID3D11DeviceChild* shader, ID3DBlob* code);
+		VertexShader(ID3D11DeviceChild* shader, ID3DBlob* code, std::string fileName);
 
 	public:
 		bool Render() override;
@@ -41,7 +43,7 @@ namespace SSB
 	class PixelShader : public Shader
 	{
 	public:
-		PixelShader(ID3D11DeviceChild* shader, ID3DBlob* code);
+		PixelShader(ID3D11DeviceChild* shader, ID3DBlob* code, std::string fileName);
 
 	public:
 		bool Render() override;

@@ -81,7 +81,7 @@ namespace SSB
 
 	bool Mesh_Vertex_PCNT_Animatable::Render()
 	{
-		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(, 1, &_meshBuffer);
+		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(4, 1, &_meshBuffer);
 		Mesh<Vertex_PCNT>::Render();
 		return true;
 	}
@@ -248,7 +248,7 @@ namespace SSB
 
 	bool Mesh_Vertex_PCNTs_Animatable::Render()
 	{
-		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(, 1, &_meshBuffer);
+		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(4, 1, &_meshBuffer);
 
 		Mesh<Vertex_PCNTs>::Render();
 		return true;

@@ -21,12 +21,14 @@ namespace SSB
 		class ShaderFactory
 		{
 		protected:
+            std::string _fileName;
 			ID3D11DeviceChild* _shader;
 			ID3DBlob* _code;
 
 		public:
 			void SetShader(ID3D11DeviceChild* shader);
 			void SetCode(ID3DBlob* code);
+			void SetFileName(std::string fileName);
 
 		public:
 			virtual Shader* New() = 0;

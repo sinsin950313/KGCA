@@ -3,6 +3,7 @@
 #include "Common.h"
 #include "Texture.h"
 #include "Shader.h"
+#include "Serializeable.h"
 
 namespace SSB
 {
@@ -14,7 +15,7 @@ namespace SSB
 	//static const TextureType kNormal = 1;
 	//static const TextureType kSpecular = 2;
 
-	class Material : public Common
+	class Material : public Common, public Serializeable
 	{
 	private:
 		MaterialIndex _materialIndex;
@@ -33,5 +34,7 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 }

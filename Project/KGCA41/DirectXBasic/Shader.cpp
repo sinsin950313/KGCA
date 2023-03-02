@@ -6,7 +6,12 @@ namespace SSB
 {
     extern DXWindow* g_dxWindow;
 
-    Shader::Shader(ID3D11DeviceChild* shader, ID3DBlob* code) : _shader(shader), _code(code)
+    std::string Shader::GetFileName()
+    {
+        return _fileName;
+    }
+
+    Shader::Shader(ID3D11DeviceChild* shader, ID3DBlob* code, std::string fileName) : _shader(shader), _code(code), _fileName(fileName)
     {
     }
     Shader::~Shader()
@@ -39,7 +44,7 @@ namespace SSB
 
         return true;
     }
-    VertexShader::VertexShader(ID3D11DeviceChild* shader, ID3DBlob* code) : Shader(shader, code)
+    VertexShader::VertexShader(ID3D11DeviceChild* shader, ID3DBlob* code, std::string fileName) : Shader(shader, code, fileName)
     {
     }
     bool VertexShader::Render()
@@ -47,7 +52,7 @@ namespace SSB
 		g_dxWindow->GetDeviceContext()->VSSetShader((ID3D11VertexShader*)GetShader(), NULL, 0);
         return true;
     }
-    PixelShader::PixelShader(ID3D11DeviceChild* shader, ID3DBlob* code) : Shader(shader, code)
+    PixelShader::PixelShader(ID3D11DeviceChild* shader, ID3DBlob* code, std::string fileName) : Shader(shader, code, fileName)
     {
     }
     bool PixelShader::Render()

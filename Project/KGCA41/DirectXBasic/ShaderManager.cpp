@@ -62,6 +62,7 @@ namespace SSB
                 return nullptr;
             }
 
+            factory->SetFileName(fileName);
             factory->SetShader(shader);
             factory->SetCode(code);
             Shader* shaderComp = factory->New();
@@ -87,10 +88,9 @@ namespace SSB
         };
         class VertexShaderFactory : public ShaderFactory
         {
-        public:
             Shader* New() override
             {
-                return new VertexShader(_shader, _code);
+                return new VertexShader(_shader, _code, _fileName);
             }
         };
         VertexShaderFactory factory;
@@ -106,10 +106,9 @@ namespace SSB
         };
         class PixelShaderFactory : public ShaderFactory
         {
-        public:
             Shader* New()
             {
-                return new PixelShader(_shader, _code);
+                return new PixelShader(_shader, _code, _fileName);
             }
         };
         PixelShaderFactory factory;
@@ -157,5 +156,9 @@ namespace SSB
     void ShaderManager::ShaderFactory::SetCode(ID3DBlob* code)
     {
         _code = code;
+    }
+    void SSB::ShaderManager::ShaderFactory::SetFileName(std::string fileName)
+    {
+        _fileName = fileName;
     }
 }

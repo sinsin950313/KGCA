@@ -7,12 +7,13 @@
 #include <map>
 #include "Shader.h"
 #include "VolumeType.h"
+#include "Serializeable.h"
 
 namespace SSB
 {
 	typedef std::string AnimationName;
 
-	class Model : public Common
+	class Model : public Common, public Serializeable
 	{
 	private:
 		static Animation DefaultAnimation;
@@ -56,5 +57,7 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 }

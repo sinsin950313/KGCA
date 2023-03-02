@@ -7,28 +7,14 @@
 #include "Timer.h"
 #include <vector>
 #include <d3d11.h>
+#include "Serializeable.h"
+#include "SerializeableDataType.h"
 
 namespace SSB
 {
-	static const int kAnimationUnitMaxIndex = 255;
-	struct AnimationUnitInfo
-	{
-		HMatrix44 Matrix;
-		Vector3 Translate;
-		float Padding1 = 0;
-		Vector3 Scale{ 1, 1, 1 };
-		float Padding2 = 0;
-		Quaternion Rotate;
-	};
-	struct AnimationFrameInfo
-	{
-		AnimationUnitInfo BoneAnimationUnit[kAnimationUnitMaxIndex];
-		AnimationUnitInfo MeshAnimationUnit[kAnimationUnitMaxIndex];
-	};
-
 	typedef unsigned int FrameIndex;
 
-	class Animation : public Common
+	class Animation : public Common, public Serializeable
 	{
 	private:
 		static const AnimationFrameInfo kDefaultFrameInfo;
@@ -44,6 +30,7 @@ namespace SSB
 		FrameIndex _startFrame;
 		FrameIndex _endFrame;
 
+		// Consider maximum Stack size
 		AnimationFrameInfo _currentFrameInfo;
 		ID3D11Buffer* _animatedFrameBuffer;
 
@@ -66,5 +53,7 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 }

@@ -6,13 +6,15 @@
 #include "Matrix.h"
 #include "Shader.h"
 #include <vector>
+#include "Serializeable.h"
+#include "SerializeableDataType.h"
 
 namespace SSB
 {
 	typedef DWORD IndexForMeshVertice;
 	typedef int MeshIndex;
 
-	class MeshInterface : public Common
+	class MeshInterface : public Common, public Serializeable
 	{
 	protected:
 		virtual void InitialVertexShader() = 0;
@@ -82,33 +84,25 @@ namespace SSB
 		bool Release() override;
 	};
 
-	struct Vertex_PC
-	{
-		Float4 Position;
-		Float4 Color;
-	};
 	class Mesh_Vertex_PC : public Mesh<Vertex_PC>
 	{
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
-	};
 
-	struct Vertex_PCNT : public Vertex_PC
-	{
-		Float4 Normal;
-		Float2 TextureUV;
+	public:
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 	class Mesh_Vertex_PCNT : public Mesh<Vertex_PCNT>
 	{
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
-	};
 
-	struct MeshData : public Vertex_PCNT
-	{
-		int MeshIndex;
+	public:
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 	class Mesh_Vertex_PCNT_Animatable : public Mesh<Vertex_PCNT>
 	{
@@ -130,17 +124,8 @@ namespace SSB
 		bool Init() override;
 		bool Render() override;
 		bool Release() override;
-	};
-
-	static const int kAffectedBoneCount = 4;
-	struct Vertex_PCNT_Skinning : public Vertex_PCNT
-	{
-		int AffectedBoneIndex[kAffectedBoneCount];
-		float Weight[kAffectedBoneCount];
-	};
-	struct MeshToBoneSpaceTransformData
-	{
-		HMatrix44 BoneSpaceTransformBuffer[255];
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 	class Mesh_Vertex_PCNT_Skinning : public Mesh<Vertex_PCNT_Skinning>
 	{
@@ -162,17 +147,18 @@ namespace SSB
 		bool Init() override;
 		bool Render() override;
 		bool Release() override;
-	};
-
-	struct Vertex_PCNTs : public Vertex_PCNT
-	{
-		unsigned int MaterialIndex;
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 	class Mesh_Vertex_PCNTs : public Mesh<Vertex_PCNTs>
 	{
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
+
+	public:
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 
 	class Mesh_Vertex_PCNTs_Animatable : public Mesh<Vertex_PCNTs>
@@ -195,13 +181,8 @@ namespace SSB
 		bool Init() override;
 		bool Render() override;
 		bool Release() override;
-	};
-
-	struct Vertex_PCNTs_Skinning : public Vertex_PCNT
-	{
-		int AffectedBoneIndex[kAffectedBoneCount];
-		float Weight[kAffectedBoneCount];
-		unsigned int MaterialIndex;
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 	class Mesh_Vertex_PCNTs_Skinning : public Mesh<Vertex_PCNTs_Skinning>
 	{
@@ -223,6 +204,8 @@ namespace SSB
 		bool Init() override;
 		bool Render() override;
 		bool Release() override;
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 
 	//class Direction : public Mesh_Vertex_PC

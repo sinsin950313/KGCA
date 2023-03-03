@@ -26,9 +26,8 @@ struct PixelShaderInput_PCNT_P
 	float4 Color : COLOR0;
 	float4 Normal : NORMAL;
 	float2 Diffuse : TEXCOORD0;
-
-	// 0 : DiffuseMaterialIndex
-	float4 Parameter : TEXCOORD1;
+	//float4 Parameter : TEXCOORD1;
+	uint Index : SV_RenderTargetArrayIndex;
 };
 
 float4 GetDiffuseColor(uint index, float2 uv)

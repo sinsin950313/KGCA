@@ -199,6 +199,10 @@ namespace SSB
 	{
 		std::string fileFullPath = texture->GetFileName();
 		auto splitedPath = SplitPath(mtw(fileFullPath));
+		if (splitedPath[3] == L".tga" || splitedPath[3] == L".TGA")
+		{
+			splitedPath[3] = L".DDS";
+		}
 		std::wstring fileName = splitedPath[2] + splitedPath[3];
 		return fileName;
 	}

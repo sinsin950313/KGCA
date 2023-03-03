@@ -39,6 +39,10 @@ namespace SSB
 				{
 					auto filePath = tex->GetFileName();
 					auto splitedPath = SplitPath(mtw(filePath));
+					if (splitedPath[3] == L".tga" || splitedPath[3] == L".TGA")
+					{
+						splitedPath[3] = L".DDS";
+					}
 					std::wstring fileName = splitedPath[2] + splitedPath[3];
 					ret = fbxMaterialKeyToFbxMaterialDataMap.find(wtm(fileName))->second.Index;
 				}

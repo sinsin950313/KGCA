@@ -17,7 +17,8 @@ VertexOutput_PCNT_P VS(Vertex_PCNTs input)
 	output.c = input.Color;
 	output.n = input.Normal;
 	output.t = input.Diffuse;
-	output.param[0] = input.MaterialIndex;
+	//output.param.x = input.MaterialIndex;
+	output.Index = input.MaterialIndex;
 
 	return output;
 }

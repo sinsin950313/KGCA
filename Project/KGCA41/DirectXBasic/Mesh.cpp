@@ -37,7 +37,7 @@ namespace SSB
 	bool Mesh_Vertex_PCNT_Animatable::CreateMeshBuffer()
 	{
 		D3D11_BUFFER_DESC bd;
-		ZeroMemory(&bd, sizeof(bd));
+		ZeroMemory(&bd, sizeof(D3D11_BUFFER_DESC));
 		bd.ByteWidth = sizeof(MeshData);
 		bd.Usage = D3D11_USAGE_DEFAULT;
 		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -188,7 +188,7 @@ namespace SSB
 		(*desc)[1] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[2] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[3] = { "Diffuse", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[4] = { "MaterialIndex", 0, DXGI_FORMAT_R32_UINT, 0, 76, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[4] = { "MaterialIndex", 0, DXGI_FORMAT_R32_UINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 
 	void Mesh_Vertex_PCNTs::InitialVertexShader()

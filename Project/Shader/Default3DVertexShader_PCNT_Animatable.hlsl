@@ -6,24 +6,15 @@
 #include "MeshBuffer.hlsli"
 #include "VertexShaderOutputType.hlsli"
 
-VertexOutput_PCNT VS(Vertex_PCNT_Skinning input)
+VertexOutput_PCNT VS(Vertex_PCNT input)
 {
 	VertexOutput_PCNT output = (VertexOutput_PCNT)0;
 
 	float4 pos = 0;
 	float4 normal = 0;
-	for (int i = 0; i < 4; ++i)
 	{
-		int index = input.BoneIndex[i];
-		float weight = input.Weight[i];
-		matrix toBoneSpaceMatrix = ToBoneSpaceTransformMatrix[index];
-		matrix boneAnimationMatrix = BoneAnimationMatrix[index];
-
-		float4 tmpPos = mul(input.Position, toBoneSpaceMatrix);
-		pos += mul(tmpPos, boneAnimationMatrix) * weight;
-
-		float4 tmpNormal = mul(input.Normal, toBoneSpaceMatrix);
-		normal += mul(tmpNormal, boneAnimationMatrix) * weight;
+		pos = mul(input.Position, MeshAnimationMatrix[MeshIndex]);
+		normal = mul(input.Normal, MeshAnimationMatrix[MeshIndex]);
 	}
 
 	float4 world = mul(pos, WorldTransformMatrix);
@@ -36,4 +27,5 @@ VertexOutput_PCNT VS(Vertex_PCNT_Skinning input)
 	output.t = input.Diffuse;
 
 	return output;
+	
 }

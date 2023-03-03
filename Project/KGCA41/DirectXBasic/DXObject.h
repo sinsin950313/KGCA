@@ -5,6 +5,7 @@
 #include "Model.h"
 #include "Volume1.h"
 #include "VolumeType.h"
+#include "Serializeable.h"
 
 namespace SSB
 {
@@ -13,7 +14,7 @@ namespace SSB
 		Float44 World;
 	};
 
-	class DXObject : public DXDrawableInterface
+	class DXObject : public DXDrawableInterface, public Serializeable
 	{
 	private:
 		Vertex1Volume DefaultVolume;

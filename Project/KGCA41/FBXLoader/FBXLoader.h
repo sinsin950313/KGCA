@@ -44,6 +44,8 @@ namespace SSB
 		float _tickPerFrame = 160;
 		std::map<std::string, Animation*> _animations;
 
+		PixelShader* _ps;
+
 	public:
 		FBXLoader();
 		~FBXLoader();

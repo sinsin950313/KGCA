@@ -224,7 +224,15 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
     <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\..\Shader\AnimationBuffer.hlsli" />
+    <None Include="..\..\Shader\CameraBuffer.hlsli" />
     <None Include="..\..\Shader\LightBufferData.hlsli" />
+    <None Include="..\..\Shader\MaterialBuffer.hlsli" />
+    <None Include="..\..\Shader\MeshBuffer.hlsli" />
+    <None Include="..\..\Shader\ObjectBuffer.hlsli" />
+    <None Include="..\..\Shader\PixelShaderInputType.hlsli" />
+    <None Include="..\..\Shader\VertexShaderInputType.hlsli" />
+    <None Include="..\..\Shader\VertexShaderOutputType.hlsli" />
     <None Include="..\..\Shader\VertexShaderStageBufferData.hlsli" />
     <None Include="ClassDiagram.cd" />
   </ItemGroup>

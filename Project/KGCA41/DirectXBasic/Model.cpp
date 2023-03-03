@@ -5,7 +5,6 @@
 namespace SSB
 {
     extern DXWindow* g_dxWindow;
-
 	Animation Model::DefaultAnimation;
 
 	Model::Model()
@@ -62,7 +61,6 @@ namespace SSB
 	}
 	void Model::SetVertexShader(VertexShader* shader)
 	{
-		_vs = shader;
 		for (auto mesh : _meshes)
 		{
 			mesh.second->SetVertexShader(shader);
@@ -116,7 +114,6 @@ namespace SSB
 
 		_currentAnimation->Render();
 
-		_vs->Render();
 		_ps->Render();
 
 		for (auto material : _materials)
@@ -159,7 +156,6 @@ namespace SSB
 		_meshes.clear();
 		_meshElementMinMaxVertexList.clear();
 
-		_vs = nullptr;
 		_ps = nullptr;
 
 		return false;

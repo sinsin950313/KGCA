@@ -1,29 +1,20 @@
-struct VS_in
-{
-	float4 Position : Position;
-	float4 Color : Color;
-};
+#include "VertexShaderInputType.hlsli"
+#include "CameraBuffer.hlsli"
+#include "ObjectBuffer.hlsli"
+#include "MaterialBuffer.hlsli"
+#include "AnimationBuffer.hlsli"
+#include "MeshBuffer.hlsli"
+#include "VertexShaderOutputType.hlsli"
 
-cbuffer Camera : register(b0)
+VertexOutput_PC VS(Vertex_PC input)
 {
-	matrix g_World : packoffset(c0);
-	matrix g_View : packoffset(c4);
-	matrix g_Projection : packoffset(c8);
-};
+	float4 pos = input.Position;
 
-struct VS_out
-{
-	float4 p : SV_POSITION;
-	float4 c : COLOR0;
-};
+	pos = mul(input.Position, WorldTransformMatrix);
+	pos = mul(pos, ViewMatrix);
+	pos = mul(pos, ProjectionMatrix);
 
-VS_out VS(VS_in input)
-{
-	float4 pos = mul(input.Position, g_World);
-	pos = mul(pos, g_View);
-	pos = mul(pos, g_Projection);
-
-	VS_out output = (VS_out)0;
+	VertexOutput_PC output = (VertexOutput_PC)0;
 	output.p = pos;
 	output.c = input.Color;
 

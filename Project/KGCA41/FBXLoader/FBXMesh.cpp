@@ -326,6 +326,7 @@ namespace SSB
 			ExtractMeshVertexPosition(_fbxMesh, vertice);
 			ExtractMeshVertexColor(_fbxMesh, 0, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, 0, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, 0, vertice);
 
 			VertexRefiner<Vertex_PCNT> refiner;
 			refiner.Refine(_fbxMesh, vertice);
@@ -341,6 +342,7 @@ namespace SSB
 			ExtractMeshVertexPosition(_fbxMesh, vertice);
 			ExtractMeshVertexColor(_fbxMesh, i, vertice);
 			ExtractMeshVertexNormal(_fbxMesh, i, vertice);
+			ExtractMeshVertexTextureUV(_fbxMesh, i, vertice);
 
 			VertexRefiner<Vertex_PCNT> refiner;
 			refiner.Refine(_fbxMesh, vertice);

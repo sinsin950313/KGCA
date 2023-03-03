@@ -14,24 +14,42 @@ namespace SSB
 {
 	typedef unsigned int FrameIndex;
 
+	class DefaultAnimation
+	{
+	private:
+		AnimationFrameInfo* _frameInfo;
+
+	public:
+		DefaultAnimation();
+		~DefaultAnimation();
+
+	public:
+		const AnimationFrameInfo* GetAnimationFrameInfo() const;
+	};
+
+	static const DefaultAnimation kAnimationInitializer;
+
 	class Animation : public Common, public Serializeable
 	{
 	private:
-		static const AnimationFrameInfo kDefaultFrameInfo;
-
+		struct FrameMatrixInfo
+		{
+			HMatrix44 BoneMatrix[255];
+			HMatrix44 MeshMatrix[255];
+		};
 	private:
 		float _framePerSecond = 30;
 		Timer _animationTimer;
 
 		int _boneAnimationUnitMaxCount = 0;
 		int _meshAnimationUnitMaxCount = 0;
-		std::vector<AnimationFrameInfo> _data;
+		std::vector<AnimationFrameInfo*> _data;
 
 		FrameIndex _startFrame;
 		FrameIndex _endFrame;
 
-		// Consider maximum Stack size
-		AnimationFrameInfo _currentFrameInfo;
+		AnimationFrameInfo* _currentFrameInfo;
+		FrameMatrixInfo _frameMatrixInfo;
 		ID3D11Buffer* _animatedFrameBuffer;
 
 	public:
@@ -44,7 +62,7 @@ namespace SSB
 		void UpdateFrameInfo();
 
 	public:
-		void Initialize_SetAnimationFrameData(std::vector<AnimationFrameInfo> data);
+		void Initialize_SetAnimationFrameData(std::vector<AnimationFrameInfo*> data);
 		void Initialize_SetFrameInterval(FrameIndex start, FrameIndex end);
 		void Initialize_SetAnimationUnitMaximumCount(int boneCount, int meshCount);
 
@@ -53,7 +71,7 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
-		std::vector<std::string> Serialize(int tabCount) override;
-		void Deserialize() override;
+		//std::vector<std::string> Serialize(int tabCount) override;
+		//void Deserialize() override;
 	};
 }

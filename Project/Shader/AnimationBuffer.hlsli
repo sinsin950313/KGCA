@@ -4,8 +4,8 @@
 // Animation : Register 3
 // Mesh : Register 4
 
-cbuffer Animation : register(c3)
+cbuffer Animation : register(b3)
 {
-	matrix BoneMatrix[255];
-	matrix MeshMatrix[255];
+	matrix BoneAnimationMatrix[255];
+	matrix MeshAnimationMatrix[255];
 };

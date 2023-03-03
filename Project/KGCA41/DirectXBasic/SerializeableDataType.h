@@ -20,6 +20,7 @@ namespace SSB
 	struct MeshData
 	{
 		int MeshIndex;
+		int Padding[3];
 	};
 
 	static const int kAffectedBoneCount = 4;

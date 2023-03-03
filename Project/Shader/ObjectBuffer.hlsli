@@ -6,5 +6,5 @@
 
 cbuffer Object : register(b1)
 {
-	matrix World : packetoffset(c0);
+	matrix WorldTransformMatrix : packoffset(c0);
 };

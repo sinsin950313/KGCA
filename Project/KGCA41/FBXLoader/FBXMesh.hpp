@@ -270,12 +270,13 @@ namespace SSB
 					if (UVs)
 					{
 						texture = Read(UVs, vertexIndex, iUVIndex[iIndex]);
-					}
 
-					VertexType vertex;
-					vertex.TextureUV = { (float)texture.mData[0], 1 - (float)texture.mData[1] };
-					vertex.MaterialIndex = GetMaterialIndex(fbxMesh, iPoly, layerCount, indexToMaterialMap);
-					vertexList[vertexCount].TextureUV = vertex.TextureUV;
+						VertexType vertex;
+						vertex.TextureUV = { (float)texture.mData[0], 1 - (float)texture.mData[1] };
+						vertex.MaterialIndex = GetMaterialIndex(fbxMesh, iPoly, layerCount, indexToMaterialMap);
+						vertexList[vertexCount].TextureUV = vertex.TextureUV;
+						vertexList[vertexCount].MaterialIndex = vertex.MaterialIndex;
+					}
 					++vertexCount;
 				}
 			}

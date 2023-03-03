@@ -6,27 +6,46 @@ namespace SSB
 {
     extern DXWindow* g_dxWindow;
 
-	const AnimationFrameInfo Animation::kDefaultFrameInfo;
-
 	Animation::Animation()
 	{
-		_data.push_back(AnimationFrameInfo());
+		_currentFrameInfo = new AnimationFrameInfo;
 	}
 	Animation::~Animation()
 	{
 		Release();
+		if (_currentFrameInfo != nullptr)
+		{
+			delete _currentFrameInfo;
+			_currentFrameInfo = nullptr;
+		}
 	}
 	bool Animation::CreateAnimatedFrameInfoBuffer()
 	{
+		//D3D11_BUFFER_DESC bd;
+		//ZeroMemory(&bd, sizeof(bd));
+		//bd.ByteWidth = sizeof(AnimationFrameInfo);
+		//bd.Usage = D3D11_USAGE_DEFAULT;
+		//bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		//D3D11_SUBRESOURCE_DATA sd;
+		//ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+		//sd.pSysMem = &_currentFrameInfo;
+		//HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_animatedFrameBuffer);
+		//if (FAILED(hr))
+		//{
+		//	assert(SUCCEEDED(hr));
+		//	return false;
+		//}
+  //      return true;
 		D3D11_BUFFER_DESC bd;
 		ZeroMemory(&bd, sizeof(bd));
-		bd.ByteWidth = sizeof(AnimationFrameInfo);
+		bd.ByteWidth = sizeof(FrameMatrixInfo);
 		bd.Usage = D3D11_USAGE_DEFAULT;
 		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA sd;
 		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		sd.pSysMem = &_currentFrameInfo;
+		sd.pSysMem = &_frameMatrixInfo;
 		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_animatedFrameBuffer);
 		if (FAILED(hr))
 		{
@@ -72,24 +91,25 @@ namespace SSB
 
 		for (int i = 0; i < _boneAnimationUnitMaxCount; ++i)
 		{
-			_currentFrameInfo.BoneAnimationUnit[i].Matrix = GetInterpolate(_data[beforeIndex].BoneAnimationUnit[i], _data[afterIndex].BoneAnimationUnit[i], t);
+			//_currentFrameInfo->BoneAnimationUnit[i].Matrix = GetInterpolate(_data[beforeIndex]->BoneAnimationUnit[i], _data[afterIndex]->BoneAnimationUnit[i], t);
+			_frameMatrixInfo.BoneMatrix[i] = GetInterpolate(_data[beforeIndex]->BoneAnimationUnit[i], _data[afterIndex]->BoneAnimationUnit[i], t);
 		}
 		for (int i = 0; i < _meshAnimationUnitMaxCount; ++i)
 		{
-			_currentFrameInfo.MeshAnimationUnit[i].Matrix = GetInterpolate(_data[beforeIndex].MeshAnimationUnit[i], _data[afterIndex].MeshAnimationUnit[i], t);
+			//_currentFrameInfo->MeshAnimationUnit[i].Matrix = GetInterpolate(_data[beforeIndex]->MeshAnimationUnit[i], _data[afterIndex]->MeshAnimationUnit[i], t);
+			_frameMatrixInfo.MeshMatrix[i] = GetInterpolate(_data[beforeIndex]->MeshAnimationUnit[i], _data[afterIndex]->MeshAnimationUnit[i], t);
 		}
-
-		g_dxWindow->GetDeviceContext()->UpdateSubresource(_animatedFrameBuffer, 0, nullptr, &_currentFrameInfo, 0, 0);
 	}
 	bool Animation::Init()
 	{
 		_animationTimer.Init();
-		_currentFrameInfo = kDefaultFrameInfo;
+		const AnimationFrameInfo* ptr = kAnimationInitializer.GetAnimationFrameInfo();
+		memcpy(_currentFrameInfo, ptr, sizeof(AnimationFrameInfo));
 		CreateAnimatedFrameInfoBuffer();
 
 		return true;
 	}
-	void Animation::Initialize_SetAnimationFrameData(std::vector<AnimationFrameInfo> data)
+	void Animation::Initialize_SetAnimationFrameData(std::vector<AnimationFrameInfo*> data)
 	{
 		_data = data;
 	}
@@ -106,14 +126,20 @@ namespace SSB
 	bool Animation::Frame()
 	{
 		_animationTimer.Frame();
-		UpdateFrameInfo();
+		if (!_data.empty())
+		{
+			UpdateFrameInfo();
+		}
+
+		//g_dxWindow->GetDeviceContext()->UpdateSubresource(_animatedFrameBuffer, 0, nullptr, &_currentFrameInfo, 0, 0);
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_animatedFrameBuffer, 0, nullptr, &_frameMatrixInfo, 0, 0);
 
 		return true;
 	}
 	bool Animation::Render()
 	{
 		_animationTimer.Render();
-		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(2, 1, &_animatedFrameBuffer);
+		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(3, 1, &_animatedFrameBuffer);
 
 		return true;
 	}
@@ -122,5 +148,30 @@ namespace SSB
 		_animationTimer.Release();
 
 		return true;
+	}
+	DefaultAnimation::DefaultAnimation()
+	{
+		_frameInfo = new AnimationFrameInfo;
+		for (int i = 0; i < kAnimationUnitMaxIndex; ++i)
+		{
+			_frameInfo->BoneAnimationUnit[i].Matrix = HMatrix44();
+			_frameInfo->BoneAnimationUnit[i].Rotate = Quaternion();
+			_frameInfo->BoneAnimationUnit[i].Scale = Vector3();
+			_frameInfo->BoneAnimationUnit[i].Translate = Vector3();
+
+			_frameInfo->MeshAnimationUnit[i].Matrix = HMatrix44();
+			_frameInfo->MeshAnimationUnit[i].Rotate = Quaternion();
+			_frameInfo->MeshAnimationUnit[i].Scale = Vector3();
+			_frameInfo->MeshAnimationUnit[i].Translate = Vector3();
+		}
+	}
+	DefaultAnimation::~DefaultAnimation()
+	{
+		delete _frameInfo;
+		_frameInfo = nullptr;
+	}
+	const AnimationFrameInfo* DefaultAnimation::GetAnimationFrameInfo() const
+	{
+		return _frameInfo;
 	}
 }

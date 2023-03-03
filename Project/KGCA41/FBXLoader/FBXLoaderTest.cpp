@@ -22,8 +22,8 @@ bool SSB::FBXLoaderTest::Init()
 
 	//	Model* model = _loader->LoadModel();
 	//	model->Init();
-	//	model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
-	//	model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "PS", "ps_5_0"));
+	//	//model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
+	//	//model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "PS", "ps_5_0"));
 
 	//	DXObject* object = new DXObject;
 	//	object->Init();
@@ -39,8 +39,8 @@ bool SSB::FBXLoaderTest::Init()
 
 		Model* model = _loader->LoadModel();
 		model->Init();
-		model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs.hlsl", "VS", "vs_5_0"));
-		model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader_PCNTs.hlsl", "PS", "ps_5_0"));
+		//model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs.hlsl", "VS", "vs_5_0"));
+		//model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader_PCNTs.hlsl", "PS", "ps_5_0"));
 
 		DXObject* object = new DXObject;
 		object->Init();

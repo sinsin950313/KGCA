@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "VolumeType.h"
 #include "Serializeable.h"
+#include "Animation.h"
 
 namespace SSB
 {
@@ -29,7 +30,6 @@ namespace SSB
 		std::map<AnimationName, Animation*> _animations;
 		Animation* _currentAnimation;
 
-		VertexShader* _vs;
 		PixelShader* _ps;
 
 	public:
@@ -57,7 +57,7 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
-		std::vector<std::string> Serialize(int tabCount) override;
-		void Deserialize() override;
+		//std::vector<std::string> Serialize(int tabCount) override;
+		//void Deserialize() override;
 	};
 }

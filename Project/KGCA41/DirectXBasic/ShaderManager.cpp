@@ -62,7 +62,7 @@ namespace SSB
                 return nullptr;
             }
 
-            factory->SetFileName(fileName);
+            factory->SetFileName(wtm(fileName));
             factory->SetShader(shader);
             factory->SetCode(code);
             Shader* shaderComp = factory->New();

@@ -224,6 +224,7 @@ namespace SSB
 					mesh = new FBXMesh_PCNTs_Animatable;
 					static_cast<FBXMesh_PCNTs_Animatable*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
 					static_cast<FBXMesh_PCNTs_Animatable*>(mesh)->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
+					static_cast<FBXMesh_PCNTs_Animatable*>(mesh)->Initialize_SetMeshData(MeshData{ iter.second });
 				}
 				else
 				{
@@ -232,6 +233,7 @@ namespace SSB
 					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
 					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetBoneData(_fbxBoneKeyToFbxBoneMap);
 				}
+				_ps = ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader_PCNT_P.hlsl", "PS", "ps_5_0");
 			}
 			else
 			{
@@ -244,6 +246,7 @@ namespace SSB
 				{
 					mesh = new FBXMesh_PCNT_Animatable;
 					static_cast<FBXMesh_PCNT_Animatable*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+					static_cast<FBXMesh_PCNT_Animatable*>(mesh)->Initialize_SetMeshData({ iter.second });
 				}
 				else
 				{
@@ -251,6 +254,7 @@ namespace SSB
 					static_cast<FBXMesh_PCNT_Skinning*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
 					static_cast<FBXMesh_PCNT_Skinning*>(mesh)->Initialize_SetBoneData(_fbxBoneKeyToFbxBoneMap);
 				}
+				_ps = ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader_PCNT.hlsl", "PS", "ps_5_0");
 			}
 
 			mesh->Init();
@@ -284,39 +288,37 @@ namespace SSB
 			FbxLongLong endFrame = endTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
 			FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
 
-			std::vector<AnimationFrameInfo> data;
+			std::vector<AnimationFrameInfo*> data;
 			for (FbxLongLong t = startFrame; t <= endFrame; ++t)
 			{
 				FbxTime time;
 				time.SetFrame(t, timeMode);
 
+				AnimationFrameInfo* actionFrameInfo = new AnimationFrameInfo;
 				for (auto node : _boneNodeToBoneIndexMap)
 				{
-					AnimationFrameInfo actionFrameInfo;
-
 					AnimationUnitInfo unitInfo;
 					unitInfo.Matrix = Convert(node.first->EvaluateGlobalTransform(time));
 					Decompose(unitInfo.Matrix, unitInfo.Scale, unitInfo.Rotate, unitInfo.Translate);
 
-					actionFrameInfo.BoneAnimationUnit[node.second] = unitInfo;
+					actionFrameInfo->BoneAnimationUnit[node.second] = unitInfo;
 				}
 
 				for (auto node : _meshNodeToMeshIndexMap)
 				{
-					AnimationFrameInfo actionFrameInfo;
-
 					AnimationUnitInfo unitInfo;
 					unitInfo.Matrix = Convert(node.first->EvaluateGlobalTransform(time));
 					Decompose(unitInfo.Matrix, unitInfo.Scale, unitInfo.Rotate, unitInfo.Translate);
 
-					actionFrameInfo.BoneAnimationUnit[node.second] = unitInfo;
+					actionFrameInfo->MeshAnimationUnit[node.second] = unitInfo;
 				}
+				data.push_back(actionFrameInfo);
 			}
 			Animation* animation = new Animation;
 
 			animation->Initialize_SetAnimationFrameData(data);
 			animation->Initialize_SetAnimationUnitMaximumCount(_boneNodeToBoneIndexMap.size(), _meshNodeToMeshIndexMap.size());
-			animation->Initialize_SetFrameInterval(startFrame, endFrame);
+			animation->Initialize_SetFrameInterval(0, endFrame - startFrame);
 			animation->Init();
 
 			_animations.insert(std::make_pair(animationName, animation));
@@ -370,6 +372,7 @@ namespace SSB
 		{
 			ret->Initialize_RegisterMesh(mesh.first, mesh.second);
 		}
+		ret->SetPixelShader(_ps);
 
 		return ret;
 	}

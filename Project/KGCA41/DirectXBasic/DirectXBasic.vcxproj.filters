@@ -16,6 +16,9 @@
     <Filter Include="Shader">
       <UniqueIdentifier>{59773423-4cda-42cd-8abb-1d4bf8f5045a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="HLSLI">
+      <UniqueIdentifier>{90f0dbcb-3f74-45f3-a8d2-45f5ad98b4d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DXWindow.h">
@@ -141,10 +144,34 @@
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
     <None Include="..\..\Shader\LightBufferData.hlsli">
-      <Filter>Shader</Filter>
+      <Filter>HLSLI</Filter>
+    </None>
+    <None Include="..\..\Shader\MaterialBuffer.hlsli">
+      <Filter>HLSLI</Filter>
+    </None>
+    <None Include="..\..\Shader\MeshBuffer.hlsli">
+      <Filter>HLSLI</Filter>
+    </None>
+    <None Include="..\..\Shader\ObjectBuffer.hlsli">
+      <Filter>HLSLI</Filter>
+    </None>
+    <None Include="..\..\Shader\VertexShaderInputType.hlsli">
+      <Filter>HLSLI</Filter>
     </None>
     <None Include="..\..\Shader\VertexShaderStageBufferData.hlsli">
-      <Filter>Shader</Filter>
+      <Filter>HLSLI</Filter>
+    </None>
+    <None Include="..\..\Shader\AnimationBuffer.hlsli">
+      <Filter>HLSLI</Filter>
+    </None>
+    <None Include="..\..\Shader\CameraBuffer.hlsli">
+      <Filter>HLSLI</Filter>
+    </None>
+    <None Include="..\..\Shader\PixelShaderInputType.hlsli">
+      <Filter>HLSLI</Filter>
+    </None>
+    <None Include="..\..\Shader\VertexShaderOutputType.hlsli">
+      <Filter>HLSLI</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

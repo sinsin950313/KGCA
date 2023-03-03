@@ -6,7 +6,7 @@
 
 cbuffer Camera : register(b0)
 {
-	matrix Position : packetoffset(c0);
-	matrix View : packetoffset(c4);
-	matrix Projection : packetoffset(c8);
+	matrix CameraPosition : packoffset(c0);
+	matrix ViewMatrix : packoffset(c4);
+	matrix ProjectionMatrix : packoffset(c8);
 };

@@ -56,14 +56,13 @@ namespace SSB
 
 	void Mesh_Vertex_PCNT_Animatable::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
-		count = 5;
+		count = 4;
 
 		*desc = new D3D11_INPUT_ELEMENT_DESC[count];
 		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[1] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[2] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[3] = { "Diffuse", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[4] = { "MeshIndex", 0, DXGI_FORMAT_R32_SINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 
 	void Mesh_Vertex_PCNT_Animatable::Initialize_SetMeshData(MeshData meshData)
@@ -118,7 +117,7 @@ namespace SSB
 
 	void Mesh_Vertex_PCNT_Skinning::InitialVertexShader()
 	{
-		//SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT_Skinning.hlsl", "VS", "vs_5_0"));
+		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT_Skinning.hlsl", "VS", "vs_5_0"));
 	}
 
 	bool Mesh_Vertex_PCNT_Skinning::CreateBoneSpaceTransformBuffer()
@@ -127,7 +126,7 @@ namespace SSB
 		ZeroMemory(&bd, sizeof(bd));
 		bd.ByteWidth = sizeof(MeshToBoneSpaceTransformData);
 		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA sd;
 		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
@@ -143,7 +142,10 @@ namespace SSB
 
 	void Mesh_Vertex_PCNT_Skinning::SetMeshData(MeshToBoneSpaceTransformData data)
 	{
-		_boneSpaceTransformData = data;
+		for (int i = 0; i < kMaximumBoneCount; ++i)
+		{
+			_boneSpaceTransformData.BoneSpaceTransformBuffer[i] = data.BoneSpaceTransformBuffer[i].Transpose();
+		}
 	}
 
 	bool Mesh_Vertex_PCNT_Skinning::Init()
@@ -157,7 +159,7 @@ namespace SSB
 
 	bool Mesh_Vertex_PCNT_Skinning::Render()
 	{
-		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(3, 1, &_boneSpaceTransformBuffer);
+		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(4, 1, &_boneSpaceTransformBuffer);
 
 		Mesh<Vertex_PCNT_Skinning>::Render();
 
@@ -218,15 +220,14 @@ namespace SSB
 
 	void Mesh_Vertex_PCNTs_Animatable::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
-		count = 6;
+		count = 5;
 
 		*desc = new D3D11_INPUT_ELEMENT_DESC[count];
 		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[1] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[2] = { "Normal", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[3] = { "Diffuse", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[4] = { "MaterialIndex", 0, DXGI_FORMAT_R32_UINT, 0, 76, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[5] = { "MeshIndex", 0, DXGI_FORMAT_R32_SINT, 0, 80, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[4] = { "MaterialIndex", 0, DXGI_FORMAT_R32_UINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 
 	void Mesh_Vertex_PCNTs_Animatable::InitialVertexShader()
@@ -277,7 +278,7 @@ namespace SSB
 		(*desc)[3] = { "Diffuse", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 48, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[4] = { "AffectingBoneIndex", 0, DXGI_FORMAT_R32G32B32A32_SINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 		(*desc)[5] = { "Weight", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[6] = { "MaterialIndex", 0, DXGI_FORMAT_R32_UINT, 0, 76, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[6] = { "MaterialIndex", 0, DXGI_FORMAT_R32_UINT, 0, 88, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 
 	void Mesh_Vertex_PCNTs_Skinning::InitialVertexShader()
@@ -291,7 +292,7 @@ namespace SSB
 		ZeroMemory(&bd, sizeof(bd));
 		bd.ByteWidth = sizeof(MeshToBoneSpaceTransformData);
 		bd.Usage = D3D11_USAGE_DEFAULT;
-		bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 
 		D3D11_SUBRESOURCE_DATA sd;
 		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
@@ -307,7 +308,10 @@ namespace SSB
 
 	void Mesh_Vertex_PCNTs_Skinning::SetMeshData(MeshToBoneSpaceTransformData data)
 	{
-		_boneSpaceTransformData = data;
+		for (int i = 0; i < kMaximumBoneCount; ++i)
+		{
+			_boneSpaceTransformData.BoneSpaceTransformBuffer[i] = data.BoneSpaceTransformBuffer[i].Transpose();
+		}
 	}
 
 	bool Mesh_Vertex_PCNTs_Skinning::Init()
@@ -321,7 +325,7 @@ namespace SSB
 
 	bool Mesh_Vertex_PCNTs_Skinning::Render()
 	{
-		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(3, 1, &_boneSpaceTransformBuffer);
+		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(4, 1, &_boneSpaceTransformBuffer);
 
 		Mesh<Vertex_PCNTs_Skinning>::Render();
 

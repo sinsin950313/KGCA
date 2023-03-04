@@ -4,7 +4,7 @@
 #include "MaterialBuffer.hlsli"
 #include "AnimationBuffer.hlsli"
 #include "MeshBuffer.hlsli"
-#include "VertexShaderOutput.hlsli"
+#include "VertexShaderOutputType.hlsli"
 
 VertexOutput_PCNT_P VS(Vertex_PCNTs input)
 {
@@ -25,7 +25,7 @@ VertexOutput_PCNT_P VS(Vertex_PCNTs input)
 	output.n = normal;
 	output.c = input.Color;
 	output.t = input.Diffuse;
-	output.param[0] = input.MaterialIndex;
+	output.Index = input.MaterialIndex;
 
 	return output;
 	

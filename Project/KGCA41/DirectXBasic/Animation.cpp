@@ -21,22 +21,6 @@ namespace SSB
 	}
 	bool Animation::CreateAnimatedFrameInfoBuffer()
 	{
-		//D3D11_BUFFER_DESC bd;
-		//ZeroMemory(&bd, sizeof(bd));
-		//bd.ByteWidth = sizeof(AnimationFrameInfo);
-		//bd.Usage = D3D11_USAGE_DEFAULT;
-		//bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-
-		//D3D11_SUBRESOURCE_DATA sd;
-		//ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		//sd.pSysMem = &_currentFrameInfo;
-		//HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_animatedFrameBuffer);
-		//if (FAILED(hr))
-		//{
-		//	assert(SUCCEEDED(hr));
-		//	return false;
-		//}
-  //      return true;
 		D3D11_BUFFER_DESC bd;
 		ZeroMemory(&bd, sizeof(bd));
 		bd.ByteWidth = sizeof(FrameMatrixInfo);
@@ -71,9 +55,6 @@ namespace SSB
 		float animationElapseTime = (float)(_animationTimer.GetElapseTime() / 1000.0f);
 		int beforeIndex = animationElapseTime * _framePerSecond;
 		int afterIndex = beforeIndex + 1;
-
-		float beforeTime = beforeIndex / _framePerSecond;
-		float afterTime = afterIndex / _framePerSecond;
 		if (afterIndex == _data.size())
 		{
 			afterIndex = beforeIndex;
@@ -85,19 +66,19 @@ namespace SSB
 			afterIndex = afterIndex / _data.size();
 		}
 
-		beforeTime = beforeIndex / _framePerSecond;
-		afterTime = afterIndex / _framePerSecond;
+		float beforeTime = beforeIndex / _framePerSecond;
+		float afterTime = afterIndex / _framePerSecond;
 		float t = (animationElapseTime - beforeTime) / (afterTime - beforeTime);
 
 		for (int i = 0; i < _boneAnimationUnitMaxCount; ++i)
 		{
-			//_currentFrameInfo->BoneAnimationUnit[i].Matrix = GetInterpolate(_data[beforeIndex]->BoneAnimationUnit[i], _data[afterIndex]->BoneAnimationUnit[i], t);
 			_frameMatrixInfo.BoneMatrix[i] = GetInterpolate(_data[beforeIndex]->BoneAnimationUnit[i], _data[afterIndex]->BoneAnimationUnit[i], t);
+			_frameMatrixInfo.BoneMatrix[i] = _frameMatrixInfo.BoneMatrix[i].Transpose();
 		}
 		for (int i = 0; i < _meshAnimationUnitMaxCount; ++i)
 		{
-			//_currentFrameInfo->MeshAnimationUnit[i].Matrix = GetInterpolate(_data[beforeIndex]->MeshAnimationUnit[i], _data[afterIndex]->MeshAnimationUnit[i], t);
 			_frameMatrixInfo.MeshMatrix[i] = GetInterpolate(_data[beforeIndex]->MeshAnimationUnit[i], _data[afterIndex]->MeshAnimationUnit[i], t);
+			_frameMatrixInfo.MeshMatrix[i] = _frameMatrixInfo.MeshMatrix[i].Transpose();
 		}
 	}
 	bool Animation::Init()
@@ -131,7 +112,6 @@ namespace SSB
 			UpdateFrameInfo();
 		}
 
-		//g_dxWindow->GetDeviceContext()->UpdateSubresource(_animatedFrameBuffer, 0, nullptr, &_currentFrameInfo, 0, 0);
 		g_dxWindow->GetDeviceContext()->UpdateSubresource(_animatedFrameBuffer, 0, nullptr, &_frameMatrixInfo, 0, 0);
 
 		return true;

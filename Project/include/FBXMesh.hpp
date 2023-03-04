@@ -285,6 +285,14 @@ namespace SSB
 	template<typename VertexType>
 	inline void FBXLayerElementReader::ExtractMeshVertexSkinningData(FbxMesh* fbxMesh, std::map<FBXBoneKey, FBXBoneData>& fbxBoneKeyToFbxBoneData, std::vector<VertexType>& vertexList, MeshToBoneSpaceTransformData& transformData)
 	{
+		struct SkinningData
+		{
+			int AffectedBoneIndex[4]{ 0, };
+			float Weight[4]{ 0, };
+		};
+		std::vector<SkinningData> skinningDataPerVertex;
+		skinningDataPerVertex.resize(fbxMesh->GetControlPointsCount());
+
 		int deformerCount = fbxMesh->GetDeformerCount(FbxDeformer::eSkin);
 		for (int iDeformer = 0; iDeformer < deformerCount; ++iDeformer)
 		{
@@ -316,7 +324,7 @@ namespace SSB
 					int vertexIndex = controlPointIndice[iControlPoint];
 					float weight = controlPointWeights[iControlPoint];
 
-					VertexType& data = vertexList[vertexIndex];
+					SkinningData& data = skinningDataPerVertex[vertexIndex];
 					for (int i = 0; i < 4; ++i)
 					{
 						if (data.Weight[i] < weight)
@@ -333,6 +341,34 @@ namespace SSB
 							break;
 						}
 					}
+				}
+			}
+		}
+
+		int vertexCount = 0;
+		int polygonCount = fbxMesh->GetPolygonCount();
+		for (int iPoly = 0; iPoly < polygonCount; ++iPoly)
+		{
+			int polygonSize = fbxMesh->GetPolygonSize(iPoly);
+			int faceCount = polygonSize - 2;
+			for (int iFace = 0; iFace < faceCount; ++iFace)
+			{
+				int polygonVertexIndex[3];
+				polygonVertexIndex[0] = fbxMesh->GetPolygonVertex(iPoly, 0);
+				polygonVertexIndex[1] = fbxMesh->GetPolygonVertex(iPoly, iFace + 2);
+				polygonVertexIndex[2] = fbxMesh->GetPolygonVertex(iPoly, iFace + 1); 
+
+				for (int iIndex = 0; iIndex < 3; ++iIndex)
+				{
+					int vertexIndex = polygonVertexIndex[iIndex];
+
+					VertexType& vertex = vertexList[vertexCount];
+					for (int i = 0; i < 4; ++i)
+					{
+						vertex.AffectedBoneIndex[i] = skinningDataPerVertex[vertexIndex].AffectedBoneIndex[i];
+						vertex.Weight[i] = skinningDataPerVertex[vertexIndex].Weight[i];
+					}
+					++vertexCount;
 				}
 			}
 		}

@@ -42,9 +42,10 @@ namespace SSB
 		unsigned int MaterialIndex;
 	};
 
+	static const int kMaximumBoneCount = 255;
 	struct MeshToBoneSpaceTransformData
 	{
-		HMatrix44 BoneSpaceTransformBuffer[255];
+		HMatrix44 BoneSpaceTransformBuffer[kMaximumBoneCount];
 	};
 
 	static const int kAnimationUnitMaxIndex = 255;

@@ -75,7 +75,7 @@ namespace SSB
 
 	class FBXMesh_PCNT : public Mesh_Vertex_PCNT, public FBXLayerElementReader
 	{
-	private:
+	protected:
 		FbxMesh* _fbxMesh = nullptr;
 
 	private:
@@ -85,9 +85,21 @@ namespace SSB
 		void Initialize_SetFBXMesh(FbxMesh* fbxMesh) override;
 	};
 
-	class FBXMesh_PCNT_Animatable : public Mesh_Vertex_PCNT_Animatable, public FBXLayerElementReader
+	class FBXMesh_PCNT_Sub : public FBXMesh_PCNT
 	{
 	private:
+		int _layerIndex;
+
+	public:
+		void Initialize_SetLayerIndex(int index);
+
+	private:
+		void Build() override;
+	};
+
+	class FBXMesh_PCNT_Animatable : public Mesh_Vertex_PCNT_Animatable, public FBXLayerElementReader
+	{
+	protected:
 		FbxMesh* _fbxMesh = nullptr;
 
 	private:
@@ -95,6 +107,18 @@ namespace SSB
 
 	public:
 		void Initialize_SetFBXMesh(FbxMesh* fbxMesh) override;
+	};
+
+	class FBXMesh_PCNT_Animatable_Sub : public FBXMesh_PCNT_Animatable
+	{
+	private:
+		int _layerIndex;
+
+	public:
+		void Initialize_SetLayerIndex(int index);
+
+	private:
+		void Build() override;
 	};
 
 	class FBXMultiTextureInterface
@@ -105,7 +129,7 @@ namespace SSB
 
 	class FBXMesh_PCNTs : public Mesh_Vertex_PCNTs, public FBXLayerElementReader, public FBXMultiTextureInterface
 	{
-	private:
+	protected:
 		FbxMesh* _fbxMesh = nullptr;
 		std::map<FBXMaterialKey, FBXMaterialData> _fbxMaterialKeyToFbxMaterialMap;
 
@@ -117,9 +141,21 @@ namespace SSB
 		void Initialize_SetMaterialData(std::map<FBXMaterialKey, FBXMaterialData> fbxMaterialKeyToFbxMaterialMap) override;
 	};
 
-	class FBXMesh_PCNTs_Animatable : public Mesh_Vertex_PCNTs_Animatable, public FBXLayerElementReader, public FBXMultiTextureInterface
+	class FBXMesh_PCNTs_Sub : public FBXMesh_PCNTs
 	{
 	private:
+		int _layerIndex;
+
+	public:
+		void Initialize_SetLayerIndex(int index);
+
+	private:
+		void Build() override;
+	};
+
+	class FBXMesh_PCNTs_Animatable : public Mesh_Vertex_PCNTs_Animatable, public FBXLayerElementReader, public FBXMultiTextureInterface
+	{
+	protected:
 		FbxMesh* _fbxMesh = nullptr;
 		std::map<FBXMaterialKey, FBXMaterialData> _fbxMaterialKeyToFbxMaterialMap;
 
@@ -129,6 +165,18 @@ namespace SSB
 	public:
 		void Initialize_SetFBXMesh(FbxMesh* fbxMesh) override;
 		void Initialize_SetMaterialData(std::map<FBXMaterialKey, FBXMaterialData> fbxMaterialKeyToFbxMaterialMap) override;
+	};
+
+	class FBXMesh_PCNTs_Animatable_Sub : public FBXMesh_PCNTs_Animatable
+	{
+	private:
+		int _layerIndex;
+
+	public:
+		void Initialize_SetLayerIndex(int index);
+
+	private:
+		void Build() override;
 	};
 
 	class FBXSkinningMeshInterface
@@ -139,7 +187,7 @@ namespace SSB
 
 	class FBXMesh_PCNT_Skinning : public Mesh_Vertex_PCNT_Skinning, public FBXLayerElementReader, public FBXSkinningMeshInterface
 	{
-	private:
+	protected:
 		FbxMesh* _fbxMesh = nullptr;
 		std::map<FBXBoneKey, FBXBoneData> _fbxBoneKeyToFbxBoneDataMap;
 
@@ -151,10 +199,22 @@ namespace SSB
 		void Initialize_SetBoneData(std::map<FBXBoneKey, FBXBoneData>& fbxBoneKeyToFbxBoneDataMap) override;
 	};
 
+	class FBXMesh_PCNT_Skinning_Sub : public FBXMesh_PCNT_Skinning
+	{
+	private:
+		int _layerIndex;
+
+	public:
+		void Initialize_SetLayerIndex(int index);
+
+	private:
+		void Build() override;
+	};
+
 	class FBXMesh_PCNTs_Skinning
 		: public Mesh_Vertex_PCNTs_Skinning, public FBXLayerElementReader, public FBXMultiTextureInterface, public FBXSkinningMeshInterface
 	{
-	private:
+	protected:
 		FbxMesh* _fbxMesh = nullptr;
 		std::map<FBXMaterialKey, FBXMaterialData> _fbxMaterialKeyToFbxMaterialMap;
 		std::map<FBXBoneKey, FBXBoneData> _fbxBoneKeyToFbxBoneDataMap;
@@ -166,5 +226,17 @@ namespace SSB
 		void Initialize_SetFBXMesh(FbxMesh* fbxMesh) override;
 		void Initialize_SetMaterialData(std::map<FBXMaterialKey, FBXMaterialData> fbxMaterialKeyToFbxMaterialMap) override;
 		void Initialize_SetBoneData(std::map<FBXBoneKey, FBXBoneData>& fbxBoneKeyToFbxBoneDataMap) override;
+	};
+
+	class FBXMesh_PCNTs_Skinning_Sub : public FBXMesh_PCNTs_Skinning
+	{
+	private:
+		int _layerIndex;
+
+	public:
+		void Initialize_SetLayerIndex(int index);
+
+	private:
+		void Build() override;
 	};
 }

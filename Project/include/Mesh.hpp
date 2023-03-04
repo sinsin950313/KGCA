@@ -93,26 +93,6 @@ namespace SSB
 	{
 		_subMeshes.push_back(mesh);
 	}
-	//template<typename VertexType>
-	//void Mesh<VertexType>::SetPixelShader(PixelShader* shader)
-	//{
-	//	_ps = shader;
-	//}
-	//template<typename VertexType>
-	//void SetTextureData(std::map<IndexForMaterial, TextureResource*> textureData)
-	//{
-	//	_resourceCount = textureData.size();
-
-	//	_shaderResourceViewList = new ID3D11ShaderResourceView*[_resourceCount];
-	//	_samplerStateList = new ID3D11SamplerState * [_resourceCount];
-
-	//	for (int i = 0; i < _resourceCount; ++i)
-	//	{
-	//		auto iter = textureData.find(i)->second;
-	//		_shaderResourceViewList[i] = iter->GetResource()->GetShaderResourceView();
-	//		_samplerStateList[i] = iter->GetSamplerState();
-	//	}
-	//}
 	template<typename VertexType>
 	Vector3 Mesh<VertexType>::GetMinVertex()
 	{
@@ -126,17 +106,27 @@ namespace SSB
 	template<typename VertexType>
 	bool Mesh<VertexType>::Init()
 	{
-		InitialVertexShader();
 		Build();
+		InitialVertexShader();
 		CreateVertexBuffer();
 		CreateIndexBuffer();
 		CreateVertexLayout();
+
+		for (auto subMesh : _subMeshes)
+		{
+			subMesh->Init();
+		}
 
 		return true;
 	}
 	template<typename VertexType>
 	bool Mesh<VertexType>::Frame()
 	{
+		for (auto subMesh : _subMeshes)
+		{
+			subMesh->Frame();
+		}
+
 		return true;
 	}
 	template<typename VertexType>
@@ -153,10 +143,6 @@ namespace SSB
 		}
 		dc->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		_vs->Render();
-
-		//dc->PSSetSamplers(0, _resourceCount, _samplerStateList);
-		//dc->PSSetShaderResources(0, _resourceCount, _shaderResourceViewList);
-		//_ps->Render();
 
 		dc->DrawIndexed(_indexList.size(), 0, 0);
 
@@ -193,27 +179,13 @@ namespace SSB
 		}
 
 		_vs = nullptr;
-		//_ps = nullptr;
 
-		//if (_samplerStateList != nullptr)
-		//{
-		//	for (int i = 0; i < _resourceCount; ++i)
-		//	{
-		//		_samplerStateList[i] = nullptr;
-		//	}
-		//	delete _samplerStateList;
-		//	_samplerStateList = nullptr;
-		//}
-
-		//if (_shaderResourceViewList != nullptr)
-		//{
-		//	for (int i = 0; i < _resourceCount; ++i)
-		//	{
-		//		_shaderResourceViewList[i] = nullptr;
-		//	}
-		//	delete _shaderResourceViewList;
-		//	_shaderResourceViewList = nullptr;
-		//}
+		for (auto subMesh : _subMeshes)
+		{
+			subMesh->Release();
+			delete subMesh;
+		}
+		_subMeshes.clear();
 
 		return true;
 	}

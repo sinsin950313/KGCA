@@ -2,5 +2,5 @@
 
 float4 PS(PixelShaderInput_PCNT_P input) : SV_TARGET
 {
-	return GetDiffuseColor(input.Index, input.Diffuse);
+	return float4(GetDiffuseColor(input.Index, input.Diffuse).xyz, 1);
 }

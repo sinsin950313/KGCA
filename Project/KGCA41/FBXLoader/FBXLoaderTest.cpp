@@ -15,7 +15,7 @@ bool SSB::FBXLoaderTest::Init()
 
 	_loader = new FBXLoader();
 
-	// Mesh Loading Test
+	//// Mesh Loading Test
 	//{
 	//	_loader->Init();
 	//	_loader->SetFileName("box.FBX");
@@ -32,24 +32,24 @@ bool SSB::FBXLoaderTest::Init()
 	//	_objectList.push_back(object);
 	//}
 
-	// Multi Material = Multi Texture Test
-	{
-		//_loader->Init();
-		//_loader->SetFileName("MultiCameras.FBX");
+	//// Multi Material = Multi Texture Test
+	//{
+	//	_loader->Init();
+	//	_loader->SetFileName("MultiCameras.FBX");
 
-		//Model* model = _loader->LoadModel();
-		//model->Init();
-		////model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs.hlsl", "VS", "vs_5_0"));
-		////model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader_PCNTs.hlsl", "PS", "ps_5_0"));
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
+	//	//model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs.hlsl", "VS", "vs_5_0"));
+	//	//model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader_PCNTs.hlsl", "PS", "ps_5_0"));
 
-		//DXObject* object = new DXObject;
-		//object->Init();
-		//object->SetModel(model);
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
 
-		//_objectList.push_back(object);
-	}
+	//	_objectList.push_back(object);
+	//}
 
-	// Multi Material = Multi Texture Test
+	//// Multi Material = Multi Texture Test
 	//{
 	//	_loader->Init();
 	//	_loader->SetFileName("Ship.FBX");
@@ -66,120 +66,104 @@ bool SSB::FBXLoaderTest::Init()
 	//	_objectList.push_back(object);
 	//}
 
-	// Object Animation Testing
+	//// Object Animation Testing
 	//{
 	//	_loader->Init();
-	//	auto meshData = _loader->LoadMesh("Turret_Deploy1.FBX");
-	//	Model* model = new Model;
-	//	for (auto mesh : meshData)
-	//	{
-	//		model->RegisterMesh(mesh.first, mesh.second);
-	//	}
-	//	model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
-	//	model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
-	//	DXObject* object = new DXObject;
-	//	object->SetModel(model);
-	//	object->Init();
-	//	//DXObject* turret = _loader->Load("Man.FBX", "Man.FBXScript");
-	//	//turret->Init();
-	//	//turret->UpdateCurrentAnimation("Take 001");
-	//	_objectList.push_back(object);
-	//}
+	//	_loader->SetFileName("Turret_Deploy1.FBX");
 
-	// Multi Layer Testing
-	//{
-	//	_loader->Init();
-	//	auto meshData = _loader->LoadMesh("Man.FBX");
-	//	Model* model = new Model;
-	//	for (auto mesh : meshData)
-	//	{
-	//		model->RegisterMesh(mesh.first, mesh.second);
-	//	}
-	//	model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
-	//	model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
-	//	DXObject* object = new DXObject;
-	//	object->SetModel(model);
-	//	object->Init();
-	//	_objectList.push_back(object);
-	//}
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
 
-	// Skinning Animation Testing
-	//{
-	//	_loader->Init();
-	//	auto meshData = _loader->LoadMesh("Man.FBX");
-	//	Model* model = new Model;
-	//	for (auto mesh : meshData)
+	//	std::map<std::string, Animation*> animations = _loader->LoadAnimation();
+	//	for (auto animation : animations)
 	//	{
-	//		model->RegisterMesh(mesh.first, mesh.second);
+	//		model->Initialize_RegisterAnimation(animation.first, animation.second);
 	//	}
-	//	model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
-	//	model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
-	//	DXObject* object = new DXObject;
-	//	object->SetModel(model);
-	//	object->Init();
 	//	model->SetCurrentAnimation("Take 001");
+
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
+
 	//	_objectList.push_back(object);
 	//}
 
-	// Script Animation with Single FBX Testing
+	//// Multi Layer Testing
 	//{
 	//	_loader->Init();
-	//	auto meshData = _loader->LoadMesh("Man.FBX");
-	//	Model* model = new Model;
-	//	for (auto mesh : meshData)
-	//	{
-	//		model->RegisterMesh(mesh.first, mesh.second);
-	//	}
-	//	model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
-	//	model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
+	//	_loader->SetFileName("Man.FBX");
+
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
+
 	//	DXObject* object = new DXObject;
-	//	object->SetModel(model);
 	//	object->Init();
-	//	//DXObject* man = _loader->Load("Man.FBX", "Man.FBXScript");
-	//	//man->Init();
-	//	//man->UpdateCurrentAnimation("Walk");
+	//	object->SetModel(model);
+
 	//	_objectList.push_back(object);
 	//}
 
-	// Animation with Multi FBX File Testing
+	//// Skinning Animation Testing
 	//{
 	//	_loader->Init();
-	//	auto meshData = _loader->LoadMesh("Man.FBX");
-	//	Model* model = new Model;
-	//	for (auto mesh : meshData)
+	//	_loader->SetFileName("Man.FBX");
+
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
+
+	//	std::map<std::string, Animation*> animations = _loader->LoadAnimation();
+	//	for (auto animation : animations)
 	//	{
-	//		model->RegisterMesh(mesh.first, mesh.second);
+	//		model->Initialize_RegisterAnimation(animation.first, animation.second);
 	//	}
-	//	model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
-	//	model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
+	//	model->SetCurrentAnimation("Take 001");
+
 	//	DXObject* object = new DXObject;
-	//	object->SetModel(model);
 	//	object->Init();
-	//////DXObject* swat1 = _loader->Load("Swat.FBX", std::vector<std::string>{ "Swat@walking_backwards.fbx", "Swat@strafe_2.fbx", "Swat@strafe.fbx" });
-	////swat1->Init();
-	//////swat1->UpdateCurrentAnimation("mixamo.com");
+	//	object->SetModel(model);
+
 	//	_objectList.push_back(object);
 	//}
 
-	// Animation with Multi FBX File and Script Testing
+	//// Script Animation with Single FBX Testing
 	//{
 	//	_loader->Init();
-	//	auto meshData = _loader->LoadMesh("Man.FBX");
-	//	Model* model = new Model;
-	//	for (auto mesh : meshData)
+	//	_loader->SetFileName("Swat.fbx");
+
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
+
+	//	_loader->Init();
+	//	_loader->SetFileName("Swat@strafe.fbx");
+	//	std::map<std::string, Animation*> animations = _loader->LoadAnimation();
+	//	for (auto animation : animations)
 	//	{
-	//		model->RegisterMesh(mesh.first, mesh.second);
+	//		model->Initialize_RegisterAnimation(animation.first, animation.second);
 	//	}
-	//	model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DMeshShader.hlsl", "VS", "vs_5_0"));
-	//	model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DMeshShader.hlsl", "PS", "ps_5_0"));
+	//	model->SetCurrentAnimation("mixamo.com");
+
 	//	DXObject* object = new DXObject;
-	//	object->SetModel(model);
 	//	object->Init();
-	////DXObject* swat = _loader->Load("Swat.FBX", std::vector<std::string>{ "Swat@walking_backwards.fbx", "Swat@strafe_2.fbx", "Swat@strafe.fbx"}, "Swat.FBXScript");
-	////swat->Init();
-	////swat->UpdateCurrentAnimation("strafe_2");
+	//	object->SetModel(model);
+
 	//	_objectList.push_back(object);
 	//}
+
+	{
+		_loader->Init();
+		_loader->SetFileName("Cs_Avatar_Girl_Bow_Ambor #1 (merge).fbx");
+
+		Model* model = _loader->LoadModel();
+		model->Init();
+		//model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
+		//model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "PS", "ps_5_0"));
+
+		DXObject* object = new DXObject;
+		object->Init();
+		object->SetModel(model);
+
+		_objectList.push_back(object);
+	}
 
 	//_camera = new ModelViewCamera();
 	//_camera->SetTarget(_loader->_rootObject);

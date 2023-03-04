@@ -581,7 +581,7 @@ namespace SSB
 	}
 	void RenderTarget::Clear()
 	{
-		float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		g_dxWindow->GetDeviceContext()->ClearRenderTargetView(_renderTargetView, color);
 		g_dxWindow->GetDeviceContext()->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}

@@ -117,9 +117,12 @@ namespace SSB
 					if (prop.IsValid())
 					{
 						FbxFileTexture* fileTexture = prop.GetSrcObject<FbxFileTexture>();
-						std::wstring fileName = ExtractTextureFileName(fileTexture, material);
-						material->Initialize_SetTexture(kDiffuse, TextureLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
-						key = wtm(fileName);
+						if (fileTexture != nullptr)
+						{
+							std::wstring fileName = ExtractTextureFileName(fileTexture, material);
+							material->Initialize_SetTexture(kDiffuse, TextureLoader::GetInstance().Load(fileName, DXStateManager::kDefaultWrapSample));
+							key = wtm(fileName);
+						}
 					}
 					//ExtractTexture(&prop, material, kDiffuse);
 					FbxDouble diffuseFactor = lambertMaterial->DiffuseFactor;
@@ -142,7 +145,10 @@ namespace SSB
 			}
 			material->Init();
 
-			_fbxMaterialKeyToFbxMaterialMap.insert(std::make_pair(key, FBXMaterialData{i, material}));
+			if (!key.empty())
+			{
+				_fbxMaterialKeyToFbxMaterialMap.insert(std::make_pair(key, FBXMaterialData{ i, material }));
+			}
 		}
 	}
 
@@ -214,11 +220,12 @@ namespace SSB
 			MeshInterface* mesh = nullptr;
 
 			FbxMesh* fbxMesh = iter.first->GetMesh();
-			//if (1 < fbxMesh->GetElementMaterialCount())
+			//if (1 < _scene->GetMaterialCount())
 			if (1 < _fbxMaterialKeyToFbxMaterialMap.size())
 			{
-				if (fbxMesh->GetSrcObject<FbxAnimStack>() == nullptr)
+				if (_scene->GetSrcObjectCount<FbxAnimStack>() == 0)
 				{
+					// Not Tested
 					mesh = new FBXMesh_PCNTs;
 					static_cast<FBXMesh_PCNTs*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
 					static_cast<FBXMesh_PCNTs*>(mesh)->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
@@ -241,8 +248,9 @@ namespace SSB
 			}
 			else
 			{
-				if (fbxMesh->GetSrcObject<FbxAnimStack>() == nullptr)
+				if (_scene->GetSrcObjectCount<FbxAnimStack>() == 0)
 				{
+					// Not Tested
 					mesh = new FBXMesh_PCNT;
 					static_cast<FBXMesh_PCNT*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
 				}
@@ -396,9 +404,12 @@ namespace SSB
 		_root = nullptr;
 		_boneNodeToBoneIndexMap.clear();
 		_meshNodeToMeshIndexMap.clear();
+		_fbxBoneKeyToFbxBoneMap.clear();
+		_fbxMaterialKeyToFbxMaterialMap.clear();
+		_indexToMeshMap.clear();
+		_animations.clear();
 
-		//_animationInfo = AnimationFrameInfo();
-		//_meshInfo.clear();
+		_ps = nullptr;
 
 		return true;
 	}

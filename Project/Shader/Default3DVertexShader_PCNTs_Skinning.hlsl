@@ -34,7 +34,7 @@ VertexOutput_PCNT_P VS(Vertex_PCNTs_Skinning input)
 	output.n = normal;
 	output.c = input.Color;
 	output.t = input.Diffuse;
-	output.param = input.MaterialIndex;
+	output.Index = input.MaterialIndex;
 
 	return output;
 }

@@ -62,5 +62,7 @@ namespace SSB
 		bool Render() override;
 		bool Release() override;
 		void Draw(ID3D11DeviceContext* dc) override;
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 }

@@ -71,7 +71,7 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
-		//std::vector<std::string> Serialize(int tabCount) override;
-		//void Deserialize() override;
+		std::vector<std::string> Serialize(int tabCount) override;
+		void Deserialize() override;
 	};
 }

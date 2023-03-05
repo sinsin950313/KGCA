@@ -58,4 +58,34 @@ namespace SSB
 
 		return true;
 	}
+	std::string Material::Serialize(int tabCount)
+	{
+		std::string ret;
+		ret += Serializeable::GetTabbedString(tabCount);
+		ret += "[\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Material Index : ";
+		ret += std::to_string(_materialIndex);
+		ret += ",\n";
+
+		for(int i = 0; i < kTextureTypeCount; ++i)
+		{
+			ret += Serializeable::GetTabbedString(tabCount + 1);
+			if (_textureArray[i] != nullptr)
+			{
+				ret += _textureArray[i]->GetResource()->GetFileName();
+			}
+			else
+			{
+				ret += "Empty";
+			}
+			ret += ",\n";
+		}
+
+		ret += Serializeable::GetTabbedString(tabCount);
+		ret += "]\n";
+
+		return ret;
+	}
 }

@@ -9,13 +9,14 @@ namespace SSB
 {
 	class Serializeable
 	{
-	private:
+	protected:
 		std::string GetTabbedString(int tabCount);
 
 	protected:
 		std::string Serialize(int tabCount, float data);
 		std::string Serialize(int tabCount, Float2 data);
 		std::string Serialize(int tabCount, Float3 data);
+		std::string Serialize(int tabCount, Float4 data);
 		std::string Serialize(int tabCount, Float33 data);
 		std::string Serialize(int tabCount, Float44 data);
 		std::string Serialize(int tabCount, Vertex_PC data);
@@ -49,7 +50,7 @@ namespace SSB
 		void DeSerialize(std::string element, AnimationFrameInfo& ret);
 
 	public:
-		virtual std::vector<std::string> Serialize(int tabCount) = 0;
-		virtual void Deserialize() = 0;
+		virtual std::string Serialize(int tabCount) = 0;
+		//virtual void Deserialize() = 0;
 	};
 }

@@ -14,7 +14,7 @@ namespace SSB
 		Float44 World;
 	};
 
-	class DXObject : public DXDrawableInterface, public Serializeable
+	class DXObject : public DXDrawableInterface/*, public Serializeable*/
 	{
 	private:
 		Vertex1Volume DefaultVolume;
@@ -62,7 +62,7 @@ namespace SSB
 		bool Render() override;
 		bool Release() override;
 		void Draw(ID3D11DeviceContext* dc) override;
-		std::vector<std::string> Serialize(int tabCount) override;
-		void Deserialize() override;
+		//std::string Serialize(int tabCount) override;
+		//void Deserialize() override;
 	};
 }

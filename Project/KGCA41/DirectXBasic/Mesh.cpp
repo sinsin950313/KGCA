@@ -4,6 +4,18 @@
 
 namespace SSB
 {
+	static const std::string Vertex_PC_Keyword = "Vertex_PC";
+	static const std::string Vertex_PCNT_Keyword = "Vertex_PCNT";
+	static const std::string Vertex_PCNT_Animatable_Keyword = "Vertex_PCNT_Animatable";
+	static const std::string Vertex_PCNT_Skinning_Keyword = "Vertex_PCNT_Skinning";
+	static const std::string Vertex_PCNTs_Keyword = "Vertex_PCNTs";
+	static const std::string Vertex_PCNTs_Animatable_Keyword = "Vertex_PCNTs_Animatable";
+	static const std::string Vertex_PCNTs_Skinning_Keyword = "Vertex_PCNTs_SKinning";
+
+	std::string Mesh_Vertex_PC::GetVertexType()
+	{
+		return Vertex_PC_Keyword;
+	}
 	void Mesh_Vertex_PC::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
 		count = 2;
@@ -18,6 +30,10 @@ namespace SSB
 		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PC.hlsl", "VS", "vs_5_0"));
 	}
 
+	std::string Mesh_Vertex_PCNT::GetVertexType()
+	{
+		return Vertex_PCNT_Keyword;
+	}
 	void Mesh_Vertex_PCNT::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
 		count = 4;
@@ -54,6 +70,10 @@ namespace SSB
 		return true;
 	}
 
+	std::string Mesh_Vertex_PCNT_Animatable::GetVertexType()
+	{
+		return Vertex_PCNT_Animatable_Keyword;
+	}
 	void Mesh_Vertex_PCNT_Animatable::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
 		count = 4;
@@ -96,6 +116,29 @@ namespace SSB
 		Mesh<Vertex_PCNT>::Release();
 		return true;
 	}
+	std::string Mesh_Vertex_PCNT_Animatable::Serialize(int tabCount)
+	{
+		std::string ret;
+
+		ret += GetTabbedString(tabCount);
+		ret += "[\n";
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += "Mesh Data\n";
+		ret += Serializeable::Serialize(tabCount + 2, _meshData);
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Mesh<Vertex_PCNT>::Serialize(tabCount + 1);
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += GetTabbedString(tabCount);
+		ret += "]\n";
+
+		return ret;
+	}
 
 	void Mesh_Vertex_PCNT_Animatable::InitialVertexShader()
 	{
@@ -118,6 +161,11 @@ namespace SSB
 	void Mesh_Vertex_PCNT_Skinning::InitialVertexShader()
 	{
 		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT_Skinning.hlsl", "VS", "vs_5_0"));
+	}
+
+	std::string Mesh_Vertex_PCNT_Skinning::GetVertexType()
+	{
+		return Vertex_PCNT_Skinning_Keyword;
 	}
 
 	bool Mesh_Vertex_PCNT_Skinning::CreateBoneSpaceTransformBuffer()
@@ -166,6 +214,29 @@ namespace SSB
 		return true;
 	}
 
+	std::string Mesh_Vertex_PCNT_Skinning::Serialize(int tabCount)
+	{
+		std::string ret;
+
+		ret += GetTabbedString(tabCount);
+		ret += "[\n";
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += "Mesh to Bone space Transform Data\n";
+		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData);
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Mesh<Vertex_PCNT_Skinning>::Serialize(tabCount + 1);
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += GetTabbedString(tabCount);
+		ret += "]\n";
+
+		return ret;
+	}
 	bool Mesh_Vertex_PCNT_Skinning::Release()
 	{
 		Mesh<Vertex_PCNT_Skinning>::Release();
@@ -196,6 +267,11 @@ namespace SSB
 	void Mesh_Vertex_PCNTs::InitialVertexShader()
 	{
 		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs.hlsl", "VS", "vs_5_0"));
+	}
+
+	std::string Mesh_Vertex_PCNTs::GetVertexType()
+	{
+		return Vertex_PCNTs_Animatable_Keyword;
 	}
 
 	bool Mesh_Vertex_PCNTs_Animatable::CreateMeshBuffer()
@@ -235,6 +311,11 @@ namespace SSB
 		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs_Animatable.hlsl", "VS", "vs_5_0"));
 	}
 
+	std::string Mesh_Vertex_PCNTs_Animatable::GetVertexType()
+	{
+		return Vertex_PCNT_Animatable_Keyword;
+	}
+
 	void Mesh_Vertex_PCNTs_Animatable::Initialize_SetMeshData(MeshData meshData)
 	{
 		_meshData = meshData;
@@ -266,7 +347,34 @@ namespace SSB
 		Mesh<Vertex_PCNTs>::Release();
 		return true;
 	}
+	std::string Mesh_Vertex_PCNTs_Animatable::Serialize(int tabCount)
+	{
+		std::string ret;
 
+		ret += GetTabbedString(tabCount);
+		ret += "[\n";
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += "Mesh Data\n";
+		ret += Serializeable::Serialize(tabCount + 2, _meshData);
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Mesh<Vertex_PCNTs>::Serialize(tabCount + 1);
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += GetTabbedString(tabCount);
+		ret += "]\n";
+
+		return ret;
+	}
+
+	std::string Mesh_Vertex_PCNTs_Skinning::GetVertexType()
+	{
+		return Vertex_PCNTs_Skinning_Keyword;
+	}
 	void Mesh_Vertex_PCNTs_Skinning::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
 		count = 7;
@@ -345,6 +453,30 @@ namespace SSB
 		Mesh<Vertex_PCNTs_Skinning>::Release();
 
 		return true;
+	}
+
+	std::string Mesh_Vertex_PCNTs_Skinning::Serialize(int tabCount)
+	{
+		std::string ret;
+
+		ret += GetTabbedString(tabCount);
+		ret += "[\n";
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += "Mesh to Bone space Transform Data\n";
+		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData);
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Mesh<Vertex_PCNTs_Skinning>::Serialize(tabCount + 1);
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += GetTabbedString(tabCount);
+		ret += "]\n";
+
+		return ret;
 	}
 
 	Box::Box(float width, float height, float depth)

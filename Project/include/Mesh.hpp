@@ -189,4 +189,71 @@ namespace SSB
 
 		return true;
 	}
+	template<typename VertexType>
+	std::string Mesh<VertexType>::Serialize(int tabCount)
+	{
+		std::vector<MeshInterface*> _subMeshes;
+
+		std::string ret;
+
+		ret += GetTabbedString(tabCount);
+		ret += "[\n";
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += "Vertex Type : ";
+		ret += GetVertexType();
+		ret += ",\n";
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += "Vertex List\n";
+		for (auto vertex : _vertexList)
+		{
+			ret += Serializeable::Serialize(tabCount + 2, vertex);
+			ret += GetTabbedString(tabCount + 2);
+			ret += ",\n";
+		}
+
+		ret += GetTabbedString(tabCount + 1);
+		ret += "Index List\n";
+
+		ret += GetTabbedString(tabCount + 2);
+		ret += "{ ";
+		for (auto index : _indexList)
+		{
+			ret += std::to_string(index);
+			ret += ", ";
+		}
+		ret += "},\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Min Vertex\n";
+		ret += Serializeable::Serialize(tabCount + 2, _minVertex);
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Max Vertex\n";
+		ret += Serializeable::Serialize(tabCount + 2, _maxVertex);
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Vertex Shader File Name : ";
+		ret += _vs->GetFileName();
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "SubMesh";
+		ret += ",\n";
+		for (auto subMesh : _subMeshes)
+		{
+			ret += subMesh->Serialize(tabCount + 2);
+			ret += ",\n";
+		}
+
+		ret += GetTabbedString(tabCount);
+		ret += "]\n";
+
+		return ret;
+	}
 }

@@ -4,7 +4,7 @@
 
 namespace SSB
 {
-	class FileIOObject
+	class ObjectScriptIO
 	{
 	public:
 		std::string Read(std::string fileName);

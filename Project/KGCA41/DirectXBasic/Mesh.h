@@ -82,27 +82,32 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
+
+	protected:
+		virtual std::string GetVertexType() = 0;
+
+	public:
+		std::string Serialize(int tabCount) override;
+		//void Deserialize() override;
 	};
 
 	class Mesh_Vertex_PC : public Mesh<Vertex_PC>
 	{
 	private:
+		std::string GetVertexType() override;
+
+	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
-
-	public:
-		std::vector<std::string> Serialize(int tabCount) override;
-		void Deserialize() override;
 	};
 	class Mesh_Vertex_PCNT : public Mesh<Vertex_PCNT>
 	{
 	private:
+		std::string GetVertexType() override;
+
+	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
-
-	public:
-		std::vector<std::string> Serialize(int tabCount) override;
-		void Deserialize() override;
 	};
 	class Mesh_Vertex_PCNT_Animatable : public Mesh<Vertex_PCNT>
 	{
@@ -114,6 +119,9 @@ namespace SSB
 		bool CreateMeshBuffer();
 
 	private:
+		std::string GetVertexType() override;
+
+	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
 
@@ -124,14 +132,19 @@ namespace SSB
 		bool Init() override;
 		bool Render() override;
 		bool Release() override;
-		std::vector<std::string> Serialize(int tabCount) override;
-		void Deserialize() override;
+
+	public:
+		std::string Serialize(int tabCount) override;
+		//void Deserialize() override;
 	};
 	class Mesh_Vertex_PCNT_Skinning : public Mesh<Vertex_PCNT_Skinning>
 	{
 	private:
 		MeshToBoneSpaceTransformData _boneSpaceTransformData;
 		ID3D11Buffer* _boneSpaceTransformBuffer = nullptr;
+
+	private:
+		std::string GetVertexType() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -147,18 +160,19 @@ namespace SSB
 		bool Init() override;
 		bool Render() override;
 		bool Release() override;
-		std::vector<std::string> Serialize(int tabCount) override;
-		void Deserialize() override;
+
+	public:
+		std::string Serialize(int tabCount) override;
+		//void Deserialize() override;
 	};
 	class Mesh_Vertex_PCNTs : public Mesh<Vertex_PCNTs>
 	{
 	private:
+		std::string GetVertexType() override;
+
+	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
-
-	public:
-		std::vector<std::string> Serialize(int tabCount) override;
-		void Deserialize() override;
 	};
 
 	class Mesh_Vertex_PCNTs_Animatable : public Mesh<Vertex_PCNTs>
@@ -166,6 +180,9 @@ namespace SSB
 	private:
 		MeshData _meshData;
 		ID3D11Buffer* _meshBuffer = nullptr;
+
+	private:
+		std::string GetVertexType() override;
 
 	private:
 		bool CreateMeshBuffer();
@@ -181,14 +198,19 @@ namespace SSB
 		bool Init() override;
 		bool Render() override;
 		bool Release() override;
-		std::vector<std::string> Serialize(int tabCount) override;
-		void Deserialize() override;
+
+	public:
+		std::string Serialize(int tabCount) override;
+		//void Deserialize() override;
 	};
 	class Mesh_Vertex_PCNTs_Skinning : public Mesh<Vertex_PCNTs_Skinning>
 	{
 	private:
 		MeshToBoneSpaceTransformData _boneSpaceTransformData;
 		ID3D11Buffer* _boneSpaceTransformBuffer = nullptr;
+
+	private:
+		std::string GetVertexType() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -204,8 +226,10 @@ namespace SSB
 		bool Init() override;
 		bool Render() override;
 		bool Release() override;
-		std::vector<std::string> Serialize(int tabCount) override;
-		void Deserialize() override;
+
+	public:
+		std::string Serialize(int tabCount) override;
+		//void Deserialize() override;
 	};
 
 	//class Direction : public Mesh_Vertex_PC

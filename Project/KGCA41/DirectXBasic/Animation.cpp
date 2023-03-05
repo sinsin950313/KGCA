@@ -129,6 +129,58 @@ namespace SSB
 
 		return true;
 	}
+	std::string Animation::Serialize(int tabCount)
+	{
+		std::string ret;
+
+		ret += Serializeable::GetTabbedString(tabCount);
+		ret += "[\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Frame Per Speed : ";
+		ret += std::to_string(_framePerSecond);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Bone Animation Unit Max Count : ";
+		ret += std::to_string(_boneAnimationUnitMaxCount);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Mesh Animation Unit Max Count : ";
+		ret += std::to_string(_meshAnimationUnitMaxCount);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Start Frame : ";
+		ret += std::to_string(_startFrame);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "End Frame : ";
+		ret += std::to_string(_endFrame);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Frame Info Per Second\n";
+		for(int i = 0; i < _data.size(); ++i)
+		{
+			ret += Serializeable::GetTabbedString(tabCount + 2);
+			ret += "Frame : ";
+			ret += std::to_string(i);
+			ret += "\n";
+
+			ret += Serializeable::Serialize(tabCount + 2, *_data[i]);
+
+			ret += Serializeable::GetTabbedString(tabCount + 2);
+			ret += ",\n";
+		}
+
+		ret += Serializeable::GetTabbedString(tabCount);
+		ret += "]\n";
+
+		return ret;
+	}
 	DefaultAnimation::DefaultAnimation()
 	{
 		_frameInfo = new AnimationFrameInfo;

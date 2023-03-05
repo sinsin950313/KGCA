@@ -23,7 +23,7 @@ namespace SSB
 
 	private:
 		static TextureResourceManager _instance;
-		TextureResourceManager() : _defaultTextureResource(nullptr, nullptr) { Init(); }
+		TextureResourceManager() : _defaultTextureResource("EmptyFile", nullptr, nullptr) { Init(); }
 
 	public:
 		~TextureResourceManager();

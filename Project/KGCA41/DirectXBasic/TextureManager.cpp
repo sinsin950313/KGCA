@@ -45,7 +45,7 @@ namespace SSB
                 }
             }
 
-            TextureResource* resource = new TextureResource(textureResource, textureResourceView);
+            TextureResource* resource = new TextureResource(wtm(resourceFileName), textureResource, textureResourceView);
             resource->Init();
             _resourceData.insert(make_pair(resourceFileName, resource));
         }

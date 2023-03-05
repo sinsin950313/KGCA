@@ -52,6 +52,23 @@ namespace SSB
 
 		return ret;
 	}
+	std::string Serializeable::Serialize(int tabCount, Float4 data)
+	{
+		std::string ret;
+
+		ret += GetTabbedString(tabCount);
+		ret += "{";
+		ret += std::to_string(data.x);
+		ret += ", ";
+		ret += std::to_string(data.y);
+		ret += ", ";
+		ret += std::to_string(data.z);
+		ret += ", ";
+		ret += std::to_string(data.w);
+		ret += "}\n";
+
+		return ret;
+	}
 	std::string Serializeable::Serialize(int tabCount, Float33 data)
 	{
 		std::string ret;
@@ -148,6 +165,7 @@ namespace SSB
 		ret += "{\n";
 
 		ret += Serialize(tabCount + 1, data.Position);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.Color);
@@ -166,15 +184,19 @@ namespace SSB
 		ret += "{\n";
 
 		ret += Serialize(tabCount + 1, data.Position);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.Color);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.Normal);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.TextureUV);
+		ret += GetTabbedString(tabCount + 1);
 		ret += "\n";
 
 		ret += GetTabbedString(tabCount);
@@ -190,15 +212,19 @@ namespace SSB
 		ret += "{\n";
 
 		ret += Serialize(tabCount + 1, data.Position);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.Color);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.Normal);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.TextureUV);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.MaterialIndex);
@@ -217,15 +243,19 @@ namespace SSB
 		ret += "{\n";
 
 		ret += Serialize(tabCount + 1, data.Position);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.Color);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.Normal);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.TextureUV);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
@@ -238,6 +268,7 @@ namespace SSB
 		ret += ", ";
 		ret += std::to_string(data.AffectedBoneIndex[3]);
 		ret += "}\n";
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
@@ -264,21 +295,26 @@ namespace SSB
 		ret += "{\n";
 
 		ret += Serialize(tabCount + 1, data.Position);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.Color);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.Normal);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.TextureUV);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
 		ret += "{";
 		ret += std::to_string(data.MaterialIndex);
-		ret += "}";
+		ret += "}\n";
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
@@ -291,6 +327,7 @@ namespace SSB
 		ret += ", ";
 		ret += std::to_string(data.AffectedBoneIndex[3]);
 		ret += "}\n";
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
@@ -331,6 +368,7 @@ namespace SSB
 		for (int i = 0; i < 255; ++i)
 		{
 			ret += Serialize(tabCount + 1, (Float44)data.BoneSpaceTransformBuffer[i]);
+			ret += GetTabbedString(tabCount + 1);
 			if (i + 1 < 255)
 			{
 				ret += ",\n";
@@ -354,15 +392,18 @@ namespace SSB
 		ret += "{\n";
 
 		ret += Serialize(tabCount + 1, (Float44)data.Matrix);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.Translate);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serialize(tabCount + 1, data.Scale);
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Rotate);
+		ret += Serialize(tabCount + 1, (Float4)data.Rotate);
 		ret += "\n";
 
 		ret += GetTabbedString(tabCount);
@@ -380,6 +421,7 @@ namespace SSB
 		for (int i = 0; i < 255; ++i)
 		{
 			ret += Serialize(tabCount + 1, data.BoneAnimationUnit[i]);
+			ret += GetTabbedString(tabCount + 1);
 
 			if (i + 1 < 255)
 			{
@@ -390,11 +432,13 @@ namespace SSB
 				ret += "\n";
 			}
 		}
+		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		for (int i = 0; i < 255; ++i)
 		{
 			ret += Serialize(tabCount + 1, data.MeshAnimationUnit[i]);
+		ret += GetTabbedString(tabCount + 1);
 
 			if (i + 1 < 255)
 			{

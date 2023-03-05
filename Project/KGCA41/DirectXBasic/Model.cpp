@@ -160,4 +160,84 @@ namespace SSB
 
 		return false;
 	}
+	std::string Model::Serialize(int tabCount)
+	{
+		std::string ret;
+
+		ret += Serializeable::GetTabbedString(tabCount);
+		ret += "[\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Min Vertex\n";
+		ret += Serializeable::Serialize(tabCount + 2, _minVertex);
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Max Vertex\n";
+		ret += Serializeable::Serialize(tabCount + 2, _maxVertex);
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Material\n";
+		for (auto iter : _materials)
+		{
+			ret += Serializeable::GetTabbedString(tabCount + 2);
+			ret += "Material Index : ";
+			ret += std::to_string(iter.first);
+			ret += "\n";
+
+			auto materialStr = iter.second->Serialize(tabCount + 2);
+			ret += materialStr;
+			ret += GetTabbedString(tabCount + 2);
+			ret += ",\n";
+		}
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Mesh\n";
+		for (auto iter : _meshes)
+		{
+			ret += Serializeable::GetTabbedString(tabCount + 2);
+			ret += "Mesh Index : ";
+			ret += std::to_string(iter.first);
+			ret += "\n";
+
+			auto meshStr = iter.second->Serialize(tabCount + 2);
+			ret += meshStr;
+			ret += GetTabbedString(tabCount + 2);
+			ret += ",\n";
+		}
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Animation\n";
+		for (auto iter : _animations)
+		{
+			ret += Serializeable::GetTabbedString(tabCount + 2);
+			ret += "Animation Index : ";
+			ret += iter.first;
+			ret += "\n";
+
+			auto animationStr = iter.second->Serialize(tabCount + 2);
+			ret += animationStr;
+			ret += GetTabbedString(tabCount + 2);
+			ret += ",\n";
+		}
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "Pixel Shader File Name";
+		ret += _ps->GetFileName();
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount);
+		ret += "]";
+
+		return ret;
+	}
 }

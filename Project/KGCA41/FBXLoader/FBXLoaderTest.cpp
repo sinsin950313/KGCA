@@ -3,6 +3,7 @@
 #include "DXStateManager.h"
 #include "TextureManager.h"
 #include "ShaderManager.h"
+#include "FileIOObject.h"
 
 SSB::FBXLoaderTest::~FBXLoaderTest()
 {
@@ -30,6 +31,10 @@ bool SSB::FBXLoaderTest::Init()
 	//	object->SetModel(model);
 
 	//	_objectList.push_back(object);
+
+	//	ObjectScriptIO io;
+	//	std::string str = model->Serialize(0);
+	//	io.Write("ModelWriteTest_Box", str);
 	//}
 
 	//// Multi Material = Multi Texture Test
@@ -47,6 +52,10 @@ bool SSB::FBXLoaderTest::Init()
 	//	object->SetModel(model);
 
 	//	_objectList.push_back(object);
+
+	//	ObjectScriptIO io;
+	//	std::string str = model->Serialize(0);
+	//	io.Write("ModelWriteTest_MultiCameras", str);
 	//}
 
 	//// Multi Material = Multi Texture Test
@@ -64,6 +73,10 @@ bool SSB::FBXLoaderTest::Init()
 	//	object->SetModel(model);
 
 	//	_objectList.push_back(object);
+
+	//	ObjectScriptIO io;
+	//	std::string str = model->Serialize(0);
+	//	io.Write("ModelWriteTest_Ship", str);
 	//}
 
 	//// Object Animation Testing
@@ -86,23 +99,13 @@ bool SSB::FBXLoaderTest::Init()
 	//	object->SetModel(model);
 
 	//	_objectList.push_back(object);
+
+	//	ObjectScriptIO io;
+	//	std::string str = model->Serialize(0);
+	//	io.Write("ModelWriteTest_Turret", str);
 	//}
 
 	//// Multi Layer Testing
-	//{
-	//	_loader->Init();
-	//	_loader->SetFileName("Man.FBX");
-
-	//	Model* model = _loader->LoadModel();
-	//	model->Init();
-
-	//	DXObject* object = new DXObject;
-	//	object->Init();
-	//	object->SetModel(model);
-
-	//	_objectList.push_back(object);
-	//}
-
 	//// Skinning Animation Testing
 	//{
 	//	_loader->Init();
@@ -123,6 +126,10 @@ bool SSB::FBXLoaderTest::Init()
 	//	object->SetModel(model);
 
 	//	_objectList.push_back(object);
+
+	//	ObjectScriptIO io;
+	//	std::string str = model->Serialize(0);
+	//	io.Write("ModelWriteTest_Man", str);
 	//}
 
 	//// Script Animation with Single FBX Testing
@@ -147,23 +154,31 @@ bool SSB::FBXLoaderTest::Init()
 	//	object->SetModel(model);
 
 	//	_objectList.push_back(object);
+
+	//	ObjectScriptIO io;
+	//	std::string str = model->Serialize(0);
+	//	io.Write("ModelWriteTest_Swat", str);
 	//}
 
-	{
-		_loader->Init();
-		_loader->SetFileName("Cs_Avatar_Girl_Bow_Ambor #1 (merge).fbx");
+	//{
+	//	_loader->Init();
+	//	_loader->SetFileName("Cs_Avatar_Girl_Bow_Ambor #1 (merge).fbx");
 
-		Model* model = _loader->LoadModel();
-		model->Init();
-		//model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
-		//model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "PS", "ps_5_0"));
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
+	//	//model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
+	//	//model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "PS", "ps_5_0"));
 
-		DXObject* object = new DXObject;
-		object->Init();
-		object->SetModel(model);
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
 
-		_objectList.push_back(object);
-	}
+	//	_objectList.push_back(object);
+
+	//	ObjectScriptIO io;
+	//	std::string str = model->Serialize(0);
+	//	io.Write("ModelWriteTest_Amber", str);
+	//}
 
 	//_camera = new ModelViewCamera();
 	//_camera->SetTarget(_loader->_rootObject);

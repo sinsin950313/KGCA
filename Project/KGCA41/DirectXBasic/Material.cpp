@@ -1,5 +1,7 @@
 #include "Material.h"
 #include "DXWindow.h"
+#include "TextureManager.h"
+#include "DXStateManager.h"
 
 namespace SSB
 {
@@ -87,5 +89,45 @@ namespace SSB
 		ret += "]\n";
 
 		return ret;
+	}
+	void Material::Deserialize(std::string serialedString)
+	{
+		{
+			std::regex re("[\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+
+			serialedString = match.suffix();
+		}
+
+		{
+			std::regex re("Material Index : [0-9.e+-]+,\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			re = "[0-9]+";
+			std::regex_search(str, match, re);
+
+			_materialIndex = std::stof(match.str());
+		}
+
+		for(int i = 0; i < kTextureTypeCount; ++i)
+		{
+			std::regex re("*.*,\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			re = "[^\t]+.*[^,\n]";
+			std::regex_search(str, match, re);
+			std::string fileName = match.str();
+			_textureArray[i] = TextureLoader::GetInstance().Load(mtw(fileName), DXStateManager::kDefaultWrapSample);
+		}
 	}
 }

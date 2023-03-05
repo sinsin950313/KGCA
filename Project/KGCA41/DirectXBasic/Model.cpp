@@ -1,6 +1,7 @@
 #include "Model.h"
 #include "HCCalculator.h"
 #include "DXWindow.h"
+#include "ShaderManager.h"
 
 namespace SSB
 {
@@ -218,7 +219,7 @@ namespace SSB
 		for (auto iter : _animations)
 		{
 			ret += Serializeable::GetTabbedString(tabCount + 2);
-			ret += "Animation Index : ";
+			ret += "Animation Name : ";
 			ret += iter.first;
 			ret += "\n";
 
@@ -231,7 +232,7 @@ namespace SSB
 		ret += ",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Pixel Shader File Name";
+		ret += "Pixel Shader File Name : ";
 		ret += _ps->GetFileName();
 		ret += ",\n";
 
@@ -239,5 +240,242 @@ namespace SSB
 		ret += "]";
 
 		return ret;
+	}
+	void Model::Deserialize(std::string serialedString)
+	{
+		{
+			std::regex re("[\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+
+			serialedString = match.suffix();
+		}
+
+		{
+			std::regex re("Min Vertex\n[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			re = "{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}";
+			std::regex_search(str, match, re);
+
+			Float3 tmp;
+			DeSerialize(str, tmp);
+			_minVertex = tmp;
+		}
+
+		{
+			std::regex re("Max Vertex\n[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			re = "{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}";
+			std::regex_search(str, match, re);
+
+			Float3 tmp;
+			DeSerialize(str, tmp);
+			_maxVertex = tmp;
+		}
+
+		{
+			std::regex re(
+				R"(
+[\t]*Material Index : [0-9]+\n
+[\t]*[\n
+*
+[\t]*]\n
+[\t]*,\n
+)"
+);
+			std::smatch match;
+
+			while (std::regex_search(serialedString, match, re))
+			{
+				serialedString = match.suffix();
+
+				std::string materialDataStr = match.str();
+				int materialIndex;
+				{
+					std::regex re("[\t]*Material Index : [0-9]+,\n");
+					std::smatch match;
+
+					std::regex_search(materialDataStr, match, re);
+					std::string materialIndexStr = match.str();
+					materialDataStr = match.suffix();
+
+					re = "[0-9]+";
+					std::regex_search(materialIndexStr, match, re);
+					materialIndex = std::stoi(match.str());
+				}
+
+				{
+					std::string materialDataPack;
+					std::regex materialDataPackReg("\[*\]");
+					while (std::regex_search(materialDataStr, match, materialDataPackReg))
+					{
+						Material* mat = new Material;
+						mat->Deserialize(match.str());
+						_materials.insert(std::make_pair(materialIndex, mat));
+					}
+				}
+			}
+		}
+
+		{
+			std::regex re(
+				R"(
+[\t]*Mesh Index : [0-9]+\n
+[\t]*[\n
+*
+[\t]*]\n
+[\t]*,\n
+)"
+);
+			std::smatch match;
+
+			while (std::regex_search(serialedString, match, re))
+			{
+				serialedString = match.suffix();
+
+				std::string meshDataStr = match.str();
+				int meshIndex;
+				{
+					std::regex re("[\t]*Mesh Index : [0-9]+,\n");
+					std::smatch match;
+
+					std::regex_search(meshDataStr, match, re);
+					std::string meshIndexStr = match.str();
+					meshDataStr = match.suffix();
+
+					re = "[0-9]+";
+					std::regex_search(meshIndexStr, match, re);
+					meshIndex = std::stoi(match.str());
+				}
+
+				{
+					std::string meshDataPack;
+					std::regex meshDataPackReg("\[*\]");
+					while (std::regex_search(meshDataStr, match, meshDataPackReg))
+					{
+						std::string vertexType;
+						{
+							std::regex vertexTypeReg("Vertex Type : *?,\n");
+							std::regex_search(meshDataStr, match, vertexTypeReg);
+
+							std::string tmp = match.str();
+							int offset = 14;
+							while (tmp[offset] != ',')
+							{
+								vertexType += tmp[offset];
+								++offset;
+							}
+						}
+
+						MeshInterface* mesh;
+						if (vertexType == Vertex_PCNT_Keyword)
+						{
+							mesh = new Mesh_Vertex_PCNT;
+						}
+						else if (vertexType == Vertex_PCNT_Animatable_Keyword)
+						{
+							mesh = new Mesh_Vertex_PCNT_Animatable;
+						}
+						else if (vertexType == Vertex_PCNT_Skinning_Keyword)
+						{
+							mesh = new Mesh_Vertex_PCNT_Skinning;
+						}
+						else if (vertexType == Vertex_PCNTs_Keyword)
+						{
+							mesh = new Mesh_Vertex_PCNTs;
+						}
+						else if (vertexType == Vertex_PCNTs_Animatable_Keyword)
+						{
+							mesh = new Mesh_Vertex_PCNTs_Animatable;
+						}
+						else if (vertexType == Vertex_PCNTs_Skinning_Keyword)
+						{
+							mesh = new Mesh_Vertex_PCNTs_Skinning;
+						}
+						//if (vertexType == Vertex_PC_Keyword)
+						else
+						{
+							mesh = new Mesh_Vertex_PC;
+						}
+
+						mesh->Deserialize(match.str());
+						_meshes.insert(std::make_pair(meshIndex, mesh));
+					}
+				}
+			}
+		}
+
+		{
+			std::regex re(
+				R"(
+[\t]*Animation Name : *\n
+[\t]*[\n
+*
+[\t]*]\n
+[\t]*,\n
+)"
+);
+			std::smatch match;
+
+			while (std::regex_search(serialedString, match, re))
+			{
+				serialedString = match.suffix();
+				std::string animationDataStr = match.str();
+
+				std::string animationName;
+				{
+					std::regex animationNameReg("Animation Name : *\n");
+					std::smatch match;
+
+					std::regex_search(animationDataStr, match, animationNameReg);
+					std::string animationNameStr = match.str();
+					animationDataStr = match.suffix();
+
+					std::string tmp = match.str();
+					int offset = 17;
+					while (tmp[offset] != '\n')
+					{
+						animationName += tmp[offset];
+						++offset;
+					}
+				}
+
+				Animation* animation = new Animation;
+				animation->Deserialize(animationDataStr);
+				_animations.insert(std::make_pair(animationName, animation));
+			}
+
+		}
+
+		{
+			std::regex re("Pixel Shader File Name : *.hlsl,\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			std::string tmp = "Pixel Shader File Name : ";
+			int offset = tmp.size();
+			std::string pixelShaderFileName;
+			while (str[offset] != ',')
+			{
+				pixelShaderFileName += str[offset];
+				++offset;
+			}
+
+			_ps = ShaderManager::GetInstance().LoadPixelShader(mtw(pixelShaderFileName), "PS", "ps_5_0");
+		}
 	}
 }

@@ -4,6 +4,7 @@
 #include <string>
 #include "SerializeableDataType.h"
 #include "Matrix.h"
+#include <regex>
 
 namespace SSB
 {
@@ -51,6 +52,6 @@ namespace SSB
 
 	public:
 		virtual std::string Serialize(int tabCount) = 0;
-		//virtual void Deserialize() = 0;
+		virtual void Deserialize(std::string serialedString) = 0;
 	};
 }

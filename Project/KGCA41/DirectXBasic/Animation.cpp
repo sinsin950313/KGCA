@@ -181,6 +181,119 @@ namespace SSB
 
 		return ret;
 	}
+	void Animation::Deserialize(std::string serialedString)
+	{
+		{
+			std::regex re("[\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+
+			serialedString = match.suffix();
+		}
+
+		{
+			std::regex re("Frame Per Speed : [0-9.e+-]+,\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			re = "[0-9]+";
+			std::regex_search(str, match, re);
+
+			_framePerSecond = std::stof(match.str());
+		}
+
+		{
+			std::regex re("Bone Animation Unit Max Count : [0-9.e+-]+,\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			re = "[0-9]+";
+			std::regex_search(str, match, re);
+
+			_boneAnimationUnitMaxCount = std::stoi(match.str());
+		}
+
+		{
+			std::regex re("Mesh Animation Unit Max Count : [0-9.e+-]+,\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			re = "[0-9]+";
+			std::regex_search(str, match, re);
+
+			_meshAnimationUnitMaxCount = std::stoi(match.str());
+		}
+
+		{
+			std::regex re("Start Frame : [0-9.e+-]+,\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			re = "[0-9]+";
+			std::regex_search(str, match, re);
+
+			_startFrame = std::stoi(match.str());
+		}
+
+		{
+			std::regex re("End Frame : [0-9.e+-]+,\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			re = "[0-9]+";
+			std::regex_search(str, match, re);
+
+			_endFrame = std::stoi(match.str());
+		}
+
+		{
+			std::regex re(
+R"(
+[\t]*{\n
+[\t]*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\n
+[\t]*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\n
+[\t]*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\n
+[\t]*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\n
+[\t]*}\n
+[\t]*,\n
+[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
+[\t]*,\n
+[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
+[\t]*,\n
+[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
+[\t]*}\n
+)"
+			);
+			std::smatch match;
+
+			while (std::regex_search(serialedString, match, re))
+			{
+				std::string str = match.str();
+				serialedString = match.suffix();
+
+				AnimationFrameInfo* tmp = new AnimationFrameInfo;
+				DeSerialize(str, *tmp);
+
+				_data.push_back(tmp);
+			}
+		}
+	}
 	DefaultAnimation::DefaultAnimation()
 	{
 		_frameInfo = new AnimationFrameInfo;

@@ -4,14 +4,6 @@
 
 namespace SSB
 {
-	static const std::string Vertex_PC_Keyword = "Vertex_PC";
-	static const std::string Vertex_PCNT_Keyword = "Vertex_PCNT";
-	static const std::string Vertex_PCNT_Animatable_Keyword = "Vertex_PCNT_Animatable";
-	static const std::string Vertex_PCNT_Skinning_Keyword = "Vertex_PCNT_Skinning";
-	static const std::string Vertex_PCNTs_Keyword = "Vertex_PCNTs";
-	static const std::string Vertex_PCNTs_Animatable_Keyword = "Vertex_PCNTs_Animatable";
-	static const std::string Vertex_PCNTs_Skinning_Keyword = "Vertex_PCNTs_SKinning";
-
 	std::string Mesh_Vertex_PC::GetVertexType()
 	{
 		return Vertex_PC_Keyword;

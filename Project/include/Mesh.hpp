@@ -2,6 +2,7 @@
 
 #include "DXWindow.h"
 #include "Mesh.h"
+#include "ShaderManager.h"
 
 namespace SSB
 {
@@ -192,8 +193,6 @@ namespace SSB
 	template<typename VertexType>
 	std::string Mesh<VertexType>::Serialize(int tabCount)
 	{
-		std::vector<MeshInterface*> _subMeshes;
-
 		std::string ret;
 
 		ret += GetTabbedString(tabCount);
@@ -255,5 +254,110 @@ namespace SSB
 		ret += "]\n";
 
 		return ret;
+	}
+	template<typename VertexType>
+	void Mesh<VertexType>::Deserialize(std::string serialedString)
+	{
+		{
+			std::regex re(R"(
+[\t]*{\n
+[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
+[\t]*,\n
+[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
+[\t]*,\n
+[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
+[\t]*,\n
+[\t]*{[0-9.e+-]+, [0-9.e+-]+}\n
+[\t]*,\n
+[\t]*{[0-9]+, [0-9]+, [0-9]+, [0-9]+}\n
+[\t]*,\n
+[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
+[\t]*}\n
+)");
+			std::smatch match;
+
+			while (std::regex_search(serialedString, match, re))
+			{
+				serialedString = match.suffix();
+				VertexType vertex;
+				DeSerialize(match.str(), vertex);
+				_vertexList.push_back(vertex);
+			}
+		}
+
+		{
+			std::regex re(R"(
+Index List\n
+{ * },\n
+)");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string indexListStr = match.str();
+			serialedString = match.suffix();
+
+			{
+				std::regex indexReg("[0-9]+");
+				while (std::regex_search(indexListStr, match, indexReg))
+				{
+					indexListStr = match.suffix();
+					_indexList.push_back(std::stoi(match.str()));
+				}
+			}
+		}
+
+		{
+			std::regex re("Min Vertex\n[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			re = "{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}";
+			std::regex_search(str, match, re);
+
+			Float3 tmp;
+			DeSerialize(str, tmp);
+			_minVertex = tmp;
+		}
+
+		{
+			std::regex re("Max Vertex\n[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			re = "{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}";
+			std::regex_search(str, match, re);
+
+			Float3 tmp;
+			DeSerialize(str, tmp);
+			_maxVertex = tmp;
+		}
+
+		{
+			std::regex re("Vertex Shader File Name : *.hlsl,\n");
+			std::smatch match;
+
+			std::regex_search(serialedString, match, re);
+			std::string str = match.str();
+			serialedString = match.suffix();
+
+			std::string tmp = "Vertex Shader File Name : ";
+			int offset = tmp.size();
+			std::string vertexShaderFileName;
+			while (str[offset] != ',')
+			{
+				vertexShaderFileName += str[offset];
+				++offset;
+			}
+
+			_vs = ShaderManager::GetInstance().LoadVertexShader(mtw(vertexShaderFileName), "VS", "vs_5_0");
+		}
+
+		//SubMesh??
 	}
 }

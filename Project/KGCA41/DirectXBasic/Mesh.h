@@ -14,6 +14,14 @@ namespace SSB
 	typedef DWORD IndexForMeshVertice;
 	typedef int MeshIndex;
 
+	static const std::string Vertex_PC_Keyword = "Vertex_PC";
+	static const std::string Vertex_PCNT_Keyword = "Vertex_PCNT";
+	static const std::string Vertex_PCNT_Animatable_Keyword = "Vertex_PCNT_Animatable";
+	static const std::string Vertex_PCNT_Skinning_Keyword = "Vertex_PCNT_Skinning";
+	static const std::string Vertex_PCNTs_Keyword = "Vertex_PCNTs";
+	static const std::string Vertex_PCNTs_Animatable_Keyword = "Vertex_PCNTs_Animatable";
+	static const std::string Vertex_PCNTs_Skinning_Keyword = "Vertex_PCNTs_SKinning";
+
 	class MeshInterface : public Common, public Serializeable
 	{
 	protected:
@@ -67,6 +75,9 @@ namespace SSB
 	protected:
 		virtual void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) = 0;
 
+	protected:
+		void Build() { }
+
 	public:
 		void Initialize_AddSubMesh(MeshInterface* mesh) override;
 
@@ -88,7 +99,7 @@ namespace SSB
 
 	public:
 		std::string Serialize(int tabCount) override;
-		//void Deserialize() override;
+		void Deserialize(std::string serialedString) override;
 	};
 
 	class Mesh_Vertex_PC : public Mesh<Vertex_PC>
@@ -135,7 +146,7 @@ namespace SSB
 
 	public:
 		std::string Serialize(int tabCount) override;
-		//void Deserialize() override;
+		void Deserialize(std::string serialedString) override;
 	};
 	class Mesh_Vertex_PCNT_Skinning : public Mesh<Vertex_PCNT_Skinning>
 	{
@@ -163,7 +174,7 @@ namespace SSB
 
 	public:
 		std::string Serialize(int tabCount) override;
-		//void Deserialize() override;
+		void Deserialize(std::string serialedString) override;
 	};
 	class Mesh_Vertex_PCNTs : public Mesh<Vertex_PCNTs>
 	{
@@ -201,7 +212,7 @@ namespace SSB
 
 	public:
 		std::string Serialize(int tabCount) override;
-		//void Deserialize() override;
+		void Deserialize(std::string serialedString) override;
 	};
 	class Mesh_Vertex_PCNTs_Skinning : public Mesh<Vertex_PCNTs_Skinning>
 	{
@@ -229,7 +240,7 @@ namespace SSB
 
 	public:
 		std::string Serialize(int tabCount) override;
-		//void Deserialize() override;
+		void Deserialize(std::string serialedString) override;
 	};
 
 	//class Direction : public Mesh_Vertex_PC

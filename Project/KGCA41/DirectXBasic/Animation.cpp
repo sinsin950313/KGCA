@@ -141,38 +141,50 @@ namespace SSB
 		ret += "[\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Frame Per Speed : ";
+		ret += _framePerSecondStr;
+		ret += "\"";
 		ret += std::to_string(_framePerSecond);
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Bone Animation Unit Max Count : ";
+		ret += _boneAnimationUnitMaxCountStr;
+		ret += "\"";
 		ret += std::to_string(_boneAnimationUnitMaxCount);
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Mesh Animation Unit Max Count : ";
+		ret += _meshAnimationUnitMaxCountStr;
+		ret += "\"";
 		ret += std::to_string(_meshAnimationUnitMaxCount);
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Start Frame : ";
+		ret += _startFrameStr;
+		ret += "\"";
 		ret += std::to_string(_startFrame);
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "End Frame : ";
+		ret += _endFrameStr;
+		ret += "\"";
 		ret += std::to_string(_endFrame);
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Frame Info Per Second\n";
+		ret += _frameInfoPerSecondStr;
+
+		ret += Serializeable::GetTabbedString(tabCount + 2);
+		ret += _maxFrameCountStr;
+		ret += "\"";
+		ret += std::to_string(_data.size());
+		ret += "\"\n";
 		for(int i = 0; i < _data.size(); ++i)
 		{
 			ret += Serializeable::GetTabbedString(tabCount + 2);
-			ret += "Frame : ";
+			ret += _frameStr;
+			ret += "\"";
 			ret += std::to_string(i);
-			ret += "\n";
+			ret += "\"\n";
 
 			ret += Serializeable::Serialize(tabCount + 2, *_data[i]);
 
@@ -187,99 +199,70 @@ namespace SSB
 	}
 	void Animation::Deserialize(std::string serialedString)
 	{
+		auto data = GetUnitAtomic(serialedString, 0);
+		serialedString = data.str;
+
+		int offset = 0;
 		{
-			std::regex re("[\n");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-
-			serialedString = match.suffix();
+			offset = serialedString.find(_framePerSecondStr);
+			auto data = GetUnitAtomic(serialedString, offset);
+			std::string atomic = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(atomic, _framePerSecond);
 		}
 
 		{
-			std::regex re("Frame Per Speed : [0-9.e+-]+,\n");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			re = "[0-9]+";
-			std::regex_search(str, match, re);
-
-			_framePerSecond = std::stof(match.str());
+			offset = serialedString.find(_boneAnimationUnitMaxCountStr);
+			auto data = GetUnitAtomic(serialedString, offset);
+			std::string atomic = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(atomic, _boneAnimationUnitMaxCount);
 		}
 
 		{
-			std::regex re("Bone Animation Unit Max Count : [0-9.e+-]+,\n");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			re = "[0-9]+";
-			std::regex_search(str, match, re);
-
-			_boneAnimationUnitMaxCount = std::stoi(match.str());
+			offset = serialedString.find(_meshAnimationUnitMaxCountStr);
+			auto data = GetUnitAtomic(serialedString, offset);
+			std::string atomic = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(atomic, _meshAnimationUnitMaxCount);
 		}
 
 		{
-			std::regex re("Mesh Animation Unit Max Count : [0-9.e+-]+,\n");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			re = "[0-9]+";
-			std::regex_search(str, match, re);
-
-			_meshAnimationUnitMaxCount = std::stoi(match.str());
+			offset = serialedString.find(_startFrameStr);
+			auto data = GetUnitAtomic(serialedString, offset);
+			std::string atomic = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(atomic, _startFrame);
 		}
 
 		{
-			std::regex re("Start Frame : [0-9.e+-]+,\n");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			re = "[0-9]+";
-			std::regex_search(str, match, re);
-
-			_startFrame = std::stoi(match.str());
+			offset = serialedString.find(_endFrameStr);
+			auto data = GetUnitAtomic(serialedString, offset);
+			std::string atomic = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(atomic, _endFrame);
 		}
 
+		int maxFrameCount;
+		offset = serialedString.find(_frameInfoPerSecondStr);
 		{
-			std::regex re("End Frame : [0-9.e+-]+,\n");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			re = "[0-9]+";
-			std::regex_search(str, match, re);
-
-			_endFrame = std::stoi(match.str());
+			offset = serialedString.find(_maxFrameCountStr);
+			auto data = GetUnitAtomic(serialedString, offset);
+			std::string atomic = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(atomic, maxFrameCount);
 		}
 
+		_data.resize(maxFrameCount);
+		for(int i = 0; i < maxFrameCount; ++i)
 		{
-			std::regex re(R"(\s*\{\s*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\s*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\s*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\s*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\s*\}\s*,\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s*,\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s*,\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s*\})");
-			std::smatch match;
-
-			while (std::regex_search(serialedString, match, re))
-			{
-				std::string str = match.str();
-				serialedString = match.suffix();
-
-				AnimationFrameInfo* tmp = new AnimationFrameInfo;
-				DeSerialize(str, *tmp);
-
-				_data.push_back(tmp);
-			}
+			offset = serialedString.find(_frameStr);
+			auto elemData = GetUnitElement(serialedString, offset);
+			std::string elem = elemData.str;
+			offset += elemData.offset;
+			AnimationFrameInfo* frameInfo = new AnimationFrameInfo;
+			Serializeable::Deserialize(elem, *frameInfo);
+			_data[i] = frameInfo;
 		}
 	}
 	DefaultAnimation::DefaultAnimation()

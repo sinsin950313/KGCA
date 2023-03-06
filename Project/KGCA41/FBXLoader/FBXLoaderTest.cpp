@@ -17,37 +17,35 @@ bool SSB::FBXLoaderTest::Init()
 
 	_loader = new FBXLoader();
 
-	// Mesh Loading Test
-	//{
-	//	_loader->Init();
-	//	_loader->SetFileName("box.FBX");
+	 //Mesh Loading Test
+	{
+		//_loader->Init();
+		//_loader->SetFileName("box.FBX");
 
-	//	//Model* model = _loader->LoadModel();
-	//	//model->Init();
-	//	//model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
-	//	//model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "PS", "ps_5_0"));
+		//Model* model = _loader->LoadModel();
+		//model->Init();
 
-	//	DXObject* object = new DXObject;
-	//	object->Init();
-	//	//object->SetModel(model);
+		DXObject* object = new DXObject;
+		object->Init();
+		//object->SetModel(model);
 
-	//	_objectList.push_back(object);
+		_objectList.push_back(object);
 
-	//	//{
-	//	//	ObjectScriptIO io;
-	//	//	std::string str = model->Serialize(0);
-	//	//	io.Write("ModelWriteTest_Box", str);
-	//	//}
+		//{
+		//	ObjectScriptIO io;
+		//	std::string str = model->Serialize(0);
+		//	io.Write("ModelWriteTest_Box", str);
+		//}
 
-	//	{
-	//		ObjectScriptIO io;
-	//		std::string str = io.Read("ModelWriteTest_Box");
-	//		Model* readedModel = new Model;
-	//		readedModel->Deserialize(str);
-	//		readedModel->Init();
-	//		object->SetModel(readedModel);
-	//	}
-	//}
+		{
+			ObjectScriptIO io;
+			std::string str = io.Read("ModelWriteTest_Box");
+			Model* readedModel = new Model;
+			readedModel->Deserialize(str);
+			readedModel->Init();
+			object->SetModel(readedModel);
+		}
+	}
 
 	//// Multi Material = Multi Texture Test
 	//{
@@ -56,8 +54,6 @@ bool SSB::FBXLoaderTest::Init()
 
 	//	Model* model = _loader->LoadModel();
 	//	model->Init();
-	//	//model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs.hlsl", "VS", "vs_5_0"));
-	//	//model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader_PCNTs.hlsl", "PS", "ps_5_0"));
 
 	//	DXObject* object = new DXObject;
 	//	object->Init();
@@ -71,47 +67,45 @@ bool SSB::FBXLoaderTest::Init()
 	//		io.Write("ModelWriteTest_MultiCameras", str);
 	//	}
 
-	//	{
-	//		ObjectScriptIO io;
-	//		std::string str = io.Read("ModelWriteTest_MultiCameras");
-	//		Model* readedModel = new Model;
-	//		readedModel->Deserialize(str);
-	//		readedModel->Init();
-	//		object->SetModel(readedModel);
-	//	}
+	//	//{
+	//	//	ObjectScriptIO io;
+	//	//	std::string str = io.Read("ModelWriteTest_MultiCameras");
+	//	//	Model* readedModel = new Model;
+	//	//	readedModel->Deserialize(str);
+	//	//	readedModel->Init();
+	//	//	object->SetModel(readedModel);
+	//	//}
 	//}
 
-	 //Multi Material = Multi Texture Test
-	{
-		_loader->Init();
-		_loader->SetFileName("Ship.FBX");
+	// //Multi Material = Multi Texture Test
+	//{
+	//	_loader->Init();
+	//	_loader->SetFileName("Ship.FBX");
 
-		//Model* model = _loader->LoadModel();
-		//model->Init();
-		//model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNTs.hlsl", "VS", "vs_5_0"));
-		//model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default3DPixelShader_PCNTs.hlsl", "PS", "ps_5_0"));
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
 
-		DXObject* object = new DXObject;
-		object->Init();
-		//object->SetModel(model);
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
 
-		_objectList.push_back(object);
+	//	_objectList.push_back(object);
 
-		//{
-		//	ObjectScriptIO io;
-		//	std::string str = model->Serialize(0);
-		//	io.Write("ModelWriteTest_Ship", str);
-		//}
+	//	{
+	//		ObjectScriptIO io;
+	//		std::string str = model->Serialize(0);
+	//		io.Write("ModelWriteTest_Ship", str);
+	//	}
 
-		{
-			ObjectScriptIO io;
-			std::string str = io.Read("ModelWriteTest_Ship");
-			Model* readedModel = new Model;
-			readedModel->Deserialize(str);
-			readedModel->Init();
-			object->SetModel(readedModel);
-		}
-	}
+	//	//{
+	//	//	ObjectScriptIO io;
+	//	//	std::string str = io.Read("ModelWriteTest_Ship");
+	//	//	Model* readedModel = new Model;
+	//	//	readedModel->Deserialize(str);
+	//	//	readedModel->Init();
+	//	//	object->SetModel(readedModel);
+	//	//}
+	//}
 
 	//// Object Animation Testing
 	//{
@@ -200,8 +194,6 @@ bool SSB::FBXLoaderTest::Init()
 
 	//	Model* model = _loader->LoadModel();
 	//	model->Init();
-	//	//model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
-	//	//model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "PS", "ps_5_0"));
 
 	//	DXObject* object = new DXObject;
 	//	object->Init();

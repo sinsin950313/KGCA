@@ -8,9 +8,12 @@ namespace SSB
 	{
 		return Vertex_PC_Keyword;
 	}
-	std::string Mesh_Vertex_PC::GetVertexRegex()
+	Vertex_PC Mesh_Vertex_PC::GetDeserializedVertex(std::string str)
 	{
-		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+\})";
+		str = GetUnitElement(str, 0).str;
+		Vertex_PC vertex;
+		Serializeable::Deserialize(str, vertex);
+		return vertex;
 	}
 	void Mesh_Vertex_PC::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
@@ -30,9 +33,12 @@ namespace SSB
 	{
 		return Vertex_PCNT_Keyword;
 	}
-	std::string Mesh_Vertex_PCNT::GetVertexRegex()
+	Vertex_PCNT Mesh_Vertex_PCNT::GetDeserializedVertex(std::string str)
 	{
-		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+\})";
+		str = GetUnitElement(str, 0).str;
+		Vertex_PCNT vertex;
+		Serializeable::Deserialize(str, vertex);
+		return vertex;
 	}
 	void Mesh_Vertex_PCNT::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
@@ -73,10 +79,6 @@ namespace SSB
 	std::string Mesh_Vertex_PCNT_Animatable::GetVertexType()
 	{
 		return Vertex_PCNT_Animatable_Keyword;
-	}
-	std::string Mesh_Vertex_PCNT_Animatable::GetVertexRegex()
-	{
-		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+\})";
 	}
 	void Mesh_Vertex_PCNT_Animatable::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
@@ -128,7 +130,7 @@ namespace SSB
 		ret += "[\n";
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "Mesh Data\n";
+		ret += _meshDataStr;
 		ret += Serializeable::Serialize(tabCount + 2, _meshData);
 		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
@@ -146,14 +148,26 @@ namespace SSB
 
 	void Mesh_Vertex_PCNT_Animatable::Deserialize(std::string serialedString)
 	{
-		std::regex reg(R"(\{.*\})");
-		std::smatch match;
+		int offset = 0;
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			auto atomicData = GetUnitAtomic(elem, 0);
+			std::string atomic = atomicData.str;
+			Serializeable::Deserialize(atomic, _meshData);
+		}
 
-		std::regex_search(serialedString, match, reg);
-		DeSerialize(match.str(), _meshData);
-
-		serialedString = match.suffix();
+		serialedString = std::string(serialedString.begin() + offset, serialedString.end());
 		Mesh<Vertex_PCNT>::Deserialize(serialedString);
+	}
+
+	Vertex_PCNT Mesh_Vertex_PCNT_Animatable::GetDeserializedVertex(std::string str)
+	{
+		str = GetUnitElement(str, 0).str;
+		Vertex_PCNT vertex;
+		Serializeable::Deserialize(str, vertex);
+		return vertex;
 	}
 
 	void Mesh_Vertex_PCNT_Animatable::InitialVertexShader()
@@ -182,11 +196,6 @@ namespace SSB
 	std::string Mesh_Vertex_PCNT_Skinning::GetVertexType()
 	{
 		return Vertex_PCNT_Skinning_Keyword;
-	}
-
-	std::string Mesh_Vertex_PCNT_Skinning::GetVertexRegex()
-	{
-		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+\})";
 	}
 
 	bool Mesh_Vertex_PCNT_Skinning::CreateBoneSpaceTransformBuffer()
@@ -243,7 +252,7 @@ namespace SSB
 		ret += "[\n";
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "Mesh to Bone space Transform Data\n";
+		ret += _meshToBoneSpaceTransformDataStr;
 		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData);
 		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
@@ -260,14 +269,23 @@ namespace SSB
 	}
 	void Mesh_Vertex_PCNT_Skinning::Deserialize(std::string serialedString)
 	{
-		std::regex reg("\{.*\}");
-		std::smatch match;
+		int offset = 0;
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(elem, _boneSpaceTransformData);
+		}
 
-		std::regex_search(serialedString, match, reg);
-		DeSerialize(match.str(), _boneSpaceTransformData);
-
-		serialedString = match.suffix();
+		serialedString = std::string(serialedString.begin() + offset, serialedString.end());
 		Mesh<Vertex_PCNT_Skinning>::Deserialize(serialedString);
+	}
+	Vertex_PCNT_Skinning Mesh_Vertex_PCNT_Skinning::GetDeserializedVertex(std::string str)
+	{
+		str = GetUnitElement(str, 0).str;
+		Vertex_PCNT_Skinning vertex;
+		Serializeable::Deserialize(str, vertex);
+		return vertex;
 	}
 	bool Mesh_Vertex_PCNT_Skinning::Release()
 	{
@@ -306,9 +324,12 @@ namespace SSB
 		return Vertex_PCNTs_Animatable_Keyword;
 	}
 
-	std::string Mesh_Vertex_PCNTs::GetVertexRegex()
+	Vertex_PCNTs Mesh_Vertex_PCNTs::GetDeserializedVertex(std::string str)
 	{
-		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+\}\s+\})";
+		str = GetUnitElement(str, 0).str;
+		Vertex_PCNTs vertex;
+		Serializeable::Deserialize(str, vertex);
+		return vertex;
 	}
 
 	bool Mesh_Vertex_PCNTs_Animatable::CreateMeshBuffer()
@@ -353,11 +374,6 @@ namespace SSB
 		return Vertex_PCNTs_Animatable_Keyword;
 	}
 
-	std::string Mesh_Vertex_PCNTs_Animatable::GetVertexRegex()
-	{
-		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+\}\s+\})";
-	}
-
 	void Mesh_Vertex_PCNTs_Animatable::Initialize_SetMeshData(MeshData meshData)
 	{
 		_meshData = meshData;
@@ -397,7 +413,7 @@ namespace SSB
 		ret += "[\n";
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "Mesh Data\n";
+		ret += _meshDataStr;
 		ret += Serializeable::Serialize(tabCount + 2, _meshData);
 		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
@@ -415,23 +431,31 @@ namespace SSB
 
 	void Mesh_Vertex_PCNTs_Animatable::Deserialize(std::string serialedString)
 	{
-		std::regex reg(R"(\{.*\})");
-		std::smatch match;
+		int offset = 0;
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			auto atomicData = GetUnitAtomic(elem, 0);
+			std::string atomic = atomicData.str;
+			Serializeable::Deserialize(atomic, _meshData);
+		}
 
-		std::regex_search(serialedString, match, reg);
-		DeSerialize(match.str(), _meshData);
-
-		serialedString = match.suffix();
+		serialedString = std::string(serialedString.begin() + offset, serialedString.end());
 		Mesh<Vertex_PCNTs>::Deserialize(serialedString);
+	}
+
+	Vertex_PCNTs Mesh_Vertex_PCNTs_Animatable::GetDeserializedVertex(std::string str)
+	{
+		str = GetUnitElement(str, 0).str;
+		Vertex_PCNTs vertex;
+		Serializeable::Deserialize(str, vertex);
+		return vertex;
 	}
 
 	std::string Mesh_Vertex_PCNTs_Skinning::GetVertexType()
 	{
 		return Vertex_PCNTs_Skinning_Keyword;
-	}
-	std::string Mesh_Vertex_PCNTs_Skinning::GetVertexRegex()
-	{
-		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+\}\s+\})";
 	}
 	void Mesh_Vertex_PCNTs_Skinning::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
@@ -521,7 +545,7 @@ namespace SSB
 		ret += "[\n";
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "Mesh to Bone space Transform Data\n";
+		ret += _meshToBoneSpaceTransformDataStr;
 		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData);
 		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
@@ -539,14 +563,24 @@ namespace SSB
 
 	void Mesh_Vertex_PCNTs_Skinning::Deserialize(std::string serialedString)
 	{
-		std::regex reg("\{.*\}");
-		std::smatch match;
+		int offset = 0;
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(elem, _boneSpaceTransformData);
+		}
 
-		std::regex_search(serialedString, match, reg);
-		DeSerialize(match.str(), _boneSpaceTransformData);
-
-		serialedString = match.suffix();
+		serialedString = std::string(serialedString.begin() + offset, serialedString.end());
 		Mesh<Vertex_PCNTs_Skinning>::Deserialize(serialedString);
+	}
+
+	Vertex_PCNTs_Skinning Mesh_Vertex_PCNTs_Skinning::GetDeserializedVertex(std::string str)
+	{
+		str = GetUnitElement(str, 0).str;
+		Vertex_PCNTs_Skinning vertex;
+		Serializeable::Deserialize(str, vertex);
+		return vertex;
 	}
 
 	Box::Box(float width, float height, float depth)

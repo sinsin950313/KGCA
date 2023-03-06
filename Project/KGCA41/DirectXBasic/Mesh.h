@@ -99,7 +99,7 @@ namespace SSB
 
 	protected:
 		virtual std::string GetVertexType() = 0;
-		virtual std::string GetVertexRegex() = 0;
+		virtual VertexType GetDeserializedVertex(std::string str) = 0;
 
 	public:
 		std::string Serialize(int tabCount) override;
@@ -110,7 +110,7 @@ namespace SSB
 	{
 	private:
 		std::string GetVertexType() override;
-		std::string GetVertexRegex() override;
+		Vertex_PC GetDeserializedVertex(std::string str) override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -120,7 +120,7 @@ namespace SSB
 	{
 	private:
 		std::string GetVertexType() override;
-		std::string GetVertexRegex() override;
+		Vertex_PCNT GetDeserializedVertex(std::string str) override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -137,7 +137,7 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
-		std::string GetVertexRegex() override;
+		Vertex_PCNT GetDeserializedVertex(std::string str) override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -163,7 +163,7 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
-		std::string GetVertexRegex() override;
+		Vertex_PCNT_Skinning GetDeserializedVertex(std::string str) override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -188,7 +188,7 @@ namespace SSB
 	{
 	private:
 		std::string GetVertexType() override;
-		std::string GetVertexRegex() override;
+		Vertex_PCNTs GetDeserializedVertex(std::string str) override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -203,7 +203,7 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
-		std::string GetVertexRegex() override;
+		Vertex_PCNTs GetDeserializedVertex(std::string str) override;
 
 	private:
 		bool CreateMeshBuffer();
@@ -232,7 +232,7 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
-		std::string GetVertexRegex() override;
+		Vertex_PCNTs_Skinning GetDeserializedVertex(std::string str) override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;

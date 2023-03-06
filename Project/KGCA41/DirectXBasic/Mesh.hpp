@@ -223,12 +223,12 @@ namespace SSB
 		ret += "[\n";
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "Vertex Type : ";
+		ret += _vertexTypeStr;
 		ret += GetVertexType();
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "Vertex List\n";
+		ret += _vertexListStr;
 		for (auto vertex : _vertexList)
 		{
 			ret += Serializeable::Serialize(tabCount + 2, vertex);
@@ -237,37 +237,41 @@ namespace SSB
 		}
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "Index List\n";
+		ret += _indexListStr;
 
 		ret += GetTabbedString(tabCount + 2);
 		ret += "{ ";
 		for (auto index : _indexList)
 		{
+			ret += "\"";
 			ret += std::to_string(index);
-			ret += ", ";
+			ret += "\", ";
 		}
 		ret += "},\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Min Vertex\n";
+		ret += _minVertexStr;
 		ret += Serializeable::Serialize(tabCount + 2, _minVertex);
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Max Vertex\n";
+		ret += _maxVertexStr;
 		ret += Serializeable::Serialize(tabCount + 2, _maxVertex);
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Vertex Shader File Name : ";
+		ret += _vertexShaderStr;
+		ret += "\"";
 		ret += _vs->GetFileName();
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "SubMesh";
-		ret += ",\n";
+		ret += _subMeshStr;
+		ret += " : \"";
+		ret += std::to_string(_subMeshes.size());
+		ret += "\",\n";
 		for (auto subMesh : _subMeshes)
 		{
 			ret += subMesh->Serialize(tabCount + 2);
@@ -282,100 +286,68 @@ namespace SSB
 	template<typename VertexType>
 	void Mesh<VertexType>::Deserialize(std::string serialedString)
 	{
-		{
-			std::regex re(GetVertexRegex());
-			std::smatch match;
+		serialedString = GetUnitObject(serialedString, 0).str;
+		int indexListStrPos = serialedString.find(_indexListStr);
 
-			while (std::regex_search(serialedString, match, re))
+		int offset = 0;
+		while(offset < indexListStrPos)
+		{
+			auto elemData = GetUnitElement(serialedString, offset);
+			std::string elem = elemData.str;
+			offset = elemData.offset;
+			VertexType vertex = GetDeserializedVertex(elem);
+			_vertexList.push_back(vertex);
+		}
+
+		{
+			auto elemData = GetUnitElement(serialedString, offset);
+			std::string elem = elemData.str;
+			offset = elemData.offset;
+			int indexOffset = 0;
+			while (indexOffset < elem.size())
 			{
-				std::string str = match.str();
-				serialedString = match.suffix();
-				VertexType vertex;
-				DeSerialize(str, vertex);
-				_vertexList.push_back(vertex);
+				std::string atomic = GetUnitAtomic(elem, indexOffset).str;
+				int val;
+				Serializeable::Deserialize(atomic, val);
+				_indexList.push_back(val);
 			}
 		}
 
 		{
-			std::regex re(R"(\s+Index List\s+\{ ([\s\S]*) \},)");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string indexListStr = match.str();
-			serialedString = match.suffix();
-
-			{
-				std::regex indexReg("[0-9]+");
-				while (std::regex_search(indexListStr, match, indexReg))
-				{
-					_indexList.push_back(std::stoi(match.str()));
-					indexListStr = match.suffix();
-				}
-			}
-		}
-
-		{
-			std::regex re(R"(Min Vertex\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			re = R"(\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})";
-			std::regex_search(str, match, re);
-
+			offset = serialedString.find(_minVertexStr);
+			auto elemData = GetUnitElement(serialedString, offset);
+			std::string elem = elemData.str;
+			offset = elemData.offset;
 			Float3 tmp;
-			DeSerialize(match.str(), tmp);
+			Serializeable::Deserialize(elem, tmp);
 			_minVertex = tmp;
 		}
 
 		{
-			std::regex re(R"(Max Vertex\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			re = R"(\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})";
-			std::regex_search(str, match, re);
-
+			offset = serialedString.find(_maxVertexStr);
+			auto elemData = GetUnitElement(serialedString, offset);
+			std::string elem = elemData.str;
+			offset = elemData.offset;
 			Float3 tmp;
-			DeSerialize(match.str(), tmp);
+			Serializeable::Deserialize(elem, tmp);
 			_maxVertex = tmp;
 		}
 
 		{
-			std::regex re("Vertex Shader File Name : .*.hlsl,");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			std::string tmp = "Vertex Shader File Name : ";
-			int offset = tmp.size();
-			std::string vertexShaderFileName;
-			while (str[offset] != ',')
-			{
-				vertexShaderFileName += str[offset];
-				++offset;
-			}
-
-			_vs = ShaderManager::GetInstance().LoadVertexShader(mtw(vertexShaderFileName), "VS", "vs_5_0");
+			offset = serialedString.find(_vertexShaderStr);
+			auto atomicData = GetUnitAtomic(serialedString, offset);
+			_vs = ShaderManager::GetInstance().LoadVertexShader(mtw(atomicData.str), "VS", "vs_5_0");
 		}
 
-
-		std::regex subMeshReg("SubMesh,");
-		std::smatch match;
-
-		if(std::regex_search(serialedString, match, subMeshReg))
 		{
-			std::regex re(R"(\[([\s\S])\])");
+			offset = serialedString.find(_subMeshStr);
+			auto atomicData = GetUnitAtomic(serialedString, offset);
+			int subMeshCount;
+			Serializeable::Deserialize(atomicData.str, subMeshCount);
 
-			while (std::regex_search(serialedString, match, re))
+			for(int i = 0; i < subMeshCount; ++i)
 			{
+				auto objectData = GetUnitObject(serialedString, offset);
 				MeshInterface* mesh;
 				if (GetVertexType() == Vertex_PCNT_Keyword)
 				{
@@ -407,8 +379,7 @@ namespace SSB
 					mesh = new Mesh_Vertex_PC;
 				}
 
-				mesh->Deserialize(match.str());
-				serialedString = match.suffix();
+				mesh->Deserialize(objectData.str);
 			}
 		}
 	}

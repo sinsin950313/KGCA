@@ -16,9 +16,9 @@ namespace SSB
 		std::string ret;
 
 		ret += GetTabbedString(tabCount);
-		ret += "{";
+		ret += "{\"";
 		ret += std::to_string(data);
-		ret += "}";
+		ret += "\"}";
 		ret += "\n";
 
 		return ret;
@@ -28,11 +28,11 @@ namespace SSB
 		std::string ret;
 
 		ret += GetTabbedString(tabCount);
-		ret += "{";
+		ret += "{\"";
 		ret += std::to_string(data.x);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.y);
-		ret += "}\n";
+		ret += "\"}\n";
 
 		return ret;
 	}
@@ -41,13 +41,13 @@ namespace SSB
 		std::string ret;
 
 		ret += GetTabbedString(tabCount);
-		ret += "{";
+		ret += "{\"";
 		ret += std::to_string(data.x);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.y);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.z);
-		ret += "}\n";
+		ret += "\"}\n";
 
 		return ret;
 	}
@@ -56,15 +56,15 @@ namespace SSB
 		std::string ret;
 
 		ret += GetTabbedString(tabCount);
-		ret += "{";
+		ret += "{\"";
 		ret += std::to_string(data.x);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.y);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.z);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.w);
-		ret += "}\n";
+		ret += "\"}\n";
 
 		return ret;
 	}
@@ -76,31 +76,34 @@ namespace SSB
 		ret += "{\n";
 
 		ret += GetTabbedString(tabCount + 1);
+		ret += "\"";
 		ret += std::to_string(data.e11);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e12);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e13);
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += GetTabbedString(tabCount + 1);
+		ret += "\"";
 		ret += std::to_string(data.e21);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e22);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e23);
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += GetTabbedString(tabCount + 1);
+		ret += "\"";
 		ret += std::to_string(data.e31);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e32);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e33);
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += GetTabbedString(tabCount);
-		ret += "}\n";
+		ret += "\"}\n";
 
 		return ret;
 	}
@@ -112,44 +115,48 @@ namespace SSB
 		ret += "{\n";
 
 		ret += GetTabbedString(tabCount + 1);
+		ret += "\"";
 		ret += std::to_string(data.e11);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e12);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e13);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e14);
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += GetTabbedString(tabCount + 1);
+		ret += "\"";
 		ret += std::to_string(data.e21);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e22);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e23);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e24);
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += GetTabbedString(tabCount + 1);
+		ret += "\"";
 		ret += std::to_string(data.e31);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e32);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e33);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e34);
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += GetTabbedString(tabCount + 1);
+		ret += "\"";
 		ret += std::to_string(data.e41);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e42);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e43);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.e44);
-		ret += "\n";
+		ret += "\"\n";
 
 		ret += GetTabbedString(tabCount);
 		ret += "}\n";
@@ -260,26 +267,26 @@ namespace SSB
 		ret += GetTabbedString(tabCount + 1);
 		ret += "{";
 		ret += std::to_string(data.AffectedBoneIndex[0]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.AffectedBoneIndex[1]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.AffectedBoneIndex[2]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.AffectedBoneIndex[3]);
-		ret += "}\n";
+		ret += "\"}\n";
 		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
 		ret += "{";
 		ret += std::to_string(data.Weight[0]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.Weight[1]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.Weight[2]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.Weight[3]);
-		ret += "}\n";
+		ret += "\"}\n";
 
 		ret += GetTabbedString(tabCount);
 		ret += "}\n";
@@ -310,35 +317,35 @@ namespace SSB
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "{";
+		ret += "{\"";
 		ret += std::to_string(data.MaterialIndex);
-		ret += "}\n";
+		ret += "\"}\n";
 		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "{";
+		ret += "{\"";
 		ret += std::to_string(data.AffectedBoneIndex[0]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.AffectedBoneIndex[1]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.AffectedBoneIndex[2]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.AffectedBoneIndex[3]);
-		ret += "}\n";
+		ret += "\"}\n";
 		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "{";
+		ret += "{\"";
 		ret += std::to_string(data.Weight[0]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.Weight[1]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.Weight[2]);
-		ret += ", ";
+		ret += "\", \"";
 		ret += std::to_string(data.Weight[3]);
-		ret += "}\n";
+		ret += "\"}\n";
 
 		ret += GetTabbedString(tabCount);
 		ret += "}\n";
@@ -350,9 +357,9 @@ namespace SSB
 		std::string ret;
 
 		ret += GetTabbedString(tabCount);
-		ret += "{";
+		ret += "{\"";
 		ret += std::to_string(data.MeshIndex);
-		ret += "}";
+		ret += "\"}";
 		ret += "\n";
 
 		return ret;
@@ -417,12 +424,12 @@ namespace SSB
 		ret += GetTabbedString(tabCount);
 		ret += "{\n";
 
-		for (int i = 0; i < 255; ++i)
+		for (int i = 0; i < kAnimationUnitMaxIndex; ++i)
 		{
 			ret += Serialize(tabCount + 1, data.BoneAnimationUnit[i]);
 			ret += GetTabbedString(tabCount + 1);
 
-			if (i + 1 < 255)
+			if (i + 1 < kAnimationUnitMaxIndex)
 			{
 				ret += ",\n";
 			}
@@ -434,12 +441,12 @@ namespace SSB
 		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
-		for (int i = 0; i < 255; ++i)
+		for (int i = 0; i < kAnimationUnitMaxIndex; ++i)
 		{
 			ret += Serialize(tabCount + 1, data.MeshAnimationUnit[i]);
 		ret += GetTabbedString(tabCount + 1);
 
-			if (i + 1 < 255)
+			if (i + 1 < kAnimationUnitMaxIndex)
 			{
 				ret += ",\n";
 			}
@@ -454,42 +461,32 @@ namespace SSB
 
 		return ret;
 	}
-	std::string Serializeable::GetUnitObject(std::string str, int offset)
+	Serializeable::ExtractedData Serializeable::GetUnitAtomic(std::string str, int offset)
 	{
 		int startIndex = 0;
-		int endIndex = 0;
-		int count = 0;
-		bool begin = false;
-		for (int i = offset; i < str.size(); ++i)
+		int endIndex = str.size();
+
+		int index = offset;
+		while (str[index] != '\"')
 		{
-			if (!begin && str[i] == '[')
-			{
-				startIndex = i;
-				begin = true;
-			}
-
-			if (str[i] == '[')
-			{
-				++count;
-			}
-			if (str[i] == ']')
-			{
-				--count;
-			}
-
-			if (begin && count == 0)
-			{
-				endIndex = i;
-				break;
-			}
+			++index;
 		}
+		++index;
 
-		return std::string(str.begin() + startIndex, str.begin() + endIndex);
+		startIndex = index;
+
+		while (str[index] != '\"')
+		{
+			++index;
+		}
+		endIndex = index - 1;
+
+		return { std::string(str.begin() + startIndex + 1, str.begin() + endIndex), index + 1 };
 	}
-	std::string Serializeable::GetUnitElement(std::string str, int offset)
+	Serializeable::ExtractedData Serializeable::GetUnitElement(std::string str, int offset)
 	{
 		int startIndex = 0;
-		int endIndex = 0;
+		int endIndex = str.size();
 		int count = 0;
 		bool begin = false;
 		for (int i = offset; i < str.size(); ++i)
@@ -516,90 +513,110 @@ namespace SSB
 			}
 		}
 
-		return std::string(str.begin() + startIndex, str.begin() + endIndex);
+		//if (endIndex == str.size())
+		//{
+		//	return std::string(str.begin() + startIndex, str.begin() + endIndex);
+		//}
+		//else
+		//{
+		return { std::string(str.begin() + startIndex, str.begin() + endIndex + 1), endIndex + 1 };
+		//}
 	}
-	void Serializeable::Deserialize(std::string element, float& ret)
+	Serializeable::ExtractedData Serializeable::GetUnitObject(std::string str, int offset)
 	{
-		std::string str = std::string(element.begin() + 1, element.end() - 1);
-		ret = std::stof(str);
-	}
-	void Serializeable::Deserialize(std::string element, Float2& ret)
-	{
-		int index = 1;
+		int startIndex = 0;
+		int endIndex = str.size();
+		int count = 0;
+		bool begin = false;
+		for (int i = offset; i < str.size(); ++i)
 		{
-			std::string str;
-			while (element[index] != ',')
+			if (!begin && str[i] == '[')
 			{
-				str += element[index];
-				++index;
+				startIndex = i;
+				begin = true;
 			}
-			ret.x = std::stof(str);
-		}
 
-		// ','
-		++index;
-		// ' '
-		++index;
-
-		{
-			std::string str;
-			while (element[index] != '\"')
-			{
-				str += element[index];
-				++index;
-			}
-			ret.y = std::stof(str);
-		}
-	}
-	void Serializeable::Deserialize(std::string element, Float3& ret)
-	{
-		int index = 0;
-		while (element[index] != '{')
-		{
-			++index;
-		}
-		++index;
-
-		for (int i = 0; i < 3; ++i)
-		{
-			int start = index;
-
-			std::string tmp;
-			int count = 0;
-			while (element[index] != ',')
+			if (str[i] == '[')
 			{
 				++count;
-				++index;
 			}
-			ret.e[i] = std::stof(std::string(element.begin() + start, element.begin() + start + count));
-			++index;
-			++index;
-		}
-	}
-	void Serializeable::Deserialize(std::string element, Float33& ret)
-	{
-		float val[9] = { 0, };
-		int valIndex = 0;
-
-		std::string str;
-		int index = 1;
-		while (element[index] != '\"')
-		{
-			char c = element[index];
-			if (c == '\"')
+			if (str[i] == ']')
 			{
+				--count;
+			}
+
+			if (begin && count == 0)
+			{
+				endIndex = i;
 				break;
 			}
-			else if (c != ',')
+		}
+
+		//if (endIndex == str.size())
+		//{
+		//	return std::string(str.begin() + startIndex, str.begin() + endIndex);
+		//}
+		//else
+		//{
+		return { std::string(str.begin() + startIndex, str.begin() + endIndex + 1), endIndex + 1 };
+		//}
+	}
+	void Serializeable::Deserialize(std::string str, int& ret)
+	{
+		str = GetUnitElement(str, 0).str;
+		auto val = GetUnitAtomic(str, 0);
+		ret = std::stoi(val.str);
+	}
+	void Serializeable::Deserialize(std::string str, unsigned int& ret)
+	{
+		str = GetUnitElement(str, 0).str;
+		auto val = GetUnitAtomic(str, 0);
+		ret = std::stoi(val.str);
+	}
+	void Serializeable::Deserialize(std::string str, float& ret)
+	{
+		str = GetUnitElement(str, 0).str;
+		auto val = GetUnitAtomic(str, 0);
+		ret = std::stof(val.str);
+	}
+	void Serializeable::Deserialize(std::string str, Float2& ret)
+	{
+		str = GetUnitElement(str, 0).str;
+		int offset = 0;
+		for (int i = 0; i < 2; ++i)
+		{
+			auto data = GetUnitAtomic(str, offset);
+			std::string val = data.str;
+			offset = data.offset;
+			ret.e[i] = std::stof(val);
+		}
+	}
+	void Serializeable::Deserialize(std::string str, Float3& ret)
+	{
+		str = GetUnitElement(str, 0).str;
+		int offset = 0;
+		for (int i = 0; i < 3; ++i)
+		{
+			auto data = GetUnitAtomic(str, offset);
+			std::string val = data.str;
+			offset = data.offset;
+			ret.e[i] = std::stof(val);
+		}
+	}
+	void Serializeable::Deserialize(std::string str, Float33& ret)
+	{
+		float val[9];
+
+		str = GetUnitElement(str, 0).str;
+		int offset = 0;
+		for (int i = 0; i < 3; ++i)
+		{
+			for (int j = 0; j < 3; ++j)
 			{
-				str += c;
-				++index;
-			}
-			else
-			{
-				val[valIndex] = std::stof(str);
-				++valIndex;
-				index += 2;
+				auto data = GetUnitAtomic(str, offset);
+				std::string valStr = data.str;
+				offset = data.offset;
+				val[i * 3 + j] = std::stof(valStr);
 			}
 		}
 
@@ -609,30 +626,20 @@ namespace SSB
 			val[6], val[7], val[8]
 		};
 	}
-	void Serializeable::Deserialize(std::string element, Float44& ret)
+	void Serializeable::Deserialize(std::string str, Float44& ret)
 	{
 		float val[16] = { 0, };
-		int valIndex = 0;
 
-		std::string str;
-		int index = 1;
-		while (element[index] != '\"')
+		str = GetUnitElement(str, 0).str;
+		int offset = 0;
+		for (int i = 0; i < 4; ++i)
 		{
-			char c = element[index];
-			if (c == '\"')
+			for (int j = 0; j < 4; ++j)
 			{
-				break;
-			}
-			else if (c != ',')
-			{
-				str += c;
-				++index;
-			}
-			else
-			{
-				val[valIndex] = std::stof(str);
-				++valIndex;
-				index += 2;
+				auto data = GetUnitAtomic(str, offset);
+				std::string valStr = data.str;
+				offset = data.offset;
+				val[i * 4 + j] = std::stof(valStr);
 			}
 		}
 
@@ -643,466 +650,244 @@ namespace SSB
 			val[12], val[13], val[14], val[15]
 		};
 	}
-	void Serializeable::Deserialize(std::string element, Vertex_PC& ret)
+	void Serializeable::Deserialize(std::string str, Vertex_PC& ret)
 	{
-		int index = 0;
-		while (element[index] != '{')
+		int offset = 0;
 		{
-			++index;
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.Position);
 		}
 
 		{
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Position);
-		}
-
-		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Color);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.Color);
 		}
 	}
-	void Serializeable::Deserialize(std::string element, Vertex_PCNT& ret)
+	void Serializeable::Deserialize(std::string str, Vertex_PCNT& ret)
 	{
-		int index = 0;
-		while (element[index] != '{')
+		int offset = 0;
 		{
-			++index;
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset += data.offset;
+			Deserialize(elem, ret.Position);
 		}
 
 		{
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Position);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.Color);
 		}
 
 		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Color);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.Normal);
 		}
 
 		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Normal);
-		}
-
-		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.TextureUV);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.TextureUV);
 		}
 	}
-	void Serializeable::Deserialize(std::string element, Vertex_PCNTs& ret)
+	void Serializeable::Deserialize(std::string str, Vertex_PCNTs& ret)
 	{
-		int index = 0;
-		while (element[index] != '{')
+		int offset = 0;
 		{
-			++index;
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.Position);
 		}
 
 		{
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Position);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.Color);
 		}
 
 		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Color);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.Normal);
 		}
 
 		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Normal);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.TextureUV);
 		}
 
 		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.TextureUV);
-		}
-
-		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.MaterialIndex);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.MaterialIndex);
 		}
 	}
-	void Serializeable::Deserialize(std::string element, Vertex_PCNT_Skinning& ret)
+	void Serializeable::Deserialize(std::string str, Vertex_PCNT_Skinning& ret)
 	{
-		int index = 0;
-		while (element[index] != '{')
+		int offset = 0;
 		{
-			++index;
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.Position);
 		}
 
 		{
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Position);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.Color);
 		}
 
 		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Color);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.Normal);
 		}
 
 		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Normal);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+			Deserialize(elem, ret.TextureUV);
 		}
 
 		{
-			while (element[index] != '{')
+			int atomicOffset = 0;
+			for (int i = 0; i < 4; ++i)
 			{
-				++index;
-			}
+				auto data = GetUnitElement(str, offset);
+				std::string elem = data.str;
+				offset = data.offset;
 
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
+				auto atomicData = GetUnitAtomic(elem, atomicOffset);
+				std::string atomicStr = atomicData.str;
+				atomicOffset = atomicData.offset;
 
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.TextureUV);
+				Deserialize(atomicStr, ret.AffectedBoneIndex[i]);
+			}
 		}
 
-		while (element[index] != '{')
 		{
-			++index;
-		}
-		++index;
-
-		for(int i = 0; i < 4; ++i)
-		{
-			int start = index;
-			int count = 0;
-			while (element[index] != ',' && element[index] != '}')
+			int atomicOffset = 0;
+			for (int i = 0; i < 4; ++i)
 			{
-				++index;
-				++count;
+				auto data = GetUnitElement(str, offset);
+				std::string elem = data.str;
+				offset = data.offset;
+
+				auto atomicData = GetUnitAtomic(elem, atomicOffset);
+				std::string atomicStr = atomicData.str;
+				atomicOffset = atomicData.offset;
+
+				Deserialize(atomicStr, ret.Weight[i]);
 			}
-			++index;
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.AffectedBoneIndex[i]);
-		}
-
-		while (element[index] != '{')
-		{
-			++index;
-		}
-		++index;
-
-		for(int i = 0; i < 4; ++i)
-		{
-			int start = index;
-			int count = 0;
-			while (element[index] != ',' && element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-			++index;
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Weight[i]);
 		}
 	}
-	void Serializeable::Deserialize(std::string element, Vertex_PCNTs_Skinning& ret)
+	void Serializeable::Deserialize(std::string str, Vertex_PCNTs_Skinning& ret)
 	{
-		int index = 0;
-		while (element[index] != '{')
+		int offset = 0;
 		{
-			++index;
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			Deserialize(elem, ret.Position);
+			offset = data.offset;
 		}
 
 		{
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Position);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			Deserialize(elem, ret.Color);
+			offset = data.offset;
 		}
 
 		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Color);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			Deserialize(elem, ret.Normal);
+			offset = data.offset;
 		}
 
 		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Normal);
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			Deserialize(elem, ret.TextureUV);
+			offset = data.offset;
 		}
 
 		{
-			while (element[index] != '{')
+			int atomicOffset = 0;
+			for (int i = 0; i < 4; ++i)
 			{
-				++index;
+				auto data = GetUnitElement(str, offset);
+				std::string elem = data.str;
+				offset = data.offset;
+
+				auto atomicData = GetUnitAtomic(elem, atomicOffset);
+				std::string atomicStr = atomicData.str;
+				atomicOffset = atomicData.offset;
+
+				Deserialize(atomicStr, ret.AffectedBoneIndex[i]);
 			}
-
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.TextureUV);
-		}
-
-		while (element[index] != '{')
-		{
-			++index;
-		}
-		++index;
-
-		for(int i = 0; i < 4; ++i)
-		{
-			int start = index;
-			int count = 0;
-			while (element[index] != ',' && element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-			++index;
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.AffectedBoneIndex[i]);
-		}
-
-		while (element[index] != '{')
-		{
-			++index;
-		}
-		++index;
-
-		for(int i = 0; i < 4; ++i)
-		{
-			int start = index;
-			int count = 0;
-			while (element[index] != ',' && element[index] != '}')
-			{
-				++index;
-				++count;
-			}
-			++index;
-
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Weight[i]);
 		}
 
 		{
-			while (element[index] != '{')
+			int atomicOffset = 0;
+			for (int i = 0; i < 4; ++i)
 			{
-				++index;
-			}
+				auto data = GetUnitElement(str, offset);
+				std::string elem = data.str;
+				offset = data.offset;
 
-			int start = index;
-			int count = 0;
-			while (element[index] != '}')
-			{
-				++index;
-				++count;
-			}
+				auto atomicData = GetUnitAtomic(elem, atomicOffset);
+				std::string atomicStr = atomicData.str;
+				atomicOffset = atomicData.offset;
 
-			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.MaterialIndex);
+				Deserialize(atomicStr, ret.Weight[i]);
+			}
+		}
+
+		{
+			auto data = GetUnitElement(str, offset);
+			std::string elem = data.str;
+			Deserialize(elem, ret.MaterialIndex);
+			offset = data.offset;
 		}
 	}
-	void Serializeable::Deserialize(std::string element, MeshData& ret)
+	void Serializeable::Deserialize(std::string str, MeshData& ret)
 	{
-		int start = element.find('{') + 1;
-		int end = element.find('}');
-		Deserialize(std::string(element.begin() + start, element.begin() + end), ret.MeshIndex);
+		auto data = GetUnitElement(str, 0);
+		std::string elem = data.str;
+		Deserialize(elem, ret.MeshIndex);
 	}
-	void Serializeable::Deserialize(std::string element, MeshToBoneSpaceTransformData& ret)
+	void Serializeable::Deserialize(std::string str, MeshToBoneSpaceTransformData& ret)
 	{
-		int index = 0;
-		while (element[index] != '{')
-		{
-			++index;
-		}
-
+		auto data = GetUnitElement(str, 0);
+		std::string elem = data.str;
+		int offset = 0;
 		for (int i = 0; i < kMaximumBoneCount; ++i)
 		{
-			while (element[index] != '{')
-			{
-				++index;
-			}
-			int start = index;
-			int end = element.find('}', index);
+			auto valData = GetUnitElement(elem, offset);
+			std::string val = valData.str;
+			offset = valData.offset;
 
 			Float44 tmp;
-			Deserialize(std::string(element.begin() + index, element.begin() + end), tmp);
+			Deserialize(val, tmp);
 			ret.BoneSpaceTransformBuffer[i] = {
 				tmp.e11, tmp.e12, tmp.e13, tmp.e14,
 				tmp.e21, tmp.e22, tmp.e23, tmp.e24,
@@ -1111,205 +896,63 @@ namespace SSB
 			};
 		}
 	}
-	void Serializeable::Deserialize(std::string element, AnimationUnitInfo& ret)
+	void Serializeable::Deserialize(std::string str, AnimationUnitInfo& ret)
 	{
-		std::regex re("[0-9.e+-]+");
-		std::smatch match;
+		auto data = GetUnitElement(str, 0);
+		std::string elem = data.str;
 
+		int offset = 0;
 		{
-			float val[16];
-			for (int j = 0; j < 16; ++j)
-			{
-				std::regex_search(element, match, re);
-				val[j] = std::stof(match.str());
-				element = match.suffix();
-			}
-
-			Float44 result;
-			memcpy(&result, val, sizeof(float) * 16);
-
-			HMatrix44 tmp = {
-				result.e11, result.e12, result.e13, result.e14,
-				result.e21, result.e22, result.e23, result.e24,
-				result.e31, result.e32, result.e33, result.e34,
-				result.e41, result.e42, result.e43, result.e44,
+			auto localElemData = GetUnitElement(elem, offset);
+			std::string localElem = localElemData.str;
+			offset = localElemData.offset;
+			Float44 val;
+			Deserialize(localElem, val);
+			ret.Matrix = {
+				val.e11, val.e12, val.e13, val.e14,
+				val.e21, val.e22, val.e23, val.e24,
+				val.e31, val.e32, val.e33, val.e34,
+				val.e41, val.e42, val.e43, val.e44,
 			};
-			ret.Matrix = tmp;
 		}
 
 		{
-			float val[3];
-			for (int j = 0; j < 3; ++j)
-			{
-				std::regex_search(element, match, re);
-				val[j] = std::stof(match.str());
-				element = match.suffix();
-			}
-
-			Float3 result;
-			memcpy(&result, val, sizeof(float) * 3);
-			ret.Translate = result;
+			auto localElemData = GetUnitElement(elem, offset);
+			std::string localElem = localElemData.str;
+			offset = localElemData.offset;
+			Float3 val;
+			Deserialize(localElem, val);
+			ret.Translate = { val.x, val.y, val.z };
 		}
 
 		{
-			float val[3];
-			for (int j = 0; j < 3; ++j)
-			{
-				std::regex_search(element, match, re);
-				val[j] = std::stof(match.str());
-				element = match.suffix();
-			}
-
-			Float3 result;
-			memcpy(&result, val, sizeof(float) * 3);
-			ret.Scale = result;
-		}
-
-		{
-			float val[4];
-			for (int j = 0; j < 4; ++j)
-			{
-				std::regex_search(element, match, re);
-				val[j] = std::stof(match.str());
-				element = match.suffix();
-			}
-
-			Float4 result;
-			memcpy(&result, val, sizeof(float) * 4);
-			ret.Rotate = { result.x, result.y, result.z, result.w };
+			auto localElemData = GetUnitElement(elem, offset);
+			std::string localElem = localElemData.str;
+			offset = localElemData.offset;
+			Float3 val;
+			Deserialize(localElem, val);
+			ret.Scale = { val.x, val.y, val.z };
 		}
 	}
-	void Serializeable::Deserialize(std::string element, AnimationFrameInfo& ret)
+	void Serializeable::Deserialize(std::string str, AnimationFrameInfo& ret)
 	{
-		std::regex re("[0-9.e+-]+");
-		std::smatch match;
+		str = GetUnitElement(str, 0).str;
 
+		int offset = 0;
 		for (int i = 0; i < kAnimationUnitMaxIndex; ++i)
 		{
-			float val[16];
-			for (int j = 0; j < 16; ++j)
-			{
-				std::regex_search(element, match, re);
-				val[j] = std::stof(match.str());
-				element = match.suffix();
-			}
-
-			Float44 result;
-			memcpy(&result, val, sizeof(float) * 16);
-
-			HMatrix44 tmp = {
-				result.e11, result.e12, result.e13, result.e14,
-				result.e21, result.e22, result.e23, result.e24,
-				result.e31, result.e32, result.e33, result.e34,
-				result.e41, result.e42, result.e43, result.e44,
-			};
-			ret.BoneAnimationUnit[i].Matrix = tmp;
-
-			{
-				float val[3];
-				for (int j = 0; j < 3; ++j)
-				{
-					std::regex_search(element, match, re);
-					val[j] = std::stof(match.str());
-					element = match.suffix();
-				}
-
-				Float3 result;
-				memcpy(&result, val, sizeof(float) * 3);
-				ret.BoneAnimationUnit[i].Translate = result;
-			}
-
-			{
-				float val[3];
-				for (int j = 0; j < 3; ++j)
-				{
-					std::regex_search(element, match, re);
-					val[j] = std::stof(match.str());
-					element = match.suffix();
-				}
-
-				Float3 result;
-				memcpy(&result, val, sizeof(float) * 3);
-				ret.BoneAnimationUnit[i].Scale = result;
-			}
-
-			{
-				float val[4];
-				for (int j = 0; j < 4; ++j)
-				{
-					std::regex_search(element, match, re);
-					val[j] = std::stof(match.str());
-					element = match.suffix();
-				}
-
-				Float4 result;
-				memcpy(&result, val, sizeof(float) * 4);
-				ret.BoneAnimationUnit[i].Rotate = { result.x, result.y, result.z, result.w };
-			}
+			auto data = GetUnitElement(str, offset);
+			std::string val = data.str;
+			offset = data.offset;
+			Deserialize(val, ret.BoneAnimationUnit[i]);
 		}
 
 		for (int i = 0; i < kAnimationUnitMaxIndex; ++i)
 		{
-			float val[16];
-			for (int j = 0; j < 16; ++j)
-			{
-				std::regex_search(element, match, re);
-				val[j] = std::stof(match.str());
-				element = match.suffix();
-			}
-
-			Float44 result;
-			memcpy(&result, val, sizeof(float) * 16);
-
-			HMatrix44 tmp = {
-				result.e11, result.e12, result.e13, result.e14,
-				result.e21, result.e22, result.e23, result.e24,
-				result.e31, result.e32, result.e33, result.e34,
-				result.e41, result.e42, result.e43, result.e44,
-			};
-			ret.MeshAnimationUnit[i].Matrix = tmp;
-
-			{
-				float val[3];
-				for (int j = 0; j < 3; ++j)
-				{
-					std::regex_search(element, match, re);
-					val[j] = std::stof(match.str());
-					element = match.suffix();
-				}
-
-				Float3 result;
-				memcpy(&result, val, sizeof(float) * 3);
-				ret.MeshAnimationUnit[i].Translate = result;
-			}
-
-			{
-				float val[3];
-				for (int j = 0; j < 3; ++j)
-				{
-					std::regex_search(element, match, re);
-					val[j] = std::stof(match.str());
-					element = match.suffix();
-				}
-
-				Float3 result;
-				memcpy(&result, val, sizeof(float) * 3);
-				ret.MeshAnimationUnit[i].Scale = result;
-			}
-
-			{
-				float val[4];
-				for (int j = 0; j < 4; ++j)
-				{
-					std::regex_search(element, match, re);
-					val[j] = std::stof(match.str());
-					element = match.suffix();
-				}
-
-				Float4 result;
-				memcpy(&result, val, sizeof(float) * 4);
-				ret.MeshAnimationUnit[i].Rotate = { result.x, result.y, result.z, result.w };
-			}
+			auto data = GetUnitElement(str, offset);
+			std::string val = data.str;
+			offset = data.offset;
+			Deserialize(val, ret.MeshAnimationUnit[i]);
 		}
 	}
 }

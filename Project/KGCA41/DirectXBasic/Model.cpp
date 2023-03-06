@@ -170,25 +170,26 @@ namespace SSB
 		ret += "[\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Min Vertex\n";
+		ret += _minVertexStr;
 		ret += Serializeable::Serialize(tabCount + 2, _minVertex);
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Max Vertex\n";
+		ret += _maxVertexStr;
 		ret += Serializeable::Serialize(tabCount + 2, _maxVertex);
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Material\n";
+		ret += _materialStr;
 		for (auto iter : _materials)
 		{
 			ret += Serializeable::GetTabbedString(tabCount + 2);
-			ret += "Material Index : ";
+			ret += _materialIndexStr;
+			ret += "\"";
 			ret += std::to_string(iter.first);
-			ret += "\n";
+			ret += "\"\n";
 
 			auto materialStr = iter.second->Serialize(tabCount + 2);
 			ret += materialStr;
@@ -199,13 +200,14 @@ namespace SSB
 		ret += ",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Mesh\n";
+		ret += _meshStr;
 		for (auto iter : _meshes)
 		{
 			ret += Serializeable::GetTabbedString(tabCount + 2);
-			ret += "Mesh Index : ";
+			ret += _meshIndexStr;
+			ret += "\"";
 			ret += std::to_string(iter.first);
-			ret += "\n";
+			ret += "\"\n";
 
 			auto meshStr = iter.second->Serialize(tabCount + 2);
 			ret += meshStr;
@@ -216,11 +218,11 @@ namespace SSB
 		ret += ",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Animation\n";
+		ret += _animationStr;
 		for (auto iter : _animations)
 		{
 			ret += Serializeable::GetTabbedString(tabCount + 2);
-			ret += "Animation Name : ";
+			ret += _animationNameStr;
 			ret += iter.first;
 			ret += "\n";
 
@@ -233,9 +235,10 @@ namespace SSB
 		ret += ",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Pixel Shader File Name : ";
+		ret += "\"";
+		ret += _pixelShaderStr;
 		ret += _ps->GetFileName();
-		ret += ",\n";
+		ret += "\",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount);
 		ret += "]";
@@ -244,212 +247,125 @@ namespace SSB
 	}
 	void Model::Deserialize(std::string serialedString)
 	{
+		serialedString = GetUnitObject(serialedString, 0).str;
+
+		int offset = 0;
 		{
-			std::regex re(R"(\s*Min Vertex\n\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\n)");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			re = R"(\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})";
-			std::regex_search(str, match, re);
-
+			offset = serialedString.find(_minVertexStr);
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
 			Float3 tmp;
-			DeSerialize(match.str(), tmp);
+			Serializeable::Deserialize(data.str, tmp);
 			_minVertex = tmp;
 		}
 
 		{
-			std::regex re(R"(\s*Max Vertex\n\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\n)");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			re = R"(\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})";
-			std::regex_search(str, match, re);
-
+			offset = serialedString.find(_maxVertexStr);
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
 			Float3 tmp;
-			DeSerialize(match.str(), tmp);
+			Serializeable::Deserialize(data.str, tmp);
 			_maxVertex = tmp;
 		}
 
+		while (serialedString.find(_materialIndexStr) != std::string::npos)
 		{
-			std::regex re(R"~(\s*Material\s*Index\s*:\s*[0-9]+\s*\[[\s\S]*?\]\s*,)~");
-			std::smatch match;
-
-			while (std::regex_search(serialedString, match, re))
+			int materialIndex;
 			{
-				std::string materialDataStr = match.str();
-				serialedString = match.suffix();
-
-				int materialIndex;
-				{
-					std::regex re(R"(\s*Material Index : [0-9]+\n)");
-					std::smatch match;
-
-					std::regex_search(materialDataStr, match, re);
-					std::string materialIndexStr = match.str();
-					materialDataStr = match.suffix();
-
-					re = R"([0-9]+)";
-					std::regex_search(materialIndexStr, match, re);
-					materialIndex = std::stoi(match.str());
-				}
-
-				{
-					std::string materialDataPack;
-					std::regex materialDataPackReg(R"~(\[[\s\S]+\])~");
-
-					{
-						std::regex_search(materialDataStr, match, materialDataPackReg);
-						Material* mat = new Material;
-						mat->Deserialize(match.str());
-						mat->Init();
-						_materials.insert(std::make_pair(materialIndex, mat));
-					}
-				}
+				offset = serialedString.find(_materialIndexStr);
+				auto data = GetUnitAtomic(serialedString, offset);
+				offset = data.offset;
+				Serializeable::Deserialize(data.str, materialIndex);
 			}
+
+			auto objectData = GetUnitObject(serialedString, offset);
+			std::string objectStr = objectData.str;
+			offset = objectData.offset;
+			Material* mat = new Material;
+			mat->Deserialize(objectStr);
+			mat->Init();
+			_materials.insert(std::make_pair(materialIndex, mat));
+		}
+
+		while (serialedString.find(_meshIndexStr) != std::string::npos)
+		{
+			int meshIndex;
+			{
+				offset = serialedString.find(_meshIndexStr);
+				auto data = GetUnitAtomic(serialedString, offset);
+				offset = data.offset;
+				Serializeable::Deserialize(data.str, meshIndex);
+			}
+
+			auto objectData = GetUnitObject(serialedString, offset);
+			std::string objectStr = objectData.str;
+			offset = objectData.offset;
+
+			std::string vertexType;
+			{
+				std::string tmp = GetUnitAtomic(serialedString, offset).str;
+				vertexType = std::string(tmp.begin() + 1, tmp.end() - 1);
+			}
+			MeshInterface* mesh;
+			if (vertexType == Vertex_PCNT_Keyword)
+			{
+				mesh = new Mesh_Vertex_PCNT;
+			}
+			else if (vertexType == Vertex_PCNT_Animatable_Keyword)
+			{
+				mesh = new Mesh_Vertex_PCNT_Animatable;
+			}
+			else if (vertexType == Vertex_PCNT_Skinning_Keyword)
+			{
+				mesh = new Mesh_Vertex_PCNT_Skinning;
+			}
+			else if (vertexType == Vertex_PCNTs_Keyword)
+			{
+				mesh = new Mesh_Vertex_PCNTs;
+			}
+			else if (vertexType == Vertex_PCNTs_Animatable_Keyword)
+			{
+				mesh = new Mesh_Vertex_PCNTs_Animatable;
+			}
+			else if (vertexType == Vertex_PCNTs_Skinning_Keyword)
+			{
+				mesh = new Mesh_Vertex_PCNTs_Skinning;
+			}
+			//if (vertexType == Vertex_PC_Keyword)
+			else
+			{
+				mesh = new Mesh_Vertex_PC;
+			}
+
+			mesh->Deserialize(objectStr);
+			mesh->Init();
+			_meshes.insert(std::make_pair(meshIndex, mesh));
+		}
+
+		while (serialedString.find(_animationNameStr) != std::string::npos)
+		{
+			AnimationName animationName;
+			{
+				offset = serialedString.find(_animationNameStr);
+				auto atomic = GetUnitAtomic(serialedString, offset);
+				offset = atomic.offset;
+				animationName = std::string(atomic.str.begin() + 1, atomic.str.end() + 1);
+			}
+
+			auto objectData = GetUnitObject(serialedString, offset);
+			std::string objectStr = objectData.str;
+			offset = objectData.offset;
+			Animation* anim = new Animation;
+			anim->Deserialize(objectStr);
+			anim->Init();
+			_animations.insert(std::make_pair(animationName, anim));
 		}
 
 		{
-			std::regex re(R"~(\s*Mesh\s*Index\s*:\s*[0-9]+\s*\[[\s\S]*?\]\s*,)~");
-			std::smatch match;
-
-			while (std::regex_search(serialedString, match, re))
-			{
-				std::string meshDataStr = match.str();
-				serialedString = match.suffix();
-
-				int meshIndex;
-				{
-					std::regex tmpReg(R"(Mesh Index : [0-9]+)");
-					std::smatch match;
-
-					std::regex_search(meshDataStr, match, tmpReg);
-					std::string meshIndexStr = match.str();
-					meshDataStr = match.suffix();
-
-					std::regex tmpReg1("[0-9]+");
-					std::regex_search(meshIndexStr, match, tmpReg1);
-					meshIndex = std::stoi(match.str());
-				}
-
-				{
-					std::string meshDataPack;
-					std::regex meshDataPackReg(R"(\[\s([\s\S]+)\])");
-					if (std::regex_search(meshDataStr, match, meshDataPackReg))
-					{
-						meshDataStr = match.str();
-
-						std::string vertexType;
-						{
-							std::regex vertexTypeReg(R"(Vertex Type : .*,\n)");
-							std::regex_search(meshDataStr, match, vertexTypeReg);
-
-							std::string tmp = match.str();
-							int offset = 14;
-							while (tmp[offset] != ',')
-							{
-								vertexType += tmp[offset];
-								++offset;
-							}
-						}
-
-						MeshInterface* mesh;
-						if (vertexType == Vertex_PCNT_Keyword)
-						{
-							mesh = new Mesh_Vertex_PCNT;
-						}
-						else if (vertexType == Vertex_PCNT_Animatable_Keyword)
-						{
-							mesh = new Mesh_Vertex_PCNT_Animatable;
-						}
-						else if (vertexType == Vertex_PCNT_Skinning_Keyword)
-						{
-							mesh = new Mesh_Vertex_PCNT_Skinning;
-						}
-						else if (vertexType == Vertex_PCNTs_Keyword)
-						{
-							mesh = new Mesh_Vertex_PCNTs;
-						}
-						else if (vertexType == Vertex_PCNTs_Animatable_Keyword)
-						{
-							mesh = new Mesh_Vertex_PCNTs_Animatable;
-						}
-						else if (vertexType == Vertex_PCNTs_Skinning_Keyword)
-						{
-							mesh = new Mesh_Vertex_PCNTs_Skinning;
-						}
-						//if (vertexType == Vertex_PC_Keyword)
-						else
-						{
-							mesh = new Mesh_Vertex_PC;
-						}
-
-						mesh->Deserialize(meshDataStr);
-						mesh->Init();
-						_meshes.insert(std::make_pair(meshIndex, mesh));
-					}
-				}
-			}
-		}
-
-		{
-			//std::regex re(R"(Animation Name : [\s\S]+\[[\s\S]+\]\s+,)");
-			std::regex re(R"~(\s*Animation\s*Name\s*:\s*[0-9]+\s*\[[\s\S]*?\]\s*,)~");
-			std::smatch match;
-
-			while (std::regex_search(serialedString, match, re))
-			{
-				serialedString = match.suffix();
-				std::string animationDataStr = match.str();
-
-				std::string animationName;
-				{
-					std::regex animationNameReg(R"(Animation Name : \n)");
-					std::smatch match;
-
-					std::regex_search(animationDataStr, match, animationNameReg);
-					std::string animationNameStr = match.str();
-					animationDataStr = match.suffix();
-
-					std::string tmp = match.str();
-					int offset = 17;
-					while (tmp[offset] != '\n')
-					{
-						animationName += tmp[offset];
-						++offset;
-					}
-				}
-
-				Animation* animation = new Animation;
-				animation->Deserialize(animationDataStr);
-				animation->Init();
-				_animations.insert(std::make_pair(animationName, animation));
-			}
-		}
-
-		{
-			std::regex re(R"(Pixel Shader File Name : [\s\S]*?.hlsl,)");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			std::string tmp = "Pixel Shader File Name : ";
-			int offset = tmp.size();
-			std::string pixelShaderFileName;
-			while (str[offset] != ',')
-			{
-				pixelShaderFileName += str[offset];
-				++offset;
-			}
-
-			_ps = ShaderManager::GetInstance().LoadPixelShader(mtw(pixelShaderFileName), "PS", "ps_5_0");
+			offset = serialedString.find(_pixelShaderStr);
+			auto atomicData = GetUnitAtomic(serialedString, offset);
+			std::string atomic = atomicData.str;
+			_ps = ShaderManager::GetInstance().LoadPixelShader(mtw(atomic), "PS", "ps_5_0");
 		}
 	}
 }

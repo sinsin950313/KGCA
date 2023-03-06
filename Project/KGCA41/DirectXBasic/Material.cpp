@@ -67,13 +67,15 @@ namespace SSB
 		ret += "[\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "Material Index : ";
+		ret += _materialIndexStr;
+		ret += "\"";
 		ret += std::to_string(_materialIndex);
-		ret += ",\n";
+		ret += "\",\n";
 
 		for(int i = 0; i < kTextureTypeCount; ++i)
 		{
 			ret += Serializeable::GetTabbedString(tabCount + 1);
+			ret += "\"";
 			if (_textureArray[i] != nullptr)
 			{
 				ret += _textureArray[i]->GetResource()->GetFileName();
@@ -82,7 +84,7 @@ namespace SSB
 			{
 				ret += "Empty";
 			}
-			ret += ",\n";
+			ret += "\",\n";
 		}
 
 		ret += Serializeable::GetTabbedString(tabCount);
@@ -92,42 +94,23 @@ namespace SSB
 	}
 	void Material::Deserialize(std::string serialedString)
 	{
+		serialedString = GetUnitObject(serialedString, 0).str;
+
+		int offset = 0;
 		{
-			std::regex re("\[\n\]");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-
-			serialedString = match.suffix();
+			offset = serialedString.find(_materialIndexStr);
+			auto data = GetUnitAtomic(serialedString, offset);
+			std::string atomic = data.str;
+			offset = data.offset;
+			Serializeable::Deserialize(atomic, _materialIndex);
 		}
 
+		for (int i = 0; i < kTextureTypeCount; ++i)
 		{
-			std::regex re("Material Index : [0-9.e+-]+,\n");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			re = "[0-9]+";
-			std::regex_search(str, match, re);
-
-			_materialIndex = std::stof(match.str());
-		}
-
-		for(int i = 0; i < kTextureTypeCount; ++i)
-		{
-			std::regex re(".*..*,\n");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-			std::string str = match.str();
-			serialedString = match.suffix();
-
-			re = "[^\t]+.*[^,\n]";
-			std::regex_search(str, match, re);
-			std::string fileName = match.str();
-			_textureArray[i] = TextureLoader::GetInstance().Load(mtw(fileName), DXStateManager::kDefaultWrapSample);
+			auto data = GetUnitAtomic(serialedString, offset);
+			std::string atomic = data.str;
+			offset = data.offset;
+			_textureArray[i] = TextureLoader::GetInstance().Load(mtw(atomic), DXStateManager::kDefaultWrapSample);
 		}
 	}
 }

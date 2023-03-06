@@ -1,5 +1,4 @@
 #include "Serializeable.h"
-#include <regex>
 
 namespace SSB
 {
@@ -365,7 +364,7 @@ namespace SSB
 		ret += GetTabbedString(tabCount);
 		ret += "{\n";
 
-		for (int i = 0; i < 255; ++i)
+		for (int i = 0; i < kMaximumBoneCount; ++i)
 		{
 			ret += Serialize(tabCount + 1, (Float44)data.BoneSpaceTransformBuffer[i]);
 			ret += GetTabbedString(tabCount + 1);
@@ -519,12 +518,12 @@ namespace SSB
 
 		return std::string(str.begin() + startIndex, str.begin() + endIndex);
 	}
-	void Serializeable::DeSerialize(std::string element, float& ret)
+	void Serializeable::Deserialize(std::string element, float& ret)
 	{
 		std::string str = std::string(element.begin() + 1, element.end() - 1);
 		ret = std::stof(str);
 	}
-	void Serializeable::DeSerialize(std::string element, Float2& ret)
+	void Serializeable::Deserialize(std::string element, Float2& ret)
 	{
 		int index = 1;
 		{
@@ -552,50 +551,32 @@ namespace SSB
 			ret.y = std::stof(str);
 		}
 	}
-	void Serializeable::DeSerialize(std::string element, Float3& ret)
+	void Serializeable::Deserialize(std::string element, Float3& ret)
 	{
-		int index = 1;
+		int index = 0;
+		while (element[index] != '{')
 		{
-			std::string str;
+			++index;
+		}
+		++index;
+
+		for (int i = 0; i < 3; ++i)
+		{
+			int start = index;
+
+			std::string tmp;
+			int count = 0;
 			while (element[index] != ',')
 			{
-				str += element[index];
+				++count;
 				++index;
 			}
-			ret.x = std::stof(str);
-		}
-
-		// ','
-		++index;
-		// ' '
-		++index;
-
-		{
-			std::string str;
-			while (element[index] != ',')
-			{
-				str += element[index];
-				++index;
-			}
-			ret.y = std::stof(str);
-		}
-
-		// ','
-		++index;
-		// ' '
-		++index;
-
-		{
-			std::string str;
-			while (element[index] != '\"')
-			{
-				str += element[index];
-				++index;
-			}
-			ret.z = std::stof(str);
+			ret.e[i] = std::stof(std::string(element.begin() + start, element.begin() + start + count));
+			++index;
+			++index;
 		}
 	}
-	void Serializeable::DeSerialize(std::string element, Float33& ret)
+	void Serializeable::Deserialize(std::string element, Float33& ret)
 	{
 		float val[9] = { 0, };
 		int valIndex = 0;
@@ -628,7 +609,7 @@ namespace SSB
 			val[6], val[7], val[8]
 		};
 	}
-	void Serializeable::DeSerialize(std::string element, Float44& ret)
+	void Serializeable::Deserialize(std::string element, Float44& ret)
 	{
 		float val[16] = { 0, };
 		int valIndex = 0;
@@ -662,236 +643,475 @@ namespace SSB
 			val[12], val[13], val[14], val[15]
 		};
 	}
-	void Serializeable::DeSerialize(std::string element, Vertex_PC& ret)
+	void Serializeable::Deserialize(std::string element, Vertex_PC& ret)
 	{
-		std::regex re("[0-9.e+-]+");
-		std::smatch match;
-
-		for (int i = 0; i < 4; ++i)
+		int index = 0;
+		while (element[index] != '{')
 		{
-			std::regex_search(element, match, re);
-			ret.Position.e[i] = std::stof(match.str());
-			element = match.suffix();
+			++index;
 		}
 
-		for (int i = 0; i < 4; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.Color.e[i] = std::stof(match.str());
-			element = match.suffix();
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Position);
+		}
+
+		{
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Color);
 		}
 	}
-	void Serializeable::DeSerialize(std::string element, Vertex_PCNT& ret)
+	void Serializeable::Deserialize(std::string element, Vertex_PCNT& ret)
 	{
-		std::regex re("[0-9.e+-]+");
-		std::smatch match;
-
-		for (int i = 0; i < 4; ++i)
+		int index = 0;
+		while (element[index] != '{')
 		{
-			std::regex_search(element, match, re);
-			ret.Position.e[i] = std::stof(match.str());
-			element = match.suffix();
+			++index;
 		}
 
-		for (int i = 0; i < 4; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.Color.e[i] = std::stof(match.str());
-			element = match.suffix();
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Position);
 		}
 
-		for (int i = 0; i < 4; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.Normal.e[i] = std::stof(match.str());
-			element = match.suffix();
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Color);
 		}
 
-		for (int i = 0; i < 2; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.TextureUV.e[i] = std::stof(match.str());
-			element = match.suffix();
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Normal);
+		}
+
+		{
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.TextureUV);
 		}
 	}
-	void Serializeable::DeSerialize(std::string element, Vertex_PCNTs& ret)
+	void Serializeable::Deserialize(std::string element, Vertex_PCNTs& ret)
 	{
-		std::regex re("[0-9.e+-]+");
-		std::smatch match;
-
-		for (int i = 0; i < 4; ++i)
+		int index = 0;
+		while (element[index] != '{')
 		{
-			std::regex_search(element, match, re);
-			ret.Position.e[i] = std::stof(match.str());
-			element = match.suffix();
+			++index;
 		}
 
-		for (int i = 0; i < 4; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.Color.e[i] = std::stof(match.str());
-			element = match.suffix();
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Position);
 		}
 
-		for (int i = 0; i < 4; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.Normal.e[i] = std::stof(match.str());
-			element = match.suffix();
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Color);
 		}
 
-		for (int i = 0; i < 2; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.TextureUV.e[i] = std::stof(match.str());
-			element = match.suffix();
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Normal);
 		}
 
-		re = "[0-9]+";
-		std::regex_search(element, match, re);
-		ret.MaterialIndex = std::stof(match.str());
+		{
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.TextureUV);
+		}
+
+		{
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.MaterialIndex);
+		}
 	}
-	void Serializeable::DeSerialize(std::string element, Vertex_PCNT_Skinning& ret)
+	void Serializeable::Deserialize(std::string element, Vertex_PCNT_Skinning& ret)
 	{
-		std::regex re("[0-9.e+-]+");
-		std::smatch match;
-
-		for (int i = 0; i < 4; ++i)
+		int index = 0;
+		while (element[index] != '{')
 		{
-			std::regex_search(element, match, re);
-			ret.Position.e[i] = std::stof(match.str());
-			element = match.suffix();
+			++index;
 		}
 
-		for (int i = 0; i < 4; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.Color.e[i] = std::stof(match.str());
-			element = match.suffix();
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Position);
 		}
 
-		for (int i = 0; i < 4; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.Normal.e[i] = std::stof(match.str());
-			element = match.suffix();
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Color);
 		}
 
-		for (int i = 0; i < 2; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.TextureUV.e[i] = std::stof(match.str());
-			element = match.suffix();
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Normal);
 		}
 
-		re = "[0-9]+";
-		for (int i = 0; i < 4; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.AffectedBoneIndex[i] = std::stoi(match.str());
-			element = match.suffix();
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.TextureUV);
 		}
 
-		re = "[0-9.e+-]+";
-		for (int i = 0; i < 4; ++i)
+		while (element[index] != '{')
 		{
-			std::regex_search(element, match, re);
-			ret.Weight[i] = std::stof(match.str());
-			element = match.suffix();
+			++index;
+		}
+		++index;
+
+		for(int i = 0; i < 4; ++i)
+		{
+			int start = index;
+			int count = 0;
+			while (element[index] != ',' && element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+			++index;
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.AffectedBoneIndex[i]);
+		}
+
+		while (element[index] != '{')
+		{
+			++index;
+		}
+		++index;
+
+		for(int i = 0; i < 4; ++i)
+		{
+			int start = index;
+			int count = 0;
+			while (element[index] != ',' && element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+			++index;
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Weight[i]);
 		}
 	}
-	void Serializeable::DeSerialize(std::string element, Vertex_PCNTs_Skinning& ret)
+	void Serializeable::Deserialize(std::string element, Vertex_PCNTs_Skinning& ret)
 	{
-		std::regex re("[0-9.e+-]+");
-		std::smatch match;
-
-		for (int i = 0; i < 4; ++i)
+		int index = 0;
+		while (element[index] != '{')
 		{
-			std::regex_search(element, match, re);
-			ret.Position.e[i] = std::stof(match.str());
-			element = match.suffix();
+			++index;
 		}
 
-		for (int i = 0; i < 4; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.Color.e[i] = std::stof(match.str());
-			element = match.suffix();
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Position);
 		}
 
-		for (int i = 0; i < 4; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.Normal.e[i] = std::stof(match.str());
-			element = match.suffix();
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Color);
 		}
 
-		for (int i = 0; i < 2; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.TextureUV.e[i] = std::stof(match.str());
-			element = match.suffix();
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Normal);
 		}
 
-		re = "[0-9]+";
-		for (int i = 0; i < 4; ++i)
 		{
-			std::regex_search(element, match, re);
-			ret.AffectedBoneIndex[i] = std::stoi(match.str());
-			element = match.suffix();
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.TextureUV);
 		}
 
-		re = "[0-9.e+-]+";
-		for (int i = 0; i < 4; ++i)
+		while (element[index] != '{')
 		{
-			std::regex_search(element, match, re);
-			ret.Weight[i] = std::stof(match.str());
-			element = match.suffix();
+			++index;
+		}
+		++index;
+
+		for(int i = 0; i < 4; ++i)
+		{
+			int start = index;
+			int count = 0;
+			while (element[index] != ',' && element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+			++index;
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.AffectedBoneIndex[i]);
 		}
 
-		re = "[0-9]+";
-		std::regex_search(element, match, re);
-		ret.MaterialIndex = std::stoi(match.str());
+		while (element[index] != '{')
+		{
+			++index;
+		}
+		++index;
+
+		for(int i = 0; i < 4; ++i)
+		{
+			int start = index;
+			int count = 0;
+			while (element[index] != ',' && element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+			++index;
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.Weight[i]);
+		}
+
+		{
+			while (element[index] != '{')
+			{
+				++index;
+			}
+
+			int start = index;
+			int count = 0;
+			while (element[index] != '}')
+			{
+				++index;
+				++count;
+			}
+
+			Deserialize(std::string(element.begin() + start, element.begin() + start + count), ret.MaterialIndex);
+		}
 	}
-	void Serializeable::DeSerialize(std::string element, MeshData& ret)
+	void Serializeable::Deserialize(std::string element, MeshData& ret)
 	{
-		std::regex re("[0-9.e+-]+");
-		std::smatch match;
-
-		re = "[0-9]+";
-		std::regex_search(element, match, re);
-		ret.MeshIndex = std::stoi(match.str());
+		int start = element.find('{') + 1;
+		int end = element.find('}');
+		Deserialize(std::string(element.begin() + start, element.begin() + end), ret.MeshIndex);
 	}
-	void Serializeable::DeSerialize(std::string element, MeshToBoneSpaceTransformData& ret)
+	void Serializeable::Deserialize(std::string element, MeshToBoneSpaceTransformData& ret)
 	{
-		std::regex re("[0-9.e+-]+");
-		std::smatch match;
+		int index = 0;
+		while (element[index] != '{')
+		{
+			++index;
+		}
 
 		for (int i = 0; i < kMaximumBoneCount; ++i)
 		{
-			float val[16];
-			for (int j = 0; j < 16; ++j)
+			while (element[index] != '{')
 			{
-				std::regex_search(element, match, re);
-				val[j] = std::stof(match.str());
-				element = match.suffix();
+				++index;
 			}
+			int start = index;
+			int end = element.find('}', index);
 
-			Float44 result;
-			memcpy(&result, val, sizeof(float) * 16);
-
-			{
-				HMatrix44 tmp = {
-					result.e11, result.e12, result.e13, result.e14,
-					result.e21, result.e22, result.e23, result.e24,
-					result.e31, result.e32, result.e33, result.e34,
-					result.e41, result.e42, result.e43, result.e44,
-				};
-				ret.BoneSpaceTransformBuffer[i] = tmp;
-			}
+			Float44 tmp;
+			Deserialize(std::string(element.begin() + index, element.begin() + end), tmp);
+			ret.BoneSpaceTransformBuffer[i] = {
+				tmp.e11, tmp.e12, tmp.e13, tmp.e14,
+				tmp.e21, tmp.e22, tmp.e23, tmp.e24,
+				tmp.e31, tmp.e32, tmp.e33, tmp.e34,
+				tmp.e41, tmp.e42, tmp.e43, tmp.e44,
+			};
 		}
 	}
-	void Serializeable::DeSerialize(std::string element, AnimationUnitInfo& ret)
+	void Serializeable::Deserialize(std::string element, AnimationUnitInfo& ret)
 	{
 		std::regex re("[0-9.e+-]+");
 		std::smatch match;
@@ -959,7 +1179,7 @@ namespace SSB
 			ret.Rotate = { result.x, result.y, result.z, result.w };
 		}
 	}
-	void Serializeable::DeSerialize(std::string element, AnimationFrameInfo& ret)
+	void Serializeable::Deserialize(std::string element, AnimationFrameInfo& ret)
 	{
 		std::regex re("[0-9.e+-]+");
 		std::smatch match;

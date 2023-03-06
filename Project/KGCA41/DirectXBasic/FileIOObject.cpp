@@ -20,7 +20,7 @@ namespace SSB
 
 		int readCount = fread(buf, sizeof(char), fileSize, fp);
 		buf[fileSize] = 0;
-		ret = buf;
+		ret = std::string(buf);
 
 		free(buf);
 		fclose(fp);
@@ -31,7 +31,7 @@ namespace SSB
 	{
 		FILE* fp = fopen((wtm(kObjectScriptPath) + fileName + ext).c_str(), "w");
 
-		int readCount = fwrite(str.c_str(), sizeof(char), str.size(), fp);
+		int writeCount = fwrite(str.c_str(), sizeof(char), str.size(), fp);
 
 		fclose(fp);
 	}

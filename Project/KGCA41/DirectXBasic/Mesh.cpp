@@ -8,13 +8,17 @@ namespace SSB
 	{
 		return Vertex_PC_Keyword;
 	}
+	std::string Mesh_Vertex_PC::GetVertexRegex()
+	{
+		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+\})";
+	}
 	void Mesh_Vertex_PC::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
 		count = 2;
 
 		*desc = new D3D11_INPUT_ELEMENT_DESC[count];
 		(*desc)[0] = { "Position", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 };
-		(*desc)[2] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
+		(*desc)[1] = { "Color", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0 };
 	}
 
 	void Mesh_Vertex_PC::InitialVertexShader()
@@ -25,6 +29,10 @@ namespace SSB
 	std::string Mesh_Vertex_PCNT::GetVertexType()
 	{
 		return Vertex_PCNT_Keyword;
+	}
+	std::string Mesh_Vertex_PCNT::GetVertexRegex()
+	{
+		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+\})";
 	}
 	void Mesh_Vertex_PCNT::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
@@ -65,6 +73,10 @@ namespace SSB
 	std::string Mesh_Vertex_PCNT_Animatable::GetVertexType()
 	{
 		return Vertex_PCNT_Animatable_Keyword;
+	}
+	std::string Mesh_Vertex_PCNT_Animatable::GetVertexRegex()
+	{
+		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+\})";
 	}
 	void Mesh_Vertex_PCNT_Animatable::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
@@ -132,6 +144,18 @@ namespace SSB
 		return ret;
 	}
 
+	void Mesh_Vertex_PCNT_Animatable::Deserialize(std::string serialedString)
+	{
+		std::regex reg(R"(\{.*\})");
+		std::smatch match;
+
+		std::regex_search(serialedString, match, reg);
+		DeSerialize(match.str(), _meshData);
+
+		serialedString = match.suffix();
+		Mesh<Vertex_PCNT>::Deserialize(serialedString);
+	}
+
 	void Mesh_Vertex_PCNT_Animatable::InitialVertexShader()
 	{
 		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT_Animatable.hlsl", "VS", "vs_5_0"));
@@ -158,6 +182,11 @@ namespace SSB
 	std::string Mesh_Vertex_PCNT_Skinning::GetVertexType()
 	{
 		return Vertex_PCNT_Skinning_Keyword;
+	}
+
+	std::string Mesh_Vertex_PCNT_Skinning::GetVertexRegex()
+	{
+		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+\})";
 	}
 
 	bool Mesh_Vertex_PCNT_Skinning::CreateBoneSpaceTransformBuffer()
@@ -229,6 +258,17 @@ namespace SSB
 
 		return ret;
 	}
+	void Mesh_Vertex_PCNT_Skinning::Deserialize(std::string serialedString)
+	{
+		std::regex reg("\{.*\}");
+		std::smatch match;
+
+		std::regex_search(serialedString, match, reg);
+		DeSerialize(match.str(), _boneSpaceTransformData);
+
+		serialedString = match.suffix();
+		Mesh<Vertex_PCNT_Skinning>::Deserialize(serialedString);
+	}
 	bool Mesh_Vertex_PCNT_Skinning::Release()
 	{
 		Mesh<Vertex_PCNT_Skinning>::Release();
@@ -264,6 +304,11 @@ namespace SSB
 	std::string Mesh_Vertex_PCNTs::GetVertexType()
 	{
 		return Vertex_PCNTs_Animatable_Keyword;
+	}
+
+	std::string Mesh_Vertex_PCNTs::GetVertexRegex()
+	{
+		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+\}\s+\})";
 	}
 
 	bool Mesh_Vertex_PCNTs_Animatable::CreateMeshBuffer()
@@ -305,7 +350,12 @@ namespace SSB
 
 	std::string Mesh_Vertex_PCNTs_Animatable::GetVertexType()
 	{
-		return Vertex_PCNT_Animatable_Keyword;
+		return Vertex_PCNTs_Animatable_Keyword;
+	}
+
+	std::string Mesh_Vertex_PCNTs_Animatable::GetVertexRegex()
+	{
+		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+\}\s+\})";
 	}
 
 	void Mesh_Vertex_PCNTs_Animatable::Initialize_SetMeshData(MeshData meshData)
@@ -363,9 +413,25 @@ namespace SSB
 		return ret;
 	}
 
+	void Mesh_Vertex_PCNTs_Animatable::Deserialize(std::string serialedString)
+	{
+		std::regex reg(R"(\{.*\})");
+		std::smatch match;
+
+		std::regex_search(serialedString, match, reg);
+		DeSerialize(match.str(), _meshData);
+
+		serialedString = match.suffix();
+		Mesh<Vertex_PCNTs>::Deserialize(serialedString);
+	}
+
 	std::string Mesh_Vertex_PCNTs_Skinning::GetVertexType()
 	{
 		return Vertex_PCNTs_Skinning_Keyword;
+	}
+	std::string Mesh_Vertex_PCNTs_Skinning::GetVertexRegex()
+	{
+		return R"(\{\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s+,\s+\{[0-9.e+-]+\}\s+\})";
 	}
 	void Mesh_Vertex_PCNTs_Skinning::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
@@ -469,6 +535,18 @@ namespace SSB
 		ret += "]\n";
 
 		return ret;
+	}
+
+	void Mesh_Vertex_PCNTs_Skinning::Deserialize(std::string serialedString)
+	{
+		std::regex reg("\{.*\}");
+		std::smatch match;
+
+		std::regex_search(serialedString, match, reg);
+		DeSerialize(match.str(), _boneSpaceTransformData);
+
+		serialedString = match.suffix();
+		Mesh<Vertex_PCNTs_Skinning>::Deserialize(serialedString);
 	}
 
 	Box::Box(float width, float height, float depth)

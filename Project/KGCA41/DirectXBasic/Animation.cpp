@@ -62,13 +62,17 @@ namespace SSB
 		else if (_data.size() <= beforeIndex)
 		{
 			_animationTimer.Init();
-			beforeIndex = beforeIndex / _data.size();
-			afterIndex = afterIndex / _data.size();
+			beforeIndex = beforeIndex % _data.size();
+			afterIndex = afterIndex % _data.size();
 		}
 
 		float beforeTime = beforeIndex / _framePerSecond;
 		float afterTime = afterIndex / _framePerSecond;
 		float t = (animationElapseTime - beforeTime) / (afterTime - beforeTime);
+		if (afterTime - beforeTime < 0.001f)
+		{
+			t = 0;
+		}
 
 		for (int i = 0; i < _boneAnimationUnitMaxCount; ++i)
 		{
@@ -263,23 +267,7 @@ namespace SSB
 		}
 
 		{
-			std::regex re(
-R"(
-[\t]*{\n
-[\t]*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\n
-[\t]*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\n
-[\t]*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\n
-[\t]*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\n
-[\t]*}\n
-[\t]*,\n
-[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
-[\t]*,\n
-[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
-[\t]*,\n
-[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
-[\t]*}\n
-)"
-			);
+			std::regex re(R"(\s*\{\s*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\s*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\s*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+,\s*[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\s*\}\s*,\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s*,\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s*,\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\s*\})");
 			std::smatch match;
 
 			while (std::regex_search(serialedString, match, re))

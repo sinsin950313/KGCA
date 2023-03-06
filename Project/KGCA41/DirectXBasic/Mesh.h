@@ -64,6 +64,9 @@ namespace SSB
 		virtual ~Mesh();
 
 	private:
+		void CheckSize();
+
+	private:
 		bool CreateVertexLayout() override;
 		bool CreateVertexBuffer() override;
 		bool CreateIndexBuffer() override;
@@ -96,6 +99,7 @@ namespace SSB
 
 	protected:
 		virtual std::string GetVertexType() = 0;
+		virtual std::string GetVertexRegex() = 0;
 
 	public:
 		std::string Serialize(int tabCount) override;
@@ -106,6 +110,7 @@ namespace SSB
 	{
 	private:
 		std::string GetVertexType() override;
+		std::string GetVertexRegex() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -115,6 +120,7 @@ namespace SSB
 	{
 	private:
 		std::string GetVertexType() override;
+		std::string GetVertexRegex() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -131,6 +137,7 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
+		std::string GetVertexRegex() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -156,6 +163,7 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
+		std::string GetVertexRegex() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -180,6 +188,7 @@ namespace SSB
 	{
 	private:
 		std::string GetVertexType() override;
+		std::string GetVertexRegex() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -194,6 +203,7 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
+		std::string GetVertexRegex() override;
 
 	private:
 		bool CreateMeshBuffer();
@@ -222,6 +232,7 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
+		std::string GetVertexRegex() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;

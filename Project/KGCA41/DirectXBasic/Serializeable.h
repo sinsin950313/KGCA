@@ -4,7 +4,6 @@
 #include <string>
 #include "SerializeableDataType.h"
 #include "Matrix.h"
-#include <regex>
 
 namespace SSB
 {
@@ -35,20 +34,22 @@ namespace SSB
 		std::string GetUnitElement(std::string str, int offset);
 
 	protected:
-		void DeSerialize(std::string element, float& ret);
-		void DeSerialize(std::string element, Float2& ret);
-		void DeSerialize(std::string element, Float3& ret);
-		void DeSerialize(std::string element, Float33& ret);
-		void DeSerialize(std::string element, Float44& ret);
-		void DeSerialize(std::string element, Vertex_PC& ret);
-		void DeSerialize(std::string element, Vertex_PCNT& ret);
-		void DeSerialize(std::string element, Vertex_PCNTs& ret);
-		void DeSerialize(std::string element, Vertex_PCNT_Skinning& ret);
-		void DeSerialize(std::string element, Vertex_PCNTs_Skinning& ret);
-		void DeSerialize(std::string element, MeshData& ret);
-		void DeSerialize(std::string element, MeshToBoneSpaceTransformData& ret);
-		void DeSerialize(std::string element, AnimationUnitInfo& ret);
-		void DeSerialize(std::string element, AnimationFrameInfo& ret);
+		void Deserialize(std::string element, int& ret);
+		void Deserialize(std::string element, unsigned int& ret);
+		void Deserialize(std::string element, float& ret);
+		void Deserialize(std::string element, Float2& ret);
+		void Deserialize(std::string element, Float3& ret);
+		void Deserialize(std::string element, Float33& ret);
+		void Deserialize(std::string element, Float44& ret);
+		void Deserialize(std::string element, Vertex_PC& ret);
+		void Deserialize(std::string element, Vertex_PCNT& ret);
+		void Deserialize(std::string element, Vertex_PCNTs& ret);
+		void Deserialize(std::string element, Vertex_PCNT_Skinning& ret);
+		void Deserialize(std::string element, Vertex_PCNTs_Skinning& ret);
+		void Deserialize(std::string element, MeshData& ret);
+		void Deserialize(std::string element, MeshToBoneSpaceTransformData& ret);
+		void Deserialize(std::string element, AnimationUnitInfo& ret);
+		void Deserialize(std::string element, AnimationFrameInfo& ret);
 
 	public:
 		virtual std::string Serialize(int tabCount) = 0;

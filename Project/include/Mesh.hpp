@@ -18,6 +18,29 @@ namespace SSB
 		Release();
 	}
 	template<typename VertexType>
+	inline void Mesh<VertexType>::CheckSize()
+	{
+		float minX = (std::numeric_limits<float>::max)();
+		float minY = (std::numeric_limits<float>::max)();
+		float minZ = (std::numeric_limits<float>::max)();
+		float maxX = (std::numeric_limits<float>::min)();
+		float maxY = (std::numeric_limits<float>::min)();
+		float maxZ = (std::numeric_limits<float>::min)();
+		for (auto vertex : _vertexList)
+		{
+			minX = min(minX, vertex.Position.x);
+			minY = min(minY, vertex.Position.y);
+			minZ = min(minZ, vertex.Position.z);
+
+			maxX = max(maxX, vertex.Position.x);
+			maxY = max(maxY, vertex.Position.y);
+			maxZ = max(maxZ, vertex.Position.z);
+		}
+
+		_minVertex = { minX, minY, minZ };
+		_maxVertex = { maxX, maxY, maxZ };
+	}
+	template<typename VertexType>
 	inline void Mesh<VertexType>::SetVertexList(std::vector<VertexType> vertexList)
 	{
 		_vertexList = vertexList;
@@ -108,6 +131,7 @@ namespace SSB
 	bool Mesh<VertexType>::Init()
 	{
 		Build();
+		CheckSize();
 		InitialVertexShader();
 		CreateVertexBuffer();
 		CreateIndexBuffer();
@@ -259,37 +283,21 @@ namespace SSB
 	void Mesh<VertexType>::Deserialize(std::string serialedString)
 	{
 		{
-			std::regex re(R"(
-[\t]*{\n
-[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
-[\t]*,\n
-[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
-[\t]*,\n
-[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
-[\t]*,\n
-[\t]*{[0-9.e+-]+, [0-9.e+-]+}\n
-[\t]*,\n
-[\t]*{[0-9]+, [0-9]+, [0-9]+, [0-9]+}\n
-[\t]*,\n
-[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n
-[\t]*}\n
-)");
+			std::regex re(GetVertexRegex());
 			std::smatch match;
 
 			while (std::regex_search(serialedString, match, re))
 			{
+				std::string str = match.str();
 				serialedString = match.suffix();
 				VertexType vertex;
-				DeSerialize(match.str(), vertex);
+				DeSerialize(str, vertex);
 				_vertexList.push_back(vertex);
 			}
 		}
 
 		{
-			std::regex re(R"(
-Index List\n
-{ * },\n
-)");
+			std::regex re(R"(\s+Index List\s+\{ ([\s\S]*) \},)");
 			std::smatch match;
 
 			std::regex_search(serialedString, match, re);
@@ -300,46 +308,46 @@ Index List\n
 				std::regex indexReg("[0-9]+");
 				while (std::regex_search(indexListStr, match, indexReg))
 				{
-					indexListStr = match.suffix();
 					_indexList.push_back(std::stoi(match.str()));
+					indexListStr = match.suffix();
 				}
 			}
 		}
 
 		{
-			std::regex re("Min Vertex\n[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n");
+			std::regex re(R"(Min Vertex\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})");
 			std::smatch match;
 
 			std::regex_search(serialedString, match, re);
 			std::string str = match.str();
 			serialedString = match.suffix();
 
-			re = "{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}";
+			re = R"(\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})";
 			std::regex_search(str, match, re);
 
 			Float3 tmp;
-			DeSerialize(str, tmp);
+			DeSerialize(match.str(), tmp);
 			_minVertex = tmp;
 		}
 
 		{
-			std::regex re("Max Vertex\n[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n");
+			std::regex re(R"(Max Vertex\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})");
 			std::smatch match;
 
 			std::regex_search(serialedString, match, re);
 			std::string str = match.str();
 			serialedString = match.suffix();
 
-			re = "{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}";
+			re = R"(\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})";
 			std::regex_search(str, match, re);
 
 			Float3 tmp;
-			DeSerialize(str, tmp);
+			DeSerialize(match.str(), tmp);
 			_maxVertex = tmp;
 		}
 
 		{
-			std::regex re("Vertex Shader File Name : *.hlsl,\n");
+			std::regex re("Vertex Shader File Name : .*.hlsl,");
 			std::smatch match;
 
 			std::regex_search(serialedString, match, re);
@@ -358,6 +366,50 @@ Index List\n
 			_vs = ShaderManager::GetInstance().LoadVertexShader(mtw(vertexShaderFileName), "VS", "vs_5_0");
 		}
 
-		//SubMesh??
+
+		std::regex subMeshReg("SubMesh,");
+		std::smatch match;
+
+		if(std::regex_search(serialedString, match, subMeshReg))
+		{
+			std::regex re(R"(\[([\s\S])\])");
+
+			while (std::regex_search(serialedString, match, re))
+			{
+				MeshInterface* mesh;
+				if (GetVertexType() == Vertex_PCNT_Keyword)
+				{
+					mesh = new Mesh_Vertex_PCNT;
+				}
+				else if (GetVertexType() == Vertex_PCNT_Animatable_Keyword)
+				{
+					mesh = new Mesh_Vertex_PCNT_Animatable;
+				}
+				else if (GetVertexType() == Vertex_PCNT_Skinning_Keyword)
+				{
+					mesh = new Mesh_Vertex_PCNT_Skinning;
+				}
+				else if (GetVertexType() == Vertex_PCNTs_Keyword)
+				{
+					mesh = new Mesh_Vertex_PCNTs;
+				}
+				else if (GetVertexType() == Vertex_PCNTs_Animatable_Keyword)
+				{
+					mesh = new Mesh_Vertex_PCNTs_Animatable;
+				}
+				else if (GetVertexType() == Vertex_PCNTs_Skinning_Keyword)
+				{
+					mesh = new Mesh_Vertex_PCNTs_Skinning;
+				}
+				//if (vertexType == Vertex_PC_Keyword)
+				else
+				{
+					mesh = new Mesh_Vertex_PC;
+				}
+
+				mesh->Deserialize(match.str());
+				serialedString = match.suffix();
+			}
+		}
 	}
 }

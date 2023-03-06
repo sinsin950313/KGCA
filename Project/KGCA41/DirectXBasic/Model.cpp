@@ -2,6 +2,7 @@
 #include "HCCalculator.h"
 #include "DXWindow.h"
 #include "ShaderManager.h"
+#include "Mesh.hpp"
 
 namespace SSB
 {
@@ -244,84 +245,69 @@ namespace SSB
 	void Model::Deserialize(std::string serialedString)
 	{
 		{
-			std::regex re("[\n");
-			std::smatch match;
-
-			std::regex_search(serialedString, match, re);
-
-			serialedString = match.suffix();
-		}
-
-		{
-			std::regex re("Min Vertex\n[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n");
+			std::regex re(R"(\s*Min Vertex\n\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\n)");
 			std::smatch match;
 
 			std::regex_search(serialedString, match, re);
 			std::string str = match.str();
 			serialedString = match.suffix();
 
-			re = "{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}";
+			re = R"(\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})";
 			std::regex_search(str, match, re);
 
 			Float3 tmp;
-			DeSerialize(str, tmp);
+			DeSerialize(match.str(), tmp);
 			_minVertex = tmp;
 		}
 
 		{
-			std::regex re("Max Vertex\n[\t]*{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}\n");
+			std::regex re(R"(\s*Max Vertex\n\s*\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\}\n)");
 			std::smatch match;
 
 			std::regex_search(serialedString, match, re);
 			std::string str = match.str();
 			serialedString = match.suffix();
 
-			re = "{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+}";
+			re = R"(\{[0-9.e+-]+, [0-9.e+-]+, [0-9.e+-]+\})";
 			std::regex_search(str, match, re);
 
 			Float3 tmp;
-			DeSerialize(str, tmp);
+			DeSerialize(match.str(), tmp);
 			_maxVertex = tmp;
 		}
 
 		{
-			std::regex re(
-				R"(
-[\t]*Material Index : [0-9]+\n
-[\t]*[\n
-*
-[\t]*]\n
-[\t]*,\n
-)"
-);
+			std::regex re(R"~(\s*Material\s*Index\s*:\s*[0-9]+\s*\[[\s\S]*?\]\s*,)~");
 			std::smatch match;
 
 			while (std::regex_search(serialedString, match, re))
 			{
+				std::string materialDataStr = match.str();
 				serialedString = match.suffix();
 
-				std::string materialDataStr = match.str();
 				int materialIndex;
 				{
-					std::regex re("[\t]*Material Index : [0-9]+,\n");
+					std::regex re(R"(\s*Material Index : [0-9]+\n)");
 					std::smatch match;
 
 					std::regex_search(materialDataStr, match, re);
 					std::string materialIndexStr = match.str();
 					materialDataStr = match.suffix();
 
-					re = "[0-9]+";
+					re = R"([0-9]+)";
 					std::regex_search(materialIndexStr, match, re);
 					materialIndex = std::stoi(match.str());
 				}
 
 				{
 					std::string materialDataPack;
-					std::regex materialDataPackReg("\[*\]");
-					while (std::regex_search(materialDataStr, match, materialDataPackReg))
+					std::regex materialDataPackReg(R"~(\[[\s\S]+\])~");
+
 					{
+						std::regex_search(materialDataStr, match, materialDataPackReg);
 						Material* mat = new Material;
 						mat->Deserialize(match.str());
+						mat->Init();
 						_materials.insert(std::make_pair(materialIndex, mat));
 					}
 				}
@@ -329,44 +315,38 @@ namespace SSB
 		}
 
 		{
-			std::regex re(
-				R"(
-[\t]*Mesh Index : [0-9]+\n
-[\t]*[\n
-*
-[\t]*]\n
-[\t]*,\n
-)"
-);
+			std::regex re(R"~(\s*Mesh\s*Index\s*:\s*[0-9]+\s*\[[\s\S]*?\]\s*,)~");
 			std::smatch match;
 
 			while (std::regex_search(serialedString, match, re))
 			{
+				std::string meshDataStr = match.str();
 				serialedString = match.suffix();
 
-				std::string meshDataStr = match.str();
 				int meshIndex;
 				{
-					std::regex re("[\t]*Mesh Index : [0-9]+,\n");
+					std::regex tmpReg(R"(Mesh Index : [0-9]+)");
 					std::smatch match;
 
-					std::regex_search(meshDataStr, match, re);
+					std::regex_search(meshDataStr, match, tmpReg);
 					std::string meshIndexStr = match.str();
 					meshDataStr = match.suffix();
 
-					re = "[0-9]+";
-					std::regex_search(meshIndexStr, match, re);
+					std::regex tmpReg1("[0-9]+");
+					std::regex_search(meshIndexStr, match, tmpReg1);
 					meshIndex = std::stoi(match.str());
 				}
 
 				{
 					std::string meshDataPack;
-					std::regex meshDataPackReg("\[*\]");
-					while (std::regex_search(meshDataStr, match, meshDataPackReg))
+					std::regex meshDataPackReg(R"(\[\s([\s\S]+)\])");
+					if (std::regex_search(meshDataStr, match, meshDataPackReg))
 					{
+						meshDataStr = match.str();
+
 						std::string vertexType;
 						{
-							std::regex vertexTypeReg("Vertex Type : *?,\n");
+							std::regex vertexTypeReg(R"(Vertex Type : .*,\n)");
 							std::regex_search(meshDataStr, match, vertexTypeReg);
 
 							std::string tmp = match.str();
@@ -409,7 +389,8 @@ namespace SSB
 							mesh = new Mesh_Vertex_PC;
 						}
 
-						mesh->Deserialize(match.str());
+						mesh->Deserialize(meshDataStr);
+						mesh->Init();
 						_meshes.insert(std::make_pair(meshIndex, mesh));
 					}
 				}
@@ -417,15 +398,8 @@ namespace SSB
 		}
 
 		{
-			std::regex re(
-				R"(
-[\t]*Animation Name : *\n
-[\t]*[\n
-*
-[\t]*]\n
-[\t]*,\n
-)"
-);
+			//std::regex re(R"(Animation Name : [\s\S]+\[[\s\S]+\]\s+,)");
+			std::regex re(R"~(\s*Animation\s*Name\s*:\s*[0-9]+\s*\[[\s\S]*?\]\s*,)~");
 			std::smatch match;
 
 			while (std::regex_search(serialedString, match, re))
@@ -435,7 +409,7 @@ namespace SSB
 
 				std::string animationName;
 				{
-					std::regex animationNameReg("Animation Name : *\n");
+					std::regex animationNameReg(R"(Animation Name : \n)");
 					std::smatch match;
 
 					std::regex_search(animationDataStr, match, animationNameReg);
@@ -453,13 +427,13 @@ namespace SSB
 
 				Animation* animation = new Animation;
 				animation->Deserialize(animationDataStr);
+				animation->Init();
 				_animations.insert(std::make_pair(animationName, animation));
 			}
-
 		}
 
 		{
-			std::regex re("Pixel Shader File Name : *.hlsl,\n");
+			std::regex re(R"(Pixel Shader File Name : [\s\S]*?.hlsl,)");
 			std::smatch match;
 
 			std::regex_search(serialedString, match, re);

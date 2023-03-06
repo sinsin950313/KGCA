@@ -93,7 +93,7 @@ namespace SSB
 	void Material::Deserialize(std::string serialedString)
 	{
 		{
-			std::regex re("[\n");
+			std::regex re("\[\n\]");
 			std::smatch match;
 
 			std::regex_search(serialedString, match, re);
@@ -117,7 +117,7 @@ namespace SSB
 
 		for(int i = 0; i < kTextureTypeCount; ++i)
 		{
-			std::regex re("*.*,\n");
+			std::regex re(".*..*,\n");
 			std::smatch match;
 
 			std::regex_search(serialedString, match, re);

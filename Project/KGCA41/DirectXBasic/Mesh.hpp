@@ -291,7 +291,7 @@ namespace SSB
 		return ret;
 	}
 	template<typename VertexType>
-	void Mesh<VertexType>::Deserialize(std::string serialedString)
+	void Mesh<VertexType>::Deserialize(std::string& serialedString)
 	{
 		serialedString = GetUnitObject(serialedString, 0).str;
 		int offset = 0;

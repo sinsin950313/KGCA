@@ -92,7 +92,7 @@ namespace SSB
 
 		return ret;
 	}
-	void Material::Deserialize(std::string serialedString)
+	void Material::Deserialize(std::string& serialedString)
 	{
 		serialedString = GetUnitObject(serialedString, 0).str;
 

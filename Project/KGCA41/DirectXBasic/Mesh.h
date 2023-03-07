@@ -103,7 +103,7 @@ namespace SSB
 
 	public:
 		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string serialedString) override;
+		void Deserialize(std::string& serialedString) override;
 	};
 
 	class Mesh_Vertex_PC : public Mesh<Vertex_PC>
@@ -153,7 +153,7 @@ namespace SSB
 
 	public:
 		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string serialedString) override;
+		void Deserialize(std::string& serialedString) override;
 	};
 	class Mesh_Vertex_PCNT_Skinning : public Mesh<Vertex_PCNT_Skinning>
 	{
@@ -182,7 +182,7 @@ namespace SSB
 
 	public:
 		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string serialedString) override;
+		void Deserialize(std::string& serialedString) override;
 	};
 	class Mesh_Vertex_PCNTs : public Mesh<Vertex_PCNTs>
 	{
@@ -222,7 +222,7 @@ namespace SSB
 
 	public:
 		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string serialedString) override;
+		void Deserialize(std::string& serialedString) override;
 	};
 	class Mesh_Vertex_PCNTs_Skinning : public Mesh<Vertex_PCNTs_Skinning>
 	{
@@ -251,7 +251,7 @@ namespace SSB
 
 	public:
 		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string serialedString) override;
+		void Deserialize(std::string& serialedString) override;
 	};
 
 	//class Direction : public Mesh_Vertex_PC

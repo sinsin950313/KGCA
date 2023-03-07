@@ -197,7 +197,7 @@ namespace SSB
 
 		return ret;
 	}
-	void Animation::Deserialize(std::string serialedString)
+	void Animation::Deserialize(std::string& serialedString)
 	{
 		auto data = GetUnitObject(serialedString, 0);
 		serialedString = data.str;

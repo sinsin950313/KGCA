@@ -485,7 +485,7 @@ namespace SSB
 
 		return ret;
 	}
-	Serializeable::ExtractedData Serializeable::GetUnitAtomic(std::string str, int offset)
+	Serializeable::ExtractedData Serializeable::GetUnitAtomic(std::string& str, int offset)
 	{
 		int startIndex = 0;
 		int endIndex = str.size();
@@ -507,7 +507,7 @@ namespace SSB
 
 		return { std::string(str.begin() + startIndex, str.begin() + endIndex), index + 1 };
 	}
-	Serializeable::ExtractedData Serializeable::GetUnitElement(std::string str, int offset)
+	Serializeable::ExtractedData Serializeable::GetUnitElement(std::string& str, int offset)
 	{
 		int startIndex = 0;
 		int endIndex = str.size();
@@ -546,7 +546,7 @@ namespace SSB
 		return { std::string(str.begin() + startIndex, str.begin() + endIndex + 1), endIndex + 1 };
 		//}
 	}
-	Serializeable::ExtractedData Serializeable::GetUnitObject(std::string str, int offset)
+	Serializeable::ExtractedData Serializeable::GetUnitObject(std::string& str, int offset)
 	{
 		int startIndex = 0;
 		int endIndex = str.size();
@@ -585,25 +585,25 @@ namespace SSB
 		return { std::string(str.begin() + startIndex, str.begin() + endIndex + 1), endIndex + 1 };
 		//}
 	}
-	void Serializeable::Deserialize(std::string str, int& ret)
+	void Serializeable::Deserialize(std::string& str, int& ret)
 	{
 		str = GetUnitElement(str, 0).str;
 		auto val = GetUnitAtomic(str, 0);
 		ret = std::stoi(val.str);
 	}
-	void Serializeable::Deserialize(std::string str, unsigned int& ret)
+	void Serializeable::Deserialize(std::string& str, unsigned int& ret)
 	{
 		str = GetUnitElement(str, 0).str;
 		auto val = GetUnitAtomic(str, 0);
 		ret = std::stoul(val.str);
 	}
-	void Serializeable::Deserialize(std::string str, float& ret)
+	void Serializeable::Deserialize(std::string& str, float& ret)
 	{
 		str = GetUnitElement(str, 0).str;
 		auto val = GetUnitAtomic(str, 0);
 		ret = std::stof(val.str);
 	}
-	void Serializeable::Deserialize(std::string str, Float2& ret)
+	void Serializeable::Deserialize(std::string& str, Float2& ret)
 	{
 		str = GetUnitElement(str, 0).str;
 		int offset = 0;
@@ -615,7 +615,7 @@ namespace SSB
 			ret.e[i] = std::stof(val);
 		}
 	}
-	void Serializeable::Deserialize(std::string str, Float3& ret)
+	void Serializeable::Deserialize(std::string& str, Float3& ret)
 	{
 		str = GetUnitElement(str, 0).str;
 		int offset = 0;
@@ -627,7 +627,7 @@ namespace SSB
 			ret.e[i] = std::stof(val);
 		}
 	}
-	void Serializeable::Deserialize(std::string str, Float4& ret)
+	void Serializeable::Deserialize(std::string& str, Float4& ret)
 	{
 		str = GetUnitElement(str, 0).str;
 		int offset = 0;
@@ -639,7 +639,7 @@ namespace SSB
 			ret.e[i] = std::stof(val);
 		}
 	}
-	void Serializeable::Deserialize(std::string str, Float33& ret)
+	void Serializeable::Deserialize(std::string& str, Float33& ret)
 	{
 		float val[9];
 
@@ -662,7 +662,7 @@ namespace SSB
 			val[6], val[7], val[8]
 		};
 	}
-	void Serializeable::Deserialize(std::string str, Float44& ret)
+	void Serializeable::Deserialize(std::string& str, Float44& ret)
 	{
 		float val[16] = { 0, };
 
@@ -686,7 +686,7 @@ namespace SSB
 			val[12], val[13], val[14], val[15]
 		};
 	}
-	void Serializeable::Deserialize(std::string str, Vertex_PC& ret)
+	void Serializeable::Deserialize(std::string& str, Vertex_PC& ret)
 	{
 		int offset = 1;
 		{
@@ -703,7 +703,7 @@ namespace SSB
 			Deserialize(elem, ret.Color);
 		}
 	}
-	void Serializeable::Deserialize(std::string str, Vertex_PCNT& ret)
+	void Serializeable::Deserialize(std::string& str, Vertex_PCNT& ret)
 	{
 		int offset = 1;
 		{
@@ -734,7 +734,7 @@ namespace SSB
 			Deserialize(elem, ret.TextureUV);
 		}
 	}
-	void Serializeable::Deserialize(std::string str, Vertex_PCNTs& ret)
+	void Serializeable::Deserialize(std::string& str, Vertex_PCNTs& ret)
 	{
 		int offset = 1;
 		{
@@ -772,7 +772,7 @@ namespace SSB
 			Deserialize(elem, ret.MaterialIndex);
 		}
 	}
-	void Serializeable::Deserialize(std::string str, Vertex_PCNT_Skinning& ret)
+	void Serializeable::Deserialize(std::string& str, Vertex_PCNT_Skinning& ret)
 	{
 		int offset = 1;
 		{
@@ -833,7 +833,7 @@ namespace SSB
 			}
 		}
 	}
-	void Serializeable::Deserialize(std::string str, Vertex_PCNTs_Skinning& ret)
+	void Serializeable::Deserialize(std::string& str, Vertex_PCNTs_Skinning& ret)
 	{
 		int offset = 1;
 		{
@@ -901,13 +901,13 @@ namespace SSB
 			}
 		}
 	}
-	void Serializeable::Deserialize(std::string str, MeshData& ret)
+	void Serializeable::Deserialize(std::string& str, MeshData& ret)
 	{
 		auto data = GetUnitElement(str, 0);
 		std::string elem = data.str;
 		Deserialize(elem, ret.MeshIndex);
 	}
-	void Serializeable::Deserialize(std::string str, MeshToBoneSpaceTransformData& ret)
+	void Serializeable::Deserialize(std::string& str, MeshToBoneSpaceTransformData& ret)
 	{
 		auto data = GetUnitElement(str, 0);
 		std::string elem = data.str;
@@ -928,7 +928,7 @@ namespace SSB
 			};
 		}
 	}
-	void Serializeable::Deserialize(std::string str, AnimationUnitInfo& ret)
+	void Serializeable::Deserialize(std::string& str, AnimationUnitInfo& ret)
 	{
 		auto data = GetUnitElement(str, 0);
 		std::string elem = data.str;
@@ -975,7 +975,7 @@ namespace SSB
 			ret.Rotate = { val.x, val.y, val.z, val.w };
 		}
 	}
-	void Serializeable::Deserialize(std::string str, AnimationFrameInfo& ret)
+	void Serializeable::Deserialize(std::string& str, AnimationFrameInfo& ret)
 	{
 		str = GetUnitElement(str, 0).str;
 

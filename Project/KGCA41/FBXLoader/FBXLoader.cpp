@@ -223,14 +223,7 @@ namespace SSB
 			//if (1 < _scene->GetMaterialCount())
 			if (1 < _fbxMaterialKeyToFbxMaterialMap.size())
 			{
-				if (_scene->GetSrcObjectCount<FbxAnimStack>() == 0)
-				{
-					// Not Tested
-					mesh = new FBXMesh_PCNTs;
-					static_cast<FBXMesh_PCNTs*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
-					static_cast<FBXMesh_PCNTs*>(mesh)->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
-				}
-				else if (fbxMesh->GetDeformerCount() == 0)
+				if (_boneNodeToBoneIndexMap.empty())
 				{
 					mesh = new FBXMesh_PCNTs_Animatable;
 					static_cast<FBXMesh_PCNTs_Animatable*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
@@ -248,13 +241,7 @@ namespace SSB
 			}
 			else
 			{
-				if (_scene->GetSrcObjectCount<FbxAnimStack>() == 0)
-				{
-					// Not Tested
-					mesh = new FBXMesh_PCNT;
-					static_cast<FBXMesh_PCNT*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
-				}
-				if (fbxMesh->GetDeformerCount() == 0)
+				if (_boneNodeToBoneIndexMap.empty())
 				{
 					mesh = new FBXMesh_PCNT_Animatable;
 					static_cast<FBXMesh_PCNT_Animatable*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
@@ -268,6 +255,54 @@ namespace SSB
 				}
 				_ps = ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader_PCNT.hlsl", "PS", "ps_5_0");
 			}
+			////if (1 < _scene->GetMaterialCount())
+			//if (1 < _fbxMaterialKeyToFbxMaterialMap.size())
+			//{
+			//	if (_scene->GetSrcObjectCount<FbxAnimStack>() == 0)
+			//	{
+			//		// Not Tested
+			//		mesh = new FBXMesh_PCNTs;
+			//		static_cast<FBXMesh_PCNTs*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+			//		static_cast<FBXMesh_PCNTs*>(mesh)->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
+			//	}
+			//	else if (fbxMesh->GetDeformerCount() == 0)
+			//	{
+			//		mesh = new FBXMesh_PCNTs_Animatable;
+			//		static_cast<FBXMesh_PCNTs_Animatable*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+			//		static_cast<FBXMesh_PCNTs_Animatable*>(mesh)->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
+			//		static_cast<FBXMesh_PCNTs_Animatable*>(mesh)->Initialize_SetMeshData(MeshData{ iter.second });
+			//	}
+			//	else
+			//	{
+			//		mesh = new FBXMesh_PCNTs_Skinning;
+			//		static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+			//		static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
+			//		static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetBoneData(_fbxBoneKeyToFbxBoneMap);
+			//	}
+			//	_ps = ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader_PCNT_P.hlsl", "PS", "ps_5_0");
+			//}
+			//else
+			//{
+			//	if (_scene->GetSrcObjectCount<FbxAnimStack>() == 0)
+			//	{
+			//		// Not Tested
+			//		mesh = new FBXMesh_PCNT;
+			//		static_cast<FBXMesh_PCNT*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+			//	}
+			//	if (fbxMesh->GetDeformerCount() == 0)
+			//	{
+			//		mesh = new FBXMesh_PCNT_Animatable;
+			//		static_cast<FBXMesh_PCNT_Animatable*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+			//		static_cast<FBXMesh_PCNT_Animatable*>(mesh)->Initialize_SetMeshData({ iter.second });
+			//	}
+			//	else
+			//	{
+			//		mesh = new FBXMesh_PCNT_Skinning;
+			//		static_cast<FBXMesh_PCNT_Skinning*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
+			//		static_cast<FBXMesh_PCNT_Skinning*>(mesh)->Initialize_SetBoneData(_fbxBoneKeyToFbxBoneMap);
+			//	}
+			//	_ps = ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader_PCNT.hlsl", "PS", "ps_5_0");
+			//}
 
 			mesh->Init();
 

@@ -246,7 +246,7 @@ namespace SSB
 
 		return ret;
 	}
-	void Model::Deserialize(std::string serialedString)
+	void Model::Deserialize(std::string& serialedString)
 	{
 		serialedString = GetUnitObject(serialedString, 0).str;
 

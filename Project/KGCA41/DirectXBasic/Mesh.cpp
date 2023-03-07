@@ -146,7 +146,7 @@ namespace SSB
 		return ret;
 	}
 
-	void Mesh_Vertex_PCNT_Animatable::Deserialize(std::string serialedString)
+	void Mesh_Vertex_PCNT_Animatable::Deserialize(std::string& serialedString)
 	{
 		int offset = 0;
 		{
@@ -267,7 +267,7 @@ namespace SSB
 
 		return ret;
 	}
-	void Mesh_Vertex_PCNT_Skinning::Deserialize(std::string serialedString)
+	void Mesh_Vertex_PCNT_Skinning::Deserialize(std::string& serialedString)
 	{
 		int offset = 0;
 		{
@@ -429,7 +429,7 @@ namespace SSB
 		return ret;
 	}
 
-	void Mesh_Vertex_PCNTs_Animatable::Deserialize(std::string serialedString)
+	void Mesh_Vertex_PCNTs_Animatable::Deserialize(std::string& serialedString)
 	{
 		int offset = 0;
 		{
@@ -561,7 +561,7 @@ namespace SSB
 		return ret;
 	}
 
-	void Mesh_Vertex_PCNTs_Skinning::Deserialize(std::string serialedString)
+	void Mesh_Vertex_PCNTs_Skinning::Deserialize(std::string& serialedString)
 	{
 		int offset = 0;
 		{

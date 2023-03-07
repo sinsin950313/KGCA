@@ -64,31 +64,31 @@ namespace SSB
 			int offset;
 		};
 
-		ExtractedData GetUnitAtomic(std::string str, int offset);
-		ExtractedData GetUnitElement(std::string str, int offset);
-		ExtractedData GetUnitObject(std::string str, int offset);
+		ExtractedData GetUnitAtomic(std::string& str, int offset);
+		ExtractedData GetUnitElement(std::string& str, int offset);
+		ExtractedData GetUnitObject(std::string& str, int offset);
 
 	protected:
-		void Deserialize(std::string str, int& ret);
-		void Deserialize(std::string str, unsigned int& ret);
-		void Deserialize(std::string str, float& ret);
-		void Deserialize(std::string str, Float2& ret);
-		void Deserialize(std::string str, Float3& ret);
-		void Deserialize(std::string str, Float4& ret);
-		void Deserialize(std::string str, Float33& ret);
-		void Deserialize(std::string str, Float44& ret);
-		void Deserialize(std::string str, Vertex_PC& ret);
-		void Deserialize(std::string str, Vertex_PCNT& ret);
-		void Deserialize(std::string str, Vertex_PCNTs& ret);
-		void Deserialize(std::string str, Vertex_PCNT_Skinning& ret);
-		void Deserialize(std::string str, Vertex_PCNTs_Skinning& ret);
-		void Deserialize(std::string str, MeshData& ret);
-		void Deserialize(std::string str, MeshToBoneSpaceTransformData& ret);
-		void Deserialize(std::string str, AnimationUnitInfo& ret);
-		void Deserialize(std::string str, AnimationFrameInfo& ret);
+		void Deserialize(std::string& str, int& ret);
+		void Deserialize(std::string& str, unsigned int& ret);
+		void Deserialize(std::string& str, float& ret);
+		void Deserialize(std::string& str, Float2& ret);
+		void Deserialize(std::string& str, Float3& ret);
+		void Deserialize(std::string& str, Float4& ret);
+		void Deserialize(std::string& str, Float33& ret);
+		void Deserialize(std::string& str, Float44& ret);
+		void Deserialize(std::string& str, Vertex_PC& ret);
+		void Deserialize(std::string& str, Vertex_PCNT& ret);
+		void Deserialize(std::string& str, Vertex_PCNTs& ret);
+		void Deserialize(std::string& str, Vertex_PCNT_Skinning& ret);
+		void Deserialize(std::string& str, Vertex_PCNTs_Skinning& ret);
+		void Deserialize(std::string& str, MeshData& ret);
+		void Deserialize(std::string& str, MeshToBoneSpaceTransformData& ret);
+		void Deserialize(std::string& str, AnimationUnitInfo& ret);
+		void Deserialize(std::string& str, AnimationFrameInfo& ret);
 
 	public:
 		virtual std::string Serialize(int tabCount) = 0;
-		virtual void Deserialize(std::string serialedString) = 0;
+		virtual void Deserialize(std::string& serialedString) = 0;
 	};
 }

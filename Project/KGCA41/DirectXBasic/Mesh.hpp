@@ -224,11 +224,15 @@ namespace SSB
 
 		ret += GetTabbedString(tabCount + 1);
 		ret += _vertexTypeStr;
+		ret += "{\"";
 		ret += GetVertexType();
-		ret += ",\n";
+		ret += "\"},\n";
 
 		ret += GetTabbedString(tabCount + 1);
 		ret += _vertexListStr;
+		ret += "{\"";
+		ret += std::to_string(_vertexList.size());
+		ret += "\"}\n";
 		for (auto vertex : _vertexList)
 		{
 			ret += Serializeable::Serialize(tabCount + 2, vertex);
@@ -238,14 +242,17 @@ namespace SSB
 
 		ret += GetTabbedString(tabCount + 1);
 		ret += _indexListStr;
+		ret += "{\"";
+		ret += std::to_string(_indexList.size());
+		ret += "\"},\n";
 
 		ret += GetTabbedString(tabCount + 2);
 		ret += "{ ";
 		for (auto index : _indexList)
 		{
-			ret += "\"";
+			ret += "{\"";
 			ret += std::to_string(index);
-			ret += "\", ";
+			ret += "\"}, ";
 		}
 		ret += "},\n";
 
@@ -263,15 +270,15 @@ namespace SSB
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _vertexShaderStr;
-		ret += "\"";
+		ret += "{\"";
 		ret += _vs->GetFileName();
-		ret += "\",\n";
+		ret += "\"},\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _subMeshStr;
-		ret += " : \"";
+		ret += " : {\"";
 		ret += std::to_string(_subMeshes.size());
-		ret += "\",\n";
+		ret += "\"},\n";
 		for (auto subMesh : _subMeshes)
 		{
 			ret += subMesh->Serialize(tabCount + 2);
@@ -287,10 +294,21 @@ namespace SSB
 	void Mesh<VertexType>::Deserialize(std::string serialedString)
 	{
 		serialedString = GetUnitObject(serialedString, 0).str;
-		int indexListStrPos = serialedString.find(_indexListStr);
-
 		int offset = 0;
-		while(offset < indexListStrPos)
+
+		{
+			auto data = GetUnitElement(serialedString, 0);
+			offset = data.offset;
+		}
+
+		int vertexCount;
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			Serializeable::Deserialize(data.str, vertexCount);
+			offset = data.offset;
+		}
+
+		for(int i = 0; i < vertexCount; ++i)
 		{
 			auto elemData = GetUnitElement(serialedString, offset);
 			std::string elem = elemData.str;
@@ -300,21 +318,32 @@ namespace SSB
 		}
 
 		{
-			auto elemData = GetUnitElement(serialedString, offset);
-			std::string elem = elemData.str;
-			offset = elemData.offset;
-			int indexOffset = 0;
-			while (indexOffset < elem.size())
+			int indexCount;
 			{
-				std::string atomic = GetUnitAtomic(elem, indexOffset).str;
+				offset = serialedString.find(_indexListStr);
+				auto elemData = GetUnitElement(serialedString, offset);
+				offset = elemData.offset;
+				Serializeable::Deserialize(elemData.str, indexCount);
+			}
+			_indexList.resize(indexCount);
+
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+
+			int indexOffset = 1;
+			for(int i = 0; i < indexCount; ++i)
+			{
+				auto data = GetUnitElement(elem, indexOffset);
 				int val;
-				Serializeable::Deserialize(atomic, val);
-				_indexList.push_back(val);
+				Serializeable::Deserialize(data.str, val);
+				_indexList[i] = val;
+				indexOffset = data.offset;
 			}
 		}
 
 		{
-			offset = serialedString.find(_minVertexStr);
+			offset = serialedString.find(_minVertexStr, offset);
 			auto elemData = GetUnitElement(serialedString, offset);
 			std::string elem = elemData.str;
 			offset = elemData.offset;
@@ -324,7 +353,7 @@ namespace SSB
 		}
 
 		{
-			offset = serialedString.find(_maxVertexStr);
+			offset = serialedString.find(_maxVertexStr, offset);
 			auto elemData = GetUnitElement(serialedString, offset);
 			std::string elem = elemData.str;
 			offset = elemData.offset;
@@ -334,14 +363,14 @@ namespace SSB
 		}
 
 		{
-			offset = serialedString.find(_vertexShaderStr);
-			auto atomicData = GetUnitAtomic(serialedString, offset);
-			_vs = ShaderManager::GetInstance().LoadVertexShader(mtw(atomicData.str), "VS", "vs_5_0");
+			offset = serialedString.find(_vertexShaderStr, offset);
+			auto atomicData = GetUnitElement(serialedString, offset);
+			_vs = ShaderManager::GetInstance().LoadVertexShader(mtw(GetUnitAtomic(atomicData.str, 0).str), "VS", "vs_5_0");
 		}
 
 		{
-			offset = serialedString.find(_subMeshStr);
-			auto atomicData = GetUnitAtomic(serialedString, offset);
+			offset = serialedString.find(_subMeshStr, offset);
+			auto atomicData = GetUnitElement(serialedString, offset);
 			int subMeshCount;
 			Serializeable::Deserialize(atomicData.str, subMeshCount);
 

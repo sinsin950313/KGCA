@@ -187,9 +187,9 @@ namespace SSB
 		{
 			ret += Serializeable::GetTabbedString(tabCount + 2);
 			ret += _materialIndexStr;
-			ret += "\"";
+			ret += "{\"";
 			ret += std::to_string(iter.first);
-			ret += "\"\n";
+			ret += "\"}\n";
 
 			auto materialStr = iter.second->Serialize(tabCount + 2);
 			ret += materialStr;
@@ -205,9 +205,9 @@ namespace SSB
 		{
 			ret += Serializeable::GetTabbedString(tabCount + 2);
 			ret += _meshIndexStr;
-			ret += "\"";
+			ret += "{\"";
 			ret += std::to_string(iter.first);
-			ret += "\"\n";
+			ret += "\"}\n";
 
 			auto meshStr = iter.second->Serialize(tabCount + 2);
 			ret += meshStr;
@@ -223,8 +223,9 @@ namespace SSB
 		{
 			ret += Serializeable::GetTabbedString(tabCount + 2);
 			ret += _animationNameStr;
+			ret += "{\"";
 			ret += iter.first;
-			ret += "\n";
+			ret += "\"}\n";
 
 			auto animationStr = iter.second->Serialize(tabCount + 2);
 			ret += animationStr;
@@ -235,10 +236,10 @@ namespace SSB
 		ret += ",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += "\"";
 		ret += _pixelShaderStr;
+		ret += "{\"";
 		ret += _ps->GetFileName();
-		ret += "\",\n";
+		ret += "\"},\n";
 
 		ret += Serializeable::GetTabbedString(tabCount);
 		ret += "]";
@@ -268,12 +269,12 @@ namespace SSB
 			_maxVertex = tmp;
 		}
 
-		while (serialedString.find(_materialIndexStr) != std::string::npos)
+		while (serialedString.find(_materialIndexStr, offset) != std::string::npos)
 		{
 			int materialIndex;
 			{
-				offset = serialedString.find(_materialIndexStr);
-				auto data = GetUnitAtomic(serialedString, offset);
+				offset = serialedString.find(_materialIndexStr, offset);
+				auto data = GetUnitElement(serialedString, offset);
 				offset = data.offset;
 				Serializeable::Deserialize(data.str, materialIndex);
 			}
@@ -287,25 +288,27 @@ namespace SSB
 			_materials.insert(std::make_pair(materialIndex, mat));
 		}
 
-		while (serialedString.find(_meshIndexStr) != std::string::npos)
+		while (serialedString.find(_meshIndexStr, offset) != std::string::npos)
 		{
 			int meshIndex;
 			{
-				offset = serialedString.find(_meshIndexStr);
-				auto data = GetUnitAtomic(serialedString, offset);
+				offset = serialedString.find(_meshIndexStr, offset);
+				auto data = GetUnitElement(serialedString, offset);
 				offset = data.offset;
 				Serializeable::Deserialize(data.str, meshIndex);
 			}
 
 			auto objectData = GetUnitObject(serialedString, offset);
 			std::string objectStr = objectData.str;
-			offset = objectData.offset;
 
 			std::string vertexType;
 			{
-				std::string tmp = GetUnitAtomic(serialedString, offset).str;
-				vertexType = std::string(tmp.begin() + 1, tmp.end() - 1);
+				int tmpOffset = serialedString.find(_vertexTypeStr, offset);
+				std::string tmp = GetUnitElement(serialedString, tmpOffset).str;
+				vertexType = GetUnitAtomic(tmp, 0).str;
 			}
+			offset = objectData.offset;
+
 			MeshInterface* mesh;
 			if (vertexType == Vertex_PCNT_Keyword)
 			{
@@ -342,14 +345,14 @@ namespace SSB
 			_meshes.insert(std::make_pair(meshIndex, mesh));
 		}
 
-		while (serialedString.find(_animationNameStr) != std::string::npos)
+		while (serialedString.find(_animationNameStr, offset) != std::string::npos)
 		{
 			AnimationName animationName;
 			{
-				offset = serialedString.find(_animationNameStr);
-				auto atomic = GetUnitAtomic(serialedString, offset);
+				offset = serialedString.find(_animationNameStr, offset);
+				auto atomic = GetUnitElement(serialedString, offset);
 				offset = atomic.offset;
-				animationName = std::string(atomic.str.begin() + 1, atomic.str.end() + 1);
+				animationName = std::string(GetUnitAtomic(atomic.str, 0).str);
 			}
 
 			auto objectData = GetUnitObject(serialedString, offset);
@@ -362,10 +365,10 @@ namespace SSB
 		}
 
 		{
-			offset = serialedString.find(_pixelShaderStr);
-			auto atomicData = GetUnitAtomic(serialedString, offset);
+			offset = serialedString.find(_pixelShaderStr, offset);
+			auto atomicData = GetUnitElement(serialedString, offset);
 			std::string atomic = atomicData.str;
-			_ps = ShaderManager::GetInstance().LoadPixelShader(mtw(atomic), "PS", "ps_5_0");
+			_ps = ShaderManager::GetInstance().LoadPixelShader(mtw(GetUnitAtomic(atomic, 0).str), "PS", "ps_5_0");
 		}
 	}
 }

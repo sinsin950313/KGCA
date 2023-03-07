@@ -11,6 +11,30 @@ namespace SSB
 		}
 		return ret;
 	}
+	std::string Serializeable::Serialize(int tabCount, int data)
+	{
+		std::string ret;
+
+		ret += GetTabbedString(tabCount);
+		ret += "{\"";
+		ret += std::to_string(data);
+		ret += "\"}";
+		ret += "\n";
+
+		return ret;
+	}
+	std::string Serializeable::Serialize(int tabCount, unsigned int data)
+	{
+		std::string ret;
+
+		ret += GetTabbedString(tabCount);
+		ret += "{\"";
+		ret += std::to_string(data);
+		ret += "\"}";
+		ret += "\n";
+
+		return ret;
+	}
 	std::string Serializeable::Serialize(int tabCount, float data)
 	{
 		std::string ret;
@@ -265,7 +289,7 @@ namespace SSB
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "{";
+		ret += "{\"";
 		ret += std::to_string(data.AffectedBoneIndex[0]);
 		ret += "\", \"";
 		ret += std::to_string(data.AffectedBoneIndex[1]);
@@ -278,7 +302,7 @@ namespace SSB
 		ret += ",\n";
 
 		ret += GetTabbedString(tabCount + 1);
-		ret += "{";
+		ret += "{\"";
 		ret += std::to_string(data.Weight[0]);
 		ret += "\", \"";
 		ret += std::to_string(data.Weight[1]);
@@ -479,9 +503,9 @@ namespace SSB
 		{
 			++index;
 		}
-		endIndex = index - 1;
+		endIndex = index;
 
-		return { std::string(str.begin() + startIndex + 1, str.begin() + endIndex), index + 1 };
+		return { std::string(str.begin() + startIndex, str.begin() + endIndex), index + 1 };
 	}
 	Serializeable::ExtractedData Serializeable::GetUnitElement(std::string str, int offset)
 	{
@@ -571,7 +595,7 @@ namespace SSB
 	{
 		str = GetUnitElement(str, 0).str;
 		auto val = GetUnitAtomic(str, 0);
-		ret = std::stoi(val.str);
+		ret = std::stoul(val.str);
 	}
 	void Serializeable::Deserialize(std::string str, float& ret)
 	{
@@ -596,6 +620,18 @@ namespace SSB
 		str = GetUnitElement(str, 0).str;
 		int offset = 0;
 		for (int i = 0; i < 3; ++i)
+		{
+			auto data = GetUnitAtomic(str, offset);
+			std::string val = data.str;
+			offset = data.offset;
+			ret.e[i] = std::stof(val);
+		}
+	}
+	void Serializeable::Deserialize(std::string str, Float4& ret)
+	{
+		str = GetUnitElement(str, 0).str;
+		int offset = 0;
+		for (int i = 0; i < 4; ++i)
 		{
 			auto data = GetUnitAtomic(str, offset);
 			std::string val = data.str;
@@ -652,7 +688,7 @@ namespace SSB
 	}
 	void Serializeable::Deserialize(std::string str, Vertex_PC& ret)
 	{
-		int offset = 0;
+		int offset = 1;
 		{
 			auto data = GetUnitElement(str, offset);
 			std::string elem = data.str;
@@ -669,7 +705,7 @@ namespace SSB
 	}
 	void Serializeable::Deserialize(std::string str, Vertex_PCNT& ret)
 	{
-		int offset = 0;
+		int offset = 1;
 		{
 			auto data = GetUnitElement(str, offset);
 			std::string elem = data.str;
@@ -700,7 +736,7 @@ namespace SSB
 	}
 	void Serializeable::Deserialize(std::string str, Vertex_PCNTs& ret)
 	{
-		int offset = 0;
+		int offset = 1;
 		{
 			auto data = GetUnitElement(str, offset);
 			std::string elem = data.str;
@@ -738,7 +774,7 @@ namespace SSB
 	}
 	void Serializeable::Deserialize(std::string str, Vertex_PCNT_Skinning& ret)
 	{
-		int offset = 0;
+		int offset = 1;
 		{
 			auto data = GetUnitElement(str, offset);
 			std::string elem = data.str;
@@ -768,40 +804,38 @@ namespace SSB
 		}
 
 		{
-			int atomicOffset = 0;
-			for (int i = 0; i < 4; ++i)
 			{
 				auto data = GetUnitElement(str, offset);
 				std::string elem = data.str;
 				offset = data.offset;
 
-				auto atomicData = GetUnitAtomic(elem, atomicOffset);
-				std::string atomicStr = atomicData.str;
-				atomicOffset = atomicData.offset;
-
-				Deserialize(atomicStr, ret.AffectedBoneIndex[i]);
+				Float4 tmp;
+				Deserialize(elem, tmp);
+				ret.AffectedBoneIndex[0] = tmp.x;
+				ret.AffectedBoneIndex[1] = tmp.y;
+				ret.AffectedBoneIndex[2] = tmp.z;
+				ret.AffectedBoneIndex[3] = tmp.w;
 			}
 		}
 
 		{
-			int atomicOffset = 0;
-			for (int i = 0; i < 4; ++i)
 			{
 				auto data = GetUnitElement(str, offset);
 				std::string elem = data.str;
 				offset = data.offset;
 
-				auto atomicData = GetUnitAtomic(elem, atomicOffset);
-				std::string atomicStr = atomicData.str;
-				atomicOffset = atomicData.offset;
-
-				Deserialize(atomicStr, ret.Weight[i]);
+				Float4 tmp;
+				Deserialize(elem, tmp);
+				ret.Weight[0] = tmp.x;
+				ret.Weight[1] = tmp.y;
+				ret.Weight[2] = tmp.z;
+				ret.Weight[3] = tmp.w;
 			}
 		}
 	}
 	void Serializeable::Deserialize(std::string str, Vertex_PCNTs_Skinning& ret)
 	{
-		int offset = 0;
+		int offset = 1;
 		{
 			auto data = GetUnitElement(str, offset);
 			std::string elem = data.str;
@@ -831,42 +865,40 @@ namespace SSB
 		}
 
 		{
-			int atomicOffset = 0;
-			for (int i = 0; i < 4; ++i)
-			{
-				auto data = GetUnitElement(str, offset);
-				std::string elem = data.str;
-				offset = data.offset;
-
-				auto atomicData = GetUnitAtomic(elem, atomicOffset);
-				std::string atomicStr = atomicData.str;
-				atomicOffset = atomicData.offset;
-
-				Deserialize(atomicStr, ret.AffectedBoneIndex[i]);
-			}
-		}
-
-		{
-			int atomicOffset = 0;
-			for (int i = 0; i < 4; ++i)
-			{
-				auto data = GetUnitElement(str, offset);
-				std::string elem = data.str;
-				offset = data.offset;
-
-				auto atomicData = GetUnitAtomic(elem, atomicOffset);
-				std::string atomicStr = atomicData.str;
-				atomicOffset = atomicData.offset;
-
-				Deserialize(atomicStr, ret.Weight[i]);
-			}
-		}
-
-		{
 			auto data = GetUnitElement(str, offset);
 			std::string elem = data.str;
-			Deserialize(elem, ret.MaterialIndex);
 			offset = data.offset;
+			Deserialize(elem, ret.MaterialIndex);
+		}
+
+		{
+			{
+				auto data = GetUnitElement(str, offset);
+				std::string elem = data.str;
+				offset = data.offset;
+
+				Float4 tmp;
+				Deserialize(elem, tmp);
+				ret.AffectedBoneIndex[0] = tmp.x;
+				ret.AffectedBoneIndex[1] = tmp.y;
+				ret.AffectedBoneIndex[2] = tmp.z;
+				ret.AffectedBoneIndex[3] = tmp.w;
+			}
+		}
+
+		{
+			{
+				auto data = GetUnitElement(str, offset);
+				std::string elem = data.str;
+				offset = data.offset;
+
+				Float4 tmp;
+				Deserialize(elem, tmp);
+				ret.Weight[0] = tmp.x;
+				ret.Weight[1] = tmp.y;
+				ret.Weight[2] = tmp.z;
+				ret.Weight[3] = tmp.w;
+			}
 		}
 	}
 	void Serializeable::Deserialize(std::string str, MeshData& ret)
@@ -879,7 +911,7 @@ namespace SSB
 	{
 		auto data = GetUnitElement(str, 0);
 		std::string elem = data.str;
-		int offset = 0;
+		int offset = 1;
 		for (int i = 0; i < kMaximumBoneCount; ++i)
 		{
 			auto valData = GetUnitElement(elem, offset);
@@ -901,7 +933,7 @@ namespace SSB
 		auto data = GetUnitElement(str, 0);
 		std::string elem = data.str;
 
-		int offset = 0;
+		int offset = 1;
 		{
 			auto localElemData = GetUnitElement(elem, offset);
 			std::string localElem = localElemData.str;
@@ -933,12 +965,21 @@ namespace SSB
 			Deserialize(localElem, val);
 			ret.Scale = { val.x, val.y, val.z };
 		}
+
+		{
+			auto localElemData = GetUnitElement(elem, offset);
+			std::string localElem = localElemData.str;
+			offset = localElemData.offset;
+			Float4 val;
+			Deserialize(localElem, val);
+			ret.Rotate = { val.x, val.y, val.z, val.w };
+		}
 	}
 	void Serializeable::Deserialize(std::string str, AnimationFrameInfo& ret)
 	{
 		str = GetUnitElement(str, 0).str;
 
-		int offset = 0;
+		int offset = 1;
 		for (int i = 0; i < kAnimationUnitMaxIndex; ++i)
 		{
 			auto data = GetUnitElement(str, offset);

@@ -68,14 +68,14 @@ namespace SSB
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _materialIndexStr;
-		ret += "\"";
+		ret += "{\"";
 		ret += std::to_string(_materialIndex);
-		ret += "\",\n";
+		ret += "\"},\n";
 
 		for(int i = 0; i < kTextureTypeCount; ++i)
 		{
 			ret += Serializeable::GetTabbedString(tabCount + 1);
-			ret += "\"";
+			ret += "{\"";
 			if (_textureArray[i] != nullptr)
 			{
 				ret += _textureArray[i]->GetResource()->GetFileName();
@@ -84,7 +84,7 @@ namespace SSB
 			{
 				ret += "Empty";
 			}
-			ret += "\",\n";
+			ret += "\"},\n";
 		}
 
 		ret += Serializeable::GetTabbedString(tabCount);
@@ -98,8 +98,8 @@ namespace SSB
 
 		int offset = 0;
 		{
-			offset = serialedString.find(_materialIndexStr);
-			auto data = GetUnitAtomic(serialedString, offset);
+			offset = serialedString.find(_materialIndexStr, offset);
+			auto data = GetUnitElement(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
 			Serializeable::Deserialize(atomic, _materialIndex);
@@ -107,10 +107,10 @@ namespace SSB
 
 		for (int i = 0; i < kTextureTypeCount; ++i)
 		{
-			auto data = GetUnitAtomic(serialedString, offset);
+			auto data = GetUnitElement(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
-			_textureArray[i] = TextureLoader::GetInstance().Load(mtw(atomic), DXStateManager::kDefaultWrapSample);
+			_textureArray[i] = TextureLoader::GetInstance().Load(mtw(GetUnitAtomic(data.str, 0).str), DXStateManager::kDefaultWrapSample);
 		}
 	}
 }

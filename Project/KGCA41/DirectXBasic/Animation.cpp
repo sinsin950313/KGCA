@@ -142,49 +142,49 @@ namespace SSB
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _framePerSecondStr;
-		ret += "\"";
+		ret += "{\"";
 		ret += std::to_string(_framePerSecond);
-		ret += "\",\n";
+		ret += "\"},\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _boneAnimationUnitMaxCountStr;
-		ret += "\"";
+		ret += "{\"";
 		ret += std::to_string(_boneAnimationUnitMaxCount);
-		ret += "\",\n";
+		ret += "\"},\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _meshAnimationUnitMaxCountStr;
-		ret += "\"";
+		ret += "{\"";
 		ret += std::to_string(_meshAnimationUnitMaxCount);
-		ret += "\",\n";
+		ret += "\"},\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _startFrameStr;
-		ret += "\"";
+		ret += "{\"";
 		ret += std::to_string(_startFrame);
-		ret += "\",\n";
+		ret += "\"},\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _endFrameStr;
-		ret += "\"";
+		ret += "{\"";
 		ret += std::to_string(_endFrame);
-		ret += "\",\n";
+		ret += "\"},\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _frameInfoPerSecondStr;
 
 		ret += Serializeable::GetTabbedString(tabCount + 2);
 		ret += _maxFrameCountStr;
-		ret += "\"";
+		ret += "{\"";
 		ret += std::to_string(_data.size());
-		ret += "\"\n";
+		ret += "\"}\n";
 		for(int i = 0; i < _data.size(); ++i)
 		{
 			ret += Serializeable::GetTabbedString(tabCount + 2);
 			ret += _frameStr;
-			ret += "\"";
+			ret += "{\"";
 			ret += std::to_string(i);
-			ret += "\"\n";
+			ret += "\"}\n";
 
 			ret += Serializeable::Serialize(tabCount + 2, *_data[i]);
 
@@ -199,70 +199,78 @@ namespace SSB
 	}
 	void Animation::Deserialize(std::string serialedString)
 	{
-		auto data = GetUnitAtomic(serialedString, 0);
+		auto data = GetUnitObject(serialedString, 0);
 		serialedString = data.str;
 
 		int offset = 0;
 		{
-			offset = serialedString.find(_framePerSecondStr);
-			auto data = GetUnitAtomic(serialedString, offset);
+			offset = serialedString.find(_framePerSecondStr, offset);
+			auto data = GetUnitElement(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
 			Serializeable::Deserialize(atomic, _framePerSecond);
 		}
 
 		{
-			offset = serialedString.find(_boneAnimationUnitMaxCountStr);
-			auto data = GetUnitAtomic(serialedString, offset);
+			offset = serialedString.find(_boneAnimationUnitMaxCountStr, offset);
+			auto data = GetUnitElement(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
 			Serializeable::Deserialize(atomic, _boneAnimationUnitMaxCount);
 		}
 
 		{
-			offset = serialedString.find(_meshAnimationUnitMaxCountStr);
-			auto data = GetUnitAtomic(serialedString, offset);
+			offset = serialedString.find(_meshAnimationUnitMaxCountStr, offset);
+			auto data = GetUnitElement(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
 			Serializeable::Deserialize(atomic, _meshAnimationUnitMaxCount);
 		}
 
 		{
-			offset = serialedString.find(_startFrameStr);
-			auto data = GetUnitAtomic(serialedString, offset);
+			offset = serialedString.find(_startFrameStr, offset);
+			auto data = GetUnitElement(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
 			Serializeable::Deserialize(atomic, _startFrame);
 		}
 
 		{
-			offset = serialedString.find(_endFrameStr);
-			auto data = GetUnitAtomic(serialedString, offset);
+			offset = serialedString.find(_endFrameStr, offset);
+			auto data = GetUnitElement(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
 			Serializeable::Deserialize(atomic, _endFrame);
 		}
 
 		int maxFrameCount;
-		offset = serialedString.find(_frameInfoPerSecondStr);
+		offset = serialedString.find(_frameInfoPerSecondStr, offset);
 		{
-			offset = serialedString.find(_maxFrameCountStr);
-			auto data = GetUnitAtomic(serialedString, offset);
+			offset = serialedString.find(_maxFrameCountStr, offset);
+			auto data = GetUnitElement(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
 			Serializeable::Deserialize(atomic, maxFrameCount);
 		}
 
 		_data.resize(maxFrameCount);
-		for(int i = 0; i < maxFrameCount; ++i)
+
 		{
-			offset = serialedString.find(_frameStr);
-			auto elemData = GetUnitElement(serialedString, offset);
-			std::string elem = elemData.str;
-			offset += elemData.offset;
-			AnimationFrameInfo* frameInfo = new AnimationFrameInfo;
-			Serializeable::Deserialize(elem, *frameInfo);
-			_data[i] = frameInfo;
+			for (int i = 0; i < maxFrameCount; ++i)
+			{
+				{
+					offset = serialedString.find(_frameStr, offset);
+					auto elemData = GetUnitElement(serialedString, offset);
+					std::string elem = elemData.str;
+					offset = elemData.offset;
+				}
+
+				auto data = GetUnitElement(serialedString, offset);
+				offset = data.offset;
+				AnimationFrameInfo* frameInfo = new AnimationFrameInfo;
+				Serializeable::Deserialize(data.str, *frameInfo);
+				_data[i] = frameInfo;
+			}
 		}
 	}
 	DefaultAnimation::DefaultAnimation()

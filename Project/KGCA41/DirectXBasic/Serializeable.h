@@ -21,7 +21,7 @@ namespace SSB
 		std::string _vertexShaderStr = "Vertex Shader File Name : ";
 		std::string _pixelShaderStr = "Pixel Shader File Name : ";
 		std::string _vertexTypeStr = "Vertex Type : ";
-		std::string _vertexListStr = "Vertex List\n";
+		std::string _vertexListStr = "Vertex List ";
 		std::string _indexListStr = "Index List\n";
 		std::string _subMeshStr = "SubMesh";
 		std::string _meshDataStr = "Mesh Data\n";
@@ -39,6 +39,8 @@ namespace SSB
 		std::string GetTabbedString(int tabCount);
 
 	protected:
+		std::string Serialize(int tabCount, int data);
+		std::string Serialize(int tabCount, unsigned int data);
 		std::string Serialize(int tabCount, float data);
 		std::string Serialize(int tabCount, Float2 data);
 		std::string Serialize(int tabCount, Float3 data);
@@ -61,6 +63,7 @@ namespace SSB
 			std::string str;
 			int offset;
 		};
+
 		ExtractedData GetUnitAtomic(std::string str, int offset);
 		ExtractedData GetUnitElement(std::string str, int offset);
 		ExtractedData GetUnitObject(std::string str, int offset);
@@ -71,6 +74,7 @@ namespace SSB
 		void Deserialize(std::string str, float& ret);
 		void Deserialize(std::string str, Float2& ret);
 		void Deserialize(std::string str, Float3& ret);
+		void Deserialize(std::string str, Float4& ret);
 		void Deserialize(std::string str, Float33& ret);
 		void Deserialize(std::string str, Float44& ret);
 		void Deserialize(std::string str, Vertex_PC& ret);

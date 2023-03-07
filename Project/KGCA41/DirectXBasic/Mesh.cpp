@@ -153,12 +153,12 @@ namespace SSB
 			auto data = GetUnitElement(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			auto atomicData = GetUnitAtomic(elem, 0);
+			auto atomicData = GetUnitElement(elem, 0);
 			std::string atomic = atomicData.str;
 			Serializeable::Deserialize(atomic, _meshData);
 		}
 
-		serialedString = std::string(serialedString.begin() + offset, serialedString.end());
+		serialedString = GetUnitObject(serialedString, offset).str;
 		Mesh<Vertex_PCNT>::Deserialize(serialedString);
 	}
 
@@ -321,7 +321,7 @@ namespace SSB
 
 	std::string Mesh_Vertex_PCNTs::GetVertexType()
 	{
-		return Vertex_PCNTs_Animatable_Keyword;
+		return Vertex_PCNTs_Keyword;
 	}
 
 	Vertex_PCNTs Mesh_Vertex_PCNTs::GetDeserializedVertex(std::string str)
@@ -436,7 +436,7 @@ namespace SSB
 			auto data = GetUnitElement(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			auto atomicData = GetUnitAtomic(elem, 0);
+			auto atomicData = GetUnitElement(elem, 0);
 			std::string atomic = atomicData.str;
 			Serializeable::Deserialize(atomic, _meshData);
 		}

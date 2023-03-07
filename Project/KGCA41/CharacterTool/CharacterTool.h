@@ -3,16 +3,16 @@
 #include "DXObject.h"
 #include "FBXLoader.h"
 #include "Common.h"
+#include "Model.h"
 
 namespace SSB
 {
 	struct ActionData
 	{
-		std::string ActionFileName;
-		std::string ActionName;
-		unsigned int EndFrame = 0;
+		Animation* AnimationPointer;
+		std::string AnimationName;
+		FrameIndex EndFrame;
 	};
-
 	class CharacterTool : public Common
 	{
 	private:
@@ -22,19 +22,16 @@ namespace SSB
 		std::string _scriptFileName;
 		std::string _actionFileName;
 
-		DXObject* _object = nullptr;
-		std::vector<ActionData> _actionList;
-		std::vector<ActionData>::iterator _selectedActionDataPointer;
+		DXObject* _object;
+		Model* _model;
+		std::map<MaterialIndex, Material*> _materials;
+		std::map<MeshIndex, MeshInterface*> _meshes;
+		std::map<AnimationName, Animation*> _animations;
 
-		std::string _actionName;
-		unsigned int _lastFrame;
+		Animation* _currentAnimation;
 
 	public:
 		const std::string kNewActionName = "NewAction";
-
-	private:
-		std::vector<ActionData>::iterator GetIterator(std::string actionName);
-		void Reload();
 
 	public:
 		void Export();
@@ -44,16 +41,12 @@ namespace SSB
 		void RegisterObjectFileName(std::string fileName);
 		void RegisterScriptFileName(std::string fileName);
 		void RegisterActionFileName(std::string fileName);
-		void RegisterActionName(std::string actionName);
-		void RegisterEndFrame(unsigned int frame);
 		void AddAction(std::string actionFileName);
 		void RemoveAction(std::string actionName);
 		void SelectCurrentAction(std::string actionName);
 		void CutAnimataion(std::string actionName, unsigned int lastFrame);
 		void ChangeSelectedActionData(std::string actionName, unsigned int lastFrame);
 		std::vector<ActionData> GetActionList();
-		//void ChangeActionName(std::string actionName);
-		//void ChangeEndFrame(int frame);
 		DXObject* GetTargetObject();
 
 	public:

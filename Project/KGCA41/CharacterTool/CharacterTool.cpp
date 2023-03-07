@@ -31,9 +31,9 @@ namespace SSB
 		}
 		{
 			auto ret = SplitPath(mtw(_scriptFileName));
-			if (ret[3].empty() || ret[3] != L".FBXScript")
+			if (ret[3].empty() || ret[3] != L".Script")
 			{
-				_scriptFileName = wtm(ret[2]) + ".FBXScript";
+				_scriptFileName = wtm(ret[2]) + ".Script";
 			}
 		}
 
@@ -293,38 +293,28 @@ namespace SSB
 
 		_actionList = ret;
 
-		Reload();
-
 		SelectCurrentAction(actionName);
 	}
 	void CharacterTool::ChangeSelectedActionData(std::string actionName, unsigned int lastFrame)
 	{
-		if (_selectedActionDataPointer != _actionList.end())
+		if (_currentAnimation != nullptr)
 		{
+			_animations.erase(_animations.find(_currentAnimation->));
 			_selectedActionDataPointer->ActionName = actionName;
 			_selectedActionDataPointer->EndFrame = lastFrame;
-
-			Reload();
-
-			SelectCurrentAction(actionName);
 		}
-	}
-	void CharacterTool::Reload()
-	{
-		const std::string tmpScriptFileName = "TempScript.FBXScript";
-
-		_scriptFileName = tmpScriptFileName;
-		Export();
-
-		_actionList.clear();
-		Import();
-
-		std::string path = wtm(kFBXScriptPath) + tmpScriptFileName;
-		int ret = remove(path.c_str());
 	}
 	std::vector<ActionData> CharacterTool::GetActionList()
 	{
-		return _actionList;
+		std::vector<ActionData> ret;
+		for (auto action : _animations)
+		{
+			ActionData data;
+			data.AnimationName = action.first;
+			data.EndFrame = action.second.;
+			ret.push_back(data);
+		}
+		return ret;
 	}
 	DXObject* CharacterTool::GetTargetObject()
 	{
@@ -332,11 +322,37 @@ namespace SSB
 	}
 	bool CharacterTool::Init()
 	{
+		if (_model != nullptr)
+		{
+			_model->Init();
+		}
+
+		for (auto material : _materials)
+		{
+			material.second->Release();
+			delete material.second;
+		}
+		_materials.clear();
+
+		for (auto mesh : _meshes)
+		{
+			mesh.second->Release();
+			delete mesh.second;
+		}
+		_meshes.clear();
+
+		_currentAnimation = nullptr;
+		for (auto animation : _animations)
+		{
+			animation.second->Release();
+			delete animation.second;
+		}
+		_animations.clear();
+
 		_objectFileName.clear();
 		_scriptFileName.clear();
 		_actionFileName.clear();
 
-		_actionList.clear();
 		if (_object != nullptr)
 		{
 			_object->Release();;

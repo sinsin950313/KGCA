@@ -1,5 +1,4 @@
 #include "Model.h"
-#include "HCCalculator.h"
 #include "DXWindow.h"
 #include "ShaderManager.h"
 #include "Mesh.hpp"
@@ -74,6 +73,7 @@ namespace SSB
 	}
 	Model::operator OBBData()
 	{
+		// Not OBB - This is AABB
 		Vector3 tmp = _maxVertex - _minVertex;
 		return OBBData{
 			Vector3(), Matrix33(), Vector3(),

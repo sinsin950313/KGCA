@@ -329,7 +329,7 @@ namespace SSB
 	}
 	HMatrix44 ModelViewCamera::GetViewMatrix()
 	{
-		HMatrix44 targetMatrix(Matrix33(), _target->GetMatrix().GetRow(3));
+		HMatrix44 targetMatrix(Matrix33(), _target->GetPosition());
 		return targetMatrix.Inverse() * _matrix.Inverse();
 	}
 	bool ModelViewCamera::Init()

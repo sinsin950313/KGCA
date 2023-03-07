@@ -154,15 +154,15 @@ namespace SSB
 
 	bool DXObject::Render()
 	{
-		if (g_dxWindow->GetMainCamera()->IsRender(this))
+		//if (g_dxWindow->GetMainCamera()->IsRender(this))
 		{
 			UpdateObjectTransformBuffer();
 			g_dxWindow->AddDrawable(this);
 		}
-		else
-		{
-			//OutputDebugString(L"Invisible\n");
-		}
+		//else
+		//{
+		//	//OutputDebugString(L"Invisible\n");
+		//}
 
 		for (auto child : _childObjectList)
 		{

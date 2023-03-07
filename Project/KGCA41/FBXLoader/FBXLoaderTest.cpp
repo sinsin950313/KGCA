@@ -271,6 +271,7 @@ bool SSB::FBXLoaderTest::Frame()
 
 	for (auto object : _objectList)
 	{
+		object->Rotate(0, 0.001f);
 		object->Frame();
 	}
 

@@ -78,5 +78,14 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
+
+	private:
+		std::string _actionName;
+		int _endFrame;
+
+	public:
+		bool HasAnimation();
+		std::string GetDefaultActionName();
+		int GetEndFrame();
 	};
 }

@@ -47,7 +47,7 @@ namespace SSB
 		//void LookAt(DXObject* target);
 		//// Wait for Quaternion
 		////void LookAt(float yaw = 0.0f, float pitch = 0.0f, float roll = 0.0f);
-		//void SetPosition(Vector3 position);
+		void SetPosition(Vector3 position);
 		HMatrix44 GetMatrix() { return _matrix; }
 		bool IsRender(DXObject* object);
 		ECollideState GetCollideState(OBBData data);
@@ -82,12 +82,15 @@ namespace SSB
 		DXObject _vTarget;
 		DXObject* _target;
 
+		float _rotXTotal = 0;
+		float _rotYTotal = 0;
+
 	public:
 		ModelViewCamera();
 
 	public:
 		//void Move(float deltaZ, float deltaX);
-		void Rotate(float yaw, float pitch = 0.0f);
+		//void Rotate(float yaw, float pitch = 0.0f);
 		void SetTarget(DXObject* target);
 
 	public:

@@ -16,6 +16,9 @@ namespace SSB
 	class CharacterTool : public Common
 	{
 	private:
+		const int kEmptyFrame = -1;
+
+	private:
 		FBXLoader* _loader = nullptr;
 
 		std::string _objectFileName;
@@ -28,7 +31,7 @@ namespace SSB
 		std::map<MeshIndex, MeshInterface*> _meshes;
 		std::map<AnimationName, Animation*> _animations;
 
-		Animation* _currentAnimation;
+		ActionData _currentAnimation;
 
 	public:
 		const std::string kNewActionName = "NewAction";
@@ -37,6 +40,10 @@ namespace SSB
 		void Export();
 		void Import();
 
+	private:
+		void ClearAnimationSelection();
+		bool IsSelected();
+
 	public:
 		void RegisterObjectFileName(std::string fileName);
 		void RegisterScriptFileName(std::string fileName);
@@ -44,8 +51,8 @@ namespace SSB
 		void AddAction(std::string actionFileName);
 		void RemoveAction(std::string actionName);
 		void SelectCurrentAction(std::string actionName);
-		void CutAnimataion(std::string actionName, unsigned int lastFrame);
-		void ChangeSelectedActionData(std::string actionName, unsigned int lastFrame);
+		void CutAnimataion(std::string newActionName, unsigned int lastFrame = -1);
+		void ChangeSelectedActionData(std::string actionName, unsigned int frameSize);
 		std::vector<ActionData> GetActionList();
 		DXObject* GetTargetObject();
 

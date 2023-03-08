@@ -9,12 +9,13 @@
 #include "VolumeType.h"
 #include "Serializeable.h"
 #include "Animation.h"
+#include "EditableInterface.h"
 
 namespace SSB
 {
 	typedef std::string AnimationName;
 
-	class Model : public Common, public Serializeable
+	class Model : public Common, public Serializeable, public EditableInterface<Model>
 	{
 	private:
 		static Animation DefaultAnimation;
@@ -59,5 +60,29 @@ namespace SSB
 		bool Release() override;
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
+		EditableObject<Model>* GetEditableObject() override;
+	};
+
+	class EditableModelObject : public EditableObject<Model>
+	{
+	private:
+		Vector3 _minVertex;
+		Vector3 _maxVertex;
+
+		std::map<MaterialIndex, Material*> _materials;
+		std::map<MeshIndex, MeshInterface*> _meshes;
+		std::map<AnimationName, Animation*> _animations;
+
+		PixelShader* _ps;
+
+	public:
+		EditableModelObject(std::map<MaterialIndex, Material*> materials, std::map<MeshIndex, MeshInterface*> meshes, std::map<AnimationName, Animation*> animations, PixelShader* ps);
+
+	public:
+		void RemoveAction(AnimationName actionName);
+		void AddAction(AnimationName actionName, Animation* animation);
+
+	public:
+		Model* GetResult() override;
 	};
 }

@@ -24,21 +24,21 @@ namespace SSB
 		_frames = 0;
 		_fps = 0.0f;
 
-        //{
-        //    MeshInterface* box = new Box;
-        //    box->Init();
+        {
+            MeshInterface* box = new Box;
+            box->Init();
 
-        //    Model* model = new Model;
-        //    model->Initialize_RegisterMesh(0, box);
-        //    model->Init();
-        //    model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PC.hlsl", "VS", "vs_5_0"));
-        //    model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"BoxMeshShader.hlsl", "PSMain", "ps_5_0"));
+            Model* model = new Model;
+            model->Initialize_RegisterMesh(0, box);
+            model->Init();
+            model->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PC.hlsl", "VS", "vs_5_0"));
+            model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"BoxMeshShader.hlsl", "PSMain", "ps_5_0"));
 
-        //    _object = new DXObject();
-        //    _object->Init();
-        //    _object->SetModel(model);
-        //    _object->Move({ 0, 5, 0 });
-        //}
+            _object = new DXObject();
+            _object->Init();
+            _object->SetModel(model);
+            _object->Move({ 0, 5, 0 });
+        }
 
         //{
         //    _objectBack = new DXObject();

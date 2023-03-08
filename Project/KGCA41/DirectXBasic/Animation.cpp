@@ -131,7 +131,25 @@ namespace SSB
 	{
 		_animationTimer.Release();
 
+		for (auto frameInfo : _data)
+		{
+			delete frameInfo;
+		}
+		_data.clear();
+
+		_currentFrameInfo = nullptr;
+
+		if (_animatedFrameBuffer)
+		{
+			_animatedFrameBuffer->Release();
+			_animatedFrameBuffer = nullptr;
+		}
+
 		return true;
+	}
+	FrameIndex Animation::GetFrameSize()
+	{
+		return _endFrame - _startFrame;
 	}
 	std::string Animation::Serialize(int tabCount)
 	{
@@ -196,6 +214,10 @@ namespace SSB
 		ret += "]\n";
 
 		return ret;
+	}
+	EditableObject<Animation>* Animation::GetEditableObject()
+	{
+		return new EditableAnimationObject(_boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount, _data, _startFrame, _endFrame);
 	}
 	void Animation::Deserialize(std::string& serialedString)
 	{
@@ -297,5 +319,47 @@ namespace SSB
 	const AnimationFrameInfo* DefaultAnimation::GetAnimationFrameInfo() const
 	{
 		return _frameInfo;
+	}
+	EditableAnimationObject::EditableAnimationObject(int boneMaxUnit, int meshMaxUnit, std::vector<AnimationFrameInfo*> frameData, FrameIndex start, FrameIndex end) : _boneAnimationUnitMaxCount(boneMaxUnit), _meshAnimationUnitMaxCount(meshMaxUnit), _data(frameData), _startFrame(start), _endFrame(end)
+	{
+	}
+	EditableAnimationObject::~EditableAnimationObject()
+	{
+		for (auto data : _data)
+		{
+			delete data;
+		}
+		_data.clear();
+	}
+	void EditableAnimationObject::EditFrame(FrameIndex start, FrameIndex end)
+	{
+		_startFrame = start;
+		_endFrame = end;
+	}
+	FrameIndex EditableAnimationObject::GetStartFrame()
+	{
+		return _startFrame;
+	}
+	FrameIndex EditableAnimationObject::GetEndFrame()
+	{
+		return _endFrame;
+	}
+	Animation* EditableAnimationObject::GetResult()
+	{
+		Animation* ret = new Animation;
+
+		std::vector<AnimationFrameInfo*> data;
+		for (int i = _startFrame; i < _endFrame; ++i)
+		{
+			AnimationFrameInfo* tmp = new AnimationFrameInfo;
+			memcpy(tmp, data[i], sizeof(AnimationFrameInfo));
+			data.push_back(tmp);
+		}
+		ret->Initialize_SetAnimationFrameData(data);
+		ret->Initialize_SetAnimationUnitMaximumCount(_boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
+		ret->Initialize_SetFrameInterval(0, _endFrame - _startFrame);
+		ret->Init();
+
+		return ret;
 	}
 }

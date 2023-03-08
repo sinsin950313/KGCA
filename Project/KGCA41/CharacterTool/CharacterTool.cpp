@@ -7,22 +7,11 @@
 #include "ShaderManager.h"
 #include "CommonUtility.h"
 #include "Common.h"
+#include "Animation.h"
+#include "EditableInterface.h"
 
 namespace SSB
 {
-	std::vector<ActionData>::iterator CharacterTool::GetIterator(std::string actionName)
-	{
-		auto iter = _actionList.begin();
-		while (iter != _actionList.end())
-		{
-			if (iter->ActionName == actionName)
-			{
-				return iter;
-			}
-			++iter;
-		}
-		return iter;
-	}
 	void CharacterTool::Export()
 	{
 		if (_scriptFileName.empty())
@@ -209,21 +198,25 @@ namespace SSB
 	{
 		_objectFileName = fileName;
 	}
+	void CharacterTool::ClearAnimationSelection()
+	{
+		{
+			_currentAnimation.AnimationPointer = nullptr;
+			_currentAnimation.AnimationName.clear();
+			_currentAnimation.EndFrame = kEmptyFrame;
+		}
+	}
 	void CharacterTool::RegisterScriptFileName(std::string fileName)
 	{
 		_scriptFileName = fileName;
 	}
+	bool CharacterTool::IsSelected()
+	{
+		return _currentAnimation.AnimationPointer != nullptr;
+	}
 	void CharacterTool::RegisterActionFileName(std::string fileName)
 	{
 		_actionFileName = fileName;
-	}
-	void CharacterTool::RegisterActionName(std::string actionName)
-	{
-		_actionName = actionName;
-	}
-	void CharacterTool::RegisterEndFrame(unsigned int frame)
-	{
-		_lastFrame = frame;
 	}
 	void CharacterTool::AddAction(std::string actionFileName)
 	{
@@ -256,52 +249,64 @@ namespace SSB
 		Reload();
 
 	}
-	//void CharacterTool::ChangeActionName(std::string actionName)
-	//{
-	//	_selectedActionDataPointer->ActionName = actionName;
-	//}
 	void CharacterTool::SelectCurrentAction(std::string actionName)
 	{
-		_selectedActionDataPointer = GetIterator(actionName);
-		if (_selectedActionDataPointer != _actionList.end())
+		ClearAnimationSelection();
+
+		if (_animations.find(actionName) != _animations.end())
 		{
-			_object->UpdateCurrentAnimation(_selectedActionDataPointer->ActionName);
+			_currentAnimation.AnimationName = actionName;
+			_currentAnimation.AnimationPointer = _animations.find(actionName)->second;
+			_currentAnimation.EndFrame = _currentAnimation.AnimationPointer->GetFrameSize();
 		}
 	}
-	void CharacterTool::CutAnimataion(std::string actionName, unsigned int lastFrame)
+	void CharacterTool::CutAnimataion(std::string newActionName, unsigned int lastFrame)
 	{
-		std::vector<ActionData> ret;
-		ActionData pivot = *_selectedActionDataPointer;
-		for (auto action : _actionList)
+		if (IsSelected())
 		{
-			if (action.ActionName == pivot.ActionName)
+			EditableAnimationObject* editableObject = static_cast<EditableAnimationObject*>(_currentAnimation.AnimationPointer->GetEditableObject());
+			delete _currentAnimation.AnimationPointer;
+			FrameIndex currentEndFrame = editableObject->GetEndFrame();
+
 			{
-				{
-					ActionData data{ action.ActionFileName, actionName, lastFrame };
-					ret.push_back(data);
-				}
-				{
-					ActionData data{ action.ActionFileName, kNewActionName, pivot.EndFrame - lastFrame };
-					ret.push_back(data);
-				}
+				editableObject->EditFrame(0, lastFrame);
+				Animation* before = editableObject->GetResult();
+				_animations.insert(std::make_pair(_currentAnimation.AnimationName, before));
 			}
-			else
+
 			{
-				ret.push_back(action);
+				editableObject->EditFrame(lastFrame, currentEndFrame);
+				Animation* after = editableObject->GetResult();
+				_animations.insert(std::make_pair(_currentAnimation.AnimationName, after));
 			}
 		}
-
-		_actionList = ret;
-
-		SelectCurrentAction(actionName);
 	}
-	void CharacterTool::ChangeSelectedActionData(std::string actionName, unsigned int lastFrame)
+	void CharacterTool::ChangeSelectedActionData(std::string actionName, unsigned int frameSize)
 	{
-		if (_currentAnimation != nullptr)
+		if (IsSelected())
 		{
-			_animations.erase(_animations.find(_currentAnimation->));
-			_selectedActionDataPointer->ActionName = actionName;
-			_selectedActionDataPointer->EndFrame = lastFrame;
+			if (!actionName.empty())
+			{
+				_animations.erase(_currentAnimation.AnimationName);
+				_animations.insert(std::make_pair(actionName, _currentAnimation.AnimationPointer));
+			}
+
+			if (frameSize != kEmptyFrame)
+			{
+				_animations.erase(_currentAnimation.AnimationName);
+
+				EditableAnimationObject* editableObject = static_cast<EditableAnimationObject*>(_currentAnimation.AnimationPointer->GetEditableObject());
+				editableObject->EditFrame(0, frameSize);
+				editableObject->GetResult();
+				delete _currentAnimation.AnimationPointer;
+
+				Animation* result = editableObject->GetResult();
+				_currentAnimation.AnimationPointer = result;
+				_animations.insert(std::make_pair(_currentAnimation.AnimationName, _currentAnimation.AnimationPointer));
+			}
+
+			_currentAnimation.AnimationName = actionName;
+			_currentAnimation.EndFrame = frameSize;
 		}
 	}
 	std::vector<ActionData> CharacterTool::GetActionList()
@@ -311,7 +316,7 @@ namespace SSB
 		{
 			ActionData data;
 			data.AnimationName = action.first;
-			data.EndFrame = action.second.;
+			data.EndFrame = action.second->GetFrameSize();
 			ret.push_back(data);
 		}
 		return ret;
@@ -341,7 +346,8 @@ namespace SSB
 		}
 		_meshes.clear();
 
-		_currentAnimation = nullptr;
+		ClearAnimationSelection();
+
 		for (auto animation : _animations)
 		{
 			animation.second->Release();

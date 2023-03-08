@@ -189,6 +189,7 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
     <ClInclude Include="DXStateManager.h" />
     <ClInclude Include="DXTextableInterface.h" />
     <ClInclude Include="DXWindow.h" />
+    <ClInclude Include="EditableInterface.h" />
     <ClInclude Include="FileIOObject.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="Map.h" />

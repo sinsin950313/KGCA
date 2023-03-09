@@ -305,7 +305,7 @@ namespace SSB
 	MeshInterface* Mesh_Vertex_PCNT_Skinning::Clone()
 	{
 		Mesh_Vertex_PCNT_Skinning* newMesh = static_cast<Mesh_Vertex_PCNT_Skinning*>(Mesh<Vertex_PCNT_Skinning>::Clone());
-		newMesh->_meshToBoneSpaceTransformDataStr = _meshToBoneSpaceTransformDataStr;
+		memcpy(&newMesh->_boneSpaceTransformData, &_boneSpaceTransformData, sizeof(MeshToBoneSpaceTransformData));
 		return newMesh;
 	}
 	Vertex_PCNT_Skinning Mesh_Vertex_PCNT_Skinning::GetDeserializedVertex(std::string str)

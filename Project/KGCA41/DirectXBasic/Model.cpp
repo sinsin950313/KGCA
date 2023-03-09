@@ -116,7 +116,10 @@ namespace SSB
 
 		_currentAnimation->Render();
 
-		_ps->Render();
+		if (_ps != nullptr)
+		{
+			_ps->Render();
+		}
 
 		for (auto material : _materials)
 		{

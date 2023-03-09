@@ -31,11 +31,6 @@ END_MESSAGE_MAP()
 
 // CCharacterToolWindowApp 생성
 
-SSB::CharacterTool* CCharacterToolWindowApp::GetTool()
-{
-	return _logic->GetTool();
-}
-
 SSB::CharacterToolMainLogic* CCharacterToolWindowApp::GetLogic()
 {
 	return _logic;
@@ -214,37 +209,7 @@ void CCharacterToolWindowApp::OnImport()
 	CString selectFileName;
 	if (FileDlg.DoModal() == IDOK)		// 저장, 취소를 누르기 전까지 Blocking
 	{
-		auto tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
-		tool->RegisterObjectFileName(std::string(CT2CA(FileDlg.GetFileName())));
-		tool->Import();
-
-		SSB::Model* model = new SSB::Model;
-
-		auto materials = tool->GetMaterials();
-		for (auto material : materials)
-		{
-			material.second->Init();
-			model->Initialize_RegisterMaterial(material.first, material.second);
-		}
-
-		auto meshes = tool->GetMeshes();
-		for (auto mesh : meshes)
-		{
-			mesh.second->Init();
-			model->Initialize_RegisterMesh(mesh.first, mesh.second);
-		}
-
-		auto animations = tool->GetActions();
-		for (auto animation : animations)
-		{
-			animation.second->Init();
-			model->Initialize_RegisterAnimation(animation.first, animation.second);
-		}
-
-		model->SetPixelShader(tool->GetPixelShader());
-		model->Init();
-
-		((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->SetModel(model);
+		((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->Import(std::string(CT2CA(FileDlg.GetFileName())));
 	}
 }
 
@@ -255,8 +220,6 @@ void CCharacterToolWindowApp::OnExport()
 	CString selectFileName;
 	if (FileDlg.DoModal() == IDOK)		// 저장, 취소를 누르기 전까지 Blocking
 	{
-		auto tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
-		tool->RegisterScriptFileName(std::string(CT2CA(FileDlg.GetFileName())));
-		tool->Export();
+		((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->Export(std::string(CT2CA(FileDlg.GetFileName())));
 	}
 }

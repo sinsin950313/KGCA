@@ -21,7 +21,6 @@ private:
 	SSB::CharacterToolMainLogic* _logic;
 
 public:
-	SSB::CharacterTool* GetTool();
 	SSB::CharacterToolMainLogic* GetLogic();
 
 public:

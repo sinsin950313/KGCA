@@ -41,16 +41,12 @@ private:
 	CListCtrl _actionListControl;
 	CString _selectedActionName;
 
-public:
-	afx_msg void OnBnClickedFramecutbutton();
-	afx_msg void OnBnClickedFramechangebutton();
-	afx_msg void OnBnClickedImportbutton();
-	afx_msg void OnBnClickedExportbutton();
-
 private:
 	void UpdateActionList();
 
 public:
+	afx_msg void OnBnClickedFramecutbutton();
+	afx_msg void OnBnClickedFramechangebutton();
 	afx_msg void OnLvnItemchangedActionlistcontrol(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedActionaddbutton();
 	afx_msg void OnBnClickedActionremovebutton();

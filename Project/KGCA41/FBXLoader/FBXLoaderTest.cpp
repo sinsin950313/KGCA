@@ -186,24 +186,24 @@ bool SSB::FBXLoaderTest::Init()
 
 	//Script Animation with Single FBX Testing
 	{
-		//_loader->Init();
-		//_loader->SetFileName("Swat.fbx");
+		_loader->Init();
+		_loader->SetFileName("Swat.fbx");
 
-		//Model* model = _loader->LoadModel();
-		//model->Init();
+		Model* model = _loader->LoadModel();
+		model->Init();
 
-		//_loader->Init();
-		//_loader->SetFileName("Swat@strafe.fbx");
-		//std::map<std::string, Animation*> animations = _loader->LoadAnimation();
-		//for (auto animation : animations)
-		//{
-		//	model->Initialize_RegisterAnimation(animation.first, animation.second);
-		//}
-		//model->SetCurrentAnimation("mixamo.com");
+		_loader->Init();
+		_loader->SetFileName("Swat@strafe.fbx");
+		std::map<std::string, Animation*> animations = _loader->LoadAnimation();
+		for (auto animation : animations)
+		{
+			model->Initialize_RegisterAnimation(animation.first, animation.second);
+		}
+		model->SetCurrentAnimation("mixamo.com");
 
 		DXObject* object = new DXObject;
 		object->Init();
-		//object->SetModel(model);
+		object->SetModel(model);
 
 		_objectList.push_back(object);
 
@@ -213,15 +213,15 @@ bool SSB::FBXLoaderTest::Init()
 		//	io.Write("ModelWriteTest_Swat", str);
 		//}
 
-		{
-			ObjectScriptIO io;
-			std::string str = io.Read("ModelWriteTest_Swat");
-			Model* readedModel = new Model;
-			readedModel->Deserialize(str);
-			readedModel->Init();
-			//readedModel->SetCurrentAnimation("mixamo.com");
-			object->SetModel(readedModel);
-		}
+		//{
+		//	ObjectScriptIO io;
+		//	std::string str = io.Read("ModelWriteTest_Swat");
+		//	Model* readedModel = new Model;
+		//	readedModel->Deserialize(str);
+		//	readedModel->Init();
+		//	//readedModel->SetCurrentAnimation("mixamo.com");
+		//	object->SetModel(readedModel);
+		//}
 	}
 
 	//{

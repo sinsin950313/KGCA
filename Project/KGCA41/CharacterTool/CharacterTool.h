@@ -56,6 +56,7 @@ namespace SSB
 		std::map<AnimationName, Animation*> GetActions();
 		PixelShader* GetPixelShader();
 		std::vector<ActionData> GetActionList();
+		DXObject* GetPreviewObject();
 
 	public:
 		bool Init() override;

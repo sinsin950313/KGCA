@@ -196,7 +196,7 @@ namespace SSB
 			{
 				editableObject->EditFrame(lastFrame, currentEndFrame);
 				Animation* after = editableObject->GetResult();
-				_animations.insert(std::make_pair(_selectedAnimation.AnimationName, after));
+				_animations.insert(std::make_pair(newActionName, after));
 			}
 		}
 	}
@@ -270,6 +270,44 @@ namespace SSB
 			data.EndFrame = action.second->GetFrameSize();
 			ret.push_back(data);
 		}
+		return ret;
+	}
+	DXObject* CharacterTool::GetPreviewObject()
+	{
+		DXObject* ret = new DXObject;
+		ret->Init();
+
+		Model* model = new Model;
+		for (auto material : _materials)
+		{
+			Material* copy = material.second->Clone();
+			copy->Init();
+			model->Initialize_RegisterMaterial(material.first, copy);
+		}
+
+		for (auto mesh : _meshes)
+		{
+			MeshInterface* copy = mesh.second->Clone();
+			copy->Init();
+			model->Initialize_RegisterMesh(mesh.first, copy);
+		}
+
+		for (auto animation : _animations)
+		{
+			Animation* copy = animation.second->Clone();
+			copy->Init();
+			model->Initialize_RegisterAnimation(animation.first, copy);
+		}
+
+		model->Init();
+
+		model->SetPixelShader(_ps);
+		ret->SetModel(model);
+		if (IsSelected())
+		{
+			model->SetCurrentAnimation(_selectedAnimation.AnimationName);
+		}
+
 		return ret;
 	}
 	bool CharacterTool::Init()

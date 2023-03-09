@@ -20,8 +20,6 @@ namespace SSB
 		//std::string _currentActionName;
 		//std::string _hopeActionName = "Idle";
 
-		Model* _model = nullptr;
-
 	public:
 		CharacterToolMainLogic(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
 		CharacterToolMainLogic(HWND hwnd);
@@ -34,11 +32,17 @@ namespace SSB
 	protected:
 		bool PreRender() override;
 
+	private:
+		void GetPreview();
+
 	public:
-		CharacterTool* GetTool();
-		//void ChangePIEState();
+		void Import(std::string fileName);
+		void Export(std::string fileName);
+		void AddAnimation(std::string animationFileName);
+		void RemoveAnimation(std::string actionName);
+		void CutAnimation(std::string newActionName, FrameIndex pivotFrame);
+		void ChangeAnimationData(std::string newActionName, FrameIndex pivotFrame);
+		std::vector<SSB::ActionData> GetActionList();
 		void SetCurrentAnimation(AnimationName name);
-		void ClearModel();
-		void UpdateAnimation();
 	};
 }

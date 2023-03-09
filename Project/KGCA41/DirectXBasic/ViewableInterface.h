@@ -5,7 +5,7 @@ namespace SSB
 	template<typename Class>
 	class ViewerObject
 	{
-		// What should ViewObject to do??
+		virtual Class Clone() = 0;
 	};
 
 	template<typename Class>

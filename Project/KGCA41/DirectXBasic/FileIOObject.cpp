@@ -12,7 +12,12 @@ namespace SSB
 	{
 		std::string ret;
 
-		FILE* fp = fopen((wtm(kObjectScriptPath) + fileName + ext).c_str(), "r");
+		auto path = SplitPath(mtw(fileName));
+		if (path[3].empty())
+		{
+			fileName += ext;
+		}
+		FILE* fp = fopen((wtm(kObjectScriptPath) + fileName).c_str(), "r");
 
 		fseek(fp, 0, SEEK_END);
 		int fileSize = ftell(fp);

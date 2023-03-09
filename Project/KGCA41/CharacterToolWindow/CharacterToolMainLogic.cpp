@@ -5,6 +5,7 @@
 #include "ShaderManager.h"
 #include "DXStateManager.h"
 #include "HCCalculator.h"
+#include "CommonUtility.h"
 
 namespace SSB
 {
@@ -27,9 +28,6 @@ namespace SSB
 
 		//_pieCamera = new ModelViewCamera();
 
-		_object = new DXObject;
-		_object->Init();
-
   //      _terrain = new Map();
   //      SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"KGCABK.bmp", L"Background", { 0, 0, 1024, 768 });
   //      _terrain->SetSprite(SpriteLoader::GetInstance().Load(L"KGCABK.bmp", L"Background", DXStateManager::kDefaultWrapSample));
@@ -47,7 +45,7 @@ namespace SSB
 		DXWindow::Frame();
 		InputManager::GetInstance().Frame();
 
-		if(_object != nullptr)
+		if (_object != nullptr)
 		{
 			_object->Frame();
 		}
@@ -175,6 +173,13 @@ namespace SSB
 		_toolCamera->Release();
 		//_pieCamera->Release();
 
+		if (_object != nullptr)
+		{
+			_object->Release();
+			delete _object;
+			_object = nullptr;
+		}
+
 		DXWindow::Release();
 		return true;
 	}
@@ -190,56 +195,78 @@ namespace SSB
 		//	_terrain->Render();
 		//}
 
-		if(_model != nullptr)
+		if(_object != nullptr)
 		{
 			_object->Render();
 		}
 
 		return true;
 	}
-	CharacterTool* SSB::CharacterToolMainLogic::GetTool()
+	void SSB::CharacterToolMainLogic::GetPreview()
 	{
-		return &_tool;
+		if (_object != nullptr)
+		{
+			delete _object;
+			_object = nullptr;
+		}
+		_object = _tool.GetPreviewObject();
 	}
-	//void SSB::CharacterToolMainLogic::ChangePIEState()
-	//{
-	//	_playInEditor = !_playInEditor;
-	//	_isPIEChanged = !_isPIEChanged;
-	//}
+	void SSB::CharacterToolMainLogic::Import(std::string fileName)
+	{
+		auto split = SSB::SplitPath(mtw(fileName));
+		if ((!split[3].empty()) && strcmp(wtm(split[3]).c_str(), ".Script") != 0)
+		{
+			_tool.RegisterObjectFileName(fileName);
+		}
+		else
+		{
+			_tool.RegisterScriptFileName(fileName);
+		}
+		_tool.Import();
+		GetPreview();
+	}
+	void SSB::CharacterToolMainLogic::Export(std::string fileName)
+	{
+		_tool.RegisterScriptFileName(fileName);
+		_tool.Export();
+	}
+	void SSB::CharacterToolMainLogic::AddAnimation(std::string animationFileName)
+	{
+		_tool.AddAction(animationFileName);
+		GetPreview();
+	}
+	void SSB::CharacterToolMainLogic::RemoveAnimation(std::string actionName)
+	{
+		_tool.RemoveAction(actionName);
+		GetPreview();
+	}
+	void SSB::CharacterToolMainLogic::CutAnimation(std::string newActionName, FrameIndex pivotFrame)
+	{
+		_tool.CutSelectedAnimataion(newActionName, pivotFrame);
+		GetPreview();
+	}
+	void SSB::CharacterToolMainLogic::ChangeAnimationData(std::string newActionName, FrameIndex pivotFrame)
+	{
+		_tool.ChangeSelectedAnimationData(newActionName, pivotFrame);
+		GetPreview();
+	}
+	std::vector<SSB::ActionData> SSB::CharacterToolMainLogic::GetActionList()
+	{
+		std::vector<SSB::ActionData> ret;
+		auto actions = _tool.GetActions();
+		for (auto action : actions)
+		{
+			ActionData data;
+			data.AnimationName = action.first;
+			data.AnimationPointer = nullptr;
+			data.EndFrame = action.second->GetFrameSize();
+			ret.push_back(data);
+		}
+		return ret;
+	}
 	void SSB::CharacterToolMainLogic::SetCurrentAnimation(AnimationName name)
 	{
-		_model->SetCurrentAnimation(name);
-	}
-	void SSB::CharacterToolMainLogic::ClearModel()
-	{
-		_object->SetModel(nullptr);
-	}
-	void SSB::CharacterToolMainLogic::UpdateAnimation()
-	{
-		auto editableModel = static_cast<EditableModelObject*>(_model->GetEditableObject());
-		auto materials = editableModel->GetMaterials();
-		auto meshes = editableModel->GetMeshes();
-		auto ps = editableModel->GetPixelShader();
-
-		Model* model = new Model;
-
-		for (auto material : materials)
-		{
-			model->Initialize_RegisterMaterial(material.first, material.second);
-		}
-
-		for (auto mesh : meshes)
-		{
-			model->Initialize_RegisterMesh(mesh.first, mesh.second);
-		}
-		model->SetPixelShader(ps);
-
-		auto animations = _tool.GetActions();
-		for (auto animation : animations)
-		{
-			model->Initialize_RegisterAnimation(animation.first, animation.second);
-		}
-
-		_object->SetModel(model);
+		_tool.SelectCurrentAction(name);
+		GetPreview();
 	}
 }

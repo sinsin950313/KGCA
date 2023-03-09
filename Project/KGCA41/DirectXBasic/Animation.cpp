@@ -217,7 +217,32 @@ namespace SSB
 	}
 	EditableObject<Animation>* Animation::GetEditableObject()
 	{
-		return new EditableAnimationObject(_boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount, _data, _startFrame, _endFrame);
+		std::vector<AnimationFrameInfo*> data;
+		for (auto frameInfo : _data)
+		{
+			AnimationFrameInfo* tmp = new AnimationFrameInfo;
+			memcpy(tmp, frameInfo, sizeof(AnimationFrameInfo));
+			data.push_back(tmp);
+		}
+		return new EditableAnimationObject(_boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount, data, _startFrame, _endFrame);
+	}
+	Animation* Animation::Clone()
+	{
+		Animation* ret = new Animation;
+
+		std::vector<AnimationFrameInfo*> data;
+		for (auto frameInfo : _data)
+		{
+			AnimationFrameInfo* info = new AnimationFrameInfo;
+			memcpy(info, frameInfo, sizeof(AnimationFrameInfo));
+			data.push_back(info);
+		}
+		ret->Initialize_SetAnimationFrameData(data);
+		ret->Initialize_SetAnimationUnitMaximumCount(_boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
+		ret->Initialize_SetFrameInterval(_startFrame, _endFrame);
+		ret->Init();
+
+		return ret;
 	}
 	void Animation::Deserialize(std::string& serialedString)
 	{
@@ -352,7 +377,7 @@ namespace SSB
 		for (int i = _startFrame; i < _endFrame; ++i)
 		{
 			AnimationFrameInfo* tmp = new AnimationFrameInfo;
-			memcpy(tmp, data[i], sizeof(AnimationFrameInfo));
+			memcpy(tmp, _data[i], sizeof(AnimationFrameInfo));
 			data.push_back(tmp);
 		}
 		ret->Initialize_SetAnimationFrameData(data);

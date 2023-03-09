@@ -36,5 +36,8 @@ namespace SSB
 		bool Release() override;
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
+
+	public:
+		Material* Clone();
 	};
 }

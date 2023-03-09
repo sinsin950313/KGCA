@@ -4,16 +4,16 @@
 
 // CharacterToolFormView 폼 보기
 
-class CharacterToolFormView : public CFormView
+class CharacterToolAnimationFormView : public CFormView
 {
-	DECLARE_DYNCREATE(CharacterToolFormView)
+	DECLARE_DYNCREATE(CharacterToolAnimationFormView)
 
 public:
-	static CharacterToolFormView* CreateFormView(CWnd* parent);
+	static CharacterToolAnimationFormView* CreateFormView(CWnd* parent);
 
 protected:
-	CharacterToolFormView();           // 동적 만들기에 사용되는 protected 생성자입니다.
-	virtual ~CharacterToolFormView();
+	CharacterToolAnimationFormView();           // 동적 만들기에 사용되는 protected 생성자입니다.
+	virtual ~CharacterToolAnimationFormView();
 
 public:
 #ifdef AFX_DESIGN_TIME
@@ -35,17 +35,13 @@ public:
 
 private:
 	CEdit _objectFileName;
-	CEdit _actionFileName;
 	CEdit _scriptFileName;
 	CEdit _actionName;
-	CEdit _lastFrame;
+	CEdit _pivotFrame;
 	CListCtrl _actionListControl;
 	CString _selectedActionName;
 
 public:
-	afx_msg void OnBnClickedObjectfilenamebutton();
-	afx_msg void OnBnClickedActionfilenamebutton();
-	afx_msg void OnBnClickedScriptfilenamebutton();
 	afx_msg void OnBnClickedFramecutbutton();
 	afx_msg void OnBnClickedFramechangebutton();
 	afx_msg void OnBnClickedImportbutton();
@@ -53,6 +49,7 @@ public:
 
 private:
 	void UpdateActionList();
+
 public:
 	afx_msg void OnLvnItemchangedActionlistcontrol(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedActionaddbutton();

@@ -18,7 +18,6 @@ namespace SSB
 		_tool.RegisterScriptFileName("CharacterToolTest.FBXScript");
 		_tool.Import();
 
-		_tool.RegisterActionFileName("Swat@strafe.fbx");
 		_tool.Import();
 
 		_tool.SelectCurrentAction(_tool.kNewActionName);

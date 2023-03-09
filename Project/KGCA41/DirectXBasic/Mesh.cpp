@@ -29,6 +29,11 @@ namespace SSB
 		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PC.hlsl", "VS", "vs_5_0"));
 	}
 
+	MeshInterface* Mesh_Vertex_PC::ClonedObject()
+	{
+		return new Mesh_Vertex_PC;
+	}
+
 	std::string Mesh_Vertex_PCNT::GetVertexType()
 	{
 		return Vertex_PCNT_Keyword;
@@ -54,6 +59,11 @@ namespace SSB
 	void Mesh_Vertex_PCNT::InitialVertexShader()
 	{
 		SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader_PCNT.hlsl", "VS", "vs_5_0"));
+	}
+
+	MeshInterface* Mesh_Vertex_PCNT::ClonedObject()
+	{
+		return new Mesh_Vertex_PCNT;
 	}
 
 	bool Mesh_Vertex_PCNT_Animatable::CreateMeshBuffer()
@@ -162,12 +172,24 @@ namespace SSB
 		Mesh<Vertex_PCNT>::Deserialize(serialedString);
 	}
 
+	MeshInterface* Mesh_Vertex_PCNT_Animatable::Clone()
+	{
+		Mesh_Vertex_PCNT_Animatable* newMesh = static_cast<Mesh_Vertex_PCNT_Animatable*>(Mesh<Vertex_PCNT>::Clone());
+		newMesh->_meshData = _meshData;
+		return newMesh;
+	}
+
 	Vertex_PCNT Mesh_Vertex_PCNT_Animatable::GetDeserializedVertex(std::string str)
 	{
 		str = GetUnitElement(str, 0).str;
 		Vertex_PCNT vertex;
 		Serializeable::Deserialize(str, vertex);
 		return vertex;
+	}
+
+	MeshInterface* Mesh_Vertex_PCNT_Animatable::ClonedObject()
+	{
+		return new Mesh_Vertex_PCNT_Animatable;
 	}
 
 	void Mesh_Vertex_PCNT_Animatable::InitialVertexShader()
@@ -280,12 +302,22 @@ namespace SSB
 		serialedString = std::string(serialedString.begin() + offset, serialedString.end());
 		Mesh<Vertex_PCNT_Skinning>::Deserialize(serialedString);
 	}
+	MeshInterface* Mesh_Vertex_PCNT_Skinning::Clone()
+	{
+		Mesh_Vertex_PCNT_Skinning* newMesh = static_cast<Mesh_Vertex_PCNT_Skinning*>(Mesh<Vertex_PCNT_Skinning>::Clone());
+		newMesh->_meshToBoneSpaceTransformDataStr = _meshToBoneSpaceTransformDataStr;
+		return newMesh;
+	}
 	Vertex_PCNT_Skinning Mesh_Vertex_PCNT_Skinning::GetDeserializedVertex(std::string str)
 	{
 		str = GetUnitElement(str, 0).str;
 		Vertex_PCNT_Skinning vertex;
 		Serializeable::Deserialize(str, vertex);
 		return vertex;
+	}
+	MeshInterface* Mesh_Vertex_PCNT_Skinning::ClonedObject()
+	{
+		return new Mesh_Vertex_PCNT_Skinning;
 	}
 	bool Mesh_Vertex_PCNT_Skinning::Release()
 	{
@@ -330,6 +362,11 @@ namespace SSB
 		Vertex_PCNTs vertex;
 		Serializeable::Deserialize(str, vertex);
 		return vertex;
+	}
+
+	MeshInterface* Mesh_Vertex_PCNTs::ClonedObject()
+	{
+		return new Mesh_Vertex_PCNTs;
 	}
 
 	bool Mesh_Vertex_PCNTs_Animatable::CreateMeshBuffer()
@@ -445,12 +482,24 @@ namespace SSB
 		Mesh<Vertex_PCNTs>::Deserialize(serialedString);
 	}
 
+	MeshInterface* Mesh_Vertex_PCNTs_Animatable::Clone()
+	{
+		Mesh_Vertex_PCNTs_Animatable* newMesh = static_cast<Mesh_Vertex_PCNTs_Animatable*>(Mesh<Vertex_PCNTs>::Clone());
+		newMesh->_meshData = _meshData;
+		return newMesh;
+	}
+
 	Vertex_PCNTs Mesh_Vertex_PCNTs_Animatable::GetDeserializedVertex(std::string str)
 	{
 		str = GetUnitElement(str, 0).str;
 		Vertex_PCNTs vertex;
 		Serializeable::Deserialize(str, vertex);
 		return vertex;
+	}
+
+	MeshInterface* Mesh_Vertex_PCNTs_Animatable::ClonedObject()
+	{
+		return new Mesh_Vertex_PCNTs_Animatable;
 	}
 
 	std::string Mesh_Vertex_PCNTs_Skinning::GetVertexType()
@@ -575,12 +624,24 @@ namespace SSB
 		Mesh<Vertex_PCNTs_Skinning>::Deserialize(serialedString);
 	}
 
+	MeshInterface* Mesh_Vertex_PCNTs_Skinning::Clone()
+	{
+		Mesh_Vertex_PCNTs_Skinning* newMesh = static_cast<Mesh_Vertex_PCNTs_Skinning*>(Mesh<Vertex_PCNTs_Skinning>::Clone());
+		newMesh->_boneSpaceTransformData = _boneSpaceTransformData;
+		return newMesh;
+	}
+
 	Vertex_PCNTs_Skinning Mesh_Vertex_PCNTs_Skinning::GetDeserializedVertex(std::string str)
 	{
 		str = GetUnitElement(str, 0).str;
 		Vertex_PCNTs_Skinning vertex;
 		Serializeable::Deserialize(str, vertex);
 		return vertex;
+	}
+
+	MeshInterface* Mesh_Vertex_PCNTs_Skinning::ClonedObject()
+	{
+		return new Mesh_Vertex_PCNTs_Skinning;
 	}
 
 	Box::Box(float width, float height, float depth)

@@ -113,4 +113,17 @@ namespace SSB
 			_textureArray[i] = TextureLoader::GetInstance().Load(mtw(GetUnitAtomic(data.str, 0).str), DXStateManager::kDefaultWrapSample);
 		}
 	}
+	Material* Material::Clone()
+	{
+		Material* ret = new Material;
+		ret->Initialize_SetMaterialIndex(_materialIndex);
+
+		for (int i = 0; i < kTextureTypeCount; ++i)
+		{
+			ret->Initialize_SetTexture(i, _textureArray[i]);
+		}
+		ret->Init();
+
+		return ret;
+	}
 }

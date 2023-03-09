@@ -9,47 +9,41 @@
 
 // CharacterToolFormView
 
-IMPLEMENT_DYNCREATE(CharacterToolFormView, CFormView)
+IMPLEMENT_DYNCREATE(CharacterToolAnimationFormView, CFormView)
 
-CharacterToolFormView::CharacterToolFormView()
+CharacterToolAnimationFormView::CharacterToolAnimationFormView()
 	: CFormView(IDD_CharacterToolFormView)
 {
 }
 
-CharacterToolFormView::~CharacterToolFormView()
+CharacterToolAnimationFormView::~CharacterToolAnimationFormView()
 {
 }
 
-void CharacterToolFormView::DoDataExchange(CDataExchange* pDX)
+void CharacterToolAnimationFormView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_ObjectFileNameEditBox, _objectFileName);
-	DDX_Control(pDX, IDC_ActionFileNameEditBox, _actionFileName);
-	DDX_Control(pDX, IDC_ScriptFileNameEditBox, _scriptFileName);
 	DDX_Control(pDX, IDC_ActionNameEditBox, _actionName);
-	DDX_Control(pDX, IDC_LastFrameEditBox2, _lastFrame);
+	DDX_Control(pDX, IDC_LastFrameEditBox2, _pivotFrame);
 	DDX_Control(pDX, IDC_ActionListControl, _actionListControl);
 }
 
-BEGIN_MESSAGE_MAP(CharacterToolFormView, CFormView)
+BEGIN_MESSAGE_MAP(CharacterToolAnimationFormView, CFormView)
 //	ON_WM_CREATE()
-ON_BN_CLICKED(IDC_ObjectFileNameButton, &CharacterToolFormView::OnBnClickedObjectfilenamebutton)
-ON_BN_CLICKED(IDC_ActionFileNameButton, &CharacterToolFormView::OnBnClickedActionfilenamebutton)
-ON_BN_CLICKED(IDC_ScriptFileNameButton, &CharacterToolFormView::OnBnClickedScriptfilenamebutton)
-ON_BN_CLICKED(IDC_FrameCutButton, &CharacterToolFormView::OnBnClickedFramecutbutton)
-ON_BN_CLICKED(IDC_FrameChangeButton, &CharacterToolFormView::OnBnClickedFramechangebutton)
-ON_BN_CLICKED(IDC_ImportButton, &CharacterToolFormView::OnBnClickedImportbutton)
-ON_BN_CLICKED(IDC_ExportButton, &CharacterToolFormView::OnBnClickedExportbutton)
-ON_NOTIFY(LVN_ITEMCHANGED, IDC_ActionListControl, &CharacterToolFormView::OnLvnItemchangedActionlistcontrol)
-ON_BN_CLICKED(IDC_ActionAddButton, &CharacterToolFormView::OnBnClickedActionaddbutton)
-ON_BN_CLICKED(IDC_ActionRemoveButton, &CharacterToolFormView::OnBnClickedActionremovebutton)
-ON_BN_CLICKED(IDC_PIEButton, &CharacterToolFormView::OnBnClickedPiebutton)
+ON_BN_CLICKED(IDC_FrameCutButton, &CharacterToolAnimationFormView::OnBnClickedFramecutbutton)
+ON_BN_CLICKED(IDC_FrameChangeButton, &CharacterToolAnimationFormView::OnBnClickedFramechangebutton)
+ON_BN_CLICKED(IDC_ImportButton, &CharacterToolAnimationFormView::OnBnClickedImportbutton)
+ON_BN_CLICKED(IDC_ExportButton, &CharacterToolAnimationFormView::OnBnClickedExportbutton)
+ON_NOTIFY(LVN_ITEMCHANGED, IDC_ActionListControl, &CharacterToolAnimationFormView::OnLvnItemchangedActionlistcontrol)
+ON_BN_CLICKED(IDC_ActionAddButton, &CharacterToolAnimationFormView::OnBnClickedActionaddbutton)
+ON_BN_CLICKED(IDC_ActionRemoveButton, &CharacterToolAnimationFormView::OnBnClickedActionremovebutton)
+ON_BN_CLICKED(IDC_PIEButton, &CharacterToolAnimationFormView::OnBnClickedPiebutton)
 END_MESSAGE_MAP()
 
 
-CharacterToolFormView* CharacterToolFormView::CreateFormView(CWnd* parent)
+CharacterToolAnimationFormView* CharacterToolAnimationFormView::CreateFormView(CWnd* parent)
 {
-	CharacterToolFormView* ret = new CharacterToolFormView;
+	CharacterToolAnimationFormView* ret = new CharacterToolAnimationFormView;
 	ret->Create(NULL, NULL, WS_CHILD | WS_VISIBLE, CRect(0, 0, 300, 300), parent, 0, NULL);
 	return ret;
 }
@@ -57,13 +51,13 @@ CharacterToolFormView* CharacterToolFormView::CreateFormView(CWnd* parent)
 // CharacterToolFormView 진단
 
 #ifdef _DEBUG
-void CharacterToolFormView::AssertValid() const
+void CharacterToolAnimationFormView::AssertValid() const
 {
 	CFormView::AssertValid();
 }
 
 #ifndef _WIN32_WCE
-void CharacterToolFormView::Dump(CDumpContext& dc) const
+void CharacterToolAnimationFormView::Dump(CDumpContext& dc) const
 {
 	CFormView::Dump(dc);
 }
@@ -73,7 +67,7 @@ void CharacterToolFormView::Dump(CDumpContext& dc) const
 
 // CharacterToolFormView 메시지 처리기
 
-void CharacterToolFormView::OnInitialUpdate()
+void CharacterToolAnimationFormView::OnInitialUpdate()
 {
 	CFormView::OnInitialUpdate();
 
@@ -88,40 +82,7 @@ void CharacterToolFormView::OnInitialUpdate()
 }
 
 
-void CharacterToolFormView::OnBnClickedObjectfilenamebutton()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CFileDialog dialog(FALSE, L"FBX", NULL, OFN_HIDEREADONLY | OFN_NOCHANGEDIR, L"FBX files(*.FBX)|*.FBX", this);
-	if (dialog.DoModal() == IDOK)
-	{
-		_objectFileName.SetWindowTextW(dialog.GetFileName());
-	}
-}
-
-
-void CharacterToolFormView::OnBnClickedActionfilenamebutton()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CFileDialog dialog(FALSE, L"FBX", NULL, OFN_HIDEREADONLY | OFN_NOCHANGEDIR, L"FBX files(*.FBX)|*.FBX", this);
-	if (dialog.DoModal() == IDOK)
-	{
-		_actionFileName.SetWindowTextW(dialog.GetFileName());
-	}
-}
-
-
-void CharacterToolFormView::OnBnClickedScriptfilenamebutton()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CFileDialog dialog(FALSE, L"FBXScript", NULL, OFN_HIDEREADONLY | OFN_NOCHANGEDIR, L"FBXScript files(*.FBXScript)|*.FBXScript", this);
-	if (dialog.DoModal() == IDOK)
-	{
-		_scriptFileName.SetWindowTextW(dialog.GetFileName());
-	}
-}
-
-
-void CharacterToolFormView::OnBnClickedFramecutbutton()
+void CharacterToolAnimationFormView::OnBnClickedFramecutbutton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
@@ -132,15 +93,15 @@ void CharacterToolFormView::OnBnClickedFramecutbutton()
 	_actionName.GetWindowTextW(actionName);
 
 	CString frame;
-	_lastFrame.GetWindowTextW(frame);
+	_pivotFrame.GetWindowTextW(frame);
 
-	tool->CutAnimataion(std::string(CT2CA(actionName)), _ttoi(frame));
+	tool->CutSelectedAnimataion(std::string(CT2CA(actionName)), _ttoi(frame));
 
 	UpdateActionList();
 }
 
 
-void CharacterToolFormView::OnBnClickedFramechangebutton()
+void CharacterToolAnimationFormView::OnBnClickedFramechangebutton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
@@ -151,15 +112,15 @@ void CharacterToolFormView::OnBnClickedFramechangebutton()
 	_actionName.GetWindowTextW(actionName);
 
 	CString frame;
-	_lastFrame.GetWindowTextW(frame);
+	_pivotFrame.GetWindowTextW(frame);
 
-	tool->ChangeSelectedActionData(std::string(CT2CA(actionName)), _ttoi(frame));
+	tool->ChangeSelectedAnimationData(std::string(CT2CA(actionName)), _ttoi(frame));
 
 	UpdateActionList();
 }
 
 
-void CharacterToolFormView::OnBnClickedImportbutton()
+void CharacterToolAnimationFormView::OnBnClickedImportbutton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
@@ -169,23 +130,13 @@ void CharacterToolFormView::OnBnClickedImportbutton()
 		_objectFileName.GetWindowTextW(str);
 		tool->RegisterObjectFileName(std::string(CT2CA(str)));
 	}
-	{
-		CString str;
-		_actionFileName.GetWindowTextW(str);
-		tool->RegisterActionFileName(std::string(CT2CA(str)));
-	}
-	{
-		CString str;
-		_scriptFileName.GetWindowTextW(str);
-		tool->RegisterScriptFileName(std::string(CT2CA(str)));
-	}
 	tool->Import();
 
 	UpdateActionList();
 }
 
 
-void CharacterToolFormView::OnBnClickedExportbutton()
+void CharacterToolAnimationFormView::OnBnClickedExportbutton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
@@ -198,7 +149,7 @@ void CharacterToolFormView::OnBnClickedExportbutton()
 	tool->Export();
 }
 
-void CharacterToolFormView::UpdateActionList()
+void CharacterToolAnimationFormView::UpdateActionList()
 {
 	_actionListControl.DeleteAllItems();
 
@@ -208,7 +159,7 @@ void CharacterToolFormView::UpdateActionList()
 	auto actionList = tool->GetActionList();
 	for (auto action : actionList)
 	{
-		auto actionName = SSB::mtw(action.ActionName);
+		auto actionName = SSB::mtw(action.AnimationName);
 		_actionListControl.InsertItem(index, actionName.c_str());
 		_actionListControl.SetItem(index, 1, LVIF_TEXT, SSB::mtw(std::to_string(action.EndFrame)).c_str(), 0, 0, 0, NULL);
 		++index;
@@ -216,7 +167,7 @@ void CharacterToolFormView::UpdateActionList()
 }
 
 
-void CharacterToolFormView::OnLvnItemchangedActionlistcontrol(NMHDR* pNMHDR, LRESULT* pResult)
+void CharacterToolAnimationFormView::OnLvnItemchangedActionlistcontrol(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
@@ -228,24 +179,30 @@ void CharacterToolFormView::OnLvnItemchangedActionlistcontrol(NMHDR* pNMHDR, LRE
 		_selectedActionName = _actionListControl.GetItemText(index, 0);
 		SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
 		tool->SelectCurrentAction(std::string(CT2CA(_selectedActionName)));
+		((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->UpdateAnimation();
+		((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->SetCurrentAnimation(std::string(CT2CA(_selectedActionName)));
 	}
 }
 
 
-void CharacterToolFormView::OnBnClickedActionaddbutton()
+void CharacterToolAnimationFormView::OnBnClickedActionaddbutton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
 
 	CString str;
-	_actionFileName.GetWindowTextW(str);
-	tool->AddAction(std::string(CT2CA(str)));
+	CFileDialog dialog(FALSE, L"FBX", NULL, OFN_HIDEREADONLY | OFN_NOCHANGEDIR, L"FBX files(*.FBX)|*.FBX", this);
+	if (dialog.DoModal() == IDOK)
+	{
+		str = dialog.GetFileName();
+		tool->AddAction(std::string(CT2CA(str)));
+	}
 
 	UpdateActionList();
 }
 
 
-void CharacterToolFormView::OnBnClickedActionremovebutton()
+void CharacterToolAnimationFormView::OnBnClickedActionremovebutton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	SSB::CharacterTool* tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
@@ -256,10 +213,10 @@ void CharacterToolFormView::OnBnClickedActionremovebutton()
 }
 
 
-void CharacterToolFormView::OnBnClickedPiebutton()
+void CharacterToolAnimationFormView::OnBnClickedPiebutton()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
 	SSB::CharacterToolMainLogic* logic = ((CCharacterToolWindowApp*)AfxGetApp())->GetLogic();
 
-	logic->ChangePIEState();
+	//logic->ChangePIEState();
 }

@@ -78,6 +78,9 @@ namespace SSB
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
 		EditableObject<Animation>* GetEditableObject() override;
+
+	public:
+		Animation* Clone();
 	};
 
 	class EditableAnimationObject : public EditableObject<Animation>

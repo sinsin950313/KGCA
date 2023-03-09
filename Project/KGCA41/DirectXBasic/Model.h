@@ -66,9 +66,6 @@ namespace SSB
 	class EditableModelObject : public EditableObject<Model>
 	{
 	private:
-		Vector3 _minVertex;
-		Vector3 _maxVertex;
-
 		std::map<MaterialIndex, Material*> _materials;
 		std::map<MeshIndex, MeshInterface*> _meshes;
 		std::map<AnimationName, Animation*> _animations;
@@ -77,6 +74,12 @@ namespace SSB
 
 	public:
 		EditableModelObject(std::map<MaterialIndex, Material*> materials, std::map<MeshIndex, MeshInterface*> meshes, std::map<AnimationName, Animation*> animations, PixelShader* ps);
+
+	public:
+		std::map<MaterialIndex, Material*> GetMaterials();
+		std::map<MeshIndex, MeshInterface*> GetMeshes();
+		std::map<AnimationName, Animation*> GetAnimations();
+		PixelShader* GetPixelShader();
 
 	public:
 		void RemoveAction(AnimationName actionName);

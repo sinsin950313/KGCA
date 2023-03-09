@@ -128,6 +128,21 @@ namespace SSB
 		return _maxVertex;
 	}
 	template<typename VertexType>
+	inline MeshInterface* Mesh<VertexType>::Clone()
+	{
+		Mesh<VertexType>* ret = static_cast<Mesh<VertexType>*>(ClonedObject());
+
+		ret->_vertexList = _vertexList;
+		ret->_indexList = _indexList;
+		for (auto subMesh : _subMeshes)
+		{
+			ret->Initialize_AddSubMesh(subMesh->Clone());
+		}
+		ret->_vs = _vs;
+
+		return ret;
+	}
+	template<typename VertexType>
 	bool Mesh<VertexType>::Init()
 	{
 		Build();

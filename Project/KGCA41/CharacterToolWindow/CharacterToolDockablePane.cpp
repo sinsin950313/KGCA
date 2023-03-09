@@ -38,7 +38,7 @@ int CharacterToolDockablePane::OnCreate(LPCREATESTRUCT lpCreateStruct)
 		return -1;
 
 	// TODO:  여기에 특수화된 작성 코드를 추가합니다.
-	_view = CharacterToolFormView::CreateFormView(this);
+	_view = CharacterToolAnimationFormView::CreateFormView(this);
 	_view->ShowWindow(SW_SHOW);
 
 	return 0;

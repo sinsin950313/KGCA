@@ -1,7 +1,6 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include "CharacterTool.h"
-#include "InputManager.h"
 #include <string>
 #include "CommonPath.h"
 #include "ShaderManager.h"
@@ -9,6 +8,7 @@
 #include "Common.h"
 #include "Animation.h"
 #include "EditableInterface.h"
+#include "FileIOObject.h"
 
 namespace SSB
 {
@@ -26,173 +26,108 @@ namespace SSB
 			}
 		}
 
-		FILE* fp = fopen((wtm(kFBXScriptPath) + _scriptFileName).c_str(), "w");
+		Model tmp;
 
+		for (auto material : _materials)
 		{
-			char buffer[256];
-			std::string tmp = std::to_string(_actionList.size());
-			memcpy(buffer, tmp.c_str(), tmp.size());
-			buffer[tmp.size()] = '\n';
-			fwrite(buffer, sizeof(decltype(buffer[0])), tmp.size() + 1, fp);
-		}
-		for (auto action : _actionList)
-		{
-			if(!action.ActionFileName.empty())
-			{
-				char buffer[256];
-				memcpy(buffer, action.ActionFileName.c_str(), action.ActionFileName.size());
-				buffer[action.ActionFileName.size()] = '\t';
-				fwrite(buffer, sizeof(decltype(action.ActionFileName[0])), action.ActionFileName.size() + 1, fp);
-			}
-
-			{
-				char buffer[256];
-				memcpy(buffer, action.ActionName.c_str(), action.ActionName.size());
-				buffer[action.ActionName.size()] = '\t';
-				fwrite(buffer, sizeof(decltype(action.ActionName[0])), action.ActionName.size() + 1, fp);
-			}
-
-			{
-				char buffer[256];
-				std::string tmp = std::to_string(action.EndFrame);
-				memcpy(buffer, tmp.c_str(), tmp.size());
-				buffer[tmp.size()] = '\n';
-				fwrite(buffer, sizeof(decltype(tmp[0])), tmp.size() + 1, fp);
-			}
+			tmp.Initialize_RegisterMaterial(material.first, material.second->Clone());
 		}
 
-		fclose(fp);
+		for (auto mesh : _meshes)
+		{
+			tmp.Initialize_RegisterMesh(mesh.first, mesh.second->Clone());
+		}
+
+		for (auto animation : _animations)
+		{
+			tmp.Initialize_RegisterAnimation(animation.first, animation.second->Clone());
+		}
+
+		tmp.Init();
+		tmp.SetPixelShader(_ps);
+		auto serialedStr = tmp.Serialize(0);
+
+		ObjectScriptIO ioObject;
+		ioObject.Write(_scriptFileName, serialedStr);
 	}
 	void CharacterTool::Import()
 	{
-		_loader->Init();
+		Init();
 
-		_actionList.clear();
-
-		if (_object != nullptr)
+		if (!_objectFileName.empty())
 		{
-			_object->Release();
-			delete  _object;
-			_object = nullptr;
-		}
-
-		if (!_scriptFileName.empty())
-		{
-			FILE* fp = fopen((wtm(kFBXScriptPath) + _scriptFileName).c_str(), "r");
-
-			int actionCount = 0;
+			FBXLoader loader;
+			loader.Init();
+			loader.SetFileName(_objectFileName);
 			{
-				char buffer[256];
-				ZeroMemory(buffer, 256);
-				fgets(buffer, 256, fp);
-				int bufferLength = strlen(buffer);
-				std::string tmp;
-				for (int i = 0; i < bufferLength; ++i)
+				auto loadedMaterials = loader.LoadMaterial();
+				if (!loadedMaterials.empty())
 				{
-					tmp += buffer[i];
-				}
-				actionCount = std::stoi(tmp);
-			}
-
-			int tabCount = 0;
-			std::vector<std::string> actionFileList;
-			for (int i = 0; i < actionCount; ++i)
-			{
-				tabCount = 0;
-
-				char buffer[256];
-				ZeroMemory(buffer, 256);
-				fgets(buffer, 256, fp);
-				int bufferLength = strlen(buffer);
-
-				std::string str[3];
-				std::string tmp;
-				for (int j = 0; j < bufferLength; ++j)
-				{
-					if (buffer[j] == '\t')
+					for (auto material : loadedMaterials)
 					{
-						str[tabCount] = tmp;
-						tmp.clear();
-						++tabCount;
-					}
-					else if (buffer[j] == '\n')
-					{
-						str[tabCount] = tmp;
-					}
-					else
-					{
-						tmp += buffer[j];
+						_materials.insert(std::make_pair(material.first, material.second->Clone()));
 					}
 				}
+			}
 
-				if (tabCount == 1)
+			{
+				Model* model = loader.LoadModel();
+
+				EditableModelObject* editableObject = static_cast<EditableModelObject*>(model->GetEditableObject());
+				auto meshes = editableObject->GetMeshes();
+				_meshes.clear();
+				for (auto mesh : meshes)
 				{
-					ActionData data;
-					data.ActionName = str[0];
-					data.EndFrame = std::stoi(str[1]);
-
-					_actionList.push_back(data);
+					_meshes.insert(std::make_pair(mesh.first, mesh.second->Clone()));
 				}
+				_ps = editableObject->GetPixelShader();
+				delete editableObject;
+			}
 
-				if (tabCount == 2)
+			{
+				auto animations = loader.LoadAnimation();
+				for (auto animation : animations)
 				{
-					ActionData data;
-					data.ActionFileName = str[0];
-					data.ActionName = str[1];
-					data.EndFrame = std::stoi(str[2]);
-
-					actionFileList.push_back(str[0]);
-
-					_actionList.push_back(data);
+					_animations.insert(std::make_pair(animation.first, animation.second->Clone()));
 				}
 			}
-
-			if (tabCount == 1)
-			{
-				_object = _loader->Load(_objectFileName, _scriptFileName);
-			}
-			if (tabCount == 2)
-			{
-				_object = _loader->Load(_objectFileName, actionFileList, _scriptFileName);
-			}
-
-			fclose(fp);
 		}
-		else if (!_actionFileName.empty())
+		else if (!_scriptFileName.empty())
 		{
-			_object = _loader->Load(_objectFileName, std::vector<std::string>{ _actionFileName });
+			ObjectScriptIO io;
+			auto str = io.Read(_scriptFileName);
+			Model model;
+			model.Deserialize(str);
 
-			ActionData data;
-			data.ActionFileName = _actionFileName;
-			data.ActionName = kNewActionName;
-			data.EndFrame = _loader->GetEndFrame();
-			_actionList.push_back(data);
-		}
-		else if (_actionFileName.empty())
-		{
-			_object = _loader->Load(_objectFileName);
-			if (_loader->HasAnimation())
+			EditableModelObject* editableObject = static_cast<EditableModelObject*>(model.GetEditableObject());
 			{
-				ActionData data;
-				data.ActionFileName = _actionFileName;
-				data.ActionName = kNewActionName;
-				data.EndFrame = _loader->GetEndFrame();
-				_actionList.push_back(data);
+				_materials.clear();
 
-				Reload();
-
-				SelectCurrentAction(kNewActionName);
+				auto materials = editableObject->GetMaterials();
+				for (auto material : materials)
+				{
+					_materials.insert(std::make_pair(material.first, material.second));
+				}
 			}
-		}
+			{
+				_meshes.clear();
 
-		if (_object != nullptr)
-		{
-			_object->Init();
-		_object->UpdatePosition({ 0, 0, 0 });
+				auto meshes = editableObject->GetMeshes();
+				for (auto mesh : meshes)
+				{
+					_meshes.insert(std::make_pair(mesh.first, mesh.second));
+				}
+			}
+			{
+				auto animations = editableObject->GetAnimations();
+				for (auto animation : animations)
+				{
+					_animations.insert(std::make_pair(animation.first, animation.second));
+				}
+			}
+			_ps = editableObject->GetPixelShader();
+			delete editableObject;
 		}
-
-		_scriptFileName.clear();
-		_actionFileName.clear();
 	}
 	void CharacterTool::RegisterObjectFileName(std::string fileName)
 	{
@@ -201,9 +136,9 @@ namespace SSB
 	void CharacterTool::ClearAnimationSelection()
 	{
 		{
-			_currentAnimation.AnimationPointer = nullptr;
-			_currentAnimation.AnimationName.clear();
-			_currentAnimation.EndFrame = kEmptyFrame;
+			_selectedAnimation.AnimationPointer = nullptr;
+			_selectedAnimation.AnimationName.clear();
+			_selectedAnimation.EndFrame = kEmptyFrame;
 		}
 	}
 	void CharacterTool::RegisterScriptFileName(std::string fileName)
@@ -212,42 +147,24 @@ namespace SSB
 	}
 	bool CharacterTool::IsSelected()
 	{
-		return _currentAnimation.AnimationPointer != nullptr;
-	}
-	void CharacterTool::RegisterActionFileName(std::string fileName)
-	{
-		_actionFileName = fileName;
+		return _selectedAnimation.AnimationPointer != nullptr;
 	}
 	void CharacterTool::AddAction(std::string actionFileName)
 	{
-		_loader->Init();
+		FBXLoader loader;
+		loader.Init();
+		loader.SetFileName(actionFileName);
 
-		if (_object != nullptr)
+		std::map<AnimationName, Animation*> anim = loader.LoadAnimation();
+		for (auto iter : anim)
 		{
-			_object->Release();
-			delete  _object;
-			_object = nullptr;
+			_animations.insert(std::make_pair(iter.first, iter.second));
 		}
-
-		_object = _loader->Load(_objectFileName, std::vector<std::string>{ actionFileName });
-		_object->Init();
-		_object->UpdatePosition({ 0, 0, 0 });
-
-		ActionData data;
-		data.ActionFileName = actionFileName;
-		data.ActionName = kNewActionName;
-		data.EndFrame = _loader->GetEndFrame();
-		_actionList.push_back(data);
-
-		Reload();
 	}
 	void CharacterTool::RemoveAction(std::string actionName)
 	{
-		auto iter = GetIterator(actionName);
-		_actionList.erase(iter);
-
-		Reload();
-
+		_animations.erase(actionName);
+		ClearAnimationSelection();
 	}
 	void CharacterTool::SelectCurrentAction(std::string actionName)
 	{
@@ -255,59 +172,93 @@ namespace SSB
 
 		if (_animations.find(actionName) != _animations.end())
 		{
-			_currentAnimation.AnimationName = actionName;
-			_currentAnimation.AnimationPointer = _animations.find(actionName)->second;
-			_currentAnimation.EndFrame = _currentAnimation.AnimationPointer->GetFrameSize();
+			_selectedAnimation.AnimationName = actionName;
+			_selectedAnimation.AnimationPointer = _animations.find(actionName)->second;
+			_selectedAnimation.EndFrame = _selectedAnimation.AnimationPointer->GetFrameSize();
 		}
 	}
-	void CharacterTool::CutAnimataion(std::string newActionName, unsigned int lastFrame)
+	void CharacterTool::CutSelectedAnimataion(std::string newActionName, unsigned int lastFrame)
 	{
 		if (IsSelected())
 		{
-			EditableAnimationObject* editableObject = static_cast<EditableAnimationObject*>(_currentAnimation.AnimationPointer->GetEditableObject());
-			delete _currentAnimation.AnimationPointer;
+			EditableAnimationObject* editableObject = static_cast<EditableAnimationObject*>(_selectedAnimation.AnimationPointer->GetEditableObject());
+			_animations.erase(_selectedAnimation.AnimationName);
+			delete _selectedAnimation.AnimationPointer;
+
 			FrameIndex currentEndFrame = editableObject->GetEndFrame();
 
 			{
 				editableObject->EditFrame(0, lastFrame);
 				Animation* before = editableObject->GetResult();
-				_animations.insert(std::make_pair(_currentAnimation.AnimationName, before));
+				_animations.insert(std::make_pair(_selectedAnimation.AnimationName, before));
 			}
 
 			{
 				editableObject->EditFrame(lastFrame, currentEndFrame);
 				Animation* after = editableObject->GetResult();
-				_animations.insert(std::make_pair(_currentAnimation.AnimationName, after));
+				_animations.insert(std::make_pair(_selectedAnimation.AnimationName, after));
 			}
 		}
 	}
-	void CharacterTool::ChangeSelectedActionData(std::string actionName, unsigned int frameSize)
+	void CharacterTool::ChangeSelectedAnimationData(std::string actionName, unsigned int frameSize)
 	{
 		if (IsSelected())
 		{
 			if (!actionName.empty())
 			{
-				_animations.erase(_currentAnimation.AnimationName);
-				_animations.insert(std::make_pair(actionName, _currentAnimation.AnimationPointer));
+				_animations.erase(_selectedAnimation.AnimationName);
+				_animations.insert(std::make_pair(actionName, _selectedAnimation.AnimationPointer));
+				_selectedAnimation.AnimationName = actionName;
 			}
 
 			if (frameSize != kEmptyFrame)
 			{
-				_animations.erase(_currentAnimation.AnimationName);
+				_animations.erase(_selectedAnimation.AnimationName);
 
-				EditableAnimationObject* editableObject = static_cast<EditableAnimationObject*>(_currentAnimation.AnimationPointer->GetEditableObject());
+				EditableAnimationObject* editableObject = static_cast<EditableAnimationObject*>(_selectedAnimation.AnimationPointer->GetEditableObject());
 				editableObject->EditFrame(0, frameSize);
 				editableObject->GetResult();
-				delete _currentAnimation.AnimationPointer;
+				delete _selectedAnimation.AnimationPointer;
 
 				Animation* result = editableObject->GetResult();
-				_currentAnimation.AnimationPointer = result;
-				_animations.insert(std::make_pair(_currentAnimation.AnimationName, _currentAnimation.AnimationPointer));
+				_selectedAnimation.AnimationPointer = result;
+				_animations.insert(std::make_pair(_selectedAnimation.AnimationName, _selectedAnimation.AnimationPointer));
 			}
 
-			_currentAnimation.AnimationName = actionName;
-			_currentAnimation.EndFrame = frameSize;
+			_selectedAnimation.AnimationName = actionName;
+			_selectedAnimation.EndFrame = frameSize;
 		}
+	}
+	std::map<MaterialIndex, Material*> CharacterTool::GetMaterials()
+	{
+		std::map<MaterialIndex, Material*> ret;
+		for (auto material : _materials)
+		{
+			ret.insert(std::make_pair(material.first, material.second->Clone()));
+		}
+		return ret;
+	}
+	std::map<MeshIndex, MeshInterface*> CharacterTool::GetMeshes()
+	{
+		std::map<MeshIndex, MeshInterface*> ret;
+		for (auto mesh : _meshes)
+		{
+			ret.insert(std::make_pair(mesh.first, mesh.second->Clone()));
+		}
+		return ret;
+	}
+	std::map<AnimationName, Animation*> CharacterTool::GetActions()
+	{
+		std::map<AnimationName, Animation*> ret;
+		for (auto animation : _animations)
+		{
+			ret.insert(std::make_pair(animation.first, animation.second->Clone()));
+		}
+		return ret;
+	}
+	PixelShader* CharacterTool::GetPixelShader()
+	{
+		return _ps;
 	}
 	std::vector<ActionData> CharacterTool::GetActionList()
 	{
@@ -321,17 +272,8 @@ namespace SSB
 		}
 		return ret;
 	}
-	DXObject* CharacterTool::GetTargetObject()
-	{
-		return _object;
-	}
 	bool CharacterTool::Init()
 	{
-		if (_model != nullptr)
-		{
-			_model->Init();
-		}
-
 		for (auto material : _materials)
 		{
 			material.second->Release();
@@ -355,60 +297,23 @@ namespace SSB
 		}
 		_animations.clear();
 
-		_objectFileName.clear();
-		_scriptFileName.clear();
-		_actionFileName.clear();
-
-		if (_object != nullptr)
-		{
-			_object->Release();;
-			delete _object;
-			_object = nullptr;
-		}
-
-		_loader = new FBXLoader();
-		_loader->Init();
+		//_objectFileName.clear();
+		//_scriptFileName.clear();
 
 		return false;
 	}
 	bool CharacterTool::Frame()
 	{
-		InputManager::GetInstance().Frame();
-
-		if (_object != nullptr)
-		{
-			_object->Frame();
-		}
-
 		return false;
 	}
 
 	bool CharacterTool::Release()
 	{
-		if (_object != nullptr)
-		{
-			_object->Release();
-			delete _object;
-			_object = nullptr;
-		}
-
-		if (_loader)
-		{
-			_loader->Release();
-			delete _loader;
-			_loader = nullptr;
-		}
-
 		return true;
 	}
 
 	bool CharacterTool::Render()
 	{
-		if (_object != nullptr)
-		{
-			_object->Render();
-		}
-
 		return true;
 	}
 }

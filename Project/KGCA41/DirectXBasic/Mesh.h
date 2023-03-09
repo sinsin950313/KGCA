@@ -30,6 +30,7 @@ namespace SSB
 		virtual bool CreateVertexBuffer() = 0;
 		virtual bool CreateIndexBuffer() = 0;
 		virtual void Build() = 0;
+		virtual MeshInterface* ClonedObject() = 0;
 
 	public:
 		virtual void Initialize_AddSubMesh(MeshInterface* mesh) = 0;
@@ -40,6 +41,7 @@ namespace SSB
 	public:
 		virtual Vector3 GetMinVertex() = 0;
 		virtual Vector3 GetMaxVertex() = 0;
+		virtual MeshInterface* Clone() = 0;
 	};
 
 	template<typename VertexType>
@@ -90,6 +92,7 @@ namespace SSB
 	public:
 		Vector3 GetMinVertex() override;
 		Vector3 GetMaxVertex() override;
+		MeshInterface* Clone() override;
 
 	public:
 		bool Init() override;
@@ -115,6 +118,7 @@ namespace SSB
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
+		MeshInterface* ClonedObject() override;
 	};
 	class Mesh_Vertex_PCNT : public Mesh<Vertex_PCNT>
 	{
@@ -125,6 +129,7 @@ namespace SSB
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
+		MeshInterface* ClonedObject() override;
 	};
 	class Mesh_Vertex_PCNT_Animatable : public Mesh<Vertex_PCNT>
 	{
@@ -138,6 +143,7 @@ namespace SSB
 	private:
 		std::string GetVertexType() override;
 		Vertex_PCNT GetDeserializedVertex(std::string str) override;
+		MeshInterface* ClonedObject() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -154,6 +160,7 @@ namespace SSB
 	public:
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
+		MeshInterface* Clone() override;
 	};
 	class Mesh_Vertex_PCNT_Skinning : public Mesh<Vertex_PCNT_Skinning>
 	{
@@ -164,6 +171,7 @@ namespace SSB
 	private:
 		std::string GetVertexType() override;
 		Vertex_PCNT_Skinning GetDeserializedVertex(std::string str) override;
+		MeshInterface* ClonedObject() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -183,12 +191,14 @@ namespace SSB
 	public:
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
+		MeshInterface* Clone() override;
 	};
 	class Mesh_Vertex_PCNTs : public Mesh<Vertex_PCNTs>
 	{
 	private:
 		std::string GetVertexType() override;
 		Vertex_PCNTs GetDeserializedVertex(std::string str) override;
+		MeshInterface* ClonedObject() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -204,6 +214,7 @@ namespace SSB
 	private:
 		std::string GetVertexType() override;
 		Vertex_PCNTs GetDeserializedVertex(std::string str) override;
+		MeshInterface* ClonedObject() override;
 
 	private:
 		bool CreateMeshBuffer();
@@ -223,6 +234,7 @@ namespace SSB
 	public:
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
+		MeshInterface* Clone() override;
 	};
 	class Mesh_Vertex_PCNTs_Skinning : public Mesh<Vertex_PCNTs_Skinning>
 	{
@@ -233,6 +245,7 @@ namespace SSB
 	private:
 		std::string GetVertexType() override;
 		Vertex_PCNTs_Skinning GetDeserializedVertex(std::string str) override;
+		MeshInterface* ClonedObject() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -252,6 +265,7 @@ namespace SSB
 	public:
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
+		MeshInterface* Clone() override;
 	};
 
 	//class Direction : public Mesh_Vertex_PC

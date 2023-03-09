@@ -3,6 +3,7 @@
 #include "FileIOObject.h"
 #include "CommonPath.h"
 #include "Common.h"
+#include "CommonUtility.h"
 
 namespace SSB
 {
@@ -29,7 +30,12 @@ namespace SSB
 	}
 	void ObjectScriptIO::Write(std::string fileName, std::string str)
 	{
-		FILE* fp = fopen((wtm(kObjectScriptPath) + fileName + ext).c_str(), "w");
+		auto path = SplitPath(mtw(fileName));
+		if (path[3].empty())
+		{
+			fileName += ext;
+		}
+		FILE* fp = fopen((wtm(kObjectScriptPath) + fileName).c_str(), "w");
 
 		int writeCount = fwrite(str.c_str(), sizeof(char), str.size(), fp);
 

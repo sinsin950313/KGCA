@@ -29,6 +29,7 @@
 #define ID_VIEW_APPLOOK_WINDOWS_7       219
 #define IDS_EDIT_MENU                   306
 #define IDD_CharacterToolFormView       310
+#define IDD_CharacterToolAnimationFormView 310
 #define IDC_ObjectFileNameEditBox       1001
 #define IDC_ObjectFileNameButton        1002
 #define IDC_ActionFileNameEditBox       1003
@@ -48,13 +49,17 @@
 #define IDC_ActionRemoveButton          1015
 #define IDC_PIEButton                   1016
 #define IDC_ActionNameEditBox           1017
+#define ID_32771                        32771
+#define ID_32772                        32772
+#define ID_Import                       32773
+#define ID_Export                       32774
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        315
-#define _APS_NEXT_COMMAND_VALUE         32771
+#define _APS_NEXT_COMMAND_VALUE         32775
 #define _APS_NEXT_CONTROL_VALUE         1017
 #define _APS_NEXT_SYMED_VALUE           315
 #endif

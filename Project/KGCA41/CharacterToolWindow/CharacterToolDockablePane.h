@@ -9,7 +9,7 @@ class CharacterToolDockablePane : public CDockablePane
 	DECLARE_DYNAMIC(CharacterToolDockablePane)
 
 private:
-	CharacterToolFormView* _view;
+	CharacterToolAnimationFormView* _view;
 
 public:
 	CharacterToolDockablePane();

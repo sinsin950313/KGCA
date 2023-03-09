@@ -371,4 +371,80 @@ namespace SSB
 			_ps = ShaderManager::GetInstance().LoadPixelShader(mtw(GetUnitAtomic(atomic, 0).str), "PS", "ps_5_0");
 		}
 	}
+	EditableObject<Model>* Model::GetEditableObject()
+	{
+		return new EditableModelObject(_materials, _meshes, _animations, _ps);
+	}
+	EditableModelObject::EditableModelObject(std::map<MaterialIndex, Material*> materials, std::map<MeshIndex, MeshInterface*> meshes, std::map<AnimationName, Animation*> animations, PixelShader* ps)
+		: _materials(materials), _meshes(meshes), _animations(animations), _ps(ps)
+	{
+	}
+	std::map<MaterialIndex, Material*> EditableModelObject::GetMaterials()
+	{
+		std::map<MaterialIndex, Material*> ret;
+		for (auto material : _materials)
+		{
+			ret.insert(std::make_pair(material.first, material.second->Clone()));
+		}
+		return ret;
+	}
+	std::map<MeshIndex, MeshInterface*> EditableModelObject::GetMeshes()
+	{
+		std::map<MeshIndex, MeshInterface*> ret;
+		for (auto mesh : _meshes)
+		{
+			ret.insert(std::make_pair(mesh.first, mesh.second->Clone()));
+		}
+		return ret;
+	}
+	std::map<AnimationName, Animation*> EditableModelObject::GetAnimations()
+	{
+		std::map<AnimationName, Animation*> ret;
+		for (auto animation : _animations)
+		{
+			ret.insert(std::make_pair(animation.first, animation.second->Clone()));
+		}
+		return ret;
+	}
+	PixelShader* EditableModelObject::GetPixelShader()
+	{
+		return _ps;
+	}
+	void EditableModelObject::RemoveAction(AnimationName actionName)
+	{
+		_animations.erase(actionName);
+	}
+	void EditableModelObject::AddAction(AnimationName actionName, Animation* animation)
+	{
+		_animations.insert(std::make_pair(actionName, animation));
+	}
+	Model* EditableModelObject::GetResult()
+	{
+		Model* ret = new Model;
+
+		for (auto material : _materials)
+		{
+			Material* mat = material.second->Clone();
+			mat->Init();
+			ret->Initialize_RegisterMaterial(material.first, mat);
+		}
+
+		for (auto mesh : _meshes)
+		{
+			MeshInterface* newMesh = mesh.second->Clone();
+			newMesh->Init();
+			ret->Initialize_RegisterMesh(mesh.first, newMesh);
+		}
+
+		for (auto animation : _animations)
+		{
+			Animation* newAnim = animation.second->Clone();
+			newAnim->Init();
+			ret->Initialize_RegisterAnimation(animation.first, newAnim);
+		}
+
+		ret->Init();
+
+		return ret;
+	}
 }

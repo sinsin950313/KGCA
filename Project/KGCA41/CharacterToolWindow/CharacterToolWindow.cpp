@@ -24,6 +24,8 @@ BEGIN_MESSAGE_MAP(CCharacterToolWindowApp, CWinAppEx)
 	// 표준 파일을 기초로 하는 문서 명령입니다.
 	ON_COMMAND(ID_FILE_NEW, &CWinAppEx::OnFileNew)
 	ON_COMMAND(ID_FILE_OPEN, &CWinAppEx::OnFileOpen)
+	ON_COMMAND(ID_Import, &CCharacterToolWindowApp::OnImport)
+	ON_COMMAND(ID_Export, &CCharacterToolWindowApp::OnExport)
 END_MESSAGE_MAP()
 
 
@@ -203,4 +205,58 @@ BOOL CCharacterToolWindowApp::OnIdle(LONG lCount)
 
 	//return CWinAppEx::OnIdle(lCount);
 	return true;
+}
+
+
+void CCharacterToolWindowApp::OnImport()
+{
+	CFileDialog FileDlg(FALSE, L"fbx", NULL, OFN_HIDEREADONLY | OFN_NOCHANGEDIR, L"FBX Files(*.fbx)|*.FBX|Script Files(*.Script)|*.Script|All Files(*.*)|*.*|");
+	CString selectFileName;
+	if (FileDlg.DoModal() == IDOK)		// 저장, 취소를 누르기 전까지 Blocking
+	{
+		auto tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
+		tool->RegisterObjectFileName(std::string(CT2CA(FileDlg.GetFileName())));
+		tool->Import();
+
+		SSB::Model* model = new SSB::Model;
+
+		auto materials = tool->GetMaterials();
+		for (auto material : materials)
+		{
+			material.second->Init();
+			model->Initialize_RegisterMaterial(material.first, material.second);
+		}
+
+		auto meshes = tool->GetMeshes();
+		for (auto mesh : meshes)
+		{
+			mesh.second->Init();
+			model->Initialize_RegisterMesh(mesh.first, mesh.second);
+		}
+
+		auto animations = tool->GetActions();
+		for (auto animation : animations)
+		{
+			animation.second->Init();
+			model->Initialize_RegisterAnimation(animation.first, animation.second);
+		}
+
+		model->SetPixelShader(tool->GetPixelShader());
+		model->Init();
+
+		((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->SetModel(model);
+	}
+}
+
+
+void CCharacterToolWindowApp::OnExport()
+{
+	CFileDialog FileDlg(FALSE, L"Script", NULL, OFN_HIDEREADONLY | OFN_NOCHANGEDIR, L"Script Files(*.Script)|*.Script|All Files(*.*)|*.*|");
+	CString selectFileName;
+	if (FileDlg.DoModal() == IDOK)		// 저장, 취소를 누르기 전까지 Blocking
+	{
+		auto tool = ((CCharacterToolWindowApp*)AfxGetApp())->GetTool();
+		tool->RegisterScriptFileName(std::string(CT2CA(FileDlg.GetFileName())));
+		tool->Export();
+	}
 }

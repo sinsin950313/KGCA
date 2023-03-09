@@ -226,6 +226,14 @@
     <Image Include="res\Toolbar256.bmp" />
     <Image Include="res\userimages.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CharacterTool\CharacterTool.vcxproj">
+      <Project>{b93efeb6-b6a7-492d-abdd-00118306393d}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\DirectXBasic\DirectXBasic.vcxproj">
+      <Project>{46b7d4f4-6cc8-4531-820e-d630295a11fa}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

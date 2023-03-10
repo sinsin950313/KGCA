@@ -91,6 +91,8 @@ namespace SSB
 					_animations.insert(std::make_pair(animation.first, animation.second->Clone()));
 				}
 			}
+
+			_objectFileName.clear();
 		}
 		else if (!_scriptFileName.empty())
 		{
@@ -127,6 +129,8 @@ namespace SSB
 			}
 			_ps = editableObject->GetPixelShader();
 			delete editableObject;
+
+			_scriptFileName.clear();
 		}
 	}
 	void CharacterTool::RegisterObjectFileName(std::string fileName)
@@ -190,13 +194,15 @@ namespace SSB
 			{
 				editableObject->EditFrame(0, lastFrame);
 				Animation* before = editableObject->GetResult();
-				_animations.insert(std::make_pair(_selectedAnimation.AnimationName, before));
+				AnimationName beforeName = newActionName;
+				_animations.insert(std::make_pair(beforeName, before));
 			}
 
 			{
 				editableObject->EditFrame(lastFrame, currentEndFrame);
 				Animation* after = editableObject->GetResult();
-				_animations.insert(std::make_pair(newActionName, after));
+				AnimationName afterName = _selectedAnimation.AnimationName;
+				_animations.insert(std::make_pair(afterName, after));
 			}
 		}
 	}

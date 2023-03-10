@@ -15,8 +15,8 @@ namespace SSB
 	};
 	class CharacterTool : public Common
 	{
-	private:
-		const int kEmptyFrame = -1;
+	public:
+		const static int kEmptyFrame = -1;
 
 	private:
 		std::string _objectFileName;

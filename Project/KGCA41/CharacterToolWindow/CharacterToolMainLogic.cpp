@@ -247,6 +247,10 @@ namespace SSB
 	}
 	void SSB::CharacterToolMainLogic::ChangeAnimationData(std::string newActionName, FrameIndex pivotFrame)
 	{
+		if (pivotFrame == 0)
+		{
+			pivotFrame = CharacterTool::kEmptyFrame;
+		}
 		_tool.ChangeSelectedAnimationData(newActionName, pivotFrame);
 		GetPreview();
 	}

@@ -12,6 +12,12 @@ VertexOutput_PCNT_P VS(Vertex_PCNTs_Skinning input)
 
 	float4 pos = 0;
 	float4 normal = 0;
+
+	{
+		pos = mul(input.Position, MeshAnimationMatrix[SkinningMeshIndex]) * SkinningMeshWeight;
+		normal = mul(input.Normal, MeshAnimationMatrix[SkinningMeshIndex]) * SkinningMeshWeight;
+	}
+	
 	for (int i = 0; i < 4; ++i)
 	{
 		int index = input.BoneIndex[i];

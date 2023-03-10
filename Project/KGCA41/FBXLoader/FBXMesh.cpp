@@ -348,7 +348,15 @@ namespace SSB
 			ExtractMeshVertexTextureUV(_fbxMesh, 0, vertice);
 
 			MeshToBoneSpaceTransformData transformData;
-			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
+			if (_fbxMesh->GetDeformerCount() == 0)
+			{
+				SetMeshAnimationWeight(1);
+			}
+			else
+			{
+				SetMeshAnimationWeight(0);
+				ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
+			}
 
 			VertexRefiner<Vertex_PCNT_Skinning> refiner;
 			refiner.Refine(_fbxMesh, vertice);
@@ -389,7 +397,15 @@ namespace SSB
 		ExtractMeshVertexTextureUV(_fbxMesh, _layerIndex, vertice);
 
 		MeshToBoneSpaceTransformData transformData;
-		ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
+		if (_fbxMesh->GetDeformerCount() == 0)
+		{
+			SetMeshAnimationWeight(1);
+		}
+		else
+		{
+			SetMeshAnimationWeight(0);
+			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
+		}
 
 		VertexRefiner<Vertex_PCNT_Skinning> refiner;
 		refiner.Refine(_fbxMesh, vertice);
@@ -408,7 +424,15 @@ namespace SSB
 			ExtractMeshVertexTextureUV(_fbxMesh, 0, _fbxMaterialKeyToFbxMaterialMap, vertice);
 
 			MeshToBoneSpaceTransformData transformData;
-			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
+			if (_fbxMesh->GetDeformerCount() == 0)
+			{
+				SetMeshAnimationWeight(1);
+			}
+			else
+			{
+				SetMeshAnimationWeight(0);
+				ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
+			}
 
 			VertexRefiner<Vertex_PCNTs_Skinning> refiner;
 			refiner.Refine(_fbxMesh, vertice);
@@ -442,7 +466,15 @@ namespace SSB
 		ExtractMeshVertexTextureUV(_fbxMesh, _layerIndex, _fbxMaterialKeyToFbxMaterialMap, vertice);
 
 		MeshToBoneSpaceTransformData transformData;
-		ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
+		if (_fbxMesh->GetDeformerCount() == 0)
+		{
+			SetMeshAnimationWeight(1);
+		}
+		else
+		{
+			SetMeshAnimationWeight(0);
+			ExtractMeshVertexSkinningData(_fbxMesh, _fbxBoneKeyToFbxBoneDataMap, vertice, transformData);
+		}
 
 		VertexRefiner<Vertex_PCNTs_Skinning> refiner;
 		refiner.Refine(_fbxMesh, vertice);

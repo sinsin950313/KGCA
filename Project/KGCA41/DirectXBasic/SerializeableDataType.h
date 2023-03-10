@@ -46,6 +46,9 @@ namespace SSB
 	struct MeshToBoneSpaceTransformData
 	{
 		HMatrix44 BoneSpaceTransformBuffer[kMaximumBoneCount];
+		int MeshIndex;
+		float MeshWeight;
+		int Padding[2];
 	};
 
 	static const int kAnimationUnitMaxIndex = 255;

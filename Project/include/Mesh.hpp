@@ -138,6 +138,9 @@ namespace SSB
 		{
 			ret->Initialize_AddSubMesh(subMesh->Clone());
 		}
+
+		ret->_minVertex = _minVertex;
+		ret->_maxVertex = _maxVertex;
 		ret->_vs = _vs;
 
 		return ret;

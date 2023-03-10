@@ -388,18 +388,18 @@ namespace SSB
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, MeshToBoneSpaceTransformData& data)
+	std::string Serializeable::Serialize(int tabCount, MeshToBoneSpaceTransformData& data, int maxBoneCount)
 	{
 		std::string ret;
 
 		ret += GetTabbedString(tabCount);
 		ret += "{\n";
 
-		for (int i = 0; i < kMaximumBoneCount; ++i)
+		for (int i = 0; i < maxBoneCount; ++i)
 		{
 			ret += Serialize(tabCount + 1, (Float44)data.BoneSpaceTransformBuffer[i]);
 			ret += GetTabbedString(tabCount + 1);
-			if (i + 1 < 255)
+			if (i + 1 < maxBoneCount)
 			{
 				ret += ",\n";
 			}
@@ -441,19 +441,19 @@ namespace SSB
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, AnimationFrameInfo& data)
+	std::string Serializeable::Serialize(int tabCount, AnimationFrameInfo& data, int maxBoneCount, int maxMeshCount)
 	{
 		std::string ret;
 
 		ret += GetTabbedString(tabCount);
 		ret += "{\n";
 
-		for (int i = 0; i < kAnimationUnitMaxIndex; ++i)
+		for (int i = 0; i < maxBoneCount; ++i)
 		{
 			ret += Serialize(tabCount + 1, data.BoneAnimationUnit[i]);
 			ret += GetTabbedString(tabCount + 1);
 
-			if (i + 1 < kAnimationUnitMaxIndex)
+			if (i + 1 < maxBoneCount)
 			{
 				ret += ",\n";
 			}
@@ -465,12 +465,12 @@ namespace SSB
 		ret += GetTabbedString(tabCount + 1);
 		ret += ",\n";
 
-		for (int i = 0; i < kAnimationUnitMaxIndex; ++i)
+		for (int i = 0; i < maxMeshCount; ++i)
 		{
 			ret += Serialize(tabCount + 1, data.MeshAnimationUnit[i]);
-		ret += GetTabbedString(tabCount + 1);
+			ret += GetTabbedString(tabCount + 1);
 
-			if (i + 1 < kAnimationUnitMaxIndex)
+			if (i + 1 < maxMeshCount)
 			{
 				ret += ",\n";
 			}
@@ -907,12 +907,12 @@ namespace SSB
 		std::string elem = data.str;
 		Deserialize(elem, ret.MeshIndex);
 	}
-	void Serializeable::Deserialize(std::string& str, MeshToBoneSpaceTransformData& ret)
+	void Serializeable::Deserialize(std::string& str, MeshToBoneSpaceTransformData& ret, int maxBoneCount)
 	{
 		auto data = GetUnitElement(str, 0);
 		std::string elem = data.str;
 		int offset = 1;
-		for (int i = 0; i < kMaximumBoneCount; ++i)
+		for (int i = 0; i < maxBoneCount; ++i)
 		{
 			auto valData = GetUnitElement(elem, offset);
 			std::string val = valData.str;
@@ -975,12 +975,12 @@ namespace SSB
 			ret.Rotate = { val.x, val.y, val.z, val.w };
 		}
 	}
-	void Serializeable::Deserialize(std::string& str, AnimationFrameInfo& ret)
+	void Serializeable::Deserialize(std::string& str, AnimationFrameInfo& ret, int maxBoneCount, int maxMeshCount)
 	{
 		str = GetUnitElement(str, 0).str;
 
 		int offset = 1;
-		for (int i = 0; i < kAnimationUnitMaxIndex; ++i)
+		for (int i = 0; i < maxBoneCount; ++i)
 		{
 			auto data = GetUnitElement(str, offset);
 			std::string val = data.str;
@@ -988,7 +988,7 @@ namespace SSB
 			Deserialize(val, ret.BoneAnimationUnit[i]);
 		}
 
-		for (int i = 0; i < kAnimationUnitMaxIndex; ++i)
+		for (int i = 0; i < maxMeshCount; ++i)
 		{
 			auto data = GetUnitElement(str, offset);
 			std::string val = data.str;

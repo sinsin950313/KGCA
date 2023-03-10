@@ -236,6 +236,8 @@ namespace SSB
 					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
 					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
 					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetBoneData(_fbxBoneKeyToFbxBoneMap);
+					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetMaxBoneCount(_fbxBoneKeyToFbxBoneMap.size());
+					static_cast<FBXMesh_PCNTs_Skinning*>(mesh)->Initialize_SetMeshData(iter.second);
 				}
 				_ps = ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader_PCNT_P.hlsl", "PS", "ps_5_0");
 			}
@@ -252,6 +254,8 @@ namespace SSB
 					mesh = new FBXMesh_PCNT_Skinning;
 					static_cast<FBXMesh_PCNT_Skinning*>(mesh)->Initialize_SetFBXMesh(fbxMesh);
 					static_cast<FBXMesh_PCNT_Skinning*>(mesh)->Initialize_SetBoneData(_fbxBoneKeyToFbxBoneMap);
+					static_cast<FBXMesh_PCNT_Skinning*>(mesh)->Initialize_SetMaxBoneCount(_fbxBoneKeyToFbxBoneMap.size());
+					static_cast<FBXMesh_PCNT_Skinning*>(mesh)->Initialize_SetMeshData(iter.second);
 				}
 				_ps = ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader_PCNT.hlsl", "PS", "ps_5_0");
 			}

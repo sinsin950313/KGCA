@@ -204,7 +204,7 @@ namespace SSB
 			ret += std::to_string(i);
 			ret += "\"}\n";
 
-			ret += Serializeable::Serialize(tabCount + 2, *_data[i]);
+			ret += Serializeable::Serialize(tabCount + 2, *_data[i], _boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
 
 			ret += Serializeable::GetTabbedString(tabCount + 2);
 			ret += ",\n";
@@ -315,7 +315,7 @@ namespace SSB
 				auto data = GetUnitElement(serialedString, offset);
 				offset = data.offset;
 				AnimationFrameInfo* frameInfo = new AnimationFrameInfo;
-				Serializeable::Deserialize(data.str, *frameInfo);
+				Serializeable::Deserialize(data.str, *frameInfo, _boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
 				_data[i] = frameInfo;
 			}
 		}

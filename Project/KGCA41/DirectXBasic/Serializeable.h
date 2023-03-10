@@ -16,6 +16,7 @@ namespace SSB
 		std::string _materialIndexStr = "Material Index : ";
 		std::string _meshStr = "Mesh\n";
 		std::string _meshIndexStr = "Mesh Index : ";
+		std::string _meshWeightStr = "Mesh Weight : ";
 		std::string _animationStr = "Animation\n";
 		std::string _animationNameStr = "Animation Name : ";
 		std::string _vertexShaderStr = "Vertex Shader File Name : ";
@@ -25,6 +26,7 @@ namespace SSB
 		std::string _indexListStr = "Index List\n";
 		std::string _subMeshStr = "SubMesh";
 		std::string _meshDataStr = "Mesh Data\n";
+		std::string _maxBoneCountStr = "Maximum Bone Count : ";
 		std::string _meshToBoneSpaceTransformDataStr = "Mesh to Bone space Transform Data\n";
 		std::string _framePerSecondStr = "Frame Per Second : ";
 		std::string _boneAnimationUnitMaxCountStr = "Bone Animation Unit Max Count : ";
@@ -53,9 +55,9 @@ namespace SSB
 		std::string Serialize(int tabCount, Vertex_PCNT_Skinning data);
 		std::string Serialize(int tabCount, Vertex_PCNTs_Skinning data);
 		std::string Serialize(int tabCount, MeshData data);
-		std::string Serialize(int tabCount, MeshToBoneSpaceTransformData& data);
+		std::string Serialize(int tabCount, MeshToBoneSpaceTransformData& data, int maxBoneCount);
 		std::string Serialize(int tabCount, AnimationUnitInfo data);
-		std::string Serialize(int tabCount, AnimationFrameInfo& data);
+		std::string Serialize(int tabCount, AnimationFrameInfo& data, int maxBoneCount, int maxMeshCount);
 
 	protected:
 		struct ExtractedData
@@ -83,9 +85,9 @@ namespace SSB
 		void Deserialize(std::string& str, Vertex_PCNT_Skinning& ret);
 		void Deserialize(std::string& str, Vertex_PCNTs_Skinning& ret);
 		void Deserialize(std::string& str, MeshData& ret);
-		void Deserialize(std::string& str, MeshToBoneSpaceTransformData& ret);
+		void Deserialize(std::string& str, MeshToBoneSpaceTransformData& ret, int maxBoneCount);
 		void Deserialize(std::string& str, AnimationUnitInfo& ret);
-		void Deserialize(std::string& str, AnimationFrameInfo& ret);
+		void Deserialize(std::string& str, AnimationFrameInfo& ret, int maxBoneCount, int maxMeshCount);
 
 	public:
 		virtual std::string Serialize(int tabCount) = 0;

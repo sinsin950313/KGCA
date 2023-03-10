@@ -12,5 +12,8 @@ cbuffer Mesh_Animatable : register(b4)
 cbuffer Mesh_Skinning : register(b4)
 {
 	matrix ToBoneSpaceTransformMatrix[255];
+	int SkinningMeshIndex;
+	float SkinningMeshWeight;
+	int2 Padding;
 };
 

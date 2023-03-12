@@ -182,6 +182,7 @@ copy "$(ProjectDir)\$(ProjectName).lib" "$(ProjectDir)\..\lib\"</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
+    <ClInclude Include="Bone.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="DXBasicTest.h" />
     <ClInclude Include="DXDrawableInterface.h" />

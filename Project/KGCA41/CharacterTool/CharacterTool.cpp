@@ -43,6 +43,11 @@ namespace SSB
 			tmp.Initialize_RegisterAnimation(animation.first, animation.second->Clone());
 		}
 
+		for (auto socket : _sockets)
+		{
+			tmp.Initialize_RegisterSocket(socket.first, socket.second);
+		}
+
 		tmp.Init();
 		tmp.SetPixelShader(_ps);
 		auto serialedStr = tmp.Serialize(0);
@@ -89,6 +94,17 @@ namespace SSB
 				for (auto animation : animations)
 				{
 					_animations.insert(std::make_pair(animation.first, animation.second->Clone()));
+				}
+			}
+
+			{
+				auto loadedBones = loader.LoadSkeleton();
+				if (!loadedBones.empty())
+				{
+					for(int i = 0; i < loadedBones.size(); ++i)
+					{
+						_sockets.insert(std::make_pair(loadedBones[i].Name, loadedBones[i].Index));
+					}
 				}
 			}
 
@@ -235,6 +251,18 @@ namespace SSB
 			_selectedAnimation.EndFrame = frameSize;
 		}
 	}
+	void CharacterTool::AddSocket(std::string socketName, std::string parentSocketName, HMatrix44 matrix)
+	{
+		_sockets.insert(std::make_pair(socketName, _bones.size()));
+		for (auto animation : _animations)
+		{
+			auto parentIndex = _bones.find(parentSocketName)->second;
+
+			EditableAnimationObject* editableObject = static_cast<EditableAnimationObject*>(_selectedAnimation.AnimationPointer->GetEditableObject());
+			editableObject->RegisterSocket(parentIndex, matrix);
+		}
+		_bones.insert(std::make_pair(socketName, _bones.size()));
+	}
 	std::map<MaterialIndex, Material*> CharacterTool::GetMaterials()
 	{
 		std::map<MaterialIndex, Material*> ret;
@@ -261,6 +289,10 @@ namespace SSB
 			ret.insert(std::make_pair(animation.first, animation.second->Clone()));
 		}
 		return ret;
+	}
+	std::map<BoneName, BoneIndex> CharacterTool::GetBones()
+	{
+		return _bones;
 	}
 	PixelShader* CharacterTool::GetPixelShader()
 	{
@@ -303,6 +335,11 @@ namespace SSB
 			Animation* copy = animation.second->Clone();
 			copy->Init();
 			model->Initialize_RegisterAnimation(animation.first, copy);
+		}
+
+		for (auto socket : _sockets)
+		{
+			model->Initialize_RegisterSocket(socket.first, socket.second);
 		}
 
 		model->Init();

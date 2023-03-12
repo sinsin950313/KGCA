@@ -33,6 +33,9 @@ namespace SSB
 
 		PixelShader* _ps;
 
+		// Serialize or make Skeleton
+		std::map<SocketName, BoneIndex> _sockets;
+
 	public:
 		Model();
 		virtual ~Model();
@@ -44,11 +47,13 @@ namespace SSB
 		void Initialize_RegisterMaterial(MaterialIndex index, Material* material);
 		void Initialize_RegisterMesh(MeshIndex index, MeshInterface* mesh);
 		void Initialize_RegisterAnimation(AnimationName name, Animation* animation);
+		void Initialize_RegisterSocket(SocketName name, BoneIndex index);
 
 	public:
 		void SetCurrentAnimation(AnimationName name);
 		void SetVertexShader(VertexShader* shader);
 		void SetPixelShader(PixelShader* shader);
+		HMatrix44 GetSocketCurrentLocation(SocketName name);
 
 	public:
 		operator OBBData();

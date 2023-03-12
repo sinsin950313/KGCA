@@ -49,6 +49,10 @@ namespace SSB
 	{
 		_animations.insert(std::make_pair(name, animation));
 	}
+	void Model::Initialize_RegisterSocket(SocketName name, BoneIndex index)
+	{
+		_sockets.insert(std::make_pair(name, index));
+	}
 	void Model::SetCurrentAnimation(AnimationName name)
 	{
 		if (_animations.find(name) != _animations.end())
@@ -70,6 +74,10 @@ namespace SSB
 	void Model::SetPixelShader(PixelShader* shader)
 	{
 		_ps = shader;
+	}
+	HMatrix44 Model::GetSocketCurrentLocation(SocketName name)
+	{
+		return _currentAnimation->GetSocketCurrentLocation(name);
 	}
 	Model::operator OBBData()
 	{

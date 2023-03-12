@@ -72,6 +72,7 @@ namespace SSB
 		std::map<MaterialIndex, Material*> LoadMaterial();
 		Model* LoadModel();
 		std::map<std::string, Animation*> LoadAnimation();
+		std::vector<Bone> LoadSkeleton();
 
 	public:
 		bool Init() override;

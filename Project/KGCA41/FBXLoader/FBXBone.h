@@ -1,6 +1,7 @@
 #pragma once
 
 #include <fbxsdk.h>
+#include "Bone.h"
 
 namespace SSB
 {
@@ -9,5 +10,6 @@ namespace SSB
 	struct FBXBoneData
 	{
 		int FBXBoneIndex;
+		Bone BoneData;
 	};
 }

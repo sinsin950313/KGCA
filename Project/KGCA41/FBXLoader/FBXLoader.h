@@ -8,6 +8,7 @@
 #include "Material.h"
 #include "FBXMaterial.h"
 #include "FBXBone.h"
+#include "Bone.h"
 
 namespace SSB
 {
@@ -72,7 +73,7 @@ namespace SSB
 		std::map<MaterialIndex, Material*> LoadMaterial();
 		Model* LoadModel();
 		std::map<std::string, Animation*> LoadAnimation();
-		std::vector<Bone> LoadSkeleton();
+		Skeleton* LoadSkeleton();
 
 	public:
 		bool Init() override;

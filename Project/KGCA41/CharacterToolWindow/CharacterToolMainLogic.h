@@ -20,6 +20,9 @@ namespace SSB
 		//std::string _currentActionName;
 		//std::string _hopeActionName = "Idle";
 
+		const std::string kSocketViewObjectStr = "SocketViewer.Script";
+		DXObject* _socketViewObject = nullptr;
+
 	public:
 		CharacterToolMainLogic(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
 		CharacterToolMainLogic(HWND hwnd);
@@ -43,6 +46,11 @@ namespace SSB
 		void CutAnimation(std::string newActionName, FrameIndex pivotFrame);
 		void ChangeAnimationData(std::string newActionName, FrameIndex pivotFrame);
 		std::vector<SSB::ActionData> GetActionList();
+		std::map<BoneName, Bone> GetBones();
 		void SetCurrentAnimation(AnimationName name);
+		void SetSocketViewerObjectMatrix(HMatrix44 matrix);
+		void AddSocket(SocketName name, BoneIndex parentIndex, HMatrix44 matrix);
+		HMatrix44 GetBoneMatrix(BoneIndex index);
+		BoneIndex GetBoneIndex(BoneName name);
 	};
 }

@@ -108,10 +108,6 @@ namespace SSB
 		_boneAnimationUnitMaxCount = boneCount;
 		_meshAnimationUnitMaxCount = meshCount;
 	}
-	void Animation::Initialize_SetSocket(std::map<SocketName, BoneIndex> sockets)
-	{
-		_sockets = sockets;
-	}
 	bool Animation::Frame()
 	{
 		_animationTimer.Frame();
@@ -228,9 +224,9 @@ namespace SSB
 			memcpy(tmp, frameInfo, sizeof(AnimationFrameInfo));
 			data.push_back(tmp);
 		}
-		return new EditableAnimationObject(_boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount, data, _startFrame, _endFrame, _sockets);
+		return new EditableAnimationObject(_boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount, data, _startFrame, _endFrame);
 	}
-	HMatrix44 Animation::GetSocketCurrentLocation(SocketName name)
+	HMatrix44 Animation::GetCurrentBoneMatrix(BoneIndex index)
 	{
 		float animationElapseTime = (float)(_animationTimer.GetElapseTime() / 1000.0f);
 		int beforeIndex = animationElapseTime * _framePerSecond;
@@ -254,7 +250,6 @@ namespace SSB
 			t = 0;
 		}
 
-		BoneIndex index = _sockets.find(name)->second;
 		return GetInterpolate(_data[beforeIndex]->BoneAnimationUnit[index], _data[afterIndex]->BoneAnimationUnit[index], t);
 	}
 	Animation* Animation::Clone()
@@ -271,7 +266,6 @@ namespace SSB
 		ret->Initialize_SetAnimationFrameData(data);
 		ret->Initialize_SetAnimationUnitMaximumCount(_boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
 		ret->Initialize_SetFrameInterval(_startFrame, _endFrame);
-		ret->Initialize_SetSocket(_sockets);
 		ret->Init();
 
 		return ret;
@@ -377,8 +371,8 @@ namespace SSB
 	{
 		return _frameInfo;
 	}
-	EditableAnimationObject::EditableAnimationObject(int boneMaxUnit, int meshMaxUnit, std::vector<AnimationFrameInfo*> frameData, FrameIndex start, FrameIndex end, std::map<SocketName, BoneIndex> sockets) 
-		: _boneAnimationUnitMaxCount(boneMaxUnit), _meshAnimationUnitMaxCount(meshMaxUnit), _data(frameData), _startFrame(start), _endFrame(end), _sockets(sockets)
+	EditableAnimationObject::EditableAnimationObject(int boneMaxUnit, int meshMaxUnit, std::vector<AnimationFrameInfo*> frameData, FrameIndex start, FrameIndex end) 
+		: _boneAnimationUnitMaxCount(boneMaxUnit), _meshAnimationUnitMaxCount(meshMaxUnit), _data(frameData), _startFrame(start), _endFrame(end)
 	{
 	}
 	EditableAnimationObject::~EditableAnimationObject()
@@ -393,18 +387,6 @@ namespace SSB
 	{
 		_startFrame = start;
 		_endFrame = end;
-	}
-	void EditableAnimationObject::RegisterSocket(BoneIndex parentBoneIndex, HMatrix44 localMatrix)
-	{
-		for (auto data : _data)
-		{
-			AnimationUnitInfo unitInfo;
-			unitInfo.Matrix = data[parentBoneIndex].BoneAnimationUnit->Matrix * localMatrix;
-			Decompose(unitInfo.Matrix, unitInfo.Scale, unitInfo.Rotate, unitInfo.Translate);
-			data->BoneAnimationUnit[_boneAnimationUnitMaxCount] = unitInfo;
-		}
-
-		++_boneAnimationUnitMaxCount;
 	}
 	FrameIndex EditableAnimationObject::GetStartFrame()
 	{

@@ -43,9 +43,8 @@ namespace SSB
 			tmp.Initialize_RegisterAnimation(animation.first, animation.second->Clone());
 		}
 
-		for (auto socket : _sockets)
 		{
-			tmp.Initialize_RegisterSocket(socket.first, socket.second);
+			// Export Skeleton File Name
 		}
 
 		tmp.Init();
@@ -98,14 +97,7 @@ namespace SSB
 			}
 
 			{
-				auto loadedBones = loader.LoadSkeleton();
-				if (!loadedBones.empty())
-				{
-					for(int i = 0; i < loadedBones.size(); ++i)
-					{
-						_sockets.insert(std::make_pair(loadedBones[i].Name, loadedBones[i].Index));
-					}
-				}
+				_skeleton = loader.LoadSkeleton();
 			}
 
 			_objectFileName.clear();
@@ -145,6 +137,10 @@ namespace SSB
 			}
 			_ps = editableObject->GetPixelShader();
 			delete editableObject;
+
+			{
+				// Import Skeleton Data from File Name
+			}
 
 			_scriptFileName.clear();
 		}
@@ -251,17 +247,19 @@ namespace SSB
 			_selectedAnimation.EndFrame = frameSize;
 		}
 	}
-	void CharacterTool::AddSocket(std::string socketName, std::string parentSocketName, HMatrix44 matrix)
+	void CharacterTool::AddSocket(std::string socketName, BoneIndex parentIndex, HMatrix44 matrix)
 	{
 		_sockets.insert(std::make_pair(socketName, _bones.size()));
 		for (auto animation : _animations)
 		{
-			auto parentIndex = _bones.find(parentSocketName)->second;
-
 			EditableAnimationObject* editableObject = static_cast<EditableAnimationObject*>(_selectedAnimation.AnimationPointer->GetEditableObject());
 			editableObject->RegisterSocket(parentIndex, matrix);
 		}
-		_bones.insert(std::make_pair(socketName, _bones.size()));
+		Bone bone;
+		bone.Index = _bones.size();
+		bone.Name = socketName;
+		bone.ParentIndex = parentIndex;
+		_bones.insert(std::make_pair(socketName, bone));
 	}
 	std::map<MaterialIndex, Material*> CharacterTool::GetMaterials()
 	{
@@ -290,7 +288,7 @@ namespace SSB
 		}
 		return ret;
 	}
-	std::map<BoneName, BoneIndex> CharacterTool::GetBones()
+	std::map<BoneName, Bone> CharacterTool::GetBones()
 	{
 		return _bones;
 	}

@@ -26,6 +26,10 @@ namespace SSB
 		ChangeMainCamera(_toolCamera);
 		GetMainCamera()->Move({ 0, 0, -50 });
 
+		_tool.RegisterScriptFileName(kSocketViewObjectStr);
+		_tool.Import();
+		_socketViewObject = _tool.GetPreviewObject();
+
 		//_pieCamera = new ModelViewCamera();
 
   //      _terrain = new Map();
@@ -51,6 +55,11 @@ namespace SSB
 		}
 
 		_tool.Frame();
+
+		if (_socketViewObject != nullptr)
+		{
+			_socketViewObject->Frame();
+		}
 
 		//_tool.Frame();
 		//if (_object != _tool.GetTargetObject())
@@ -268,9 +277,30 @@ namespace SSB
 		}
 		return ret;
 	}
+	std::map<BoneName, Bone> SSB::CharacterToolMainLogic::GetBones()
+	{
+		return _tool.GetBones();
+	}
 	void SSB::CharacterToolMainLogic::SetCurrentAnimation(AnimationName name)
 	{
 		_tool.SelectCurrentAction(name);
 		GetPreview();
+	}
+	void SSB::CharacterToolMainLogic::SetSocketViewerObjectMatrix(HMatrix44 matrix)
+	{
+		_socketViewObject->SetMatrix(matrix);
+	}
+	void SSB::CharacterToolMainLogic::AddSocket(SocketName name, BoneIndex parentIndex, HMatrix44 matrix)
+	{
+		_tool.AddSocket(name, parentIndex, matrix);
+	}
+	HMatrix44 SSB::CharacterToolMainLogic::GetBoneMatrix(BoneIndex index)
+	{
+		_tool.GetBoneMatrix(index);
+	}
+	BoneIndex SSB::CharacterToolMainLogic::GetBoneIndex(BoneName name)
+	{
+		auto bones = _tool.GetBones();
+		return bones.find(name)->second.Index;
 	}
 }

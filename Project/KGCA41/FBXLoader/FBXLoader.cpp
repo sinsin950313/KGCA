@@ -82,17 +82,25 @@ namespace SSB
 			Bone bone;
 			if (_fbxBoneKeyToFbxBoneMap.size() != 0)
 			{
-				bone.Index = index;
 				bone.Name = name;
 				bone.ParentIndex = _boneNodeToBoneIndexMap.find(node->GetParent())->second;
 			}
 			else
 			{
-				bone.Index = index;
 				bone.Name = name;
 				bone.ParentIndex = -1;
 			}
-			_fbxBoneKeyToFbxBoneMap.insert(std::make_pair(node, FBXBoneData{ index, bone }));
+
+			FbxAMatrix geometricMatrix;
+			FbxVector4 trans = node->GetGeometricTranslation(FbxNode::eSourcePivot);
+			FbxVector4 rot = node->GetGeometricRotation(FbxNode::eSourcePivot);
+			FbxVector4 sca = node->GetGeometricScaling(FbxNode::eSourcePivot);
+			geometricMatrix.SetT(trans);
+			geometricMatrix.SetR(rot);
+			geometricMatrix.SetS(sca);
+			bone.Matrix = Convert(geometricMatrix);
+
+			_fbxBoneKeyToFbxBoneMap.insert(std::make_pair(node, FBXBoneData{index, bone}));
 		}
 	}
 
@@ -450,13 +458,16 @@ namespace SSB
 		return _animations;
 	}
 
-	std::vector<Bone> FBXLoader::LoadSkeleton()
+	Skeleton* FBXLoader::LoadSkeleton()
 	{
-		std::vector<Bone> ret;
+		std::map<BoneIndex, Bone> data;
 		for (auto& bone : _fbxBoneKeyToFbxBoneMap)
 		{
-			ret.push_back(bone.second.BoneData);
+			data.insert(std::make_pair(bone.second.FBXBoneIndex, bone.second.BoneData));
 		}
+		Skeleton* ret = new Skeleton;
+		ret->Initialize_SetBoneData(data);
+
 		return ret;
 	}
 

@@ -48,6 +48,7 @@ namespace SSB
 		void SetVolume(Volume1* volume);
 		void Move(Vector3 vec);
 		void SetPosition(Vector3 vec);
+		void SetMatrix(HMatrix44 mat);
 		//void Rotate(float yaw, float pitch, float roll);
 		Vector3 GetPosition();
 		Vector3 GetDirection();

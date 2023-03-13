@@ -2,6 +2,7 @@
 #include "DXWindow.h"
 #include <cassert>
 #include "DXStateManager.h"
+#include "HCCalculator.h"
 
 namespace SSB
 {
@@ -96,6 +97,18 @@ namespace SSB
 	void DXObject::SetPosition(Vector3 vec)
 	{
 		_volume->SetPosition(vec);
+	}
+	void DXObject::SetMatrix(HMatrix44 mat)
+	{
+		Vector3 scale;
+		Quaternion rotation;
+		Vector3 translation;
+		Decompose(mat, scale, rotation, translation);
+
+		_volume->SetPosition(translation);
+		HMatrix44 rotMatrix(rotation.GetRotateMatrix(), Vector3());
+		_volume->Rotate(rotMatrix);
+		_volume->SetScale(scale.GetX(), scale.GetY(), scale.GetZ());
 	}
 	//void DXObject::Rotate(float yaw, float pitch, float roll)
 	//{

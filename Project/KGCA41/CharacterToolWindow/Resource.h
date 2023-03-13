@@ -30,6 +30,7 @@
 #define IDS_EDIT_MENU                   306
 #define IDD_CharacterToolFormView       310
 #define IDD_CharacterToolAnimationFormView 310
+#define IDD_SelectonEditorFormView      315
 #define IDC_ObjectFileNameEditBox       1001
 #define IDC_ObjectFileNameButton        1002
 #define IDC_ActionFileNameEditBox       1003
@@ -49,6 +50,20 @@
 #define IDC_ActionRemoveButton          1015
 #define IDC_PIEButton                   1016
 #define IDC_ActionNameEditBox           1017
+#define IDC_BoneTree                    1020
+#define IDC_AddSocketButton             1021
+#define IDC_CreateSocketButton          1022
+#define IDC_EDIT1                       1026
+#define IDC_EDIT2                       1029
+#define IDC_EDIT3                       1030
+#define IDC_EDIT4                       1031
+#define IDC_EDIT5                       1032
+#define IDC_EDIT6                       1033
+#define IDC_EDIT7                       1034
+#define IDC_EDIT8                       1035
+#define IDC_EDIT9                       1036
+#define IDC_EDIT10                      1037
+#define IDC_SocketName                  1037
 #define ID_32771                        32771
 #define ID_32772                        32772
 #define ID_Import                       32773
@@ -58,9 +73,9 @@
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        315
+#define _APS_NEXT_RESOURCE_VALUE        316
 #define _APS_NEXT_COMMAND_VALUE         32775
-#define _APS_NEXT_CONTROL_VALUE         1017
-#define _APS_NEXT_SYMED_VALUE           315
+#define _APS_NEXT_CONTROL_VALUE         1027
+#define _APS_NEXT_SYMED_VALUE           316
 #endif
 #endif

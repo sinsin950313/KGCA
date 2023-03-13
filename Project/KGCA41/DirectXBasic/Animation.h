@@ -55,8 +55,6 @@ namespace SSB
 		FrameMatrixInfo _frameMatrixInfo;
 		ID3D11Buffer* _animatedFrameBuffer;
 
-		std::map<SocketName, BoneIndex> _sockets;
-
 	public:
 		Animation();
 		~Animation();
@@ -70,7 +68,6 @@ namespace SSB
 		void Initialize_SetAnimationFrameData(std::vector<AnimationFrameInfo*> data);
 		void Initialize_SetFrameInterval(FrameIndex start, FrameIndex end);
 		void Initialize_SetAnimationUnitMaximumCount(int boneCount, int meshCount);
-		void Initialize_SetSocket(std::map<SocketName, BoneIndex> sockets);
 
 	public:
 		FrameIndex GetFrameSize();
@@ -83,7 +80,7 @@ namespace SSB
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
 		EditableObject<Animation>* GetEditableObject() override;
-		HMatrix44 GetSocketCurrentLocation(SocketName name);
+		HMatrix44 GetCurrentBoneMatrix(BoneIndex index);
 
 	public:
 		Animation* Clone();
@@ -97,20 +94,18 @@ namespace SSB
 		int _boneAnimationUnitMaxCount = 0;
 		int _meshAnimationUnitMaxCount = 0;
 		std::vector<AnimationFrameInfo*> _data;
-		std::map<SocketName, BoneIndex> _sockets;
 
 		FrameIndex _startFrame;
 		FrameIndex _endFrame;
 
 	public:
-		EditableAnimationObject(int boneMaxUnit, int meshMaxUnit, std::vector<AnimationFrameInfo*> frameData, FrameIndex start, FrameIndex end, std::map<SocketName, BoneIndex> sockets);
+		EditableAnimationObject(int boneMaxUnit, int meshMaxUnit, std::vector<AnimationFrameInfo*> frameData, FrameIndex start, FrameIndex end);
 		~EditableAnimationObject();
 
 	public:
 		FrameIndex GetStartFrame();
 		FrameIndex GetEndFrame();
 		void EditFrame(FrameIndex start, FrameIndex end);
-		void RegisterSocket(BoneIndex parentBoneIndex, HMatrix44 localMatrix);
 
 	public:
 		Animation* GetResult() override;

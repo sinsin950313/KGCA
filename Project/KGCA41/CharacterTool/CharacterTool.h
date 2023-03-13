@@ -26,8 +26,7 @@ namespace SSB
 		std::map<MaterialIndex, Material*> _materials;
 		std::map<MeshIndex, MeshInterface*> _meshes;
 		std::map<AnimationName, Animation*> _animations;
-		std::map<BoneName, BoneIndex> _bones;
-		std::map<SocketName, BoneIndex> _sockets;
+		Skeleton* _skeleton;
 
 		ActionData _selectedAnimation;
 
@@ -39,6 +38,8 @@ namespace SSB
 	public:
 		void Export();
 		void Import();
+		void ExportSkeleton();
+		void ImportSkeleton();
 
 	private:
 		void ClearAnimationSelection();
@@ -52,16 +53,17 @@ namespace SSB
 		void SelectCurrentAction(std::string actionName);
 		void CutSelectedAnimataion(std::string newActionName, unsigned int lastFrame = -1);
 		void ChangeSelectedAnimationData(std::string actionName, unsigned int frameSize);
-		void AddSocket(std::string socketName, std::string parentSocketName, HMatrix44 matrix);
+		void AddSocket(std::string socketName, BoneIndex parentIndex, HMatrix44 matrix);
 
 	public:
 		std::map<MaterialIndex, Material*> GetMaterials();
 		std::map<MeshIndex, MeshInterface*> GetMeshes();
 		std::map<AnimationName, Animation*> GetActions();
-		std::map<BoneName, BoneIndex> GetBones();
+		std::map<BoneName, Bone> GetBones();
 		PixelShader* GetPixelShader();
 		std::vector<ActionData> GetActionList();
 		DXObject* GetPreviewObject();
+		HMatrix44 GetBoneMatrix(BoneIndex index);
 
 	public:
 		bool Init() override;

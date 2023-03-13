@@ -33,7 +33,7 @@ namespace SSB
 
 		PixelShader* _ps;
 
-		// Serialize or make Skeleton
+		// Serialize
 		std::map<SocketName, BoneIndex> _sockets;
 
 	public:
@@ -53,7 +53,7 @@ namespace SSB
 		void SetCurrentAnimation(AnimationName name);
 		void SetVertexShader(VertexShader* shader);
 		void SetPixelShader(PixelShader* shader);
-		HMatrix44 GetSocketCurrentLocation(SocketName name);
+		HMatrix44 GetSocketCurrentMatrix(SocketName name);
 
 	public:
 		operator OBBData();

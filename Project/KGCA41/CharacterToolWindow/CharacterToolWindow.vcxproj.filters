@@ -48,6 +48,9 @@
     <ClInclude Include="CharacterToolFormView.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="SelectonEditorFormView.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CharacterToolWindow.cpp">
@@ -72,6 +75,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="CharacterToolFormView.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectonEditorFormView.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

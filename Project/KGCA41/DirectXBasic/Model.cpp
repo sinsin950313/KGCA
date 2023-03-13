@@ -75,9 +75,9 @@ namespace SSB
 	{
 		_ps = shader;
 	}
-	HMatrix44 Model::GetSocketCurrentLocation(SocketName name)
+	HMatrix44 Model::GetSocketCurrentMatrix(SocketName name)
 	{
-		return _currentAnimation->GetSocketCurrentLocation(name);
+		return _currentAnimation->GetCurrentBoneMatrix(_sockets.find(name)->second);
 	}
 	Model::operator OBBData()
 	{

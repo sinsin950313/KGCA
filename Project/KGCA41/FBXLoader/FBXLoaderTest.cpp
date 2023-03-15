@@ -23,6 +23,14 @@ bool SSB::FBXLoaderTest::Init()
 	//	_loader->SetFileName("box.FBX");
 
 	//	Model* model = _loader->LoadModel();
+	//	OBBData data;
+	//	data.Position = {10, 0, 0};
+	//	data.Rotation = HMatrix44::RotateFromXAxis(5);
+	//	data.Scale = {2, 3, 4};
+	//	data.Width = 10;
+	//	data.Height = 20;
+	//	data.Depth = 30;
+	//	model->Initialize_SetBoundingVolume(data);
 	//	model->Init();
 
 	//	DXObject* object = new DXObject;

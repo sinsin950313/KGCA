@@ -53,6 +53,10 @@ namespace SSB
 	{
 		_sockets.insert(std::make_pair(name, index));
 	}
+	void Model::Initialize_SetBoundingVolume(OBBData data)
+	{
+		_boundingVolume = data;
+	}
 	void Model::SetCurrentAnimation(AnimationName name)
 	{
 		if (_animations.find(name) != _animations.end())
@@ -78,6 +82,10 @@ namespace SSB
 	HMatrix44 Model::GetSocketCurrentMatrix(SocketName name)
 	{
 		return _currentAnimation->GetCurrentBoneMatrix(_sockets.find(name)->second);
+	}
+	OBBData Model::GetBoundingVolume()
+	{
+		return _boundingVolume;
 	}
 	Model::operator OBBData()
 	{
@@ -193,6 +201,16 @@ namespace SSB
 		ret += ",\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += _boundingVolumeStr;
+		ret += Serializeable::Serialize(tabCount + 2, _boundingVolume.Position);
+		ret += Serializeable::Serialize(tabCount + 2, _boundingVolume.Rotation);
+		ret += Serializeable::Serialize(tabCount + 2, _boundingVolume.Scale);
+		Float3 boundingVolumeData{ _boundingVolume.Width, _boundingVolume.Height, _boundingVolume.Depth };
+		ret += Serializeable::Serialize(tabCount + 2, boundingVolumeData);
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _materialStr;
 		for (auto iter : _materials)
 		{
@@ -278,6 +296,45 @@ namespace SSB
 			Float3 tmp;
 			Serializeable::Deserialize(data.str, tmp);
 			_maxVertex = tmp;
+		}
+
+		offset = serialedString.find(_boundingVolumeStr);
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			Float3 pos;
+			Serializeable::Deserialize(data.str, pos);
+
+			_boundingVolume.Position = pos;
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			Float33 rot;
+			Serializeable::Deserialize(data.str, rot);
+
+			_boundingVolume.Rotation = rot;
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			Float3 scale;
+			Serializeable::Deserialize(data.str, scale);
+
+			_boundingVolume.Scale = scale;
+		}
+
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			Float3 tmp;
+			Serializeable::Deserialize(data.str, tmp);
+
+			_boundingVolume.Width = tmp.x;
+			_boundingVolume.Height = tmp.y;
+			_boundingVolume.Depth = tmp.z;
 		}
 
 		while (serialedString.find(_materialIndexStr, offset) != std::string::npos)

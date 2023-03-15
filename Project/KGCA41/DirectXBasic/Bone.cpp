@@ -67,4 +67,13 @@ namespace SSB
 
 		return true;
 	}
+	//std::string Skeleton::Serialize(int tabCount)
+	//{
+	//	// Do Nothing
+	//	return std::string();
+	//}
+	//void Skeleton::Deserialize(std::string& serialedString)
+	//{
+	//	// Do Nothing
+	//}
 }

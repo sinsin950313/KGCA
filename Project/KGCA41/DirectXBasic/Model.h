@@ -36,6 +36,9 @@ namespace SSB
 		// Serialize
 		std::map<SocketName, BoneIndex> _sockets;
 
+		// Temp
+		OBBData _boundingVolume;
+
 	public:
 		Model();
 		virtual ~Model();
@@ -48,12 +51,14 @@ namespace SSB
 		void Initialize_RegisterMesh(MeshIndex index, MeshInterface* mesh);
 		void Initialize_RegisterAnimation(AnimationName name, Animation* animation);
 		void Initialize_RegisterSocket(SocketName name, BoneIndex index);
+		void Initialize_SetBoundingVolume(OBBData data);
 
 	public:
 		void SetCurrentAnimation(AnimationName name);
 		void SetVertexShader(VertexShader* shader);
 		void SetPixelShader(PixelShader* shader);
 		HMatrix44 GetSocketCurrentMatrix(SocketName name);
+		OBBData GetBoundingVolume();
 
 	public:
 		operator OBBData();

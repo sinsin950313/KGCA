@@ -113,6 +113,20 @@ namespace SSB
 			_textureArray[i] = TextureLoader::GetInstance().Load(mtw(GetUnitAtomic(data.str, 0).str), DXStateManager::kDefaultWrapSample);
 		}
 	}
+	EditableObject<Material>* Material::GetEditableObject()
+	{
+		EditableMaterialData data;
+
+		data.MaterialIndex = _materialIndex;
+
+		data.TextureFileNameArray.resize(kTextureTypeCount);
+		for (int i = 0; i < kTextureTypeCount; ++i)
+		{
+			data.TextureFileNameArray[i] = _textureArray[i]->GetResource()->GetFileName();
+		}
+
+		return new EditableMaterialObject(data);
+	}
 	Material* Material::Clone()
 	{
 		Material* ret = new Material;
@@ -123,6 +137,27 @@ namespace SSB
 			ret->Initialize_SetTexture(i, _textureArray[i]);
 		}
 		ret->Init();
+
+		return ret;
+	}
+	EditableMaterialObject::EditableMaterialObject(EditableMaterialData data) : _materialIndex(data.MaterialIndex), _textureFileNameArray(data.TextureFileNameArray)
+	{
+	}
+	void EditableMaterialObject::ChangeTexture(TextureType type, std::string fileName)
+	{
+		_textureFileNameArray[type] = fileName;
+	}
+	Material* EditableMaterialObject::GetResult()
+	{
+		Material* ret = new Material;
+
+		ret->Initialize_SetMaterialIndex(_materialIndex);
+
+		for(int i = 0; i < kTextureTypeCount; ++i)
+		{
+			Texture* tex = TextureLoader::GetInstance().Load(mtw(_textureFileNameArray[i]), DXStateManager::kDefaultWrapSample);
+			ret->Initialize_SetTexture(i, tex);
+		}
 
 		return ret;
 	}

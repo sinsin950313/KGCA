@@ -2,6 +2,7 @@
 #include "DXWindow.h"
 #include "ShaderManager.h"
 #include "Mesh.hpp"
+#include "Common.h"
 
 namespace SSB
 {
@@ -441,20 +442,42 @@ namespace SSB
 	}
 	EditableObject<Model>* Model::GetEditableObject()
 	{
-		return new EditableModelObject(_materials, _meshes, _animations, _ps);
-	}
-	EditableModelObject::EditableModelObject(std::map<MaterialIndex, Material*> materials, std::map<MeshIndex, MeshInterface*> meshes, std::map<AnimationName, Animation*> animations, PixelShader* ps)
-		: _materials(materials), _meshes(meshes), _animations(animations), _ps(ps)
-	{
-	}
-	std::map<MaterialIndex, Material*> EditableModelObject::GetMaterials()
-	{
-		std::map<MaterialIndex, Material*> ret;
+		EditableModelData data;
+
+		for (auto mesh : _meshes)
+		{
+			data.Meshes.insert(std::make_pair(mesh.first, mesh.second->Clone()));
+		}
+		data.Sockets = _sockets;
+		data.PixelShaderFileName = _ps->GetFileName();
+		data.BoundingVolume = _boundingVolume;
+
 		for (auto material : _materials)
 		{
-			ret.insert(std::make_pair(material.first, material.second->Clone()));
+			data.Materials.insert(std::make_pair(material.first, material.second->Clone()));
 		}
-		return ret;
+		for (auto animation : _animations)
+		{
+			data.Animations.insert(std::make_pair(animation.first, animation.second->Clone()));
+		}
+
+		return new EditableModelObject(data);
+	}
+	EditableModelObject::EditableModelObject(EditableModelData data) 
+		: _meshes(data.Meshes), _sockets(data.Sockets), _pixelShaderFileName(data.PixelShaderFileName), _boundingVolume(data.BoundingVolume), _materials(data.Materials), _animations(data.Animations)
+	{
+	}
+	std::map<SocketName, BoneIndex> EditableModelObject::GetSockets()
+	{
+		return _sockets;
+	}
+	std::string EditableModelObject::GetPixelShaderFileName()
+	{
+		return _pixelShaderFileName;
+	}
+	OBBData EditableModelObject::GetBoundingVolumeData()
+	{
+		return _boundingVolume;
 	}
 	std::map<MeshIndex, MeshInterface*> EditableModelObject::GetMeshes()
 	{
@@ -465,6 +488,16 @@ namespace SSB
 		}
 		return ret;
 	}
+	std::map<MaterialIndex, Material*> EditableModelObject::GetMaterials()
+	{
+		std::map<MaterialIndex, Material*> ret;
+		for (auto material : _materials)
+		{
+			ret.insert(std::make_pair(material.first, material.second->Clone()));
+		}
+
+		return ret;
+	}
 	std::map<AnimationName, Animation*> EditableModelObject::GetAnimations()
 	{
 		std::map<AnimationName, Animation*> ret;
@@ -472,46 +505,29 @@ namespace SSB
 		{
 			ret.insert(std::make_pair(animation.first, animation.second->Clone()));
 		}
+
 		return ret;
 	}
-	PixelShader* EditableModelObject::GetPixelShader()
+	void EditableModelObject::ResizeBoundingVolume(OBBData data)
 	{
-		return _ps;
+		_boundingVolume = data;
 	}
-	void EditableModelObject::RemoveAction(AnimationName actionName)
+	void EditableModelObject::ChangePixelShaderFile(std::string fileName)
 	{
-		_animations.erase(actionName);
-	}
-	void EditableModelObject::AddAction(AnimationName actionName, Animation* animation)
-	{
-		_animations.insert(std::make_pair(actionName, animation));
+		_pixelShaderFileName = fileName;
 	}
 	Model* EditableModelObject::GetResult()
 	{
 		Model* ret = new Model;
 
-		for (auto material : _materials)
+		for (auto socket : _sockets)
 		{
-			Material* mat = material.second->Clone();
-			mat->Init();
-			ret->Initialize_RegisterMaterial(material.first, mat);
+			ret->Initialize_RegisterSocket(socket.first, socket.second);
 		}
 
-		for (auto mesh : _meshes)
-		{
-			MeshInterface* newMesh = mesh.second->Clone();
-			newMesh->Init();
-			ret->Initialize_RegisterMesh(mesh.first, newMesh);
-		}
+		ret->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(mtw(_pixelShaderFileName), "PS", "ps_5_0"));
 
-		for (auto animation : _animations)
-		{
-			Animation* newAnim = animation.second->Clone();
-			newAnim->Init();
-			ret->Initialize_RegisterAnimation(animation.first, newAnim);
-		}
-
-		ret->Init();
+		ret->Initialize_SetBoundingVolume(_boundingVolume);
 
 		return ret;
 	}

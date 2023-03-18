@@ -79,28 +79,31 @@ namespace SSB
 			_boneNodeToBoneIndexMap.insert(std::make_pair(node, index));
 
 			std::string name = node->GetName();
-			Bone bone;
+			BoneInfo info;
 			if (_fbxBoneKeyToFbxBoneMap.size() != 0)
 			{
-				bone.Name = name;
-				bone.ParentIndex = _boneNodeToBoneIndexMap.find(node->GetParent())->second;
+				info.Name = name;
+				info.ParentIndex = _boneNodeToBoneIndexMap.find(node->GetParent())->second;
 			}
 			else
 			{
-				bone.Name = name;
-				bone.ParentIndex = -1;
+				info.Name = name;
+				info.ParentIndex = -1;
 			}
 
-			FbxAMatrix geometricMatrix;
-			FbxVector4 trans = node->GetGeometricTranslation(FbxNode::eSourcePivot);
-			FbxVector4 rot = node->GetGeometricRotation(FbxNode::eSourcePivot);
-			FbxVector4 sca = node->GetGeometricScaling(FbxNode::eSourcePivot);
-			geometricMatrix.SetT(trans);
-			geometricMatrix.SetR(rot);
-			geometricMatrix.SetS(sca);
-			bone.Matrix = Convert(geometricMatrix);
+			FbxAMatrix localMatrix;
+			FbxVector4 trans = node->LclTranslation.Get();
+			FbxVector4 rot = node->LclRotation.Get();
+			FbxVector4 sca = node->LclScaling.Get();
+			//FbxVector4 trans = node->GetGeometricTranslation(FbxNode::eSourcePivot);
+			//FbxVector4 rot = node->GetGeometricRotation(FbxNode::eSourcePivot);
+			//FbxVector4 sca = node->GetGeometricScaling(FbxNode::eSourcePivot);
+			localMatrix.SetT(trans);
+			localMatrix.SetR(rot);
+			localMatrix.SetS(sca);
+			info.LocalMatrix = Convert(localMatrix);
 
-			_fbxBoneKeyToFbxBoneMap.insert(std::make_pair(node, FBXBoneData{index, bone}));
+			_fbxBoneKeyToFbxBoneMap.insert(std::make_pair(node, FBXBoneData{index, info}));
 		}
 	}
 
@@ -460,10 +463,10 @@ namespace SSB
 
 	Skeleton* FBXLoader::LoadSkeleton()
 	{
-		std::map<BoneIndex, Bone> data;
-		for (auto& bone : _fbxBoneKeyToFbxBoneMap)
+		std::map<BoneIndex, BoneInfo> data;
+		for (auto& info : _fbxBoneKeyToFbxBoneMap)
 		{
-			data.insert(std::make_pair(bone.second.FBXBoneIndex, bone.second.BoneData));
+			data.insert(std::make_pair(info.second.FBXBoneIndex, info.second.Info));
 		}
 		Skeleton* ret = new Skeleton;
 		ret->Initialize_SetBoneData(data);

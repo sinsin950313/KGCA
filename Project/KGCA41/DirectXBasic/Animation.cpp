@@ -217,14 +217,22 @@ namespace SSB
 	}
 	EditableObject<Animation>* Animation::GetEditableObject()
 	{
-		std::vector<AnimationFrameInfo*> data;
+		std::vector<AnimationFrameInfo*> frameData;
 		for (auto frameInfo : _data)
 		{
 			AnimationFrameInfo* tmp = new AnimationFrameInfo;
 			memcpy(tmp, frameInfo, sizeof(AnimationFrameInfo));
-			data.push_back(tmp);
+			frameData.push_back(tmp);
 		}
-		return new EditableAnimationObject(_boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount, data, _startFrame, _endFrame);
+
+		EditableAnimationData data;
+		data.BoneAnimationUnitMaxCount = _boneAnimationUnitMaxCount;
+		data.MeshAnimationUnitMaxCount = _meshAnimationUnitMaxCount;
+		data.FrameData = frameData;
+		data.StartFrame = _startFrame;
+		data.EndFrame = _endFrame;
+
+		return new EditableAnimationObject(data);
 	}
 	HMatrix44 Animation::GetCurrentBoneMatrix(BoneIndex index)
 	{
@@ -371,8 +379,8 @@ namespace SSB
 	{
 		return _frameInfo;
 	}
-	EditableAnimationObject::EditableAnimationObject(int boneMaxUnit, int meshMaxUnit, std::vector<AnimationFrameInfo*> frameData, FrameIndex start, FrameIndex end) 
-		: _boneAnimationUnitMaxCount(boneMaxUnit), _meshAnimationUnitMaxCount(meshMaxUnit), _data(frameData), _startFrame(start), _endFrame(end)
+	EditableAnimationObject::EditableAnimationObject(EditableAnimationData data)
+		: _boneAnimationUnitMaxCount(data.BoneAnimationUnitMaxCount), _meshAnimationUnitMaxCount(data.MeshAnimationUnitMaxCount), _data(data.FrameData), _startFrame(data.StartFrame), _endFrame(data.EndFrame)
 	{
 	}
 	EditableAnimationObject::~EditableAnimationObject()
@@ -382,6 +390,17 @@ namespace SSB
 			delete data;
 		}
 		_data.clear();
+	}
+	void EditableAnimationObject::AddSocketAnimation(BoneIndex index, BoneIndex parentIndex, HMatrix44 localMatrix)
+	{
+		for (auto data : _data)
+		{
+			AnimationUnitInfo parentData = data->BoneAnimationUnit[parentIndex];
+			AnimationUnitInfo socketData;
+			socketData.Matrix = parentData.Matrix * localMatrix;
+			Decompose(socketData.Matrix, socketData.Scale, socketData.Rotate, socketData.Translate);
+			data->BoneAnimationUnit[index] = socketData;
+		}
 	}
 	void EditableAnimationObject::EditFrame(FrameIndex start, FrameIndex end)
 	{

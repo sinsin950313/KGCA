@@ -3,14 +3,14 @@
 #include "DXObject.h"
 #include "FBXLoader.h"
 #include "Common.h"
-#include "Model.h"
+#include "Material.h"
 #include "Bone.h"
+#include "Model.h"
 
 namespace SSB
 {
 	struct ActionData
 	{
-		Animation* AnimationPointer;
 		std::string AnimationName;
 		FrameIndex EndFrame;
 	};
@@ -23,14 +23,22 @@ namespace SSB
 		std::string _objectFileName;
 		std::string _scriptFileName;
 
-		std::map<MaterialIndex, Material*> _materials;
+		std::map<MaterialIndex, EditableMaterialObject*> _materials;
 		std::map<MeshIndex, MeshInterface*> _meshes;
-		std::map<AnimationName, Animation*> _animations;
-		Skeleton* _skeleton;
+		std::map<AnimationName, EditableAnimationObject*> _animations;
+
+		struct SocketInfo
+		{
+			BoneIndex Index;
+			BoneIndex ParentIndex;
+			HMatrix44 LocalMatrix;
+		};
+		std::map<SocketName, SocketInfo> _sockets;
+		EditableSkeletonObject* _skeleton;
 
 		ActionData _selectedAnimation;
 
-		PixelShader* _ps;
+		std::string _pixelShaderFileName;
 
 	public:
 		const std::string kNewActionName = "NewAction";
@@ -38,8 +46,8 @@ namespace SSB
 	public:
 		void Export();
 		void Import();
-		void ExportSkeleton();
-		void ImportSkeleton();
+		//void ExportSkeleton();
+		//void ImportSkeleton();
 
 	private:
 		void ClearAnimationSelection();
@@ -53,17 +61,16 @@ namespace SSB
 		void SelectCurrentAction(std::string actionName);
 		void CutSelectedAnimataion(std::string newActionName, unsigned int lastFrame = -1);
 		void ChangeSelectedAnimationData(std::string actionName, unsigned int frameSize);
-		void AddSocket(std::string socketName, BoneIndex parentIndex, HMatrix44 matrix);
+		void AddSocket(SocketName socketName, BoneIndex parentIndex, HMatrix44 localMatrix);
 
 	public:
 		std::map<MaterialIndex, Material*> GetMaterials();
 		std::map<MeshIndex, MeshInterface*> GetMeshes();
 		std::map<AnimationName, Animation*> GetActions();
-		std::map<BoneName, Bone> GetBones();
+		Skeleton* GetSkeleton();
 		PixelShader* GetPixelShader();
 		std::vector<ActionData> GetActionList();
 		DXObject* GetPreviewObject();
-		HMatrix44 GetBoneMatrix(BoneIndex index);
 
 	public:
 		bool Init() override;

@@ -86,6 +86,17 @@ namespace SSB
 		Animation* Clone();
 	};
 
+	struct EditableAnimationData
+	{
+		float FramePerSecond = 30;
+
+		int BoneAnimationUnitMaxCount = 0;
+		int MeshAnimationUnitMaxCount = 0;
+		std::vector<AnimationFrameInfo*> FrameData;
+
+		FrameIndex StartFrame = 0;
+		FrameIndex EndFrame = 0;
+	};
 	class EditableAnimationObject : public EditableObject<Animation>
 	{
 	private:
@@ -99,13 +110,14 @@ namespace SSB
 		FrameIndex _endFrame;
 
 	public:
-		EditableAnimationObject(int boneMaxUnit, int meshMaxUnit, std::vector<AnimationFrameInfo*> frameData, FrameIndex start, FrameIndex end);
+		EditableAnimationObject(EditableAnimationData data);
 		~EditableAnimationObject();
 
 	public:
+		void AddSocketAnimation(BoneIndex index, BoneIndex parentIndex, HMatrix44 localMatrix);
+		void EditFrame(FrameIndex start, FrameIndex end);
 		FrameIndex GetStartFrame();
 		FrameIndex GetEndFrame();
-		void EditFrame(FrameIndex start, FrameIndex end);
 
 	public:
 		Animation* GetResult() override;

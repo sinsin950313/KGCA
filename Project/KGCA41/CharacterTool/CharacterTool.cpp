@@ -12,48 +12,6 @@
 
 namespace SSB
 {
-	void CharacterTool::Export()
-	{
-		if (_scriptFileName.empty())
-		{
-			_scriptFileName = "NewFBXScriptFile";
-		}
-		{
-			auto ret = SplitPath(mtw(_scriptFileName));
-			if (ret[3].empty() || ret[3] != L".Script")
-			{
-				_scriptFileName = wtm(ret[2]) + ".Script";
-			}
-		}
-
-		Model tmp;
-
-		for (auto material : _materials)
-		{
-			tmp.Initialize_RegisterMaterial(material.first, material.second->Clone());
-		}
-
-		for (auto mesh : _meshes)
-		{
-			tmp.Initialize_RegisterMesh(mesh.first, mesh.second->Clone());
-		}
-
-		for (auto animation : _animations)
-		{
-			tmp.Initialize_RegisterAnimation(animation.first, animation.second->Clone());
-		}
-
-		{
-			// Export Skeleton File Name
-		}
-
-		tmp.Init();
-		tmp.SetPixelShader(_ps);
-		auto serialedStr = tmp.Serialize(0);
-
-		ObjectScriptIO ioObject;
-		ioObject.Write(_scriptFileName, serialedStr);
-	}
 	void CharacterTool::Import()
 	{
 		Init();
@@ -69,7 +27,8 @@ namespace SSB
 				{
 					for (auto material : loadedMaterials)
 					{
-						_materials.insert(std::make_pair(material.first, material.second->Clone()));
+						EditableMaterialObject* object = static_cast<EditableMaterialObject*>(material.second->GetEditableObject());
+						_materials.insert(std::make_pair(material.first, object));
 					}
 				}
 			}
@@ -84,7 +43,7 @@ namespace SSB
 				{
 					_meshes.insert(std::make_pair(mesh.first, mesh.second->Clone()));
 				}
-				_ps = editableObject->GetPixelShader();
+				_pixelShaderFileName = editableObject->GetPixelShaderFileName();
 				delete editableObject;
 			}
 
@@ -92,12 +51,13 @@ namespace SSB
 				auto animations = loader.LoadAnimation();
 				for (auto animation : animations)
 				{
-					_animations.insert(std::make_pair(animation.first, animation.second->Clone()));
+					EditableAnimationObject* object = static_cast<EditableAnimationObject*>(animation.second->GetEditableObject());
+					_animations.insert(std::make_pair(animation.first, object));
 				}
 			}
 
 			{
-				_skeleton = loader.LoadSkeleton();
+				_skeleton = static_cast<EditableSkeletonObject*>(loader.LoadSkeleton()->GetEditableObject());
 			}
 
 			_objectFileName.clear();
@@ -116,7 +76,8 @@ namespace SSB
 				auto materials = editableObject->GetMaterials();
 				for (auto material : materials)
 				{
-					_materials.insert(std::make_pair(material.first, material.second));
+					EditableMaterialObject* object = static_cast<EditableMaterialObject*>(material.second->GetEditableObject());
+					_materials.insert(std::make_pair(material.first, object));
 				}
 			}
 			{
@@ -132,10 +93,11 @@ namespace SSB
 				auto animations = editableObject->GetAnimations();
 				for (auto animation : animations)
 				{
-					_animations.insert(std::make_pair(animation.first, animation.second));
+					EditableAnimationObject* object = static_cast<EditableAnimationObject*>(animation.second->GetEditableObject());
+					_animations.insert(std::make_pair(animation.first, object));
 				}
 			}
-			_ps = editableObject->GetPixelShader();
+			_pixelShaderFileName = editableObject->GetPixelShaderFileName();
 			delete editableObject;
 
 			{
@@ -145,6 +107,48 @@ namespace SSB
 			_scriptFileName.clear();
 		}
 	}
+	void CharacterTool::Export()
+	{
+		if (_scriptFileName.empty())
+		{
+			_scriptFileName = "NewFBXScriptFile";
+		}
+		{
+			auto ret = SplitPath(mtw(_scriptFileName));
+			if (ret[3].empty() || ret[3] != L".Script")
+			{
+				_scriptFileName = wtm(ret[2]) + ".Script";
+			}
+		}
+
+		Model tmp;
+
+		for (auto material : _materials)
+		{
+			tmp.Initialize_RegisterMaterial(material.first, material.second->GetResult());
+		}
+
+		for (auto mesh : _meshes)
+		{
+			tmp.Initialize_RegisterMesh(mesh.first, mesh.second->Clone());
+		}
+
+		for (auto animation : _animations)
+		{
+			tmp.Initialize_RegisterAnimation(animation.first, animation.second->GetResult());
+		}
+
+		{
+			// Export Skeleton File Name
+		}
+
+		tmp.Init();
+		tmp.SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(mtw(_pixelShaderFileName), "PS", "ps_5_0"));
+		auto serialedStr = tmp.Serialize(0);
+
+		ObjectScriptIO ioObject;
+		ioObject.Write(_scriptFileName, serialedStr);
+	}
 	void CharacterTool::RegisterObjectFileName(std::string fileName)
 	{
 		_objectFileName = fileName;
@@ -152,7 +156,6 @@ namespace SSB
 	void CharacterTool::ClearAnimationSelection()
 	{
 		{
-			_selectedAnimation.AnimationPointer = nullptr;
 			_selectedAnimation.AnimationName.clear();
 			_selectedAnimation.EndFrame = kEmptyFrame;
 		}
@@ -163,7 +166,7 @@ namespace SSB
 	}
 	bool CharacterTool::IsSelected()
 	{
-		return _selectedAnimation.AnimationPointer != nullptr;
+		return !_selectedAnimation.AnimationName.empty();
 	}
 	void CharacterTool::AddAction(std::string actionFileName)
 	{
@@ -174,7 +177,12 @@ namespace SSB
 		std::map<AnimationName, Animation*> anim = loader.LoadAnimation();
 		for (auto iter : anim)
 		{
-			_animations.insert(std::make_pair(iter.first, iter.second));
+			EditableAnimationObject* object = static_cast<EditableAnimationObject*>(iter.second->GetEditableObject());
+			for (auto socket : _sockets)
+			{
+				object->AddSocketAnimation(socket.second.Index, socket.second.ParentIndex, socket.second.LocalMatrix);
+			}
+			_animations.insert(std::make_pair(iter.first, object));
 		}
 	}
 	void CharacterTool::RemoveAction(std::string actionName)
@@ -189,17 +197,15 @@ namespace SSB
 		if (_animations.find(actionName) != _animations.end())
 		{
 			_selectedAnimation.AnimationName = actionName;
-			_selectedAnimation.AnimationPointer = _animations.find(actionName)->second;
-			_selectedAnimation.EndFrame = _selectedAnimation.AnimationPointer->GetFrameSize();
+			_selectedAnimation.EndFrame = _animations.find(actionName)->second->GetEndFrame();
 		}
 	}
 	void CharacterTool::CutSelectedAnimataion(std::string newActionName, unsigned int lastFrame)
 	{
 		if (IsSelected())
 		{
-			EditableAnimationObject* editableObject = static_cast<EditableAnimationObject*>(_selectedAnimation.AnimationPointer->GetEditableObject());
+			EditableAnimationObject* editableObject = _animations.find(_selectedAnimation.AnimationName)->second;
 			_animations.erase(_selectedAnimation.AnimationName);
-			delete _selectedAnimation.AnimationPointer;
 
 			FrameIndex currentEndFrame = editableObject->GetEndFrame();
 
@@ -207,14 +213,16 @@ namespace SSB
 				editableObject->EditFrame(0, lastFrame);
 				Animation* before = editableObject->GetResult();
 				AnimationName beforeName = newActionName;
-				_animations.insert(std::make_pair(beforeName, before));
+				EditableAnimationObject* object = static_cast<EditableAnimationObject*>(before->GetEditableObject());
+				_animations.insert(std::make_pair(beforeName, object));
 			}
 
 			{
 				editableObject->EditFrame(lastFrame, currentEndFrame);
 				Animation* after = editableObject->GetResult();
 				AnimationName afterName = _selectedAnimation.AnimationName;
-				_animations.insert(std::make_pair(afterName, after));
+				EditableAnimationObject* object = static_cast<EditableAnimationObject*>(after->GetEditableObject());
+				_animations.insert(std::make_pair(afterName, object));
 			}
 		}
 	}
@@ -224,49 +232,49 @@ namespace SSB
 		{
 			if (!actionName.empty())
 			{
+				EditableAnimationObject* object = _animations.find(_selectedAnimation.AnimationName)->second;
 				_animations.erase(_selectedAnimation.AnimationName);
-				_animations.insert(std::make_pair(actionName, _selectedAnimation.AnimationPointer));
-				_selectedAnimation.AnimationName = actionName;
+				_animations.insert(std::make_pair(actionName, object));
+
+				SelectCurrentAction(actionName);
 			}
 
 			if (frameSize != kEmptyFrame)
 			{
 				_animations.erase(_selectedAnimation.AnimationName);
 
-				EditableAnimationObject* editableObject = static_cast<EditableAnimationObject*>(_selectedAnimation.AnimationPointer->GetEditableObject());
+				EditableAnimationObject* editableObject = _animations.find(_selectedAnimation.AnimationName)->second;
 				editableObject->EditFrame(0, frameSize);
-				editableObject->GetResult();
-				delete _selectedAnimation.AnimationPointer;
-
-				Animation* result = editableObject->GetResult();
-				_selectedAnimation.AnimationPointer = result;
-				_animations.insert(std::make_pair(_selectedAnimation.AnimationName, _selectedAnimation.AnimationPointer));
 			}
 
-			_selectedAnimation.AnimationName = actionName;
-			_selectedAnimation.EndFrame = frameSize;
+			SelectCurrentAction(actionName);
 		}
 	}
-	void CharacterTool::AddSocket(std::string socketName, BoneIndex parentIndex, HMatrix44 matrix)
+	void CharacterTool::AddSocket(SocketName socketName, BoneIndex parentIndex, HMatrix44 localMatrix)
 	{
-		_sockets.insert(std::make_pair(socketName, _bones.size()));
+		BoneInfo boneInfo;
+		boneInfo.Name = socketName;
+		boneInfo.ParentIndex = parentIndex;
+		boneInfo.LocalMatrix = localMatrix;
+
+		BoneIndex index = _skeleton->AddSocket(boneInfo);
 		for (auto animation : _animations)
 		{
-			EditableAnimationObject* editableObject = static_cast<EditableAnimationObject*>(_selectedAnimation.AnimationPointer->GetEditableObject());
-			editableObject->RegisterSocket(parentIndex, matrix);
+			animation.second->AddSocketAnimation(index, parentIndex, localMatrix);
 		}
-		Bone bone;
-		bone.Index = _bones.size();
-		bone.Name = socketName;
-		bone.ParentIndex = parentIndex;
-		_bones.insert(std::make_pair(socketName, bone));
+
+		SocketInfo socketInfo;
+		socketInfo.Index = index;
+		socketInfo.ParentIndex = parentIndex;
+		socketInfo.LocalMatrix = localMatrix;
+		_sockets.insert(std::make_pair(socketName, socketInfo));
 	}
 	std::map<MaterialIndex, Material*> CharacterTool::GetMaterials()
 	{
 		std::map<MaterialIndex, Material*> ret;
 		for (auto material : _materials)
 		{
-			ret.insert(std::make_pair(material.first, material.second->Clone()));
+			ret.insert(std::make_pair(material.first, material.second->GetResult()));
 		}
 		return ret;
 	}
@@ -284,17 +292,17 @@ namespace SSB
 		std::map<AnimationName, Animation*> ret;
 		for (auto animation : _animations)
 		{
-			ret.insert(std::make_pair(animation.first, animation.second->Clone()));
+			ret.insert(std::make_pair(animation.first, animation.second->GetResult()));
 		}
 		return ret;
 	}
-	std::map<BoneName, Bone> CharacterTool::GetBones()
+	Skeleton* CharacterTool::GetSkeleton()
 	{
-		return _bones;
+		return _skeleton->GetResult();
 	}
 	PixelShader* CharacterTool::GetPixelShader()
 	{
-		return _ps;
+		return ShaderManager::GetInstance().LoadPixelShader(mtw(_pixelShaderFileName), "PS", "ps_5_0");
 	}
 	std::vector<ActionData> CharacterTool::GetActionList()
 	{
@@ -303,7 +311,7 @@ namespace SSB
 		{
 			ActionData data;
 			data.AnimationName = action.first;
-			data.EndFrame = action.second->GetFrameSize();
+			data.EndFrame = action.second->GetEndFrame();
 			ret.push_back(data);
 		}
 		return ret;
@@ -316,7 +324,7 @@ namespace SSB
 		Model* model = new Model;
 		for (auto material : _materials)
 		{
-			Material* copy = material.second->Clone();
+			Material* copy = material.second->GetResult();
 			copy->Init();
 			model->Initialize_RegisterMaterial(material.first, copy);
 		}
@@ -330,19 +338,19 @@ namespace SSB
 
 		for (auto animation : _animations)
 		{
-			Animation* copy = animation.second->Clone();
+			Animation* copy = animation.second->GetResult();
 			copy->Init();
 			model->Initialize_RegisterAnimation(animation.first, copy);
 		}
 
 		for (auto socket : _sockets)
 		{
-			model->Initialize_RegisterSocket(socket.first, socket.second);
+			model->Initialize_RegisterSocket(socket.first, socket.second.Index);
 		}
 
 		model->Init();
 
-		model->SetPixelShader(_ps);
+		model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(mtw(_pixelShaderFileName), "PS", "ps_5_0"));
 		ret->SetModel(model);
 		if (IsSelected())
 		{
@@ -355,7 +363,6 @@ namespace SSB
 	{
 		for (auto material : _materials)
 		{
-			material.second->Release();
 			delete material.second;
 		}
 		_materials.clear();
@@ -371,7 +378,6 @@ namespace SSB
 
 		for (auto animation : _animations)
 		{
-			animation.second->Release();
 			delete animation.second;
 		}
 		_animations.clear();

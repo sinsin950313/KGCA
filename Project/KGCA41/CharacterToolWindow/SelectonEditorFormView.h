@@ -30,7 +30,7 @@ protected:
 
 private:
 	HTREEITEM Find(HTREEITEM hItem, SSB::BoneName name);
-	void UpdateList();
+	//void UpdateList();
 
 private:
 	CTreeCtrl BoneTreeListControl;
@@ -51,7 +51,7 @@ private:
 public:
 	//afx_msg void OnTvnSelchangedBonetree(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedAddSocketButton();
-	afx_msg void OnBnClickedCreatesocketbutton();
+	//afx_msg void OnBnClickedCreatesocketbutton();
 };
 
 

@@ -10,6 +10,6 @@ namespace SSB
 	struct FBXBoneData
 	{
 		int FBXBoneIndex;
-		Bone BoneData;
+		BoneInfo Info;
 	};
 }

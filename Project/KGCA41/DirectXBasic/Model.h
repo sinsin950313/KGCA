@@ -36,7 +36,7 @@ namespace SSB
 		// Serialize
 		std::map<SocketName, BoneIndex> _sockets;
 
-		// Temp
+		// Temp for Team Project
 		OBBData _boundingVolume;
 
 	public:
@@ -73,27 +73,42 @@ namespace SSB
 		EditableObject<Model>* GetEditableObject() override;
 	};
 
+	struct EditableModelData
+	{
+		std::map<MeshIndex, MeshInterface*> Meshes;
+		std::map<SocketName, BoneIndex> Sockets;
+		std::string PixelShaderFileName;
+		OBBData BoundingVolume;
+
+		std::map<MaterialIndex, Material*> Materials;
+		std::map<AnimationName, Animation*> Animations;
+	};
 	class EditableModelObject : public EditableObject<Model>
 	{
 	private:
-		std::map<MaterialIndex, Material*> _materials;
 		std::map<MeshIndex, MeshInterface*> _meshes;
+		std::map<SocketName, BoneIndex> _sockets;
+		std::string _pixelShaderFileName;
+		OBBData _boundingVolume;
+
+		std::map<MaterialIndex, Material*> _materials;
 		std::map<AnimationName, Animation*> _animations;
 
-		PixelShader* _ps;
+	public:
+		EditableModelObject(EditableModelData data);
 
 	public:
-		EditableModelObject(std::map<MaterialIndex, Material*> materials, std::map<MeshIndex, MeshInterface*> meshes, std::map<AnimationName, Animation*> animations, PixelShader* ps);
-
-	public:
-		std::map<MaterialIndex, Material*> GetMaterials();
+		std::map<SocketName, BoneIndex> GetSockets();
+		std::string GetPixelShaderFileName();
+		OBBData GetBoundingVolumeData();
 		std::map<MeshIndex, MeshInterface*> GetMeshes();
+
+		std::map<MaterialIndex, Material*> GetMaterials();
 		std::map<AnimationName, Animation*> GetAnimations();
-		PixelShader* GetPixelShader();
 
 	public:
-		void RemoveAction(AnimationName actionName);
-		void AddAction(AnimationName actionName, Animation* animation);
+		void ResizeBoundingVolume(OBBData data);
+		void ChangePixelShaderFile(std::string fileName);
 
 	public:
 		Model* GetResult() override;

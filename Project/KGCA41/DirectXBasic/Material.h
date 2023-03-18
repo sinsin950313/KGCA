@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Serializeable.h"
+#include "EditableInterface.h"
 
 namespace SSB
 {
@@ -15,7 +16,7 @@ namespace SSB
 	//static const TextureType kNormal = 1;
 	//static const TextureType kSpecular = 2;
 
-	class Material : public Common, public Serializeable
+	class Material : public Common, public Serializeable, public EditableInterface<Material>
 	{
 	private:
 		MaterialIndex _materialIndex;
@@ -36,8 +37,30 @@ namespace SSB
 		bool Release() override;
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
+		EditableObject<Material>* GetEditableObject() override;
 
 	public:
 		Material* Clone();
+	};
+
+	struct EditableMaterialData
+	{
+		MaterialIndex MaterialIndex;
+		std::vector<std::string> TextureFileNameArray;
+	};
+	class EditableMaterialObject : public EditableObject<Material>
+	{
+	private:
+		MaterialIndex _materialIndex;
+		std::vector<std::string> _textureFileNameArray;
+
+	public:
+		EditableMaterialObject(EditableMaterialData data);
+
+	public:
+		void ChangeTexture(TextureType type, std::string fileName);
+
+	public:
+		Material* GetResult() override;
 	};
 }

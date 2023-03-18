@@ -8,6 +8,7 @@
 #include <vector>
 #include "Serializeable.h"
 #include "SerializeableDataType.h"
+#include "EditableInterface.h"
 
 namespace SSB
 {
@@ -22,7 +23,7 @@ namespace SSB
 	static const std::string Vertex_PCNTs_Animatable_Keyword = "Vertex_PCNTs_Animatable";
 	static const std::string Vertex_PCNTs_Skinning_Keyword = "Vertex_PCNTs_SKinning";
 
-	class MeshInterface : public Common, public Serializeable
+	class MeshInterface : public Common, public Serializeable/*, public EditableInterface<MeshInterface>*/
 	{
 	protected:
 		virtual void InitialVertexShader() = 0;
@@ -119,7 +120,9 @@ namespace SSB
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
 		MeshInterface* ClonedObject() override;
+		//EditableObject<MeshInterface>* GetEditableObject() override;
 	};
+
 	class Mesh_Vertex_PCNT : public Mesh<Vertex_PCNT>
 	{
 	private:
@@ -130,6 +133,7 @@ namespace SSB
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
 		MeshInterface* ClonedObject() override;
+		//EditableObject<MeshInterface>* GetEditableObject() override;
 	};
 	class Mesh_Vertex_PCNT_Animatable : public Mesh<Vertex_PCNT>
 	{
@@ -161,6 +165,7 @@ namespace SSB
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
 		MeshInterface* Clone() override;
+		//EditableObject<MeshInterface>* GetEditableObject() override;
 	};
 	class Mesh_Vertex_PCNT_Skinning : public Mesh<Vertex_PCNT_Skinning>
 	{
@@ -196,6 +201,7 @@ namespace SSB
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
 		MeshInterface* Clone() override;
+		//EditableObject<MeshInterface>* GetEditableObject() override;
 	};
 	class Mesh_Vertex_PCNTs : public Mesh<Vertex_PCNTs>
 	{
@@ -207,6 +213,7 @@ namespace SSB
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
 		void InitialVertexShader() override;
+		//EditableObject<MeshInterface>* GetEditableObject() override;
 	};
 
 	class Mesh_Vertex_PCNTs_Animatable : public Mesh<Vertex_PCNTs>
@@ -239,6 +246,7 @@ namespace SSB
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
 		MeshInterface* Clone() override;
+		//EditableObject<MeshInterface>* GetEditableObject() override;
 	};
 	class Mesh_Vertex_PCNTs_Skinning : public Mesh<Vertex_PCNTs_Skinning>
 	{
@@ -274,6 +282,7 @@ namespace SSB
 		std::string Serialize(int tabCount) override;
 		void Deserialize(std::string& serialedString) override;
 		MeshInterface* Clone() override;
+		//EditableObject<MeshInterface>* GetEditableObject() override;
 	};
 
 	//class Direction : public Mesh_Vertex_PC

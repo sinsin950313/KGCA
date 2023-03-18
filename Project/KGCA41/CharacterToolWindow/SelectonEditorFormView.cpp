@@ -70,23 +70,23 @@ HTREEITEM SelectonEditorFormView::Find(HTREEITEM hItem, SSB::BoneName name)
 	return hFindItem;
 }
 
-void SelectonEditorFormView::UpdateList()
-{
-	BoneTreeListControl.DeleteAllItems();
-
-	int index = 0;
-	std::map<SSB::BoneName, SSB::Bone> boneList = ((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->GetBones();
-	for (auto bone : boneList)
-	{
-		TVINSERTSTRUCT insertStruct;
-		insertStruct.hParent = Find(BoneTreeListControl.GetRootItem(), bone.first);
-		BoneTreeListControl.InsertItem(&insertStruct);
-	}
-}
+//void SelectonEditorFormView::UpdateList()
+//{
+//	BoneTreeListControl.DeleteAllItems();
+//
+//	int index = 0;
+//	std::map<SSB::BoneName, SSB::Bone> boneList = ((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->GetBones();
+//	for (auto bone : boneList)
+//	{
+//		TVINSERTSTRUCT insertStruct;
+//		insertStruct.hParent = Find(BoneTreeListControl.GetRootItem(), bone.first);
+//		BoneTreeListControl.InsertItem(&insertStruct);
+//	}
+//}
 
 BEGIN_MESSAGE_MAP(SelectonEditorFormView, CFormView)
 	//ON_NOTIFY(TVN_SELCHANGED, IDC_BoneTree, &SelectonEditorFormView::OnTvnSelchangedBonetree)
-	ON_BN_CLICKED(IDC_CreateSocketButton, &SelectonEditorFormView::OnBnClickedCreatesocketbutton)
+	//ON_BN_CLICKED(IDC_CreateSocketButton, &SelectonEditorFormView::OnBnClickedCreatesocketbutton)
 	ON_BN_CLICKED(IDC_AddSocketButton, &SelectonEditorFormView::OnBnClickedAddSocketButton)
 END_MESSAGE_MAP()
 
@@ -125,88 +125,88 @@ void SelectonEditorFormView::Dump(CDumpContext& dc) const
 //}
 
 
-void SelectonEditorFormView::OnBnClickedCreatesocketbutton()
-{
-	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	CString xStr = L"0";
-	CString yStr = L"0";
-	CString zStr = L"0";
-	CString yawStr = L"0";
-	CString pitchStr = L"0";
-	CString rollStr = L"0";
-	CString rightStr = L"0";
-	CString upStr = L"0";
-	CString forwardStr = L"0";
-
-	SSB::CharacterToolMainLogic* logic = ((CCharacterToolWindowApp*)AfxGetApp())->GetLogic();
-
-	CString selectedParentItemStr;
-	_parentIndex = logic->GetBoneIndex(std::string(CT2CA(selectedParentItemStr)));
-	SSB::HMatrix44 parentMatrix = logic->GetBoneMatrix(_parentIndex);
-
-	HTREEITEM hItem = BoneTreeListControl.GetSelectedItem();
-	if (hItem != nullptr)
-	{
-		selectedParentItemStr = BoneTreeListControl.GetItemText(hItem);
-		{
-			CString tmp;
-			_x.GetWindowTextW(xStr);
-		}
-		{
-			CString tmp;
-			_y.GetWindowTextW(yStr);
-		}
-		{
-			CString tmp;
-			_z.GetWindowTextW(zStr);
-		}
-		{
-			CString tmp;
-			_yaw.GetWindowTextW(yawStr);
-		}
-		{
-			CString tmp;
-			_pitch.GetWindowTextW(pitchStr);
-		}
-		{
-			CString tmp;
-			_roll.GetWindowTextW(rollStr);
-		}
-		{
-			CString tmp;
-			_right.GetWindowTextW(rightStr);
-		}
-		{
-			CString tmp;
-			_up.GetWindowTextW(upStr);
-		}
-		{
-			CString tmp;
-			_forward.GetWindowTextW(forwardStr);
-		}
-	}
-
-	SSB::HMatrix44 S = {
-		(float)_ttof(rightStr), 0, 0, 0,
-		0, (float)_ttof(upStr), 0, 0,
-		0, 0, (float)_ttof(forwardStr), 0,
-		0, 0, 0, 1
-	};
-
-	SSB::HMatrix44 R = SSB::HMatrix44::RotateFromXAxis((float)_ttof(yawStr)) * SSB::HMatrix44::RotateFromYAxis((float)_ttof(pitchStr)) * SSB::HMatrix44::RotateFromZAxis((float)_ttof(rollStr));
-
-	SSB::HMatrix44 T = {
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		(float)_ttof(xStr), (float)_ttof(yStr), (float)_ttof(zStr), 1
-	};
-
-	_socketMatrix = S * R * T;
-	_socketMatrix = parentMatrix * _socketMatrix;
-
-	logic->SetSocketViewerObjectMatrix(_socketMatrix);
-}
+//void SelectonEditorFormView::OnBnClickedCreatesocketbutton()
+//{
+//	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+//	CString xStr = L"0";
+//	CString yStr = L"0";
+//	CString zStr = L"0";
+//	CString yawStr = L"0";
+//	CString pitchStr = L"0";
+//	CString rollStr = L"0";
+//	CString rightStr = L"0";
+//	CString upStr = L"0";
+//	CString forwardStr = L"0";
+//
+//	SSB::CharacterToolMainLogic* logic = ((CCharacterToolWindowApp*)AfxGetApp())->GetLogic();
+//
+//	CString selectedParentItemStr;
+//	_parentIndex = logic->GetBoneIndex(std::string(CT2CA(selectedParentItemStr)));
+//	SSB::HMatrix44 parentMatrix = logic->GetBoneMatrix(_parentIndex);
+//
+//	HTREEITEM hItem = BoneTreeListControl.GetSelectedItem();
+//	if (hItem != nullptr)
+//	{
+//		selectedParentItemStr = BoneTreeListControl.GetItemText(hItem);
+//		{
+//			CString tmp;
+//			_x.GetWindowTextW(xStr);
+//		}
+//		{
+//			CString tmp;
+//			_y.GetWindowTextW(yStr);
+//		}
+//		{
+//			CString tmp;
+//			_z.GetWindowTextW(zStr);
+//		}
+//		{
+//			CString tmp;
+//			_yaw.GetWindowTextW(yawStr);
+//		}
+//		{
+//			CString tmp;
+//			_pitch.GetWindowTextW(pitchStr);
+//		}
+//		{
+//			CString tmp;
+//			_roll.GetWindowTextW(rollStr);
+//		}
+//		{
+//			CString tmp;
+//			_right.GetWindowTextW(rightStr);
+//		}
+//		{
+//			CString tmp;
+//			_up.GetWindowTextW(upStr);
+//		}
+//		{
+//			CString tmp;
+//			_forward.GetWindowTextW(forwardStr);
+//		}
+//	}
+//
+//	SSB::HMatrix44 S = {
+//		(float)_ttof(rightStr), 0, 0, 0,
+//		0, (float)_ttof(upStr), 0, 0,
+//		0, 0, (float)_ttof(forwardStr), 0,
+//		0, 0, 0, 1
+//	};
+//
+//	SSB::HMatrix44 R = SSB::HMatrix44::RotateFromXAxis((float)_ttof(yawStr)) * SSB::HMatrix44::RotateFromYAxis((float)_ttof(pitchStr)) * SSB::HMatrix44::RotateFromZAxis((float)_ttof(rollStr));
+//
+//	SSB::HMatrix44 T = {
+//		0, 0, 0, 0,
+//		0, 0, 0, 0,
+//		0, 0, 0, 0,
+//		(float)_ttof(xStr), (float)_ttof(yStr), (float)_ttof(zStr), 1
+//	};
+//
+//	_socketMatrix = S * R * T;
+//	_socketMatrix = parentMatrix * _socketMatrix;
+//
+//	logic->SetSocketViewerObjectMatrix(_socketMatrix);
+//}
 
 
 void SelectonEditorFormView::OnBnClickedAddSocketButton()
@@ -216,5 +216,5 @@ void SelectonEditorFormView::OnBnClickedAddSocketButton()
 	_socketName.GetWindowTextW(socketName);
 	((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->AddSocket(std::string(CT2CA(socketName)), _parentIndex, _socketMatrix);
 
-	UpdateList();
+	//UpdateList();
 }

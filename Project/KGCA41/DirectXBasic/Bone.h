@@ -6,6 +6,7 @@
 #include "SerializeableDataType.h"
 #include <map>
 #include <d3d11.h>
+#include "EditableInterface.h"
 
 namespace SSB
 {
@@ -14,32 +15,56 @@ namespace SSB
 	typedef std::string SocketName;
 	typedef int SocketIndex;
 
-	struct Bone
+	struct BoneInfo
 	{
 		BoneName Name;
 		BoneIndex ParentIndex;
-		HMatrix44 Matrix;
+		HMatrix44 LocalMatrix;
 	};
 
-	class Skeleton : public Common, public Serializeable
+	class Skeleton : public Common/*, public Serializeable*/, public EditableInterface<Skeleton>
 	{
 	private:
-		struct FrameInfo
+		class Bone
 		{
-			HMatrix44 BoneAnimationUnit[kAnimationUnitMaxIndex];
+		private:
+			Bone* _parentBone = nullptr;
+			BoneIndex _parentIndex;
+			BoneName _name;
+			HMatrix44 _localMatrix;
+
+		public:
+			void SetInfo(BoneInfo info);
+			void SetParent(BoneIndex parentIndex, Bone* parentBone);
+
+		public:
+			BoneName GetName();
+			HMatrix44 GetLocalMatrix();
+			BoneIndex GetParentIndex();
+
+		public:
+			HMatrix44 GetWorldMatrix();
 		};
 
 	private:
 		std::map<BoneIndex, Bone> _bones;
-		FrameInfo _info;
+		std::vector<BoneIndex> _sockets;
+
+		struct BoneSet
+		{
+			HMatrix44 _boneUnits[kAnimationUnitMaxIndex];
+		};
+		BoneSet _boneSet;
 		ID3D11Buffer* _buffer;
 
 	private:
-		void SetBoneInfo();
 		bool CreateBuffer();
+		void AddBone(BoneIndex index, BoneInfo info);
 
 	public:
-		void Initialize_SetBoneData(std::map<BoneIndex, Bone> bones);
+		void Initialize_SetBoneData(std::map<BoneIndex, BoneInfo> bones);
+		void Initialize_SetSocketData(std::vector<BoneIndex> sockets);
+		std::vector<BoneIndex> GetSocketIndex();
 		HMatrix44 GetWorldMatrix(BoneIndex index);
 
 	public:
@@ -47,7 +72,32 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;	//Replace Animation setting
 		bool Release() override;
-		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string& serialedString) override;
+		EditableObject<Skeleton>* GetEditableObject() override;
+		//std::string Serialize(int tabCount) override;
+		//void Deserialize(std::string& serialedString) override;
+	};
+
+	struct EditableSkeletonData
+	{
+		std::map<BoneIndex, BoneInfo> Bones;
+		std::vector<BoneIndex> Sockets;
+	};
+	class EditableSkeletonObject : public EditableObject<Skeleton>
+	{
+	private:
+		std::map<BoneIndex, BoneInfo> _bones;
+		std::vector<BoneIndex> _sockets;
+
+	public:
+		EditableSkeletonObject(EditableSkeletonData data);
+
+	public:
+		BoneIndex AddSocket(BoneInfo info);
+
+	public:
+		std::vector<BoneIndex> GetSockets();
+
+	public:
+		Skeleton* GetResult() override;
 	};
 }

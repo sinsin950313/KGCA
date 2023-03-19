@@ -33,6 +33,23 @@ namespace SSB
         }
     };
 
+    class DepthStencilPainterStateFactory : public DepthStencilStateFactoryInterface
+    {
+    public:
+        ID3D11DepthStencilState* Create()
+        {
+			D3D11_DEPTH_STENCIL_DESC dsDesc;
+			ZeroMemory(&dsDesc, sizeof(D3D11_DEPTH_STENCIL_DESC));
+			dsDesc.DepthEnable = FALSE;
+			dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+			dsDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+
+            ID3D11DepthStencilState* state;
+			g_dxWindow->GetDevice()->CreateDepthStencilState(&dsDesc, &state);
+            return state;
+        }
+    };
+
     class SamplerStateFactoryInterface
     {
     public:
@@ -175,6 +192,7 @@ namespace SSB
 		const static std::string kDefaultWireFrameRasterizer;
         const static std::string kDefaultBlend;
         const static std::string kDefaultDepthStencil;
+        const static std::string kDepthStencilPainter;
 
     private:
         static DXStateManager _instance;

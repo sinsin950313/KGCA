@@ -468,6 +468,7 @@ namespace SSB
 		{
 			data.insert(std::make_pair(info.second.FBXBoneIndex, info.second.Info));
 		}
+		auto tmp = data;
 		Skeleton* ret = new Skeleton;
 		ret->Initialize_SetBoneData(data);
 

@@ -189,6 +189,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BoneEditorDockablePane.h" />
     <ClInclude Include="CharacterToolDockablePane.h" />
     <ClInclude Include="CharacterToolFormView.h" />
     <ClInclude Include="CharacterToolMainLogic.h" />
@@ -203,6 +204,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BoneEditorDockablePane.cpp" />
     <ClCompile Include="CharacterToolDockablePane.cpp" />
     <ClCompile Include="CharacterToolFormView.cpp" />
     <ClCompile Include="CharacterToolMainLogic.cpp" />

@@ -51,6 +51,9 @@
     <ClInclude Include="SelectonEditorFormView.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="BoneEditorDockablePane.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="CharacterToolWindow.cpp">
@@ -78,6 +81,9 @@
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="SelectonEditorFormView.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="BoneEditorDockablePane.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>

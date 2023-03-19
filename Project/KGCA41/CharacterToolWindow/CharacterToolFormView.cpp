@@ -139,6 +139,7 @@ void CharacterToolAnimationFormView::OnLvnItemchangedActionlistcontrol(NMHDR* pN
 		int index = pNMLV->iItem;
 		_selectedActionName = _actionListControl.GetItemText(index, 0);
 		((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->SetCurrentAnimation(std::string(CT2CA(_selectedActionName)));
+		((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->SetAnimationPreviewMode();
 	}
 }
 
@@ -174,4 +175,9 @@ void CharacterToolAnimationFormView::OnBnClickedPiebutton()
 	SSB::CharacterToolMainLogic* logic = ((CCharacterToolWindowApp*)AfxGetApp())->GetLogic();
 
 	//logic->ChangePIEState();
+}
+
+void CharacterToolAnimationFormView::CustomUpdateData()
+{
+	UpdateActionList();
 }

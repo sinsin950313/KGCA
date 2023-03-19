@@ -68,3 +68,8 @@ int CharacterToolDockablePane::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest,
 
 	return MA_NOACTIVATE;
 }
+
+void CharacterToolDockablePane::CustomUpdateData()
+{
+	_view->CustomUpdateData();
+}

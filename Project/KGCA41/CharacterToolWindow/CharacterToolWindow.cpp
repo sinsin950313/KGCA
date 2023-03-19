@@ -210,6 +210,7 @@ void CCharacterToolWindowApp::OnImport()
 	if (FileDlg.DoModal() == IDOK)		// 저장, 취소를 누르기 전까지 Blocking
 	{
 		((CCharacterToolWindowApp*)AfxGetApp())->GetLogic()->Import(std::string(CT2CA(FileDlg.GetFileName())));
+		((CMainFrame*)AfxGetMainWnd())->CustomUpdateData();
 	}
 }
 

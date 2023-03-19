@@ -52,6 +52,7 @@
 #define IDC_ActionNameEditBox           1017
 #define IDC_BoneTree                    1020
 #define IDC_AddSocketButton             1021
+#define IDC_PreviewSocketButton         1021
 #define IDC_CreateSocketButton          1022
 #define IDC_EDIT1                       1026
 #define IDC_EDIT2                       1029

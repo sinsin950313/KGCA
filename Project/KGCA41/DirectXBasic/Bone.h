@@ -22,10 +22,10 @@ namespace SSB
 		HMatrix44 LocalMatrix;
 	};
 
-	class Skeleton : public Common/*, public Serializeable*/, public EditableInterface<Skeleton>
+	class Skeleton : public Common, public Serializeable, public EditableInterface<Skeleton>
 	{
 	private:
-		class Bone
+		class Bone : public Serializeable
 		{
 		private:
 			Bone* _parentBone = nullptr;
@@ -44,18 +44,26 @@ namespace SSB
 
 		public:
 			HMatrix44 GetWorldMatrix();
+
+		public:
+			std::string Serialize(int tabCount) override;
+			void Deserialize(std::string& serialedString) override;
 		};
 
 	private:
-		std::map<BoneIndex, Bone> _bones;
-		std::vector<BoneIndex> _sockets;
+		std::map<BoneIndex, Bone*> _bones;
 
 		struct BoneSet
 		{
 			HMatrix44 _boneUnits[kAnimationUnitMaxIndex];
+			HMatrix44 _MeshUnitsForDummy[kAnimationUnitMaxIndex];
 		};
-		BoneSet _boneSet;
+		BoneSet* _boneSet = nullptr;
 		ID3D11Buffer* _buffer;
+
+	public:
+		Skeleton();
+		~Skeleton();
 
 	private:
 		bool CreateBuffer();
@@ -63,8 +71,6 @@ namespace SSB
 
 	public:
 		void Initialize_SetBoneData(std::map<BoneIndex, BoneInfo> bones);
-		void Initialize_SetSocketData(std::vector<BoneIndex> sockets);
-		std::vector<BoneIndex> GetSocketIndex();
 		HMatrix44 GetWorldMatrix(BoneIndex index);
 
 	public:
@@ -73,20 +79,18 @@ namespace SSB
 		bool Render() override;	//Replace Animation setting
 		bool Release() override;
 		EditableObject<Skeleton>* GetEditableObject() override;
-		//std::string Serialize(int tabCount) override;
-		//void Deserialize(std::string& serialedString) override;
+		std::string Serialize(int tabCount) override;
+		void Deserialize(std::string& serialedString) override;
 	};
 
 	struct EditableSkeletonData
 	{
 		std::map<BoneIndex, BoneInfo> Bones;
-		std::vector<BoneIndex> Sockets;
 	};
 	class EditableSkeletonObject : public EditableObject<Skeleton>
 	{
 	private:
 		std::map<BoneIndex, BoneInfo> _bones;
-		std::vector<BoneIndex> _sockets;
 
 	public:
 		EditableSkeletonObject(EditableSkeletonData data);
@@ -95,7 +99,7 @@ namespace SSB
 		BoneIndex AddSocket(BoneInfo info);
 
 	public:
-		std::vector<BoneIndex> GetSockets();
+		std::map<BoneIndex, BoneInfo> GetBones();
 
 	public:
 		Skeleton* GetResult() override;

@@ -107,7 +107,7 @@ namespace SSB
 
 		_volume->SetPosition(translation);
 		HMatrix44 rotMatrix(rotation.GetRotateMatrix(), Vector3());
-		_volume->Rotate(rotMatrix);
+		_volume->SetRotation(rotMatrix);
 		_volume->SetScale(scale.GetX(), scale.GetY(), scale.GetZ());
 	}
 	//void DXObject::Rotate(float yaw, float pitch, float roll)
@@ -128,6 +128,11 @@ namespace SSB
 	HMatrix44 DXObject::GetWorldMatrix()
 	{
 		return HMatrix44(_volume->GetWorldRotation(), _volume->GetWorldPosition());
+	}
+
+	HMatrix44 DXObject::GetSocketCurrentMatrix(SocketName name)
+	{
+		return _model->GetSocketCurrentMatrix(name);
 	}
 
 	DXObject::operator OBBData()

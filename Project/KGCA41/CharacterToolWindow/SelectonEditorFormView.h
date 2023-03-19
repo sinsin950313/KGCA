@@ -29,8 +29,15 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
+	std::map<SSB::BoneName, SSB::BoneIndex> _boneNameToIndexMap;
+
+public:
+	static SelectonEditorFormView* CreateFormView(CWnd* parent);
+
+private:
 	HTREEITEM Find(HTREEITEM hItem, SSB::BoneName name);
-	//void UpdateList();
+	SSB::HMatrix44 GetSocketLocalMatrix();
+	void UpdateList();
 
 private:
 	CTreeCtrl BoneTreeListControl;
@@ -45,13 +52,14 @@ private:
 	CEdit _forward;
 	CString _selectedBoneName;
 	CEdit _socketName;
-	SSB::BoneIndex _parentIndex;
-	SSB::HMatrix44 _socketMatrix;
 
 public:
-	//afx_msg void OnTvnSelchangedBonetree(NMHDR* pNMHDR, LRESULT* pResult);
-	afx_msg void OnBnClickedAddSocketButton();
-	//afx_msg void OnBnClickedCreatesocketbutton();
+	afx_msg void OnTvnSelchangedBonetree(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedPreviewSocketButton();
+	afx_msg void OnBnClickedCreatesocketbutton();
+
+public:
+	void CustomUpdateData();
 };
 
 

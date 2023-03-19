@@ -1,19 +1,19 @@
 #pragma once
 
-#include "CharacterToolFormView.h"
+#include "SelectonEditorFormView.h"
 
-// CharacterToolDockablePane
+// BoneEditorDockablePane
 
-class CharacterToolDockablePane : public CDockablePane
+class BoneEditorDockablePane : public CDockablePane
 {
-	DECLARE_DYNAMIC(CharacterToolDockablePane)
+	DECLARE_DYNAMIC(BoneEditorDockablePane)
 
 private:
-	CharacterToolAnimationFormView* _view;
+	SelectonEditorFormView* _boneEditorView;
 
 public:
-	CharacterToolDockablePane();
-	virtual ~CharacterToolDockablePane();
+	BoneEditorDockablePane();
+	virtual ~BoneEditorDockablePane();
 
 protected:
 	DECLARE_MESSAGE_MAP()

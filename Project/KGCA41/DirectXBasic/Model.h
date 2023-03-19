@@ -39,6 +39,8 @@ namespace SSB
 		// Temp for Team Project
 		OBBData _boundingVolume;
 
+		Skeleton* _skeleton = nullptr;
+
 	public:
 		Model();
 		virtual ~Model();
@@ -52,6 +54,7 @@ namespace SSB
 		void Initialize_RegisterAnimation(AnimationName name, Animation* animation);
 		void Initialize_RegisterSocket(SocketName name, BoneIndex index);
 		void Initialize_SetBoundingVolume(OBBData data);
+		void Initialize_SetSkeleton(Skeleton* skeleton);
 
 	public:
 		void SetCurrentAnimation(AnimationName name);

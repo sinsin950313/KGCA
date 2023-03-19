@@ -58,6 +58,10 @@ namespace SSB
 	{
 		_boundingVolume = data;
 	}
+	void Model::Initialize_SetSkeleton(Skeleton* skeleton)
+	{
+		_skeleton = skeleton;
+	}
 	void Model::SetCurrentAnimation(AnimationName name)
 	{
 		if (_animations.find(name) != _animations.end())
@@ -82,7 +86,11 @@ namespace SSB
 	}
 	HMatrix44 Model::GetSocketCurrentMatrix(SocketName name)
 	{
-		return _currentAnimation->GetCurrentBoneMatrix(_sockets.find(name)->second);
+		if (_sockets.find(name) != _sockets.end())
+		{
+			return _currentAnimation->GetCurrentBoneMatrix(_sockets.find(name)->second);
+		}
+		return HMatrix44();
 	}
 	OBBData Model::GetBoundingVolume()
 	{
@@ -132,6 +140,10 @@ namespace SSB
 		auto dc = g_dxWindow->GetDeviceContext();
 
 		_currentAnimation->Render();
+		if (_skeleton != nullptr && _currentAnimation == &DefaultAnimation)
+		{
+			_skeleton->Render();
+		}
 
 		if (_ps != nullptr)
 		{
@@ -200,6 +212,27 @@ namespace SSB
 		ret += Serializeable::Serialize(tabCount + 2, _maxVertex);
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += ",\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += _socketDataStr;
+		ret += "{\"";
+		ret += std::to_string(_sockets.size());
+		ret += "\"}\n";
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "{\n";
+		for (auto socket : _sockets)
+		{
+			ret += Serializeable::GetTabbedString(tabCount + 2);
+			ret += "\"";
+			ret += socket.first;
+			ret += "\"";
+			ret += " : ";
+			ret += "\"";
+			ret += std::to_string(socket.second);
+			ret += "\",\n";
+		}
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "},\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _boundingVolumeStr;
@@ -297,6 +330,23 @@ namespace SSB
 			Float3 tmp;
 			Serializeable::Deserialize(data.str, tmp);
 			_maxVertex = tmp;
+		}
+
+		{
+			offset = serialedString.find(_socketDataStr);
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			int socketCount;
+			Serializeable::Deserialize(data.str, socketCount);
+			for (int i = 0; i < socketCount; ++i)
+			{
+				auto socketNameData = GetUnitAtomic(serialedString, offset);
+				offset = socketNameData.offset;
+				auto boneIndexData = GetUnitAtomic(serialedString, offset);
+				offset = boneIndexData.offset;
+
+				_sockets.insert(std::make_pair(socketNameData.str, std::stoi(boneIndexData.str)));
+			}
 		}
 
 		offset = serialedString.find(_boundingVolumeStr);

@@ -34,7 +34,7 @@ namespace SSB
 			HMatrix44 LocalMatrix;
 		};
 		std::map<SocketName, SocketInfo> _sockets;
-		EditableSkeletonObject* _skeleton;
+		EditableSkeletonObject* _skeleton = nullptr;
 
 		ActionData _selectedAnimation;
 
@@ -67,6 +67,7 @@ namespace SSB
 		std::map<MaterialIndex, Material*> GetMaterials();
 		std::map<MeshIndex, MeshInterface*> GetMeshes();
 		std::map<AnimationName, Animation*> GetActions();
+		std::map<BoneIndex, BoneInfo> GetBones();
 		Skeleton* GetSkeleton();
 		PixelShader* GetPixelShader();
 		std::vector<ActionData> GetActionList();

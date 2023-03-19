@@ -98,12 +98,33 @@ namespace SSB
 				}
 			}
 			_pixelShaderFileName = editableObject->GetPixelShaderFileName();
-			delete editableObject;
 
 			{
-				// Import Skeleton Data from File Name
+				ObjectScriptIO io;
+				auto str = io.ReadSkeleton(_scriptFileName);
+				Skeleton skeleton;
+				skeleton.Deserialize(str);
+
+				_skeleton = static_cast<EditableSkeletonObject*>(skeleton.GetEditableObject());
 			}
 
+			{
+				auto sockets = editableObject->GetSockets();
+				auto bones = _skeleton->GetBones();
+
+				for (auto socket : sockets)
+				{
+					auto bone = bones.find(socket.second);
+
+					SocketInfo socketInfo;
+					socketInfo.Index = bone->first;
+					socketInfo.ParentIndex = bone->second.ParentIndex;
+					socketInfo.LocalMatrix = bone->second.LocalMatrix;
+					SocketName socketName = bone->second.Name;
+					_sockets.insert(std::make_pair(socketName, socketInfo));
+				}
+			}
+			delete editableObject;
 			_scriptFileName.clear();
 		}
 	}
@@ -138,8 +159,9 @@ namespace SSB
 			tmp.Initialize_RegisterAnimation(animation.first, animation.second->GetResult());
 		}
 
+		for (auto socket : _sockets)
 		{
-			// Export Skeleton File Name
+			tmp.Initialize_RegisterSocket(socket.first, socket.second.Index);
 		}
 
 		tmp.Init();
@@ -148,6 +170,11 @@ namespace SSB
 
 		ObjectScriptIO ioObject;
 		ioObject.Write(_scriptFileName, serialedStr);
+
+		{
+			auto str = _skeleton->GetResult()->Serialize(0);
+			ioObject.WriteSkeleton(_scriptFileName, str);
+		}
 	}
 	void CharacterTool::RegisterObjectFileName(std::string fileName)
 	{
@@ -241,8 +268,6 @@ namespace SSB
 
 			if (frameSize != kEmptyFrame)
 			{
-				_animations.erase(_selectedAnimation.AnimationName);
-
 				EditableAnimationObject* editableObject = _animations.find(_selectedAnimation.AnimationName)->second;
 				editableObject->EditFrame(0, frameSize);
 			}
@@ -296,6 +321,10 @@ namespace SSB
 		}
 		return ret;
 	}
+	std::map<BoneIndex, BoneInfo> CharacterTool::GetBones()
+	{
+		return _skeleton->GetBones();
+	}
 	Skeleton* CharacterTool::GetSkeleton()
 	{
 		return _skeleton->GetResult();
@@ -348,6 +377,12 @@ namespace SSB
 			model->Initialize_RegisterSocket(socket.first, socket.second.Index);
 		}
 
+		{
+			Skeleton* copy = _skeleton->GetResult();
+			copy->Init();
+			model->Initialize_SetSkeleton(copy);
+		}
+
 		model->Init();
 
 		model->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(mtw(_pixelShaderFileName), "PS", "ps_5_0"));
@@ -381,6 +416,8 @@ namespace SSB
 			delete animation.second;
 		}
 		_animations.clear();
+
+		_sockets.clear();
 
 		//_objectFileName.clear();
 		//_scriptFileName.clear();

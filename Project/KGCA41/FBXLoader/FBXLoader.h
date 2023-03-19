@@ -30,7 +30,7 @@ namespace SSB
 	private:
 		FbxManager* _manager;
 		FbxImporter* _importer;
-		FbxScene* _scene;
+		FbxScene* _scene = nullptr;
 
 		FbxNode* _root;
 		std::map<FbxNode*, int> _boneNodeToBoneIndexMap;

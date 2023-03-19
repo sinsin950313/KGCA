@@ -17,7 +17,11 @@ namespace SSB
 		Quaternion rollQuaternion = Quaternion::GetRotateQuaternion({ 0, 0, 1 }, roll);
 		Quaternion totalQuaternionRotate = yawQuaternion * pitchQuaternion * rollQuaternion;
 
-		Rotate(totalQuaternionRotate);
+		SetRotation(totalQuaternionRotate.GetRotateMatrix());
+	}
+	void Volume1::SetRotation(Matrix33 rotate)
+	{
+		_data.Rotation = rotate;
 	}
 	void Volume1::LookAt(Vector3 direction)
 	{

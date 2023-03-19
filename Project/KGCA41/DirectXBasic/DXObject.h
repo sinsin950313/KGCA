@@ -23,7 +23,7 @@ namespace SSB
 		//For debug direction
 		//Model* _direction;
 
-		Model* _model;
+		Model* _model = nullptr;
 		Volume1* _volume;
 		ID3D11Buffer* _objectToWorldTransformBuffer;
 		ObjectToWorldTransformData _objectToWorldTransformData;
@@ -53,6 +53,7 @@ namespace SSB
 		Vector3 GetPosition();
 		Vector3 GetDirection();
 		HMatrix44 GetWorldMatrix();
+		HMatrix44 GetSocketCurrentMatrix(SocketName name);
 
 	public:
 		operator OBBData();

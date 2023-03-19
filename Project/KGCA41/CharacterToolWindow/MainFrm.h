@@ -5,6 +5,7 @@
 #pragma once
 
 #include "CharacterToolDockablePane.h"
+#include "BoneEditorDockablePane.h"
 
 class CMainFrame : public CFrameWndEx
 {
@@ -20,6 +21,7 @@ public:
 public:
 	CTabbedPane _tabbedPane;
 	CharacterToolDockablePane _characterToolPane;
+	BoneEditorDockablePane _boneEditorPane;
 
 // 재정의입니다.
 public:
@@ -49,6 +51,8 @@ protected:
 	afx_msg void OnUpdateApplicationLook(CCmdUI* pCmdUI);
 	DECLARE_MESSAGE_MAP()
 
+public:
+	void CustomUpdateData();
 };
 
 

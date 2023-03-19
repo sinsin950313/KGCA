@@ -20,8 +20,9 @@ namespace SSB
 		//std::string _currentActionName;
 		//std::string _hopeActionName = "Idle";
 
-		//const std::string kSocketViewObjectStr = "SocketViewer.Script";
 		DXObject* _socketViewObject = nullptr;
+		SocketName _selectedSocketName;
+		bool _bonePreviewMode = true;;
 
 	public:
 		CharacterToolMainLogic(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
@@ -46,11 +47,13 @@ namespace SSB
 		void CutAnimation(std::string newActionName, FrameIndex pivotFrame);
 		void ChangeAnimationData(std::string newActionName, FrameIndex pivotFrame);
 		std::vector<SSB::ActionData> GetActionList();
-		//std::map<BoneName, Bone> GetBones();
+		std::map<BoneIndex, BoneInfo> GetBones();
+		void SetAnimationPreviewMode();
+		void SetBonePreviewMode();
 		void SetCurrentAnimation(AnimationName name);
+		void SetCurrentSocket(SocketName name);
 		void SetSocketViewerObjectMatrix(HMatrix44 matrix);
 		void AddSocket(SocketName name, BoneIndex parentIndex, HMatrix44 matrix);
-		//HMatrix44 GetBoneMatrix(BoneIndex index);
-		//BoneIndex GetBoneIndex(BoneName name);
+		HMatrix44 GetBoneWorldMatrix(BoneIndex index);
 	};
 }

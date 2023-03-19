@@ -12,6 +12,7 @@ namespace SSB
 	public:
 		std::string _minVertexStr = "Min Vertex\n";
 		std::string _maxVertexStr = "Max Vertex\n";
+		std::string _socketDataStr = "Socket Data : ";
 		std::string _boundingVolumeStr = "OBB Data : ";
 		std::string _materialStr = "Material\n";
 		std::string _materialIndexStr = "Material Index : ";

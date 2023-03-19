@@ -160,6 +160,12 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	_tabbedPane.AddTab(&_characterToolPane);
 
+	_boneEditorPane.CreateEx(NULL, L"Bone Editor", this, CRect(0, 0, 400, 400), TRUE, dwID, dwStyle);
+	_boneEditorPane.EnableDocking(CBRS_ALIGN_ANY);
+	DockPane(&_boneEditorPane);
+
+	_tabbedPane.AddTab(&_boneEditorPane);
+
 
 	return 0;
 }
@@ -291,6 +297,12 @@ void CMainFrame::OnApplicationLook(UINT id)
 void CMainFrame::OnUpdateApplicationLook(CCmdUI* pCmdUI)
 {
 	pCmdUI->SetRadio(theApp.m_nAppLook == pCmdUI->m_nID);
+}
+
+void CMainFrame::CustomUpdateData()
+{
+	_characterToolPane.CustomUpdateData();
+	_boneEditorPane.CustomUpdateData();
 }
 
 

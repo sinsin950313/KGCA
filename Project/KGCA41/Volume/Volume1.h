@@ -34,6 +34,7 @@ namespace SSB
 		void SetPosition(Vector3 position);
 		void AddPosition(Vector3 vector);
 		void SetRotation(float yaw, float pitch, float roll); // Radian
+		void SetRotation(Matrix33 rotate);
 		void LookAt(Vector3 direction);
 		void Rotate(HMatrix44 rotate);
 		void Rotate(Quaternion quaternion);

@@ -26,9 +26,19 @@ namespace SSB
 		ChangeMainCamera(_toolCamera);
 		GetMainCamera()->Move({ 0, 0, -50 });
 
-		//_tool.RegisterScriptFileName(kSocketViewObjectStr);
-		//_tool.Import();
-		//_socketViewObject = _tool.GetPreviewObject();
+		{
+			MeshInterface* box = new Box;
+			box->Init();
+
+			Model* socketViewModel = new Model;
+			socketViewModel->Initialize_RegisterMesh(0, box);
+			socketViewModel->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"SocketViewerObjectPixelShader.hlsl", "PS", "ps_5_0"));
+			socketViewModel->Init();
+
+			_socketViewObject = new DXObject;
+			_socketViewObject->SetModel(socketViewModel);
+			_socketViewObject->Init();
+		}
 
 		//_pieCamera = new ModelViewCamera();
 
@@ -52,6 +62,10 @@ namespace SSB
 		if (_object != nullptr)
 		{
 			_object->Frame();
+			if (!_bonePreviewMode)
+			{
+				_socketViewObject->SetMatrix(_object->GetSocketCurrentMatrix(_selectedSocketName));
+			}
 		}
 
 		_tool.Frame();
@@ -73,7 +87,7 @@ namespace SSB
 		//	_isPIEChanged = true;
 		//}
 
-		Vector3 direction;
+		//Vector3 direction;
 		//if (_playInEditor)
 		//{
 		//	if (_isPIEChanged)
@@ -209,6 +223,13 @@ namespace SSB
 			_object->Render();
 		}
 
+		if (_socketViewObject != nullptr)
+		{
+			//auto state = DXStateManager::GetInstance().GetDepthStencilState(DXStateManager::kDepthStencilPainter);
+			//GetDeviceContext()->OMSetDepthStencilState(state, 0xff);
+			_socketViewObject->Render();
+		}
+
 		return true;
 	}
 	void SSB::CharacterToolMainLogic::GetPreview()
@@ -276,22 +297,44 @@ namespace SSB
 		}
 		return ret;
 	}
-	//std::map<BoneName, Bone> SSB::CharacterToolMainLogic::GetBones()
-	//{
-	//	return _tool.GetBones();
-	//}
+	std::map<BoneIndex, BoneInfo> SSB::CharacterToolMainLogic::GetBones()
+	{
+		return _tool.GetBones();
+	}
+	void SSB::CharacterToolMainLogic::SetAnimationPreviewMode()
+	{
+		_bonePreviewMode = false;
+	}
+	void SSB::CharacterToolMainLogic::SetBonePreviewMode()
+	{
+		_bonePreviewMode = true;
+		SetCurrentAnimation("");
+	}
 	void SSB::CharacterToolMainLogic::SetCurrentAnimation(AnimationName name)
 	{
 		_tool.SelectCurrentAction(name);
 		GetPreview();
 	}
+	void SSB::CharacterToolMainLogic::SetCurrentSocket(SocketName name)
+	{
+		_selectedSocketName = name;
+	}
 	void SSB::CharacterToolMainLogic::SetSocketViewerObjectMatrix(HMatrix44 matrix)
 	{
+		SetBonePreviewMode();
 		_socketViewObject->SetMatrix(matrix);
 	}
 	void SSB::CharacterToolMainLogic::AddSocket(SocketName name, BoneIndex parentIndex, HMatrix44 matrix)
 	{
+		SetBonePreviewMode();
 		_tool.AddSocket(name, parentIndex, matrix);
+	}
+	HMatrix44 SSB::CharacterToolMainLogic::GetBoneWorldMatrix(BoneIndex index)
+	{
+		SSB::Skeleton* tmp = _tool.GetSkeleton();
+		SSB::HMatrix44 ret = tmp->GetWorldMatrix(index);
+		delete tmp;
+		return ret;
 	}
 	//HMatrix44 SSB::CharacterToolMainLogic::GetBoneMatrix(BoneIndex index)
 	//{

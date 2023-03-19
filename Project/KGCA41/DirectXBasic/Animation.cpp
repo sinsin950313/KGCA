@@ -236,6 +236,11 @@ namespace SSB
 	}
 	HMatrix44 Animation::GetCurrentBoneMatrix(BoneIndex index)
 	{
+		if (_data.empty())
+		{
+			return HMatrix44();
+		}
+
 		float animationElapseTime = (float)(_animationTimer.GetElapseTime() / 1000.0f);
 		int beforeIndex = animationElapseTime * _framePerSecond;
 		int afterIndex = beforeIndex + 1;
@@ -397,10 +402,11 @@ namespace SSB
 		{
 			AnimationUnitInfo parentData = data->BoneAnimationUnit[parentIndex];
 			AnimationUnitInfo socketData;
-			socketData.Matrix = parentData.Matrix * localMatrix;
+			socketData.Matrix = localMatrix * parentData.Matrix;
 			Decompose(socketData.Matrix, socketData.Scale, socketData.Rotate, socketData.Translate);
 			data->BoneAnimationUnit[index] = socketData;
 		}
+		++_boneAnimationUnitMaxCount;
 	}
 	void EditableAnimationObject::EditFrame(FrameIndex start, FrameIndex end)
 	{

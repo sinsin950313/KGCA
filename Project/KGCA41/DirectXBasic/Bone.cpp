@@ -15,7 +15,7 @@ namespace SSB
 
 		D3D11_SUBRESOURCE_DATA sd;
 		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
-		sd.pSysMem = &_boneSet;
+		sd.pSysMem = _boneSet;
 		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&bd, &sd, &_buffer);
 		if (FAILED(hr))
 		{
@@ -27,13 +27,29 @@ namespace SSB
 
 	void Skeleton::AddBone(BoneIndex index, BoneInfo info)
 	{
-		Bone newBone;
-		newBone.SetInfo(info);
+		Bone* newBone = new Bone;
+		newBone->SetInfo(info);
 		if (_bones.size() != 0)
 		{
-			newBone.SetParent(info.ParentIndex, &_bones.find(info.ParentIndex)->second);
+			newBone->SetParent(info.ParentIndex, _bones.find(info.ParentIndex)->second);
 		}
 		_bones.insert(std::make_pair(index, newBone));
+
+		_boneSet->_boneUnits[index] = newBone->GetWorldMatrix().Transpose();
+	}
+
+	Skeleton::Skeleton()
+	{
+		_boneSet = new BoneSet;
+	}
+
+	Skeleton::~Skeleton()
+	{
+		Release();
+		if (_boneSet != nullptr)
+		{
+			delete _boneSet;
+		}
 	}
 
 	void Skeleton::Initialize_SetBoneData(std::map<BoneIndex, BoneInfo> bones)
@@ -43,17 +59,9 @@ namespace SSB
 			AddBone(bone.first, bone.second);
 		}
 	}
-	void Skeleton::Initialize_SetSocketData(std::vector<BoneIndex> sockets)
-	{
-		_sockets = sockets;
-	}
-	std::vector<BoneIndex> Skeleton::GetSocketIndex()
-	{
-		return _sockets;
-	}
 	HMatrix44 Skeleton::GetWorldMatrix(BoneIndex index)
 	{
-		return _bones.find(index)->second.GetWorldMatrix();
+		return _bones.find(index)->second->GetWorldMatrix();
 	}
 	bool Skeleton::Init()
 	{
@@ -86,19 +94,19 @@ namespace SSB
 		for (auto bone : _bones)
 		{
 			BoneInfo info;
-			info.Name = bone.second.GetName();
-			info.ParentIndex = bone.second.GetParentIndex();
-			info.LocalMatrix = bone.second.GetLocalMatrix();
+			info.Name = bone.second->GetName();
+			info.ParentIndex = bone.second->GetParentIndex();
+			info.LocalMatrix = bone.second->GetLocalMatrix();
 
 			data.Bones.insert(std::make_pair(bone.first, info));
 		}
-		data.Sockets = _sockets;
 
 		return new EditableSkeletonObject(data);
 	}
 	void Skeleton::Bone::SetInfo(BoneInfo info)
 	{
 		_name = info.Name;
+		_parentIndex = info.ParentIndex;
 		_localMatrix = info.LocalMatrix;
 	}
 	void Skeleton::Bone::SetParent(BoneIndex parentIndex, Bone* parentBone)
@@ -124,38 +132,136 @@ namespace SSB
 		{
 			return _localMatrix;
 		}
-		return _parentBone->GetWorldMatrix() * _localMatrix;
+		return _localMatrix * _parentBone->GetWorldMatrix();
 	}
-	//std::string Skeleton::Serialize(int tabCount)
-	//{
-	//	// Do Nothing
-	//	return std::string();
-	//}
-	//void Skeleton::Deserialize(std::string& serialedString)
-	//{
-	//	// Do Nothing
-	//}
-	EditableSkeletonObject::EditableSkeletonObject(EditableSkeletonData data) : _bones(data.Bones), _sockets(data.Sockets)
+	std::string Skeleton::Bone::Serialize(int tabCount)
+	{
+		std::string ret;
+
+		ret += Serializeable::GetTabbedString(tabCount);
+		ret += "{\n";
+
+		ret += Serializeable::Serialize(tabCount + 1, _parentIndex);
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "\"";
+		ret += _name;
+		ret += "\"\n";
+
+		Float44 tmp = _localMatrix;
+		ret += Serializeable::Serialize(tabCount + 1, tmp);
+
+		ret += Serializeable::GetTabbedString(tabCount);
+		ret += "}\n";
+
+		return ret;
+	}
+	void Skeleton::Bone::Deserialize(std::string& serialedString)
+	{
+		serialedString = GetUnitElement(serialedString, 0).str;
+
+		int offset = 1;
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			Serializeable::Deserialize(data.str, _parentIndex);
+		}
+		{
+			auto data = GetUnitAtomic(serialedString, offset);
+			offset = data.offset;
+			_name = data.str;
+		}
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			Float44 tmp;
+			Serializeable::Deserialize(data.str, tmp);
+			_localMatrix = HMatrix44(
+				tmp.e11, tmp.e12, tmp.e13, tmp.e14,
+				tmp.e21, tmp.e22, tmp.e23, tmp.e24,
+				tmp.e31, tmp.e32, tmp.e33, tmp.e34,
+				tmp.e41, tmp.e42, tmp.e43, tmp.e44
+			);
+		}
+	}
+	std::string Skeleton::Serialize(int tabCount)
+	{
+		std::string ret;
+
+		ret += Serializeable::GetTabbedString(tabCount);
+		ret += "[\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += "{\"";
+		ret += std::to_string(_bones.size());
+		ret += "\"}\n";
+
+		for (auto bone : _bones)
+		{
+			ret += Serializeable::GetTabbedString(tabCount + 1);
+			ret += "{\"";
+			ret += std::to_string(bone.first);
+			ret += "\"\n";
+			ret += bone.second->Serialize(tabCount + 2);
+			ret += Serializeable::GetTabbedString(tabCount + 1);
+			ret += "},\n";
+		}
+
+		ret += Serializeable::GetTabbedString(tabCount);
+		ret += "]\n";
+
+		return ret;
+	}
+	void Skeleton::Deserialize(std::string& serialedString)
+	{
+		serialedString = GetUnitObject(serialedString, 0).str;
+
+		int boneCount;
+		int offset = 0;
+		{
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			Serializeable::Deserialize(data.str, boneCount);
+		}
+
+		Bone dummyBone;
+		for (int i = 0; i < boneCount; ++i)
+		{
+			int boneIndex;
+			auto indexData = GetUnitAtomic(serialedString, offset);
+			offset = indexData.offset;
+			boneIndex = stoi(indexData.str);
+
+			auto data = GetUnitElement(serialedString, offset);
+			offset = data.offset;
+			dummyBone.Deserialize(data.str);
+
+			BoneInfo info;
+			info.Name = dummyBone.GetName();
+			info.LocalMatrix = dummyBone.GetLocalMatrix();
+			info.ParentIndex = dummyBone.GetParentIndex();
+			AddBone(boneIndex, info);
+		}
+	}
+	EditableSkeletonObject::EditableSkeletonObject(EditableSkeletonData data) : _bones(data.Bones)/*, _sockets(data.Sockets)*/
 	{
 	}
 	BoneIndex EditableSkeletonObject::AddSocket(BoneInfo info)
 	{
 		BoneIndex index = _bones.size();
 		_bones.insert(std::make_pair(index, info));
-		_sockets.push_back(index);
 
 		return index;
 	}
-	std::vector<BoneIndex> EditableSkeletonObject::GetSockets()
+	std::map<BoneIndex, BoneInfo> EditableSkeletonObject::GetBones()
 	{
-		return _sockets;
+		return _bones;
 	}
 	Skeleton* EditableSkeletonObject::GetResult()
 	{
 		Skeleton* ret = new Skeleton;
 
 		ret->Initialize_SetBoneData(_bones);
-		ret->Initialize_SetSocketData(_sockets);
 
 		return ret;
 	}

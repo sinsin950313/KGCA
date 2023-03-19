@@ -51,6 +51,9 @@ public:
 	afx_msg void OnBnClickedActionaddbutton();
 	afx_msg void OnBnClickedActionremovebutton();
 	afx_msg void OnBnClickedPiebutton();
+
+public:
+	void CustomUpdateData();
 };
 
 

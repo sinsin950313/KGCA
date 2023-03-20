@@ -9,6 +9,7 @@
 #include "FBXMaterial.h"
 #include "FBXBone.h"
 #include "Bone.h"
+#include <set>
 
 namespace SSB
 {
@@ -36,6 +37,7 @@ namespace SSB
 		std::map<FbxNode*, int> _boneNodeToBoneIndexMap;
 		std::map<FbxNode*, int> _meshNodeToMeshIndexMap;
 
+		std::set<FbxNode*> _rootNodeSet;
 		std::map<FBXBoneKey, FBXBoneData> _fbxBoneKeyToFbxBoneMap;
 		std::map<FBXMaterialKey, FBXMaterialData> _fbxMaterialKeyToFbxMaterialMap;
 

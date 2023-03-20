@@ -29,7 +29,8 @@ namespace SSB
 	{
 		Bone* newBone = new Bone;
 		newBone->SetInfo(info);
-		if (_bones.size() != 0)
+		//if (_bones.size() != 0)
+		if (_bones.find(info.ParentIndex) != _bones.end())
 		{
 			newBone->SetParent(info.ParentIndex, _bones.find(info.ParentIndex)->second);
 		}

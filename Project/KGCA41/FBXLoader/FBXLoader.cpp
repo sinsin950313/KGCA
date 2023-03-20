@@ -53,7 +53,7 @@ namespace SSB
 			FbxNodeAttribute::EType attribute = node->GetNodeAttribute()->GetAttributeType();
 			if (attribute == FbxNodeAttribute::eNull)
 			{
-				// Nothing to do
+				_rootNodeSet.insert(node);
 			}
 			if (attribute == FbxNodeAttribute::eMesh)
 			{
@@ -80,7 +80,8 @@ namespace SSB
 
 			std::string name = node->GetName();
 			BoneInfo info;
-			if (_fbxBoneKeyToFbxBoneMap.size() != 0)
+			//if (_fbxBoneKeyToFbxBoneMap.size() != 0)
+			if (_rootNodeSet.find(node->GetParent()) == _rootNodeSet.end())
 			{
 				info.Name = name;
 				info.ParentIndex = _boneNodeToBoneIndexMap.find(node->GetParent())->second;
@@ -364,6 +365,8 @@ namespace SSB
 			FbxLongLong startFrame = startTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
 			FbxLongLong endFrame = endTime.GetFrameCount(FbxTime::GetGlobalTimeMode());
 			FbxTime::EMode timeMode = FbxTime::GetGlobalTimeMode();
+
+			_scene->SetCurrentAnimationStack(animStack);
 
 			std::vector<AnimationFrameInfo*> data;
 			for (FbxLongLong t = startFrame; t <= endFrame; ++t)

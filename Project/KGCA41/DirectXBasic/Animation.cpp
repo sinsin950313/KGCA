@@ -61,9 +61,17 @@ namespace SSB
 		}
 		else if (_data.size() <= beforeIndex)
 		{
-			_animationTimer.Init();
-			beforeIndex = beforeIndex % _data.size();
-			afterIndex = afterIndex % _data.size();
+			if (_isLoop)
+			{
+				_animationTimer.Init();
+				beforeIndex = beforeIndex % _data.size();
+				afterIndex = afterIndex % _data.size();
+			}
+			else
+			{
+				beforeIndex = _data.size() - 1;
+				afterIndex = _data.size() - 1;
+			}
 		}
 
 		float beforeTime = beforeIndex / _framePerSecond;
@@ -107,6 +115,10 @@ namespace SSB
 	{
 		_boneAnimationUnitMaxCount = boneCount;
 		_meshAnimationUnitMaxCount = meshCount;
+	}
+	void Animation::Initialize_SetLoop(bool loop)
+	{
+		_isLoop = loop;
 	}
 	bool Animation::Frame()
 	{
@@ -157,6 +169,12 @@ namespace SSB
 
 		ret += Serializeable::GetTabbedString(tabCount);
 		ret += "[\n";
+
+		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += _isLoopStr;
+		ret += "{\"";
+		ret += std::to_string(_isLoop);
+		ret += "\"},\n";
 
 		ret += Serializeable::GetTabbedString(tabCount + 1);
 		ret += _framePerSecondStr;
@@ -231,6 +249,7 @@ namespace SSB
 		data.FrameData = frameData;
 		data.StartFrame = _startFrame;
 		data.EndFrame = _endFrame;
+		data.IsLoop = _isLoop;
 
 		return new EditableAnimationObject(data);
 	}
@@ -241,29 +260,7 @@ namespace SSB
 			return HMatrix44();
 		}
 
-		float animationElapseTime = (float)(_animationTimer.GetElapseTime() / 1000.0f);
-		int beforeIndex = animationElapseTime * _framePerSecond;
-		int afterIndex = beforeIndex + 1;
-		if (afterIndex == _data.size())
-		{
-			afterIndex = beforeIndex;
-		}
-		else if (_data.size() <= beforeIndex)
-		{
-			_animationTimer.Init();
-			beforeIndex = beforeIndex % _data.size();
-			afterIndex = afterIndex % _data.size();
-		}
-
-		float beforeTime = beforeIndex / _framePerSecond;
-		float afterTime = afterIndex / _framePerSecond;
-		float t = (animationElapseTime - beforeTime) / (afterTime - beforeTime);
-		if (afterTime - beforeTime < 0.001f)
-		{
-			t = 0;
-		}
-
-		return GetInterpolate(_data[beforeIndex]->BoneAnimationUnit[index], _data[afterIndex]->BoneAnimationUnit[index], t);
+		return _frameMatrixInfo.BoneMatrix[index];
 	}
 	Animation* Animation::Clone()
 	{
@@ -279,6 +276,7 @@ namespace SSB
 		ret->Initialize_SetAnimationFrameData(data);
 		ret->Initialize_SetAnimationUnitMaximumCount(_boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
 		ret->Initialize_SetFrameInterval(_startFrame, _endFrame);
+		ret->Initialize_SetLoop(_isLoop);
 		ret->Init();
 
 		return ret;
@@ -289,6 +287,23 @@ namespace SSB
 		serialedString = data.str;
 
 		int offset = 0;
+		{
+			offset = serialedString.find(_isLoopStr, offset);
+			auto data = GetUnitElement(serialedString, offset);
+			std::string elem = data.str;
+			offset = data.offset;
+
+			auto atomic = GetUnitAtomic(elem, 0);
+			if (atomic.str == "1")
+			{
+				_isLoop = true;
+			}
+			else
+			{
+				_isLoop = false;
+			}
+		}
+
 		{
 			offset = serialedString.find(_framePerSecondStr, offset);
 			auto data = GetUnitElement(serialedString, offset);
@@ -385,7 +400,7 @@ namespace SSB
 		return _frameInfo;
 	}
 	EditableAnimationObject::EditableAnimationObject(EditableAnimationData data)
-		: _boneAnimationUnitMaxCount(data.BoneAnimationUnitMaxCount), _meshAnimationUnitMaxCount(data.MeshAnimationUnitMaxCount), _data(data.FrameData), _startFrame(data.StartFrame), _endFrame(data.EndFrame)
+		: _boneAnimationUnitMaxCount(data.BoneAnimationUnitMaxCount), _meshAnimationUnitMaxCount(data.MeshAnimationUnitMaxCount), _data(data.FrameData), _startFrame(data.StartFrame), _endFrame(data.EndFrame), _isLoop(data.IsLoop)
 	{
 	}
 	EditableAnimationObject::~EditableAnimationObject()
@@ -435,6 +450,7 @@ namespace SSB
 		ret->Initialize_SetAnimationFrameData(data);
 		ret->Initialize_SetAnimationUnitMaximumCount(_boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
 		ret->Initialize_SetFrameInterval(0, _endFrame - _startFrame);
+		ret->Initialize_SetLoop(_isLoop);
 		ret->Init();
 
 		return ret;

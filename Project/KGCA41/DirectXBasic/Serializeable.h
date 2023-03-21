@@ -30,6 +30,7 @@ namespace SSB
 		std::string _meshDataStr = "Mesh Data\n";
 		std::string _maxBoneCountStr = "Maximum Bone Count : ";
 		std::string _meshToBoneSpaceTransformDataStr = "Mesh to Bone space Transform Data\n";
+		std::string _isLoopStr = "Is Loop : ";
 		std::string _framePerSecondStr = "Frame Per Second : ";
 		std::string _boneAnimationUnitMaxCountStr = "Bone Animation Unit Max Count : ";
 		std::string _meshAnimationUnitMaxCountStr = "Mesh Animation Unit Max Count : ";

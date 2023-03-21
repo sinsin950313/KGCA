@@ -51,9 +51,13 @@ namespace SSB
 		FrameIndex _startFrame;
 		FrameIndex _endFrame;
 
+		//Really need this?
 		AnimationFrameInfo* _currentFrameInfo;
+
 		FrameMatrixInfo _frameMatrixInfo;
 		ID3D11Buffer* _animatedFrameBuffer;
+
+		bool _isLoop = false;;
 
 	public:
 		Animation();
@@ -68,6 +72,7 @@ namespace SSB
 		void Initialize_SetAnimationFrameData(std::vector<AnimationFrameInfo*> data);
 		void Initialize_SetFrameInterval(FrameIndex start, FrameIndex end);
 		void Initialize_SetAnimationUnitMaximumCount(int boneCount, int meshCount);
+		void Initialize_SetLoop(bool loop);
 
 	public:
 		FrameIndex GetFrameSize();
@@ -96,6 +101,8 @@ namespace SSB
 
 		FrameIndex StartFrame = 0;
 		FrameIndex EndFrame = 0;
+
+		bool IsLoop = false;
 	};
 	class EditableAnimationObject : public EditableObject<Animation>
 	{
@@ -108,6 +115,8 @@ namespace SSB
 
 		FrameIndex _startFrame;
 		FrameIndex _endFrame;
+
+		bool _isLoop;
 
 	public:
 		EditableAnimationObject(EditableAnimationData data);

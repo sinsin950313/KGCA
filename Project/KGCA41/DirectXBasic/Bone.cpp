@@ -135,48 +135,48 @@ namespace SSB
 		}
 		return _localMatrix * _parentBone->GetWorldMatrix();
 	}
-	std::string Skeleton::Bone::Serialize(int tabCount)
+	std::string Skeleton::Bone::SerializeText(int tabCount)
 	{
 		std::string ret;
 
-		ret += Serializeable::GetTabbedString(tabCount);
+		ret += SerializeableText::GetTabbedStringText(tabCount);
 		ret += "{\n";
 
-		ret += Serializeable::Serialize(tabCount + 1, _parentIndex);
+		ret += SerializeableText::SerializeText(tabCount + 1, _parentIndex);
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += "\"";
 		ret += _name;
 		ret += "\"\n";
 
 		Float44 tmp = _localMatrix;
-		ret += Serializeable::Serialize(tabCount + 1, tmp);
+		ret += SerializeableText::SerializeText(tabCount + 1, tmp);
 
-		ret += Serializeable::GetTabbedString(tabCount);
+		ret += SerializeableText::GetTabbedStringText(tabCount);
 		ret += "}\n";
 
 		return ret;
 	}
-	void Skeleton::Bone::Deserialize(std::string& serialedString)
+	void Skeleton::Bone::DeserializeText(std::string& serialedString)
 	{
-		serialedString = GetUnitElement(serialedString, 0).str;
+		serialedString = GetUnitElementText(serialedString, 0).str;
 
 		int offset = 1;
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			offset = data.offset;
-			Serializeable::Deserialize(data.str, _parentIndex);
+			SerializeableText::DeserializeText(data.str, _parentIndex);
 		}
 		{
-			auto data = GetUnitAtomic(serialedString, offset);
+			auto data = GetUnitAtomicText(serialedString, offset);
 			offset = data.offset;
 			_name = data.str;
 		}
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			offset = data.offset;
 			Float44 tmp;
-			Serializeable::Deserialize(data.str, tmp);
+			SerializeableText::DeserializeText(data.str, tmp);
 			_localMatrix = HMatrix44(
 				tmp.e11, tmp.e12, tmp.e13, tmp.e14,
 				tmp.e21, tmp.e22, tmp.e23, tmp.e24,
@@ -185,63 +185,152 @@ namespace SSB
 			);
 		}
 	}
-	std::string Skeleton::Serialize(int tabCount)
+	std::string Skeleton::Bone::SerializeBinary()
 	{
 		std::string ret;
 
-		ret += Serializeable::GetTabbedString(tabCount);
+		{
+			ret += _parentIndex;
+		}
+
+		{
+			ret += (int)_name.size();
+			ret += _name;
+		}
+
+		{
+			Float44 mat = _localMatrix;
+			char* tmpBuffer = new char[sizeof(Float44)];
+			memcpy(tmpBuffer, &mat, sizeof(Float44));
+			std::string tmp(tmpBuffer, sizeof(Float44));
+			ret += tmp;
+			delete tmpBuffer;
+		}
+
+		return ret;
+	}
+	void Skeleton::Bone::DeserializeBinary(const char* buffer, int size, int& offset)
+	{
+		{
+			memcpy(&_parentIndex, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		{
+			int nameSize;
+			memcpy(&nameSize, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			char* tmpBuffer = new char[nameSize];
+			memcpy(tmpBuffer, buffer + offset, nameSize);
+			offset += nameSize;
+			std::string tmp(tmpBuffer, nameSize);
+			_name = tmp;
+			delete tmpBuffer;
+		}
+
+		{
+			Float44 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float44));
+			offset += sizeof(Float44);
+			_localMatrix = {
+				tmp.e11, tmp.e12, tmp.e13, tmp.e14,
+				tmp.e21, tmp.e22, tmp.e23, tmp.e24,
+				tmp.e31, tmp.e32, tmp.e33, tmp.e34,
+				tmp.e41, tmp.e42, tmp.e43, tmp.e44,
+			};
+		}
+	}
+	std::string Skeleton::SerializeText(int tabCount)
+	{
+		std::string ret;
+
+		ret += SerializeableText::GetTabbedStringText(tabCount);
 		ret += "[\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += "{\"";
 		ret += std::to_string(_bones.size());
 		ret += "\"}\n";
 
 		for (auto bone : _bones)
 		{
-			ret += Serializeable::GetTabbedString(tabCount + 1);
+			ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 			ret += "{\"";
 			ret += std::to_string(bone.first);
 			ret += "\"\n";
-			ret += bone.second->Serialize(tabCount + 2);
-			ret += Serializeable::GetTabbedString(tabCount + 1);
+			ret += bone.second->SerializeText(tabCount + 2);
+			ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 			ret += "},\n";
 		}
 
-		ret += Serializeable::GetTabbedString(tabCount);
+		ret += SerializeableText::GetTabbedStringText(tabCount);
 		ret += "]\n";
 
 		return ret;
 	}
-	void Skeleton::Deserialize(std::string& serialedString)
+	void Skeleton::DeserializeText(std::string& serialedString)
 	{
-		serialedString = GetUnitObject(serialedString, 0).str;
+		serialedString = GetUnitObjectText(serialedString, 0).str;
 
 		int boneCount;
 		int offset = 0;
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			offset = data.offset;
-			Serializeable::Deserialize(data.str, boneCount);
+			SerializeableText::DeserializeText(data.str, boneCount);
 		}
 
 		Bone dummyBone;
 		for (int i = 0; i < boneCount; ++i)
 		{
 			int boneIndex;
-			auto indexData = GetUnitAtomic(serialedString, offset);
+			auto indexData = GetUnitAtomicText(serialedString, offset);
 			offset = indexData.offset;
 			boneIndex = stoi(indexData.str);
 
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			offset = data.offset;
-			dummyBone.Deserialize(data.str);
+			dummyBone.DeserializeText(data.str);
 
 			BoneInfo info;
 			info.Name = dummyBone.GetName();
 			info.LocalMatrix = dummyBone.GetLocalMatrix();
 			info.ParentIndex = dummyBone.GetParentIndex();
 			AddBone(boneIndex, info);
+		}
+	}
+	std::string Skeleton::SerializeBinary()
+	{
+		std::string ret;
+
+		ret += (int)_bones.size();
+		for (auto bone : _bones)
+		{
+			ret += bone.first;
+			ret += bone.second->SerializeBinary();
+		}
+
+		return ret;
+	}
+	void Skeleton::DeserializeBinary(const char* buffer, int size, int& offset)
+	{
+		int boneCount;
+		{
+			memcpy(&boneCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		for (int i = 0; i < boneCount; ++i)
+		{
+			int boneIndex;
+			memcpy(&boneIndex, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			Bone* bone = new Bone;
+			bone->DeserializeBinary(buffer, size, offset);
+
+			_bones.insert(std::make_pair(boneIndex, bone));
 		}
 	}
 	EditableSkeletonObject::EditableSkeletonObject(EditableSkeletonData data) : _bones(data.Bones)/*, _sockets(data.Sockets)*/

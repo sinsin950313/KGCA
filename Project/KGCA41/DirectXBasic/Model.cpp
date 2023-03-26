@@ -6,7 +6,7 @@
 
 namespace SSB
 {
-    extern DXWindow* g_dxWindow;
+	extern DXWindow* g_dxWindow;
 	Animation Model::DefaultAnimation;
 
 	Model::Model()
@@ -194,35 +194,35 @@ namespace SSB
 
 		return false;
 	}
-	std::string Model::Serialize(int tabCount)
+	std::string Model::SerializeText(int tabCount)
 	{
 		std::string ret;
 
-		ret += Serializeable::GetTabbedString(tabCount);
+		ret += SerializeableText::GetTabbedStringText(tabCount);
 		ret += "[\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _minVertexStr;
-		ret += Serializeable::Serialize(tabCount + 2, _minVertex);
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _minVertex);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _maxVertexStr;
-		ret += Serializeable::Serialize(tabCount + 2, _maxVertex);
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _maxVertex);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _socketDataStr;
 		ret += "{\"";
 		ret += std::to_string(_sockets.size());
 		ret += "\"}\n";
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += "{\n";
 		for (auto socket : _sockets)
 		{
-			ret += Serializeable::GetTabbedString(tabCount + 2);
+			ret += SerializeableText::GetTabbedStringText(tabCount + 2);
 			ret += "\"";
 			ret += socket.first;
 			ret += "\"";
@@ -231,118 +231,118 @@ namespace SSB
 			ret += std::to_string(socket.second);
 			ret += "\",\n";
 		}
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += "},\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _boundingVolumeStr;
-		ret += Serializeable::Serialize(tabCount + 2, _boundingVolume.Position);
-		ret += Serializeable::Serialize(tabCount + 2, _boundingVolume.Rotation);
-		ret += Serializeable::Serialize(tabCount + 2, _boundingVolume.Scale);
+		ret += SerializeableText::SerializeText(tabCount + 2, _boundingVolume.Position);
+		ret += SerializeableText::SerializeText(tabCount + 2, _boundingVolume.Rotation);
+		ret += SerializeableText::SerializeText(tabCount + 2, _boundingVolume.Scale);
 		Float3 boundingVolumeData{ _boundingVolume.Width, _boundingVolume.Height, _boundingVolume.Depth };
-		ret += Serializeable::Serialize(tabCount + 2, boundingVolumeData);
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, boundingVolumeData);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _materialStr;
 		for (auto iter : _materials)
 		{
-			ret += Serializeable::GetTabbedString(tabCount + 2);
+			ret += SerializeableText::GetTabbedStringText(tabCount + 2);
 			ret += _materialIndexStr;
 			ret += "{\"";
 			ret += std::to_string(iter.first);
 			ret += "\"}\n";
 
-			auto materialStr = iter.second->Serialize(tabCount + 2);
+			auto materialStr = iter.second->SerializeText(tabCount + 2);
 			ret += materialStr;
-			ret += GetTabbedString(tabCount + 2);
+			ret += GetTabbedStringText(tabCount + 2);
 			ret += ",\n";
 		}
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _meshStr;
 		for (auto iter : _meshes)
 		{
-			ret += Serializeable::GetTabbedString(tabCount + 2);
+			ret += SerializeableText::GetTabbedStringText(tabCount + 2);
 			ret += _meshIndexStr;
 			ret += "{\"";
 			ret += std::to_string(iter.first);
 			ret += "\"}\n";
 
-			auto meshStr = iter.second->Serialize(tabCount + 2);
+			auto meshStr = iter.second->SerializeText(tabCount + 2);
 			ret += meshStr;
-			ret += GetTabbedString(tabCount + 2);
+			ret += GetTabbedStringText(tabCount + 2);
 			ret += ",\n";
 		}
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _animationStr;
 		for (auto iter : _animations)
 		{
-			ret += Serializeable::GetTabbedString(tabCount + 2);
+			ret += SerializeableText::GetTabbedStringText(tabCount + 2);
 			ret += _animationNameStr;
 			ret += "{\"";
 			ret += iter.first;
 			ret += "\"}\n";
 
-			auto animationStr = iter.second->Serialize(tabCount + 2);
+			auto animationStr = iter.second->SerializeText(tabCount + 2);
 			ret += animationStr;
-			ret += GetTabbedString(tabCount + 2);
+			ret += GetTabbedStringText(tabCount + 2);
 			ret += ",\n";
 		}
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _pixelShaderStr;
 		ret += "{\"";
 		ret += _ps->GetFileName();
 		ret += "\"},\n";
 
-		ret += Serializeable::GetTabbedString(tabCount);
+		ret += SerializeableText::GetTabbedStringText(tabCount);
 		ret += "]";
 
 		return ret;
 	}
-	void Model::Deserialize(std::string& serialedString)
+	void Model::DeserializeText(std::string& serialedString)
 	{
-		serialedString = GetUnitObject(serialedString, 0).str;
+		serialedString = GetUnitObjectText(serialedString, 0).str;
 
 		int offset = 0;
 		{
 			offset = serialedString.find(_minVertexStr);
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			offset = data.offset;
 			Float3 tmp;
-			Serializeable::Deserialize(data.str, tmp);
+			SerializeableText::DeserializeText(data.str, tmp);
 			_minVertex = tmp;
 		}
 
 		{
 			offset = serialedString.find(_maxVertexStr);
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			offset = data.offset;
 			Float3 tmp;
-			Serializeable::Deserialize(data.str, tmp);
+			SerializeableText::DeserializeText(data.str, tmp);
 			_maxVertex = tmp;
 		}
 
 		{
 			offset = serialedString.find(_socketDataStr);
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			offset = data.offset;
 			int socketCount;
-			Serializeable::Deserialize(data.str, socketCount);
+			SerializeableText::DeserializeText(data.str, socketCount);
 			for (int i = 0; i < socketCount; ++i)
 			{
-				auto socketNameData = GetUnitAtomic(serialedString, offset);
+				auto socketNameData = GetUnitAtomicText(serialedString, offset);
 				offset = socketNameData.offset;
-				auto boneIndexData = GetUnitAtomic(serialedString, offset);
+				auto boneIndexData = GetUnitAtomicText(serialedString, offset);
 				offset = boneIndexData.offset;
 
 				_sockets.insert(std::make_pair(socketNameData.str, std::stoi(boneIndexData.str)));
@@ -351,37 +351,37 @@ namespace SSB
 
 		offset = serialedString.find(_boundingVolumeStr);
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			offset = data.offset;
 			Float3 pos;
-			Serializeable::Deserialize(data.str, pos);
+			SerializeableText::DeserializeText(data.str, pos);
 
 			_boundingVolume.Position = pos;
 		}
 
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			offset = data.offset;
 			Float33 rot;
-			Serializeable::Deserialize(data.str, rot);
+			SerializeableText::DeserializeText(data.str, rot);
 
 			_boundingVolume.Rotation = rot;
 		}
 
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			offset = data.offset;
 			Float3 scale;
-			Serializeable::Deserialize(data.str, scale);
+			SerializeableText::DeserializeText(data.str, scale);
 
 			_boundingVolume.Scale = scale;
 		}
 
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			offset = data.offset;
 			Float3 tmp;
-			Serializeable::Deserialize(data.str, tmp);
+			SerializeableText::DeserializeText(data.str, tmp);
 
 			_boundingVolume.Width = tmp.x;
 			_boundingVolume.Height = tmp.y;
@@ -393,16 +393,16 @@ namespace SSB
 			int materialIndex;
 			{
 				offset = serialedString.find(_materialIndexStr, offset);
-				auto data = GetUnitElement(serialedString, offset);
+				auto data = GetUnitElementText(serialedString, offset);
 				offset = data.offset;
-				Serializeable::Deserialize(data.str, materialIndex);
+				SerializeableText::DeserializeText(data.str, materialIndex);
 			}
 
-			auto objectData = GetUnitObject(serialedString, offset);
+			auto objectData = GetUnitObjectText(serialedString, offset);
 			std::string objectStr = objectData.str;
 			offset = objectData.offset;
 			Material* mat = new Material;
-			mat->Deserialize(objectStr);
+			mat->DeserializeText(objectStr);
 			mat->Init();
 			_materials.insert(std::make_pair(materialIndex, mat));
 		}
@@ -412,19 +412,19 @@ namespace SSB
 			int meshIndex;
 			{
 				offset = serialedString.find(_meshIndexStr, offset);
-				auto data = GetUnitElement(serialedString, offset);
+				auto data = GetUnitElementText(serialedString, offset);
 				offset = data.offset;
-				Serializeable::Deserialize(data.str, meshIndex);
+				SerializeableText::DeserializeText(data.str, meshIndex);
 			}
 
-			auto objectData = GetUnitObject(serialedString, offset);
+			auto objectData = GetUnitObjectText(serialedString, offset);
 			std::string objectStr = objectData.str;
 
 			std::string vertexType;
 			{
 				int tmpOffset = serialedString.find(_vertexTypeStr, offset);
-				std::string tmp = GetUnitElement(serialedString, tmpOffset).str;
-				vertexType = GetUnitAtomic(tmp, 0).str;
+				std::string tmp = GetUnitElementText(serialedString, tmpOffset).str;
+				vertexType = GetUnitAtomicText(tmp, 0).str;
 			}
 			offset = objectData.offset;
 
@@ -459,7 +459,7 @@ namespace SSB
 				mesh = new Mesh_Vertex_PC;
 			}
 
-			mesh->Deserialize(objectStr);
+			mesh->DeserializeText(objectStr);
 			mesh->Init();
 			_meshes.insert(std::make_pair(meshIndex, mesh));
 		}
@@ -469,27 +469,337 @@ namespace SSB
 			AnimationName animationName;
 			{
 				offset = serialedString.find(_animationNameStr, offset);
-				auto atomic = GetUnitElement(serialedString, offset);
+				auto atomic = GetUnitElementText(serialedString, offset);
 				offset = atomic.offset;
-				animationName = std::string(GetUnitAtomic(atomic.str, 0).str);
+				animationName = std::string(GetUnitAtomicText(atomic.str, 0).str);
 			}
 
-			auto objectData = GetUnitObject(serialedString, offset);
+			auto objectData = GetUnitObjectText(serialedString, offset);
 			std::string objectStr = objectData.str;
 			offset = objectData.offset;
 			Animation* anim = new Animation;
-			anim->Deserialize(objectStr);
+			anim->DeserializeText(objectStr);
 			anim->Init();
 			_animations.insert(std::make_pair(animationName, anim));
 		}
 
 		{
 			offset = serialedString.find(_pixelShaderStr, offset);
-			auto atomicData = GetUnitElement(serialedString, offset);
+			auto atomicData = GetUnitElementText(serialedString, offset);
 			std::string atomic = atomicData.str;
-			_ps = ShaderManager::GetInstance().LoadPixelShader(mtw(GetUnitAtomic(atomic, 0).str), "PS", "ps_5_0");
+			_ps = ShaderManager::GetInstance().LoadPixelShader(mtw(GetUnitAtomicText(atomic, 0).str), "PS", "ps_5_0");
 		}
 	}
+
+	std::string Model::SerializeBinary()
+	{
+		std::string ret;
+
+		// Min Vertex
+		{
+			Float3 tmp{ _minVertex.GetX(), _minVertex.GetY(), _minVertex.GetZ() };
+			int size = sizeof(tmp);
+			char* buf = new char[size];
+			memcpy(buf, &tmp, size);
+			ret += std::string(buf, size);
+			delete buf;
+		}
+
+		// Max Vertex
+		{
+			Float3 tmp{ _maxVertex.GetX(), _maxVertex.GetY(), _maxVertex.GetZ() };
+			int size = sizeof(tmp);
+			char* buf = new char[size];
+			memcpy(buf, &tmp, size);
+			ret += std::string(buf, size);
+			delete buf;
+		}
+
+		// Material
+		{
+			ret += (int)_materials.size();
+			for(auto material : _materials)
+			{
+				ret += material.first;
+				ret += material.second->SerializeBinary();
+			}
+		}
+
+		// Mesh
+		{
+			ret += (int)_meshes.size();
+			for (auto mesh : _meshes)
+			{
+				ret += mesh.first;
+				ret += (int)mesh.second->GetVertexType().size();
+				ret += mesh.second->GetVertexType();
+				ret += mesh.second->SerializeBinary();
+			}
+		}
+
+		// Animation
+		{
+			ret += (int)_animations.size();
+			for (auto animation : _animations)
+			{
+				ret += animation.first;
+				ret += animation.second->SerializeBinary();
+			}
+		}
+
+		// Pixel Shader
+		{
+			ret += (int)_ps->GetFileName().size();
+			ret += _ps->GetFileName();
+		}
+
+		// Socket
+		{
+			ret += (int)_sockets.size();
+			for (auto socket : _sockets)
+			{
+				ret += (int)socket.first.size();
+				ret += socket.first;
+				ret += socket.second;
+			}
+		}
+
+		// Bounding Volume
+		{
+			// Position
+			{
+				Float3 tmp{ _boundingVolume.Position.GetX(), _boundingVolume.Position.GetY(), _boundingVolume.Position.GetZ() };
+				int size = sizeof(tmp);
+				char* buf = new char[size];
+				memcpy(buf, &tmp, size);
+				ret += std::string(buf, size);
+				delete buf;
+			}
+			// Rotation
+			{
+				Float33 tmp{ 
+					_boundingVolume.Rotation.GetRow(0).GetX(), _boundingVolume.Rotation.GetRow(0).GetY(), _boundingVolume.Rotation.GetRow(0).GetZ(),
+					_boundingVolume.Rotation.GetRow(1).GetX(), _boundingVolume.Rotation.GetRow(1).GetY(), _boundingVolume.Rotation.GetRow(1).GetZ(),
+					_boundingVolume.Rotation.GetRow(2).GetX(), _boundingVolume.Rotation.GetRow(2).GetY(), _boundingVolume.Rotation.GetRow(2).GetZ(),
+				};
+				int size = sizeof(tmp);
+				char* buf = new char[size];
+				memcpy(buf, &tmp, size);
+				ret += std::string(buf, size);
+				delete buf;
+			}
+			// Scale
+			{
+				Float3 tmp{ _boundingVolume.Scale.GetX(), _boundingVolume.Scale.GetY(), _boundingVolume.Scale.GetZ() };
+				int size = sizeof(tmp);
+				char* buf = new char[size];
+				memcpy(buf, &tmp, size);
+				ret += std::string(buf, size);
+				delete buf;
+			}
+			// Width, Height, Depth
+			{
+				Float3 tmp{ _boundingVolume.Width, _boundingVolume.Height, _boundingVolume.Depth };
+				int size = sizeof(tmp);
+				char* buf = new char[size];
+				memcpy(buf, &tmp, size);
+				ret += std::string(buf, size);
+				delete buf;
+			}
+		}
+
+		return ret;
+	}
+
+	void Model::DeserializeBinary(const char* buffer, int size, int& offset)
+	{
+		// Min Vertex
+		{
+			Float3 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float3));
+			_minVertex = tmp;
+			offset += sizeof(Float3);
+		}
+
+		// Max Vertex
+		{
+			Float3 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float3));
+			_maxVertex = tmp;
+			offset += sizeof(Float3);
+		}
+
+		// Material
+		{
+			int materialCount;
+			memcpy(&materialCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			for (int i = 0; i < materialCount; ++i)
+			{
+				int materialIndex;
+				memcpy(&materialIndex, buffer + offset, sizeof(int));
+				offset += sizeof(int);
+
+				Material* tmp = new Material;
+				tmp->DeserializeBinary(buffer, size, offset);
+				_materials.insert(std::make_pair(materialIndex, tmp));
+			}
+		}
+
+		// Mesh
+		{
+			int meshCount;
+			memcpy(&meshCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			for (int i = 0; i < meshCount; ++i)
+			{
+				int meshIndex;
+				{
+					memcpy(&meshIndex, buffer + offset, sizeof(int));
+					offset += sizeof(int);
+				}
+
+				std::string vertexType;
+
+				int vertexTypeSize;
+				memcpy(&vertexTypeSize, buffer + offset, sizeof(int));
+				offset += sizeof(int);
+				{
+					char* meshTypeStr = new char[vertexTypeSize];
+					memcpy(meshTypeStr, buffer + offset, vertexTypeSize);
+					offset += sizeof(int);
+
+					vertexType = std::string(meshTypeStr, vertexTypeSize);
+					delete meshTypeStr;
+				}
+
+				MeshInterface* tmp;
+				if (vertexType == Vertex_PCNT_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNT;
+				}
+				else if (vertexType == Vertex_PCNT_Animatable_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNT_Animatable;
+				}
+				else if (vertexType == Vertex_PCNT_Skinning_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNT_Skinning;
+				}
+				else if (vertexType == Vertex_PCNTs_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNTs;
+				}
+				else if (vertexType == Vertex_PCNTs_Animatable_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNTs_Animatable;
+				}
+				else if (vertexType == Vertex_PCNTs_Skinning_Keyword)
+				{
+					tmp = new Mesh_Vertex_PCNTs_Skinning;
+				}
+				//if (vertexType == Vertex_PC_Keyword)
+				else
+				{
+					tmp = new Mesh_Vertex_PC;
+				}
+
+				tmp->DeserializeBinary(buffer, size, offset);
+				_meshes.insert(std::make_pair(meshIndex, tmp));
+			}
+		}
+
+		// Animation
+		{
+			int animationCount;
+			memcpy(&animationCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			for (int i = 0; i < animationCount; ++i)
+			{
+				Animation* tmp = new Animation;
+				tmp->DeserializeBinary(buffer, size, offset);
+			}
+		}
+
+		// Pixel Shader
+		{
+			int pixelShaderFileNameCount;
+			memcpy(&pixelShaderFileNameCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			char* fileNameBuffer = new char[pixelShaderFileNameCount];
+			memcpy(fileNameBuffer, buffer + offset, pixelShaderFileNameCount);
+			offset += pixelShaderFileNameCount;
+			std::string tmpFileName(fileNameBuffer, pixelShaderFileNameCount);
+			std::wstring fileName = mtw(tmpFileName);
+			_ps = ShaderManager::GetInstance().LoadPixelShader(fileName, "PS", "ps_5_0");
+			delete fileNameBuffer;
+		}
+
+		// Socket
+		{
+			int socketCount;
+			memcpy(&socketCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			for (int i = 0; i < socketCount; ++i)
+			{
+				int socketNameCount;
+				memcpy(&socketNameCount, buffer + offset, sizeof(int));
+				offset += sizeof(int);
+
+				char* socketNameBuffer = new char[socketNameCount];
+				memcpy(&socketNameBuffer, buffer + offset, sizeof(socketNameCount));
+				std::string socketName(socketNameBuffer, socketNameCount);
+				offset += socketNameCount;
+
+				int socketIndex;
+				memcpy(&socketIndex, buffer + offset, sizeof(int));
+				offset += sizeof(int);
+
+				_sockets.insert(std::make_pair(socketName, socketIndex));
+				delete socketNameBuffer;
+			}
+		}
+
+		// Bounding Volume
+		{
+			// Position
+			{
+				Float3 tmp;
+				memcpy(&tmp, buffer + offset, sizeof(Float3));
+				offset += sizeof(Float3);
+				_boundingVolume.Position = tmp;
+			}
+			// Rotation
+			{
+				Float33 tmp;
+				memcpy(&tmp, buffer + offset, sizeof(Float33));
+				offset += sizeof(Float33);
+				_boundingVolume.Rotation = tmp;
+			}
+			// Scale
+			{
+				Float3 tmp;
+				memcpy(&tmp, buffer + offset, sizeof(Float3));
+				offset += sizeof(Float3);
+				_boundingVolume.Scale = tmp;
+			}
+			// Width, Height, Depth
+			{
+				Float3 tmp;
+				memcpy(&tmp, buffer + offset, sizeof(Float3));
+				offset += sizeof(Float3);
+				_boundingVolume.Width = tmp.x;
+				_boundingVolume.Height = tmp.y;
+				_boundingVolume.Depth = tmp.z;
+			}
+		}
+	}
+
 	EditableObject<Model>* Model::GetEditableObject()
 	{
 		EditableModelData data;
@@ -513,7 +823,7 @@ namespace SSB
 
 		return new EditableModelObject(data);
 	}
-	EditableModelObject::EditableModelObject(EditableModelData data) 
+	EditableModelObject::EditableModelObject(EditableModelData data)
 		: _meshes(data.Meshes), _sockets(data.Sockets), _pixelShaderFileName(data.PixelShaderFileName), _boundingVolume(data.BoundingVolume), _materials(data.Materials), _animations(data.Animations)
 	{
 	}

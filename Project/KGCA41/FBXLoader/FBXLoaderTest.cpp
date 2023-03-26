@@ -17,43 +17,58 @@ bool SSB::FBXLoaderTest::Init()
 
 	_loader = new FBXLoader();
 
-	////Mesh Loading Test
-	//{
-	//	_loader->Init();
-	//	_loader->SetFileName("box.FBX");
+	//Mesh Loading Test
+	{
+		_loader->Init();
+		_loader->SetFileName("box.FBX");
 
-	//	Model* model = _loader->LoadModel();
-	//	OBBData data;
-	//	data.Position = {10, 0, 0};
-	//	data.Rotation = HMatrix44::RotateFromXAxis(5);
-	//	data.Scale = {2, 3, 4};
-	//	data.Width = 10;
-	//	data.Height = 20;
-	//	data.Depth = 30;
-	//	model->Initialize_SetBoundingVolume(data);
-	//	model->Init();
+		Model* model = _loader->LoadModel();
+		OBBData data;
+		data.Position = {10, 0, 0};
+		data.Rotation = HMatrix44::RotateFromXAxis(5);
+		data.Scale = {2, 3, 4};
+		data.Width = 10;
+		data.Height = 20;
+		data.Depth = 30;
+		model->Initialize_SetBoundingVolume(data);
+		model->Init();
 
-	//	DXObject* object = new DXObject;
-	//	object->Init();
-	//	object->SetModel(model);
+		DXObject* object = new DXObject;
+		object->Init();
+		object->SetModel(model);
 
-	//	_objectList.push_back(object);
+		_objectList.push_back(object);
 
-	//	{
-	//		ObjectScriptIO io;
-	//		std::string str = model->Serialize(0);
-	//		io.Write("ModelWriteTest_Box", str);
-	//	}
+		{
+			ObjectScriptIO io;
+			std::string str = model->SerializeText(0);
+			io.Write("ModelWriteTest_Box", str);
+			io.WriteBinary("ModelWriteTest_Box", str);
+		}
 
-	//	{
-	//		ObjectScriptIO io;
-	//		std::string str = io.Read("ModelWriteTest_Box");
-	//		Model* readedModel = new Model;
-	//		readedModel->Deserialize(str);
-	//		readedModel->Init();
-	//		object->SetModel(readedModel);
-	//	}
-	//}
+		{
+			ObjectScriptIO io;
+			auto data = io.Read("ModelWriteTest_Box");
+
+			std::string str(data.Pointer, data.BufferSize);
+			model = new Model;
+			model->DeserializeText(str);
+			model->Init();
+			object->SetModel(model);
+		}
+
+		{
+			ObjectScriptIO io;
+			auto data = io.ReadBinary("ModelWriteTest_Box");
+
+			std::string str(data.Pointer, data.BufferSize);
+			Model* readedModel = new Model;
+			int offset = 0;
+			readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+			readedModel->Init();
+			object->SetModel(readedModel);
+		}
+	}
 
 	////Multi Material = Multi Texture Test
 	//{

@@ -233,38 +233,38 @@ namespace SSB
 		return true;
 	}
 	template<typename VertexType>
-	std::string Mesh<VertexType>::Serialize(int tabCount)
+	std::string Mesh<VertexType>::SerializeText(int tabCount)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += SerializeableText::SerializeableText::GetTabbedStringText(tabCount);
 		ret += "[\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _vertexTypeStr;
 		ret += "{\"";
 		ret += GetVertexType();
 		ret += "\"},\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _vertexListStr;
 		ret += "{\"";
 		ret += std::to_string(_vertexList.size());
 		ret += "\"}\n";
 		for (auto vertex : _vertexList)
 		{
-			ret += Serializeable::Serialize(tabCount + 2, vertex);
-			ret += GetTabbedString(tabCount + 2);
+			ret += SerializeableText::SerializeText(tabCount + 2, vertex);
+			ret += SerializeableText::GetTabbedStringText(tabCount + 2);
 			ret += ",\n";
 		}
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _indexListStr;
 		ret += "{\"";
 		ret += std::to_string(_indexList.size());
 		ret += "\"},\n";
 
-		ret += GetTabbedString(tabCount + 2);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 2);
 		ret += "{ ";
 		for (auto index : _indexList)
 		{
@@ -274,64 +274,64 @@ namespace SSB
 		}
 		ret += "},\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _minVertexStr;
-		ret += Serializeable::Serialize(tabCount + 2, _minVertex);
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _minVertex);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _maxVertexStr;
-		ret += Serializeable::Serialize(tabCount + 2, _maxVertex);
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _maxVertex);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _vertexShaderStr;
 		ret += "{\"";
 		ret += _vs->GetFileName();
 		ret += "\"},\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _subMeshStr;
 		ret += " : {\"";
 		ret += std::to_string(_subMeshes.size());
 		ret += "\"},\n";
 		for (auto subMesh : _subMeshes)
 		{
-			ret += subMesh->Serialize(tabCount + 2);
+			ret += subMesh->SerializeText(tabCount + 2);
 			ret += ",\n";
 		}
 
-		ret += GetTabbedString(tabCount);
+		ret += SerializeableText::GetTabbedStringText(tabCount);
 		ret += "]\n";
 
 		return ret;
 	}
 	template<typename VertexType>
-	void Mesh<VertexType>::Deserialize(std::string& serialedString)
+	void Mesh<VertexType>::DeserializeText(std::string& serialedString)
 	{
-		serialedString = GetUnitObject(serialedString, 0).str;
+		serialedString = GetUnitObjectText(serialedString, 0).str;
 		int offset = 0;
 
 		{
-			auto data = GetUnitElement(serialedString, 0);
+			auto data = GetUnitElementText(serialedString, 0);
 			offset = data.offset;
 		}
 
 		int vertexCount;
 		{
-			auto data = GetUnitElement(serialedString, offset);
-			Serializeable::Deserialize(data.str, vertexCount);
+			auto data = GetUnitElementText(serialedString, offset);
+			SerializeableText::DeserializeText(data.str, vertexCount);
 			offset = data.offset;
 		}
 
-		for(int i = 0; i < vertexCount; ++i)
+		for (int i = 0; i < vertexCount; ++i)
 		{
-			auto elemData = GetUnitElement(serialedString, offset);
+			auto elemData = GetUnitElementText(serialedString, offset);
 			std::string elem = elemData.str;
 			offset = elemData.offset;
-			VertexType vertex = GetDeserializedVertex(elem);
+			VertexType vertex = GetDeserializedVertexText(elem);
 			_vertexList.push_back(vertex);
 		}
 
@@ -339,22 +339,22 @@ namespace SSB
 			int indexCount;
 			{
 				offset = serialedString.find(_indexListStr);
-				auto elemData = GetUnitElement(serialedString, offset);
+				auto elemData = GetUnitElementText(serialedString, offset);
 				offset = elemData.offset;
-				Serializeable::Deserialize(elemData.str, indexCount);
+				SerializeableText::DeserializeText(elemData.str, indexCount);
 			}
 			_indexList.resize(indexCount);
 
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
 
 			int indexOffset = 1;
-			for(int i = 0; i < indexCount; ++i)
+			for (int i = 0; i < indexCount; ++i)
 			{
-				auto data = GetUnitElement(elem, indexOffset);
+				auto data = GetUnitElementText(elem, indexOffset);
 				int val;
-				Serializeable::Deserialize(data.str, val);
+				SerializeableText::DeserializeText(data.str, val);
 				_indexList[i] = val;
 				indexOffset = data.offset;
 			}
@@ -362,39 +362,39 @@ namespace SSB
 
 		{
 			offset = serialedString.find(_minVertexStr, offset);
-			auto elemData = GetUnitElement(serialedString, offset);
+			auto elemData = GetUnitElementText(serialedString, offset);
 			std::string elem = elemData.str;
 			offset = elemData.offset;
 			Float3 tmp;
-			Serializeable::Deserialize(elem, tmp);
+			SerializeableText::DeserializeText(elem, tmp);
 			_minVertex = tmp;
 		}
 
 		{
 			offset = serialedString.find(_maxVertexStr, offset);
-			auto elemData = GetUnitElement(serialedString, offset);
+			auto elemData = GetUnitElementText(serialedString, offset);
 			std::string elem = elemData.str;
 			offset = elemData.offset;
 			Float3 tmp;
-			Serializeable::Deserialize(elem, tmp);
+			SerializeableText::DeserializeText(elem, tmp);
 			_maxVertex = tmp;
 		}
 
 		{
 			offset = serialedString.find(_vertexShaderStr, offset);
-			auto atomicData = GetUnitElement(serialedString, offset);
-			_vs = ShaderManager::GetInstance().LoadVertexShader(mtw(GetUnitAtomic(atomicData.str, 0).str), "VS", "vs_5_0");
+			auto atomicData = GetUnitElementText(serialedString, offset);
+			_vs = ShaderManager::GetInstance().LoadVertexShader(mtw(GetUnitAtomicText(atomicData.str, 0).str), "VS", "vs_5_0");
 		}
 
 		{
 			offset = serialedString.find(_subMeshStr, offset);
-			auto atomicData = GetUnitElement(serialedString, offset);
+			auto atomicData = GetUnitElementText(serialedString, offset);
 			int subMeshCount;
-			Serializeable::Deserialize(atomicData.str, subMeshCount);
+			SerializeableText::DeserializeText(atomicData.str, subMeshCount);
 
-			for(int i = 0; i < subMeshCount; ++i)
+			for (int i = 0; i < subMeshCount; ++i)
 			{
-				auto objectData = GetUnitObject(serialedString, offset);
+				auto objectData = GetUnitObjectText(serialedString, offset);
 				MeshInterface* mesh;
 				if (GetVertexType() == Vertex_PCNT_Keyword)
 				{
@@ -426,8 +426,132 @@ namespace SSB
 					mesh = new Mesh_Vertex_PC;
 				}
 
-				mesh->Deserialize(objectData.str);
+				mesh->DeserializeText(objectData.str);
 			}
+		}
+	}
+	template<typename VertexType>
+	inline std::string Mesh<VertexType>::SerializeBinary()
+	{
+		std::string ret;
+
+		{
+			ret += (int)_vertexList.size();
+			for (auto vertex : _vertexList)
+			{
+				ret += GetSerializedBinaryVertexData(vertex);
+			}
+		}
+
+		{
+			ret += (int)_indexList.size();
+			for (auto index : _indexList)
+			{
+				ret += index;
+			}
+		}
+
+		{
+			Float3 tmp = _minVertex;
+			char* tmpBuffer = new char[sizeof(Float3)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float3));
+			std::string tmpStr(tmpBuffer, sizeof(Float3));
+			ret += tmpStr;
+		}
+
+		{
+			Float3 tmp = _maxVertex;
+			char* tmpBuffer = new char[sizeof(Float3)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float3));
+			std::string tmpStr(tmpBuffer, sizeof(Float3));
+			delete tmpBuffer;
+			ret += tmpStr;
+		}
+
+		{
+			ret += (int)_subMeshes.size();
+			for (auto mesh : _subMeshes)
+			{
+				ret += mesh->SerializeBinary();
+			}
+		}
+
+		{
+			std::string vertexshaderFileName = _vs->GetFileName();
+			ret += (int)vertexshaderFileName.size();
+			ret += vertexshaderFileName;
+		}
+
+		return ret;
+	}
+	template<typename VertexType>
+	inline void Mesh<VertexType>::DeserializeBinary(const char* buffer, int size, int& offset)
+	{
+		{
+			int vertexCount;
+			memcpy(&vertexCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			_vertexList.resize(vertexCount);
+			for (int i = 0; i < vertexCount; ++i)
+			{
+				_vertexList[i] = GetVertex(buffer, size, offset);
+			}
+		}
+
+		{
+			int indexCount;
+			memcpy(&indexCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			_indexList.resize(indexCount);
+			for (int i = 0; i < indexCount; ++i)
+			{
+				int index;
+				memcpy(&index, buffer + offset, sizeof(int));
+				offset += sizeof(int);
+				_indexList[i] = index;
+			}
+		}
+
+		{
+			Float3 tmpBuffer;
+			memcpy(&tmpBuffer, buffer + offset, sizeof(Float3));
+			offset += sizeof(Float3);
+			_minVertex = tmpBuffer;
+		}
+
+		{
+			Float3 tmpBuffer;
+			memcpy(&tmpBuffer, buffer + offset, sizeof(Float3));
+			offset += sizeof(Float3);
+			_maxVertex = tmpBuffer;
+		}
+
+		{
+			int subMeshCount;
+			memcpy(&subMeshCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			_subMeshes.resize(subMeshCount);
+			for(int i = 0; i < subMeshCount; ++i)
+			{
+				MeshInterface* mesh = GetMesh();
+				mesh->DeserializeBinary(buffer, size, offset);
+				_subMeshes[i] = mesh;
+			}
+		}
+
+		{
+			int vertexShaderFileNameSize;
+			memcpy(&vertexShaderFileNameSize, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			char* fileName = new char[vertexShaderFileNameSize];
+			memcpy(fileName, buffer + offset, vertexShaderFileNameSize);
+			std::string tmpFileName(fileName, vertexShaderFileNameSize);
+			delete fileName;
+			_vs = ShaderManager::GetInstance().LoadVertexShader(mtw(tmpFileName), "VS", "vs_5_0");
 		}
 	}
 }

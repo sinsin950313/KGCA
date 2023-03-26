@@ -32,7 +32,7 @@ namespace SSB
 
 	static const DefaultAnimation kAnimationInitializer;
 
-	class Animation : public Common, public Serializeable, public EditableInterface<Animation>
+	class Animation : public Common, public SerializeableText, public SerializeableBinary, public EditableInterface<Animation>
 	{
 	private:
 		struct FrameMatrixInfo
@@ -82,10 +82,14 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
-		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string& serialedString) override;
 		EditableObject<Animation>* GetEditableObject() override;
 		HMatrix44 GetCurrentBoneMatrix(BoneIndex index);
+
+	public:
+		std::string SerializeText(int tabCount) override;
+		void DeserializeText(std::string& serialedString) override;
+		std::string SerializeBinary() override;
+		void DeserializeBinary(const char* buffer, int size, int& offset) override;
 
 	public:
 		Animation* Clone();

@@ -23,7 +23,7 @@ namespace SSB
 	static const std::string Vertex_PCNTs_Animatable_Keyword = "Vertex_PCNTs_Animatable";
 	static const std::string Vertex_PCNTs_Skinning_Keyword = "Vertex_PCNTs_SKinning";
 
-	class MeshInterface : public Common, public Serializeable/*, public EditableInterface<MeshInterface>*/
+	class MeshInterface : public Common, public SerializeableText, public SerializeableBinary/*, public EditableInterface<MeshInterface>*/
 	{
 	protected:
 		virtual void InitialVertexShader() = 0;
@@ -40,6 +40,7 @@ namespace SSB
 		virtual void SetVertexShader(VertexShader* shader) = 0;
 
 	public:
+		virtual std::string GetVertexType() = 0;
 		virtual Vector3 GetMinVertex() = 0;
 		virtual Vector3 GetMaxVertex() = 0;
 		virtual MeshInterface* Clone() = 0;
@@ -102,19 +103,26 @@ namespace SSB
 		bool Release() override;
 
 	protected:
-		virtual std::string GetVertexType() = 0;
-		virtual VertexType GetDeserializedVertex(std::string str) = 0;
+		virtual VertexType GetDeserializedVertexText(std::string str) = 0;
+		virtual std::string GetSerializedBinaryVertexData(VertexType vertex) = 0;
+		virtual VertexType GetVertex(const char* buffer, int size, int& offset) = 0;
+		virtual Mesh<VertexType>* GetMesh() = 0;
 
 	public:
-		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string& serialedString) override;
+		std::string SerializeText(int tabCount) override;
+		void DeserializeText(std::string& serialedString) override;
+		std::string SerializeBinary() override;
+		void DeserializeBinary(const char* buffer, int size, int& offset) override;
 	};
 
 	class Mesh_Vertex_PC : public Mesh<Vertex_PC>
 	{
 	private:
 		std::string GetVertexType() override;
-		Vertex_PC GetDeserializedVertex(std::string str) override;
+		Vertex_PC GetDeserializedVertexText(std::string str) override;
+		std::string GetSerializedBinaryVertexData(Vertex_PC vertex) override;
+		Vertex_PC GetVertex(const char* buffer, int size, int& offset) override;
+		Mesh<Vertex_PC>* GetMesh() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -127,7 +135,10 @@ namespace SSB
 	{
 	private:
 		std::string GetVertexType() override;
-		Vertex_PCNT GetDeserializedVertex(std::string str) override;
+		Vertex_PCNT GetDeserializedVertexText(std::string str) override;
+		std::string GetSerializedBinaryVertexData(Vertex_PCNT vertex) override;
+		Vertex_PCNT GetVertex(const char* buffer, int size, int& offset) override;
+		Mesh<Vertex_PCNT>* GetMesh() override;
 
 	private:
 		void SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count) override;
@@ -146,7 +157,10 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
-		Vertex_PCNT GetDeserializedVertex(std::string str) override;
+		Vertex_PCNT GetDeserializedVertexText(std::string str) override;
+		std::string GetSerializedBinaryVertexData(Vertex_PCNT vertex) override;
+		Vertex_PCNT GetVertex(const char* buffer, int size, int& offset) override;
+		Mesh<Vertex_PCNT>* GetMesh() override;
 		MeshInterface* ClonedObject() override;
 
 	private:
@@ -162,8 +176,10 @@ namespace SSB
 		bool Release() override;
 
 	public:
-		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string& serialedString) override;
+		std::string SerializeText(int tabCount) override;
+		void DeserializeText(std::string& serialedString) override;
+		std::string SerializeBinary() override;
+		void DeserializeBinary(const char* buffer, int size, int& offset) override;
 		MeshInterface* Clone() override;
 		//EditableObject<MeshInterface>* GetEditableObject() override;
 	};
@@ -176,7 +192,10 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
-		Vertex_PCNT_Skinning GetDeserializedVertex(std::string str) override;
+		Vertex_PCNT_Skinning GetDeserializedVertexText(std::string str) override;
+		std::string GetSerializedBinaryVertexData(Vertex_PCNT_Skinning vertex) override;
+		Vertex_PCNT_Skinning GetVertex(const char* buffer, int size, int& offset) override;
+		Mesh<Vertex_PCNT_Skinning>* GetMesh() override;
 		MeshInterface* ClonedObject() override;
 
 	private:
@@ -198,8 +217,10 @@ namespace SSB
 		bool Release() override;
 
 	public:
-		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string& serialedString) override;
+		std::string SerializeText(int tabCount) override;
+		void DeserializeText(std::string& serialedString) override;
+		std::string SerializeBinary() override;
+		void DeserializeBinary(const char* buffer, int size, int& offset) override;
 		MeshInterface* Clone() override;
 		//EditableObject<MeshInterface>* GetEditableObject() override;
 	};
@@ -207,7 +228,10 @@ namespace SSB
 	{
 	private:
 		std::string GetVertexType() override;
-		Vertex_PCNTs GetDeserializedVertex(std::string str) override;
+		Vertex_PCNTs GetDeserializedVertexText(std::string str) override;
+		std::string GetSerializedBinaryVertexData(Vertex_PCNTs vertex) override;
+		Vertex_PCNTs GetVertex(const char* buffer, int size, int& offset) override;
+		Mesh<Vertex_PCNTs>* GetMesh() override;
 		MeshInterface* ClonedObject() override;
 
 	private:
@@ -224,7 +248,10 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
-		Vertex_PCNTs GetDeserializedVertex(std::string str) override;
+		Vertex_PCNTs GetDeserializedVertexText(std::string str) override;
+		std::string GetSerializedBinaryVertexData(Vertex_PCNTs vertex) override;
+		Vertex_PCNTs GetVertex(const char* buffer, int size, int& offset) override;
+		Mesh<Vertex_PCNTs>* GetMesh() override;
 		MeshInterface* ClonedObject() override;
 
 	private:
@@ -243,8 +270,10 @@ namespace SSB
 		bool Release() override;
 
 	public:
-		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string& serialedString) override;
+		std::string SerializeText(int tabCount) override;
+		void DeserializeText(std::string& serialedString) override;
+		std::string SerializeBinary() override;
+		void DeserializeBinary(const char* buffer, int size, int& offset) override;
 		MeshInterface* Clone() override;
 		//EditableObject<MeshInterface>* GetEditableObject() override;
 	};
@@ -257,7 +286,10 @@ namespace SSB
 
 	private:
 		std::string GetVertexType() override;
-		Vertex_PCNTs_Skinning GetDeserializedVertex(std::string str) override;
+		Vertex_PCNTs_Skinning GetDeserializedVertexText(std::string str) override;
+		std::string GetSerializedBinaryVertexData(Vertex_PCNTs_Skinning vertex) override;
+		Vertex_PCNTs_Skinning GetVertex(const char* buffer, int size, int& offset) override;
+		Mesh<Vertex_PCNTs_Skinning>* GetMesh() override;
 		MeshInterface* ClonedObject() override;
 
 	private:
@@ -279,8 +311,10 @@ namespace SSB
 		bool Release() override;
 
 	public:
-		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string& serialedString) override;
+		std::string SerializeText(int tabCount) override;
+		void DeserializeText(std::string& serialedString) override;
+		std::string SerializeBinary() override;
+		void DeserializeBinary(const char* buffer, int size, int& offset) override;
 		MeshInterface* Clone() override;
 		//EditableObject<MeshInterface>* GetEditableObject() override;
 	};

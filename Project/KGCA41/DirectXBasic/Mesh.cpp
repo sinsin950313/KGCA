@@ -8,12 +8,58 @@ namespace SSB
 	{
 		return Vertex_PC_Keyword;
 	}
-	Vertex_PC Mesh_Vertex_PC::GetDeserializedVertex(std::string str)
+	Vertex_PC Mesh_Vertex_PC::GetDeserializedVertexText(std::string str)
 	{
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 		Vertex_PC vertex;
-		Serializeable::Deserialize(str, vertex);
+		SerializeableText::DeserializeText(str, vertex);
 		return vertex;
+	}
+	std::string Mesh_Vertex_PC::GetSerializedBinaryVertexData(Vertex_PC vertex)
+	{
+		std::string ret;
+
+		{
+			Float4 tmp = vertex.Position;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Color;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		return ret;
+	}
+	Vertex_PC Mesh_Vertex_PC::GetVertex(const char* buffer, int size, int& offset)
+	{
+		Vertex_PC ret;
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Position = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Color = tmp;
+		}
+
+		return ret;
+	}
+	Mesh<Vertex_PC>* Mesh_Vertex_PC::GetMesh()
+	{
+		return new Mesh_Vertex_PC;
 	}
 	void Mesh_Vertex_PC::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
@@ -38,12 +84,88 @@ namespace SSB
 	{
 		return Vertex_PCNT_Keyword;
 	}
-	Vertex_PCNT Mesh_Vertex_PCNT::GetDeserializedVertex(std::string str)
+	Vertex_PCNT Mesh_Vertex_PCNT::GetDeserializedVertexText(std::string str)
 	{
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 		Vertex_PCNT vertex;
-		Serializeable::Deserialize(str, vertex);
+		SerializeableText::DeserializeText(str, vertex);
 		return vertex;
+	}
+	std::string Mesh_Vertex_PCNT::GetSerializedBinaryVertexData(Vertex_PCNT vertex)
+	{
+		std::string ret;
+
+		{
+			Float4 tmp = vertex.Position;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Color;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Normal;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float2 tmp = vertex.TextureUV;
+			char* tmpBuffer = new char[sizeof(Float2)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float2));
+			std::string tmpStr(tmpBuffer, sizeof(Float2));
+			ret += tmpStr;
+		}
+
+		return ret;
+	}
+	Vertex_PCNT Mesh_Vertex_PCNT::GetVertex(const char* buffer, int size, int& offset)
+	{
+		Vertex_PCNT ret;
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Position = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Color = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Normal = tmp;
+		}
+
+		{
+			Float2 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.TextureUV = tmp;
+		}
+
+		return ret;
+	}
+	Mesh<Vertex_PCNT>* Mesh_Vertex_PCNT::GetMesh()
+	{
+		return new Mesh_Vertex_PCNT;
 	}
 	void Mesh_Vertex_PCNT::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
@@ -90,6 +212,89 @@ namespace SSB
 	{
 		return Vertex_PCNT_Animatable_Keyword;
 	}
+	Vertex_PCNT Mesh_Vertex_PCNT_Animatable::GetDeserializedVertexText(std::string str)
+	{
+		str = GetUnitElementText(str, 0).str;
+		Vertex_PCNT vertex;
+		SerializeableText::DeserializeText(str, vertex);
+		return vertex;
+	}
+	std::string Mesh_Vertex_PCNT_Animatable::GetSerializedBinaryVertexData(Vertex_PCNT vertex)
+	{
+		std::string ret;
+
+		{
+			Float4 tmp = vertex.Position;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Color;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Normal;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float2 tmp = vertex.TextureUV;
+			char* tmpBuffer = new char[sizeof(Float2)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float2));
+			std::string tmpStr(tmpBuffer, sizeof(Float2));
+			ret += tmpStr;
+		}
+
+		return ret;
+	}
+	Vertex_PCNT Mesh_Vertex_PCNT_Animatable::GetVertex(const char* buffer, int size, int& offset)
+	{
+		Vertex_PCNT ret;
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Position = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Color = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Normal = tmp;
+		}
+
+		{
+			Float2 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.TextureUV = tmp;
+		}
+
+		return ret;
+	}
+	Mesh<Vertex_PCNT>* Mesh_Vertex_PCNT_Animatable::GetMesh()
+	{
+		return new Mesh_Vertex_PCNT_Animatable;
+	}
 	void Mesh_Vertex_PCNT_Animatable::SetVertexLayoutDesc(D3D11_INPUT_ELEMENT_DESC** desc, int& count)
 	{
 		count = 4;
@@ -132,45 +337,46 @@ namespace SSB
 		Mesh<Vertex_PCNT>::Release();
 		return true;
 	}
-	std::string Mesh_Vertex_PCNT_Animatable::Serialize(int tabCount)
+	std::string Mesh_Vertex_PCNT_Animatable::SerializeText(int tabCount)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "[\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += _meshDataStr;
-		ret += Serializeable::Serialize(tabCount + 2, _meshData);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _meshData);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Mesh<Vertex_PCNT>::Serialize(tabCount + 1);
+		ret += Mesh<Vertex_PCNT>::SerializeText(tabCount + 1);
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "]\n";
 
 		return ret;
 	}
 
-	void Mesh_Vertex_PCNT_Animatable::Deserialize(std::string& serialedString)
+	void Mesh_Vertex_PCNT_Animatable::DeserializeText(std::string& serialedString)
 	{
 		int offset = 0;
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			auto atomicData = GetUnitElement(elem, 0);
+			auto atomicData = GetUnitElementText(elem, 0);
 			std::string atomic = atomicData.str;
-			Serializeable::Deserialize(atomic, _meshData);
+			SerializeableText::DeserializeText(atomic, _meshData);
 		}
 
-		serialedString = GetUnitObject(serialedString, offset).str;
-		Mesh<Vertex_PCNT>::Deserialize(serialedString);
+		serialedString = GetUnitObjectText(serialedString, offset).str;
+		Mesh<Vertex_PCNT>::DeserializeText(serialedString);
 	}
+
 
 	MeshInterface* Mesh_Vertex_PCNT_Animatable::Clone()
 	{
@@ -179,13 +385,6 @@ namespace SSB
 		return newMesh;
 	}
 
-	Vertex_PCNT Mesh_Vertex_PCNT_Animatable::GetDeserializedVertex(std::string str)
-	{
-		str = GetUnitElement(str, 0).str;
-		Vertex_PCNT vertex;
-		Serializeable::Deserialize(str, vertex);
-		return vertex;
-	}
 
 	MeshInterface* Mesh_Vertex_PCNT_Animatable::ClonedObject()
 	{
@@ -282,80 +481,80 @@ namespace SSB
 		return true;
 	}
 
-	std::string Mesh_Vertex_PCNT_Skinning::Serialize(int tabCount)
+	std::string Mesh_Vertex_PCNT_Skinning::SerializeText(int tabCount)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "[\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += _meshIndexStr;
-		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData.MeshIndex);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _boneSpaceTransformData.MeshIndex);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += _meshWeightStr;
-		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData.MeshWeight);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _boneSpaceTransformData.MeshWeight);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += _maxBoneCountStr;
 		ret += "{\"";
 		ret += std::to_string(_maxBoneCount);
 		ret += "\"}\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += _meshToBoneSpaceTransformDataStr;
-		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData, _maxBoneCount);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _boneSpaceTransformData, _maxBoneCount);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Mesh<Vertex_PCNT_Skinning>::Serialize(tabCount + 1);
+		ret += Mesh<Vertex_PCNT_Skinning>::SerializeText(tabCount + 1);
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "]\n";
 
 		return ret;
 	}
-	void Mesh_Vertex_PCNT_Skinning::Deserialize(std::string& serialedString)
+	void Mesh_Vertex_PCNT_Skinning::DeserializeText(std::string& serialedString)
 	{
 		int offset = 0;
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(elem, _boneSpaceTransformData.MeshIndex);
+			SerializeableText::DeserializeText(elem, _boneSpaceTransformData.MeshIndex);
 		}
 
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(elem, _boneSpaceTransformData.MeshWeight);
+			SerializeableText::DeserializeText(elem, _boneSpaceTransformData.MeshWeight);
 		}
 
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(elem, _maxBoneCount);
+			SerializeableText::DeserializeText(elem, _maxBoneCount);
 		}
 
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(elem, _boneSpaceTransformData, _maxBoneCount);
+			SerializeableText::DeserializeText(elem, _boneSpaceTransformData, _maxBoneCount);
 		}
 
 		serialedString = std::string(serialedString.begin() + offset, serialedString.end());
-		Mesh<Vertex_PCNT_Skinning>::Deserialize(serialedString);
+		Mesh<Vertex_PCNT_Skinning>::DeserializeText(serialedString);
 	}
 	MeshInterface* Mesh_Vertex_PCNT_Skinning::Clone()
 	{
@@ -364,12 +563,107 @@ namespace SSB
 		memcpy(&newMesh->_boneSpaceTransformData, &_boneSpaceTransformData, sizeof(MeshToBoneSpaceTransformData));
 		return newMesh;
 	}
-	Vertex_PCNT_Skinning Mesh_Vertex_PCNT_Skinning::GetDeserializedVertex(std::string str)
+	Vertex_PCNT_Skinning Mesh_Vertex_PCNT_Skinning::GetDeserializedVertexText(std::string str)
 	{
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 		Vertex_PCNT_Skinning vertex;
-		Serializeable::Deserialize(str, vertex);
+		SerializeableText::DeserializeText(str, vertex);
 		return vertex;
+	}
+	std::string Mesh_Vertex_PCNT_Skinning::GetSerializedBinaryVertexData(Vertex_PCNT_Skinning vertex)
+	{
+		std::string ret;
+
+		{
+			Float4 tmp = vertex.Position;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Color;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Normal;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float2 tmp = vertex.TextureUV;
+			char* tmpBuffer = new char[sizeof(Float2)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float2));
+			std::string tmpStr(tmpBuffer, sizeof(Float2));
+			ret += tmpStr;
+		}
+
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				ret += vertex.AffectedBoneIndex[i];
+				ret += vertex.Weight[i];
+			}
+		}
+
+		return ret;
+	}
+	Vertex_PCNT_Skinning Mesh_Vertex_PCNT_Skinning::GetVertex(const char* buffer, int size, int& offset)
+	{
+		Vertex_PCNT_Skinning ret;
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Position = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Color = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Normal = tmp;
+		}
+
+		{
+			Float2 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.TextureUV = tmp;
+		}
+
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				memcpy(&ret.AffectedBoneIndex[i], buffer + offset, sizeof(int));
+				offset += sizeof(int);
+
+				memcpy(&ret.Weight[i], buffer + offset, sizeof(float));
+				offset += sizeof(float);
+			}
+		}
+
+		return ret;
+	}
+	Mesh<Vertex_PCNT_Skinning>* Mesh_Vertex_PCNT_Skinning::GetMesh()
+	{
+		return new Mesh_Vertex_PCNT_Skinning;
 	}
 	MeshInterface* Mesh_Vertex_PCNT_Skinning::ClonedObject()
 	{
@@ -412,12 +706,100 @@ namespace SSB
 		return Vertex_PCNTs_Keyword;
 	}
 
-	Vertex_PCNTs Mesh_Vertex_PCNTs::GetDeserializedVertex(std::string str)
+	Vertex_PCNTs Mesh_Vertex_PCNTs::GetDeserializedVertexText(std::string str)
 	{
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 		Vertex_PCNTs vertex;
-		Serializeable::Deserialize(str, vertex);
+		SerializeableText::DeserializeText(str, vertex);
 		return vertex;
+	}
+
+	std::string Mesh_Vertex_PCNTs::GetSerializedBinaryVertexData(Vertex_PCNTs vertex)
+	{
+		std::string ret;
+
+		{
+			Float4 tmp = vertex.Position;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Color;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Normal;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float2 tmp = vertex.TextureUV;
+			char* tmpBuffer = new char[sizeof(Float2)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float2));
+			std::string tmpStr(tmpBuffer, sizeof(Float2));
+			ret += tmpStr;
+		}
+
+		{
+			ret += vertex.MaterialIndex;
+		}
+
+		return ret;
+	}
+
+	Vertex_PCNTs Mesh_Vertex_PCNTs::GetVertex(const char* buffer, int size, int& offset)
+	{
+		Vertex_PCNTs ret;
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Position = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Color = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Normal = tmp;
+		}
+
+		{
+			Float2 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.TextureUV = tmp;
+		}
+
+		{
+			memcpy(&ret.MaterialIndex, buffer + offset, sizeof(unsigned int));
+			offset += sizeof(unsigned int);
+		}
+
+		return ret;
+	}
+
+	Mesh<Vertex_PCNTs>* Mesh_Vertex_PCNTs::GetMesh()
+	{
+		return new Mesh_Vertex_PCNTs;
 	}
 
 	MeshInterface* Mesh_Vertex_PCNTs::ClonedObject()
@@ -498,44 +880,44 @@ namespace SSB
 		Mesh<Vertex_PCNTs>::Release();
 		return true;
 	}
-	std::string Mesh_Vertex_PCNTs_Animatable::Serialize(int tabCount)
+	std::string Mesh_Vertex_PCNTs_Animatable::SerializeText(int tabCount)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "[\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += _meshDataStr;
-		ret += Serializeable::Serialize(tabCount + 2, _meshData);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _meshData);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Mesh<Vertex_PCNTs>::Serialize(tabCount + 1);
+		ret += Mesh<Vertex_PCNTs>::SerializeText(tabCount + 1);
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "]\n";
 
 		return ret;
 	}
 
-	void Mesh_Vertex_PCNTs_Animatable::Deserialize(std::string& serialedString)
+	void Mesh_Vertex_PCNTs_Animatable::DeserializeText(std::string& serialedString)
 	{
 		int offset = 0;
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			auto atomicData = GetUnitElement(elem, 0);
+			auto atomicData = GetUnitElementText(elem, 0);
 			std::string atomic = atomicData.str;
-			Serializeable::Deserialize(atomic, _meshData);
+			SerializeableText::DeserializeText(atomic, _meshData);
 		}
 
 		serialedString = std::string(serialedString.begin() + offset, serialedString.end());
-		Mesh<Vertex_PCNTs>::Deserialize(serialedString);
+		Mesh<Vertex_PCNTs>::DeserializeText(serialedString);
 	}
 
 	MeshInterface* Mesh_Vertex_PCNTs_Animatable::Clone()
@@ -545,12 +927,100 @@ namespace SSB
 		return newMesh;
 	}
 
-	Vertex_PCNTs Mesh_Vertex_PCNTs_Animatable::GetDeserializedVertex(std::string str)
+	Vertex_PCNTs Mesh_Vertex_PCNTs_Animatable::GetDeserializedVertexText(std::string str)
 	{
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 		Vertex_PCNTs vertex;
-		Serializeable::Deserialize(str, vertex);
+		SerializeableText::DeserializeText(str, vertex);
 		return vertex;
+	}
+
+	std::string Mesh_Vertex_PCNTs_Animatable::GetSerializedBinaryVertexData(Vertex_PCNTs vertex)
+	{
+		std::string ret;
+
+		{
+			Float4 tmp = vertex.Position;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Color;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Normal;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float2 tmp = vertex.TextureUV;
+			char* tmpBuffer = new char[sizeof(Float2)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float2));
+			std::string tmpStr(tmpBuffer, sizeof(Float2));
+			ret += tmpStr;
+		}
+
+		{
+			ret += vertex.MaterialIndex;
+		}
+
+		return ret;
+	}
+
+	Vertex_PCNTs Mesh_Vertex_PCNTs_Animatable::GetVertex(const char* buffer, int size, int& offset)
+	{
+		Vertex_PCNTs ret;
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Position = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Color = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Normal = tmp;
+		}
+
+		{
+			Float2 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.TextureUV = tmp;
+		}
+
+		{
+			memcpy(&ret.MaterialIndex, buffer + offset, sizeof(unsigned int));
+			offset += sizeof(unsigned int);
+		}
+
+		return ret;
+	}
+
+	Mesh<Vertex_PCNTs>* Mesh_Vertex_PCNTs_Animatable::GetMesh()
+	{
+		return new Mesh_Vertex_PCNTs_Animatable;
 	}
 
 	MeshInterface* Mesh_Vertex_PCNTs_Animatable::ClonedObject()
@@ -658,81 +1128,81 @@ namespace SSB
 		return true;
 	}
 
-	std::string Mesh_Vertex_PCNTs_Skinning::Serialize(int tabCount)
+	std::string Mesh_Vertex_PCNTs_Skinning::SerializeText(int tabCount)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "[\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += _meshIndexStr;
-		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData.MeshIndex);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _boneSpaceTransformData.MeshIndex);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += _meshWeightStr;
-		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData.MeshWeight);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _boneSpaceTransformData.MeshWeight);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += _maxBoneCountStr;
 		ret += "{\"";
 		ret += std::to_string(_maxBoneCount);
 		ret += "\"}\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += _meshToBoneSpaceTransformDataStr;
-		ret += Serializeable::Serialize(tabCount + 2, _boneSpaceTransformData, _maxBoneCount);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeableText::SerializeText(tabCount + 2, _boneSpaceTransformData, _maxBoneCount);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Mesh<Vertex_PCNTs_Skinning>::Serialize(tabCount + 1);
+		ret += Mesh<Vertex_PCNTs_Skinning>::SerializeText(tabCount + 1);
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "]\n";
 
 		return ret;
 	}
 
-	void Mesh_Vertex_PCNTs_Skinning::Deserialize(std::string& serialedString)
+	void Mesh_Vertex_PCNTs_Skinning::DeserializeText(std::string& serialedString)
 	{
 		int offset = 0;
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(elem, _boneSpaceTransformData.MeshIndex);
+			SerializeableText::DeserializeText(elem, _boneSpaceTransformData.MeshIndex);
 		}
 
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(elem, _boneSpaceTransformData.MeshWeight);
+			SerializeableText::DeserializeText(elem, _boneSpaceTransformData.MeshWeight);
 		}
 
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(elem, _maxBoneCount);
+			SerializeableText::DeserializeText(elem, _maxBoneCount);
 		}
 
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(elem, _boneSpaceTransformData, _maxBoneCount);
+			SerializeableText::DeserializeText(elem, _boneSpaceTransformData, _maxBoneCount);
 		}
 
 		serialedString = std::string(serialedString.begin() + offset, serialedString.end());
-		Mesh<Vertex_PCNTs_Skinning>::Deserialize(serialedString);
+		Mesh<Vertex_PCNTs_Skinning>::DeserializeText(serialedString);
 	}
 
 	MeshInterface* Mesh_Vertex_PCNTs_Skinning::Clone()
@@ -743,12 +1213,119 @@ namespace SSB
 		return newMesh;
 	}
 
-	Vertex_PCNTs_Skinning Mesh_Vertex_PCNTs_Skinning::GetDeserializedVertex(std::string str)
+	Vertex_PCNTs_Skinning Mesh_Vertex_PCNTs_Skinning::GetDeserializedVertexText(std::string str)
 	{
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 		Vertex_PCNTs_Skinning vertex;
-		Serializeable::Deserialize(str, vertex);
+		SerializeableText::DeserializeText(str, vertex);
 		return vertex;
+	}
+
+	std::string Mesh_Vertex_PCNTs_Skinning::GetSerializedBinaryVertexData(Vertex_PCNTs_Skinning vertex)
+	{
+		std::string ret;
+
+		{
+			Float4 tmp = vertex.Position;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Color;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float4 tmp = vertex.Normal;
+			char* tmpBuffer = new char[sizeof(Float4)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float4));
+			std::string tmpStr(tmpBuffer, sizeof(Float4));
+			ret += tmpStr;
+		}
+
+		{
+			Float2 tmp = vertex.TextureUV;
+			char* tmpBuffer = new char[sizeof(Float2)];
+			memcpy(tmpBuffer, &tmp, sizeof(Float2));
+			std::string tmpStr(tmpBuffer, sizeof(Float2));
+			ret += tmpStr;
+		}
+
+		{
+			ret += vertex.MaterialIndex;
+		}
+
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				ret += vertex.AffectedBoneIndex[i];
+				ret += vertex.Weight[i];
+			}
+		}
+
+		return ret;
+	}
+
+	Vertex_PCNTs_Skinning Mesh_Vertex_PCNTs_Skinning::GetVertex(const char* buffer, int size, int& offset)
+	{
+		Vertex_PCNTs_Skinning ret;
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Position = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Color = tmp;
+		}
+
+		{
+			Float4 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.Normal = tmp;
+		}
+
+		{
+			Float2 tmp;
+			memcpy(&tmp, buffer + offset, sizeof(Float4));
+			offset += sizeof(Float4);
+			ret.TextureUV = tmp;
+		}
+
+		{
+			memcpy(&ret.MaterialIndex, buffer + offset, sizeof(unsigned int));
+			offset += sizeof(unsigned int);
+		}
+
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				memcpy(&ret.AffectedBoneIndex[i], buffer + offset, sizeof(int));
+				offset += sizeof(int);
+
+				memcpy(&ret.Weight[i], buffer + offset, sizeof(float));
+				offset += sizeof(float);
+			}
+		}
+
+		return ret;
+	}
+
+	Mesh<Vertex_PCNTs_Skinning>* Mesh_Vertex_PCNTs_Skinning::GetMesh()
+	{
+		return new Mesh_Vertex_PCNTs_Skinning;
 	}
 
 	MeshInterface* Mesh_Vertex_PCNTs_Skinning::ClonedObject()

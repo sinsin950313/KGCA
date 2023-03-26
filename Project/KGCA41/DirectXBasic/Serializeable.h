@@ -7,7 +7,7 @@
 
 namespace SSB
 {
-	class Serializeable
+	class SerializeableText
 	{
 	public:
 		std::string _minVertexStr = "Min Vertex\n";
@@ -41,26 +41,26 @@ namespace SSB
 		std::string _frameStr = "Frame : ";
 
 	protected:
-		std::string GetTabbedString(int tabCount);
+		std::string GetTabbedStringText(int tabCount);
 
 	protected:
-		std::string Serialize(int tabCount, int data);
-		std::string Serialize(int tabCount, unsigned int data);
-		std::string Serialize(int tabCount, float data);
-		std::string Serialize(int tabCount, Float2 data);
-		std::string Serialize(int tabCount, Float3 data);
-		std::string Serialize(int tabCount, Float4 data);
-		std::string Serialize(int tabCount, Float33 data);
-		std::string Serialize(int tabCount, Float44 data);
-		std::string Serialize(int tabCount, Vertex_PC data);
-		std::string Serialize(int tabCount, Vertex_PCNT data);
-		std::string Serialize(int tabCount, Vertex_PCNTs data);
-		std::string Serialize(int tabCount, Vertex_PCNT_Skinning data);
-		std::string Serialize(int tabCount, Vertex_PCNTs_Skinning data);
-		std::string Serialize(int tabCount, MeshData data);
-		std::string Serialize(int tabCount, MeshToBoneSpaceTransformData& data, int maxBoneCount);
-		std::string Serialize(int tabCount, AnimationUnitInfo data);
-		std::string Serialize(int tabCount, AnimationFrameInfo& data, int maxBoneCount, int maxMeshCount);
+		std::string SerializeText(int tabCount, int data);
+		std::string SerializeText(int tabCount, unsigned int data);
+		std::string SerializeText(int tabCount, float data);
+		std::string SerializeText(int tabCount, Float2 data);
+		std::string SerializeText(int tabCount, Float3 data);
+		std::string SerializeText(int tabCount, Float4 data);
+		std::string SerializeText(int tabCount, Float33 data);
+		std::string SerializeText(int tabCount, Float44 data);
+		std::string SerializeText(int tabCount, Vertex_PC data);
+		std::string SerializeText(int tabCount, Vertex_PCNT data);
+		std::string SerializeText(int tabCount, Vertex_PCNTs data);
+		std::string SerializeText(int tabCount, Vertex_PCNT_Skinning data);
+		std::string SerializeText(int tabCount, Vertex_PCNTs_Skinning data);
+		std::string SerializeText(int tabCount, MeshData data);
+		std::string SerializeText(int tabCount, MeshToBoneSpaceTransformData& data, int maxBoneCount);
+		std::string SerializeText(int tabCount, AnimationUnitInfo data);
+		std::string SerializeText(int tabCount, AnimationFrameInfo& data, int maxBoneCount, int maxMeshCount);
 
 	protected:
 		struct ExtractedData
@@ -69,31 +69,87 @@ namespace SSB
 			int offset;
 		};
 
-		ExtractedData GetUnitAtomic(std::string& str, int offset);
-		ExtractedData GetUnitElement(std::string& str, int offset);
-		ExtractedData GetUnitObject(std::string& str, int offset);
+		ExtractedData GetUnitAtomicText(std::string& str, int offset);
+		ExtractedData GetUnitElementText(std::string& str, int offset);
+		ExtractedData GetUnitObjectText(std::string& str, int offset);
 
 	protected:
-		void Deserialize(std::string& str, int& ret);
-		void Deserialize(std::string& str, unsigned int& ret);
-		void Deserialize(std::string& str, float& ret);
-		void Deserialize(std::string& str, Float2& ret);
-		void Deserialize(std::string& str, Float3& ret);
-		void Deserialize(std::string& str, Float4& ret);
-		void Deserialize(std::string& str, Float33& ret);
-		void Deserialize(std::string& str, Float44& ret);
-		void Deserialize(std::string& str, Vertex_PC& ret);
-		void Deserialize(std::string& str, Vertex_PCNT& ret);
-		void Deserialize(std::string& str, Vertex_PCNTs& ret);
-		void Deserialize(std::string& str, Vertex_PCNT_Skinning& ret);
-		void Deserialize(std::string& str, Vertex_PCNTs_Skinning& ret);
-		void Deserialize(std::string& str, MeshData& ret);
-		void Deserialize(std::string& str, MeshToBoneSpaceTransformData& ret, int maxBoneCount);
-		void Deserialize(std::string& str, AnimationUnitInfo& ret);
-		void Deserialize(std::string& str, AnimationFrameInfo& ret, int maxBoneCount, int maxMeshCount);
+		void DeserializeText(std::string& str, int& ret);
+		void DeserializeText(std::string& str, unsigned int& ret);
+		void DeserializeText(std::string& str, float& ret);
+		void DeserializeText(std::string& str, Float2& ret);
+		void DeserializeText(std::string& str, Float3& ret);
+		void DeserializeText(std::string& str, Float4& ret);
+		void DeserializeText(std::string& str, Float33& ret);
+		void DeserializeText(std::string& str, Float44& ret);
+		void DeserializeText(std::string& str, Vertex_PC& ret);
+		void DeserializeText(std::string& str, Vertex_PCNT& ret);
+		void DeserializeText(std::string& str, Vertex_PCNTs& ret);
+		void DeserializeText(std::string& str, Vertex_PCNT_Skinning& ret);
+		void DeserializeText(std::string& str, Vertex_PCNTs_Skinning& ret);
+		void DeserializeText(std::string& str, MeshData& ret);
+		void DeserializeText(std::string& str, MeshToBoneSpaceTransformData& ret, int maxBoneCount);
+		void DeserializeText(std::string& str, AnimationUnitInfo& ret);
+		void DeserializeText(std::string& str, AnimationFrameInfo& ret, int maxBoneCount, int maxMeshCount);
 
 	public:
-		virtual std::string Serialize(int tabCount) = 0;
-		virtual void Deserialize(std::string& serialedString) = 0;
+		virtual std::string SerializeText(int tabCount) = 0;
+		virtual void DeserializeText(std::string& serialedString) = 0;
+	};
+
+	class SerializeableBinary
+	{
+	//protected:
+	//	std::string SerializeBinary(int data);
+	//	std::string SerializeBinary(unsigned int data);
+	//	std::string SerializeBinary(float data);
+	//	std::string SerializeBinary(Float2 data);
+	//	std::string SerializeBinary(Float3 data);
+	//	std::string SerializeBinary(Float4 data);
+	//	std::string SerializeBinary(Float33 data);
+	//	std::string SerializeBinary(Float44 data);
+	//	std::string SerializeBinary(Vertex_PC data);
+	//	std::string SerializeBinary(Vertex_PCNT data);
+	//	std::string SerializeBinary(Vertex_PCNTs data);
+	//	std::string SerializeBinary(Vertex_PCNT_Skinning data);
+	//	std::string SerializeBinary(Vertex_PCNTs_Skinning data);
+	//	std::string SerializeBinary(MeshData data);
+	//	std::string SerializeBinary(MeshToBoneSpaceTransformData& data, int maxBoneCount);
+	//	std::string SerializeBinary(AnimationUnitInfo data);
+	//	std::string SerializeBinary(AnimationFrameInfo& data, int maxBoneCount, int maxMeshCount);
+
+	//protected:
+	//	struct ExtractedData
+	//	{
+	//		std::string str;
+	//		int offset;
+	//	};
+
+	//	ExtractedData GetUnitAtomicBinary(std::string& str, int offset);
+	//	ExtractedData GetUnitElementBinary(std::string& str, int offset);
+	//	ExtractedData GetUnitObjectBinary(std::string& str, int offset);
+
+	//protected:
+	//	void DeserializeBinary(std::string& str, int& ret);
+	//	void DeserializeBinary(std::string& str, unsigned int& ret);
+	//	void DeserializeBinary(std::string& str, float& ret);
+	//	void DeserializeBinary(std::string& str, Float2& ret);
+	//	void DeserializeBinary(std::string& str, Float3& ret);
+	//	void DeserializeBinary(std::string& str, Float4& ret);
+	//	void DeserializeBinary(std::string& str, Float33& ret);
+	//	void DeserializeBinary(std::string& str, Float44& ret);
+	//	void DeserializeBinary(std::string& str, Vertex_PC& ret);
+	//	void DeserializeBinary(std::string& str, Vertex_PCNT& ret);
+	//	void DeserializeBinary(std::string& str, Vertex_PCNTs& ret);
+	//	void DeserializeBinary(std::string& str, Vertex_PCNT_Skinning& ret);
+	//	void DeserializeBinary(std::string& str, Vertex_PCNTs_Skinning& ret);
+	//	void DeserializeBinary(std::string& str, MeshData& ret);
+	//	void DeserializeBinary(std::string& str, MeshToBoneSpaceTransformData& ret, int maxBoneCount);
+	//	void DeserializeBinary(std::string& str, AnimationUnitInfo& ret);
+	//	void DeserializeBinary(std::string& str, AnimationFrameInfo& ret, int maxBoneCount, int maxMeshCount);
+
+	public:
+		virtual std::string SerializeBinary() = 0;
+		virtual void DeserializeBinary(const char* buffer, int size, int& offset) = 0;
 	};
 }

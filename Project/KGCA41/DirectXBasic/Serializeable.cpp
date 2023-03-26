@@ -2,7 +2,7 @@
 
 namespace SSB
 {
-	std::string Serializeable::GetTabbedString(int tabCount)
+	std::string SerializeableText::GetTabbedStringText(int tabCount)
 	{
 		std::string ret;
 		for (int i = 0; i < tabCount; ++i)
@@ -11,11 +11,11 @@ namespace SSB
 		}
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, int data)
+	std::string SerializeableText::SerializeText(int tabCount, int data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\"";
 		ret += std::to_string(data);
 		ret += "\"}";
@@ -23,11 +23,11 @@ namespace SSB
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, unsigned int data)
+	std::string SerializeableText::SerializeText(int tabCount, unsigned int data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\"";
 		ret += std::to_string(data);
 		ret += "\"}";
@@ -35,11 +35,11 @@ namespace SSB
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, float data)
+	std::string SerializeableText::SerializeText(int tabCount, float data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\"";
 		ret += std::to_string(data);
 		ret += "\"}";
@@ -47,11 +47,11 @@ namespace SSB
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, Float2 data)
+	std::string SerializeableText::SerializeText(int tabCount, Float2 data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\"";
 		ret += std::to_string(data.x);
 		ret += "\", \"";
@@ -60,11 +60,11 @@ namespace SSB
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, Float3 data)
+	std::string SerializeableText::SerializeText(int tabCount, Float3 data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\"";
 		ret += std::to_string(data.x);
 		ret += "\", \"";
@@ -75,11 +75,11 @@ namespace SSB
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, Float4 data)
+	std::string SerializeableText::SerializeText(int tabCount, Float4 data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\"";
 		ret += std::to_string(data.x);
 		ret += "\", \"";
@@ -92,14 +92,14 @@ namespace SSB
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, Float33 data)
+	std::string SerializeableText::SerializeText(int tabCount, Float33 data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "\"";
 		ret += std::to_string(data.e11);
 		ret += "\", \"";
@@ -108,7 +108,7 @@ namespace SSB
 		ret += std::to_string(data.e13);
 		ret += "\",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "\"";
 		ret += std::to_string(data.e21);
 		ret += "\", \"";
@@ -117,7 +117,7 @@ namespace SSB
 		ret += std::to_string(data.e23);
 		ret += "\",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "\"";
 		ret += std::to_string(data.e31);
 		ret += "\", \"";
@@ -126,19 +126,19 @@ namespace SSB
 		ret += std::to_string(data.e33);
 		ret += "\",\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "\"}\n";
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, Float44 data)
+	std::string SerializeableText::SerializeText(int tabCount, Float44 data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "\"";
 		ret += std::to_string(data.e11);
 		ret += "\", \"";
@@ -149,7 +149,7 @@ namespace SSB
 		ret += std::to_string(data.e14);
 		ret += "\",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "\"";
 		ret += std::to_string(data.e21);
 		ret += "\", \"";
@@ -160,7 +160,7 @@ namespace SSB
 		ret += std::to_string(data.e24);
 		ret += "\",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "\"";
 		ret += std::to_string(data.e31);
 		ret += "\", \"";
@@ -171,7 +171,7 @@ namespace SSB
 		ret += std::to_string(data.e34);
 		ret += "\",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "\"";
 		ret += std::to_string(data.e41);
 		ret += "\", \"";
@@ -182,113 +182,113 @@ namespace SSB
 		ret += std::to_string(data.e44);
 		ret += "\"\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "}\n";
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, Vertex_PC data)
+	std::string SerializeableText::SerializeText(int tabCount, Vertex_PC data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\n";
 
-		ret += Serialize(tabCount + 1, data.Position);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Position);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Color);
+		ret += SerializeText(tabCount + 1, data.Color);
 		ret += "\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "}\n";
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, Vertex_PCNT data)
+	std::string SerializeableText::SerializeText(int tabCount, Vertex_PCNT data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\n";
 
-		ret += Serialize(tabCount + 1, data.Position);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Position);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Color);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Color);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Normal);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Normal);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.TextureUV);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.TextureUV);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "}\n";
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, Vertex_PCNTs data)
+	std::string SerializeableText::SerializeText(int tabCount, Vertex_PCNTs data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\n";
 
-		ret += Serialize(tabCount + 1, data.Position);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Position);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Color);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Color);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Normal);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Normal);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.TextureUV);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.TextureUV);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.MaterialIndex);
+		ret += SerializeText(tabCount + 1, data.MaterialIndex);
 		ret += "\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "}\n";
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, Vertex_PCNT_Skinning data)
+	std::string SerializeableText::SerializeText(int tabCount, Vertex_PCNT_Skinning data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\n";
 
-		ret += Serialize(tabCount + 1, data.Position);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Position);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Color);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Color);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Normal);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Normal);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.TextureUV);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.TextureUV);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "{\"";
 		ret += std::to_string(data.AffectedBoneIndex[0]);
 		ret += "\", \"";
@@ -298,10 +298,10 @@ namespace SSB
 		ret += "\", \"";
 		ret += std::to_string(data.AffectedBoneIndex[3]);
 		ret += "\"}\n";
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "{\"";
 		ret += std::to_string(data.Weight[0]);
 		ret += "\", \"";
@@ -312,42 +312,42 @@ namespace SSB
 		ret += std::to_string(data.Weight[3]);
 		ret += "\"}\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "}\n";
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, Vertex_PCNTs_Skinning data)
+	std::string SerializeableText::SerializeText(int tabCount, Vertex_PCNTs_Skinning data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\n";
 
-		ret += Serialize(tabCount + 1, data.Position);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Position);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Color);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Color);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Normal);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Normal);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.TextureUV);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.TextureUV);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "{\"";
 		ret += std::to_string(data.MaterialIndex);
 		ret += "\"}\n";
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "{\"";
 		ret += std::to_string(data.AffectedBoneIndex[0]);
 		ret += "\", \"";
@@ -357,10 +357,10 @@ namespace SSB
 		ret += "\", \"";
 		ret += std::to_string(data.AffectedBoneIndex[3]);
 		ret += "\"}\n";
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += "{\"";
 		ret += std::to_string(data.Weight[0]);
 		ret += "\", \"";
@@ -371,16 +371,16 @@ namespace SSB
 		ret += std::to_string(data.Weight[3]);
 		ret += "\"}\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "}\n";
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, MeshData data)
+	std::string SerializeableText::SerializeText(int tabCount, MeshData data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\"";
 		ret += std::to_string(data.MeshIndex);
 		ret += "\"}";
@@ -388,17 +388,17 @@ namespace SSB
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, MeshToBoneSpaceTransformData& data, int maxBoneCount)
+	std::string SerializeableText::SerializeText(int tabCount, MeshToBoneSpaceTransformData& data, int maxBoneCount)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\n";
 
 		for (int i = 0; i < maxBoneCount; ++i)
 		{
-			ret += Serialize(tabCount + 1, (Float44)data.BoneSpaceTransformBuffer[i]);
-			ret += GetTabbedString(tabCount + 1);
+			ret += SerializeText(tabCount + 1, (Float44)data.BoneSpaceTransformBuffer[i]);
+			ret += GetTabbedStringText(tabCount + 1);
 			if (i + 1 < maxBoneCount)
 			{
 				ret += ",\n";
@@ -409,49 +409,49 @@ namespace SSB
 			}
 		}
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "}\n";
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, AnimationUnitInfo data)
+	std::string SerializeableText::SerializeText(int tabCount, AnimationUnitInfo data)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\n";
 
-		ret += Serialize(tabCount + 1, (Float44)data.Matrix);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, (Float44)data.Matrix);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Translate);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Translate);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, data.Scale);
-		ret += GetTabbedString(tabCount + 1);
+		ret += SerializeText(tabCount + 1, data.Scale);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
-		ret += Serialize(tabCount + 1, (Float4)data.Rotate);
+		ret += SerializeText(tabCount + 1, (Float4)data.Rotate);
 		ret += "\n";
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "}\n";
 
 		return ret;
 	}
-	std::string Serializeable::Serialize(int tabCount, AnimationFrameInfo& data, int maxBoneCount, int maxMeshCount)
+	std::string SerializeableText::SerializeText(int tabCount, AnimationFrameInfo& data, int maxBoneCount, int maxMeshCount)
 	{
 		std::string ret;
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "{\n";
 
 		for (int i = 0; i < maxBoneCount; ++i)
 		{
-			ret += Serialize(tabCount + 1, data.BoneAnimationUnit[i]);
-			ret += GetTabbedString(tabCount + 1);
+			ret += SerializeText(tabCount + 1, data.BoneAnimationUnit[i]);
+			ret += GetTabbedStringText(tabCount + 1);
 
 			if (i + 1 < maxBoneCount)
 			{
@@ -462,13 +462,13 @@ namespace SSB
 				ret += "\n";
 			}
 		}
-		ret += GetTabbedString(tabCount + 1);
+		ret += GetTabbedStringText(tabCount + 1);
 		ret += ",\n";
 
 		for (int i = 0; i < maxMeshCount; ++i)
 		{
-			ret += Serialize(tabCount + 1, data.MeshAnimationUnit[i]);
-			ret += GetTabbedString(tabCount + 1);
+			ret += SerializeText(tabCount + 1, data.MeshAnimationUnit[i]);
+			ret += GetTabbedStringText(tabCount + 1);
 
 			if (i + 1 < maxMeshCount)
 			{
@@ -480,12 +480,12 @@ namespace SSB
 			}
 		}
 
-		ret += GetTabbedString(tabCount);
+		ret += GetTabbedStringText(tabCount);
 		ret += "}\n";
 
 		return ret;
 	}
-	Serializeable::ExtractedData Serializeable::GetUnitAtomic(std::string& str, int offset)
+	SerializeableText::ExtractedData SerializeableText::GetUnitAtomicText(std::string& str, int offset)
 	{
 		int startIndex = 0;
 		int endIndex = str.size();
@@ -507,7 +507,7 @@ namespace SSB
 
 		return { std::string(str.begin() + startIndex, str.begin() + endIndex), index + 1 };
 	}
-	Serializeable::ExtractedData Serializeable::GetUnitElement(std::string& str, int offset)
+	SerializeableText::ExtractedData SerializeableText::GetUnitElementText(std::string& str, int offset)
 	{
 		int startIndex = 0;
 		int endIndex = str.size();
@@ -546,7 +546,7 @@ namespace SSB
 		return { std::string(str.begin() + startIndex, str.begin() + endIndex + 1), endIndex + 1 };
 		//}
 	}
-	Serializeable::ExtractedData Serializeable::GetUnitObject(std::string& str, int offset)
+	SerializeableText::ExtractedData SerializeableText::GetUnitObjectText(std::string& str, int offset)
 	{
 		int startIndex = 0;
 		int endIndex = str.size();
@@ -585,71 +585,71 @@ namespace SSB
 		return { std::string(str.begin() + startIndex, str.begin() + endIndex + 1), endIndex + 1 };
 		//}
 	}
-	void Serializeable::Deserialize(std::string& str, int& ret)
+	void SerializeableText::DeserializeText(std::string& str, int& ret)
 	{
-		str = GetUnitElement(str, 0).str;
-		auto val = GetUnitAtomic(str, 0);
+		str = GetUnitElementText(str, 0).str;
+		auto val = GetUnitAtomicText(str, 0);
 		ret = std::stoi(val.str);
 	}
-	void Serializeable::Deserialize(std::string& str, unsigned int& ret)
+	void SerializeableText::DeserializeText(std::string& str, unsigned int& ret)
 	{
-		str = GetUnitElement(str, 0).str;
-		auto val = GetUnitAtomic(str, 0);
+		str = GetUnitElementText(str, 0).str;
+		auto val = GetUnitAtomicText(str, 0);
 		ret = std::stoul(val.str);
 	}
-	void Serializeable::Deserialize(std::string& str, float& ret)
+	void SerializeableText::DeserializeText(std::string& str, float& ret)
 	{
-		str = GetUnitElement(str, 0).str;
-		auto val = GetUnitAtomic(str, 0);
+		str = GetUnitElementText(str, 0).str;
+		auto val = GetUnitAtomicText(str, 0);
 		ret = std::stof(val.str);
 	}
-	void Serializeable::Deserialize(std::string& str, Float2& ret)
+	void SerializeableText::DeserializeText(std::string& str, Float2& ret)
 	{
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 		int offset = 0;
 		for (int i = 0; i < 2; ++i)
 		{
-			auto data = GetUnitAtomic(str, offset);
+			auto data = GetUnitAtomicText(str, offset);
 			std::string val = data.str;
 			offset = data.offset;
 			ret.e[i] = std::stof(val);
 		}
 	}
-	void Serializeable::Deserialize(std::string& str, Float3& ret)
+	void SerializeableText::DeserializeText(std::string& str, Float3& ret)
 	{
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 		int offset = 0;
 		for (int i = 0; i < 3; ++i)
 		{
-			auto data = GetUnitAtomic(str, offset);
+			auto data = GetUnitAtomicText(str, offset);
 			std::string val = data.str;
 			offset = data.offset;
 			ret.e[i] = std::stof(val);
 		}
 	}
-	void Serializeable::Deserialize(std::string& str, Float4& ret)
+	void SerializeableText::DeserializeText(std::string& str, Float4& ret)
 	{
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 		int offset = 0;
 		for (int i = 0; i < 4; ++i)
 		{
-			auto data = GetUnitAtomic(str, offset);
+			auto data = GetUnitAtomicText(str, offset);
 			std::string val = data.str;
 			offset = data.offset;
 			ret.e[i] = std::stof(val);
 		}
 	}
-	void Serializeable::Deserialize(std::string& str, Float33& ret)
+	void SerializeableText::DeserializeText(std::string& str, Float33& ret)
 	{
 		float val[9];
 
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 		int offset = 0;
 		for (int i = 0; i < 3; ++i)
 		{
 			for (int j = 0; j < 3; ++j)
 			{
-				auto data = GetUnitAtomic(str, offset);
+				auto data = GetUnitAtomicText(str, offset);
 				std::string valStr = data.str;
 				offset = data.offset;
 				val[i * 3 + j] = std::stof(valStr);
@@ -662,17 +662,17 @@ namespace SSB
 			val[6], val[7], val[8]
 		};
 	}
-	void Serializeable::Deserialize(std::string& str, Float44& ret)
+	void SerializeableText::DeserializeText(std::string& str, Float44& ret)
 	{
 		float val[16] = { 0, };
 
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 		int offset = 0;
 		for (int i = 0; i < 4; ++i)
 		{
 			for (int j = 0; j < 4; ++j)
 			{
-				auto data = GetUnitAtomic(str, offset);
+				auto data = GetUnitAtomicText(str, offset);
 				std::string valStr = data.str;
 				offset = data.offset;
 				val[i * 4 + j] = std::stof(valStr);
@@ -686,131 +686,131 @@ namespace SSB
 			val[12], val[13], val[14], val[15]
 		};
 	}
-	void Serializeable::Deserialize(std::string& str, Vertex_PC& ret)
+	void SerializeableText::DeserializeText(std::string& str, Vertex_PC& ret)
 	{
 		int offset = 1;
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.Position);
+			DeserializeText(elem, ret.Position);
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.Color);
+			DeserializeText(elem, ret.Color);
 		}
 	}
-	void Serializeable::Deserialize(std::string& str, Vertex_PCNT& ret)
+	void SerializeableText::DeserializeText(std::string& str, Vertex_PCNT& ret)
 	{
 		int offset = 1;
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset += data.offset;
-			Deserialize(elem, ret.Position);
+			DeserializeText(elem, ret.Position);
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.Color);
+			DeserializeText(elem, ret.Color);
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.Normal);
+			DeserializeText(elem, ret.Normal);
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.TextureUV);
+			DeserializeText(elem, ret.TextureUV);
 		}
 	}
-	void Serializeable::Deserialize(std::string& str, Vertex_PCNTs& ret)
+	void SerializeableText::DeserializeText(std::string& str, Vertex_PCNTs& ret)
 	{
 		int offset = 1;
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.Position);
+			DeserializeText(elem, ret.Position);
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.Color);
+			DeserializeText(elem, ret.Color);
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.Normal);
+			DeserializeText(elem, ret.Normal);
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.TextureUV);
+			DeserializeText(elem, ret.TextureUV);
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.MaterialIndex);
+			DeserializeText(elem, ret.MaterialIndex);
 		}
 	}
-	void Serializeable::Deserialize(std::string& str, Vertex_PCNT_Skinning& ret)
+	void SerializeableText::DeserializeText(std::string& str, Vertex_PCNT_Skinning& ret)
 	{
 		int offset = 1;
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.Position);
+			DeserializeText(elem, ret.Position);
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.Color);
+			DeserializeText(elem, ret.Color);
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.Normal);
+			DeserializeText(elem, ret.Normal);
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.TextureUV);
+			DeserializeText(elem, ret.TextureUV);
 		}
 
 		{
 			{
-				auto data = GetUnitElement(str, offset);
+				auto data = GetUnitElementText(str, offset);
 				std::string elem = data.str;
 				offset = data.offset;
 
 				Float4 tmp;
-				Deserialize(elem, tmp);
+				DeserializeText(elem, tmp);
 				ret.AffectedBoneIndex[0] = tmp.x;
 				ret.AffectedBoneIndex[1] = tmp.y;
 				ret.AffectedBoneIndex[2] = tmp.z;
@@ -820,12 +820,12 @@ namespace SSB
 
 		{
 			{
-				auto data = GetUnitElement(str, offset);
+				auto data = GetUnitElementText(str, offset);
 				std::string elem = data.str;
 				offset = data.offset;
 
 				Float4 tmp;
-				Deserialize(elem, tmp);
+				DeserializeText(elem, tmp);
 				ret.Weight[0] = tmp.x;
 				ret.Weight[1] = tmp.y;
 				ret.Weight[2] = tmp.z;
@@ -833,52 +833,52 @@ namespace SSB
 			}
 		}
 	}
-	void Serializeable::Deserialize(std::string& str, Vertex_PCNTs_Skinning& ret)
+	void SerializeableText::DeserializeText(std::string& str, Vertex_PCNTs_Skinning& ret)
 	{
 		int offset = 1;
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
-			Deserialize(elem, ret.Position);
+			DeserializeText(elem, ret.Position);
 			offset = data.offset;
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
-			Deserialize(elem, ret.Color);
+			DeserializeText(elem, ret.Color);
 			offset = data.offset;
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
-			Deserialize(elem, ret.Normal);
+			DeserializeText(elem, ret.Normal);
 			offset = data.offset;
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
-			Deserialize(elem, ret.TextureUV);
+			DeserializeText(elem, ret.TextureUV);
 			offset = data.offset;
 		}
 
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string elem = data.str;
 			offset = data.offset;
-			Deserialize(elem, ret.MaterialIndex);
+			DeserializeText(elem, ret.MaterialIndex);
 		}
 
 		{
 			{
-				auto data = GetUnitElement(str, offset);
+				auto data = GetUnitElementText(str, offset);
 				std::string elem = data.str;
 				offset = data.offset;
 
 				Float4 tmp;
-				Deserialize(elem, tmp);
+				DeserializeText(elem, tmp);
 				ret.AffectedBoneIndex[0] = tmp.x;
 				ret.AffectedBoneIndex[1] = tmp.y;
 				ret.AffectedBoneIndex[2] = tmp.z;
@@ -888,12 +888,12 @@ namespace SSB
 
 		{
 			{
-				auto data = GetUnitElement(str, offset);
+				auto data = GetUnitElementText(str, offset);
 				std::string elem = data.str;
 				offset = data.offset;
 
 				Float4 tmp;
-				Deserialize(elem, tmp);
+				DeserializeText(elem, tmp);
 				ret.Weight[0] = tmp.x;
 				ret.Weight[1] = tmp.y;
 				ret.Weight[2] = tmp.z;
@@ -901,25 +901,25 @@ namespace SSB
 			}
 		}
 	}
-	void Serializeable::Deserialize(std::string& str, MeshData& ret)
+	void SerializeableText::DeserializeText(std::string& str, MeshData& ret)
 	{
-		auto data = GetUnitElement(str, 0);
+		auto data = GetUnitElementText(str, 0);
 		std::string elem = data.str;
-		Deserialize(elem, ret.MeshIndex);
+		DeserializeText(elem, ret.MeshIndex);
 	}
-	void Serializeable::Deserialize(std::string& str, MeshToBoneSpaceTransformData& ret, int maxBoneCount)
+	void SerializeableText::DeserializeText(std::string& str, MeshToBoneSpaceTransformData& ret, int maxBoneCount)
 	{
-		auto data = GetUnitElement(str, 0);
+		auto data = GetUnitElementText(str, 0);
 		std::string elem = data.str;
 		int offset = 1;
 		for (int i = 0; i < maxBoneCount; ++i)
 		{
-			auto valData = GetUnitElement(elem, offset);
+			auto valData = GetUnitElementText(elem, offset);
 			std::string val = valData.str;
 			offset = valData.offset;
 
 			Float44 tmp;
-			Deserialize(val, tmp);
+			DeserializeText(val, tmp);
 			ret.BoneSpaceTransformBuffer[i] = {
 				tmp.e11, tmp.e12, tmp.e13, tmp.e14,
 				tmp.e21, tmp.e22, tmp.e23, tmp.e24,
@@ -928,18 +928,18 @@ namespace SSB
 			};
 		}
 	}
-	void Serializeable::Deserialize(std::string& str, AnimationUnitInfo& ret)
+	void SerializeableText::DeserializeText(std::string& str, AnimationUnitInfo& ret)
 	{
-		auto data = GetUnitElement(str, 0);
+		auto data = GetUnitElementText(str, 0);
 		std::string elem = data.str;
 
 		int offset = 1;
 		{
-			auto localElemData = GetUnitElement(elem, offset);
+			auto localElemData = GetUnitElementText(elem, offset);
 			std::string localElem = localElemData.str;
 			offset = localElemData.offset;
 			Float44 val;
-			Deserialize(localElem, val);
+			DeserializeText(localElem, val);
 			ret.Matrix = {
 				val.e11, val.e12, val.e13, val.e14,
 				val.e21, val.e22, val.e23, val.e24,
@@ -949,51 +949,974 @@ namespace SSB
 		}
 
 		{
-			auto localElemData = GetUnitElement(elem, offset);
+			auto localElemData = GetUnitElementText(elem, offset);
 			std::string localElem = localElemData.str;
 			offset = localElemData.offset;
 			Float3 val;
-			Deserialize(localElem, val);
+			DeserializeText(localElem, val);
 			ret.Translate = { val.x, val.y, val.z };
 		}
 
 		{
-			auto localElemData = GetUnitElement(elem, offset);
+			auto localElemData = GetUnitElementText(elem, offset);
 			std::string localElem = localElemData.str;
 			offset = localElemData.offset;
 			Float3 val;
-			Deserialize(localElem, val);
+			DeserializeText(localElem, val);
 			ret.Scale = { val.x, val.y, val.z };
 		}
 
 		{
-			auto localElemData = GetUnitElement(elem, offset);
+			auto localElemData = GetUnitElementText(elem, offset);
 			std::string localElem = localElemData.str;
 			offset = localElemData.offset;
 			Float4 val;
-			Deserialize(localElem, val);
+			DeserializeText(localElem, val);
 			ret.Rotate = { val.x, val.y, val.z, val.w };
 		}
 	}
-	void Serializeable::Deserialize(std::string& str, AnimationFrameInfo& ret, int maxBoneCount, int maxMeshCount)
+	void SerializeableText::DeserializeText(std::string& str, AnimationFrameInfo& ret, int maxBoneCount, int maxMeshCount)
 	{
-		str = GetUnitElement(str, 0).str;
+		str = GetUnitElementText(str, 0).str;
 
 		int offset = 1;
 		for (int i = 0; i < maxBoneCount; ++i)
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string val = data.str;
 			offset = data.offset;
-			Deserialize(val, ret.BoneAnimationUnit[i]);
+			DeserializeText(val, ret.BoneAnimationUnit[i]);
 		}
 
 		for (int i = 0; i < maxMeshCount; ++i)
 		{
-			auto data = GetUnitElement(str, offset);
+			auto data = GetUnitElementText(str, offset);
 			std::string val = data.str;
 			offset = data.offset;
-			Deserialize(val, ret.MeshAnimationUnit[i]);
+			DeserializeText(val, ret.MeshAnimationUnit[i]);
 		}
 	}
+	//std::string SerializeableBinary::GetSerializeableKeyword(SerializableBinaryKeyword keyword)
+	//{
+	//	std::string ret = "가나다라마바사" + keyword;
+	//	ret = ret + "아자차카타파하";
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(int data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{\"";
+	//	ret += data;
+	//	ret += "\"}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(unsigned int data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{\"";
+	//	ret += (data);
+	//	ret += "\"}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(float data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{\"";
+	//	ret += (data);
+	//	ret += "\"}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(Float2 data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{\"";
+	//	ret += (data.x);
+	//	ret += "\", \"";
+	//	ret += (data.y);
+	//	ret += "\"}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(Float3 data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{\"";
+	//	ret += (data.x);
+	//	ret += "\", \"";
+	//	ret += (data.y);
+	//	ret += "\", \"";
+	//	ret += (data.z);
+	//	ret += "\"}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(Float4 data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{\"";
+	//	ret += (data.x);
+	//	ret += "\", \"";
+	//	ret += (data.y);
+	//	ret += "\", \"";
+	//	ret += (data.z);
+	//	ret += "\", \"";
+	//	ret += (data.w);
+	//	ret += "\"}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(Float33 data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{";
+
+	//	ret += "\"";
+	//	ret += (data.e11);
+	//	ret += "\", \"";
+	//	ret += (data.e12);
+	//	ret += "\", \"";
+	//	ret += (data.e13);
+	//	//ret += "\",";
+	//	ret += "\",";
+
+	//	ret += "\"";
+	//	ret += (data.e21);
+	//	ret += "\", \"";
+	//	ret += (data.e22);
+	//	ret += "\", \"";
+	//	ret += (data.e23);
+	//	//ret += "\",";
+	//	ret += "\",";
+
+	//	ret += "\"";
+	//	ret += (data.e31);
+	//	ret += "\", \"";
+	//	ret += (data.e32);
+	//	ret += "\", \"";
+	//	ret += (data.e33);
+	//	//ret += "\",";
+	//	ret += "\",";
+
+	//	ret += "\"}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(Float44 data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{";
+
+	//	ret += "\"";
+	//	ret += (data.e11);
+	//	ret += "\", \"";
+	//	ret += (data.e12);
+	//	ret += "\", \"";
+	//	ret += (data.e13);
+	//	ret += "\", \"";
+	//	ret += (data.e14);
+	//	ret += "\",";
+
+	//	ret += "\"";
+	//	ret += (data.e21);
+	//	ret += "\", \"";
+	//	ret += (data.e22);
+	//	ret += "\", \"";
+	//	ret += (data.e23);
+	//	ret += "\", \"";
+	//	ret += (data.e24);
+	//	ret += "\",";
+
+	//	ret += "\"";
+	//	ret += (data.e31);
+	//	ret += "\", \"";
+	//	ret += (data.e32);
+	//	ret += "\", \"";
+	//	ret += (data.e33);
+	//	ret += "\", \"";
+	//	ret += (data.e34);
+	//	//ret += "\",";
+	//	ret += "\",";
+
+	//	ret += "\"";
+	//	ret += (data.e41);
+	//	ret += "\", \"";
+	//	ret += (data.e42);
+	//	ret += "\", \"";
+	//	ret += (data.e43);
+	//	ret += "\", \"";
+	//	ret += (data.e44);
+	//	ret += "\"";
+
+	//	ret += "}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(Vertex_PC data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{";
+
+	//	ret += SerializeBinary(data.Position);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.Color);
+
+	//	ret += "}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(Vertex_PCNT data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{";
+
+	//	ret += SerializeBinary(data.Position);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.Color);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.Normal);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.TextureUV);
+
+	//	ret += "}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(Vertex_PCNTs data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{";
+
+	//	ret += SerializeBinary(data.Position);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.Color);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.Normal);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.TextureUV);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.MaterialIndex);
+	//	ret += "";
+
+	//	ret += "}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(Vertex_PCNT_Skinning data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{";
+
+	//	ret += SerializeBinary(data.Position);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.Color);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.Normal);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.TextureUV);
+	//	ret += ",";
+
+	//	ret += "{\"";
+	//	ret += (data.AffectedBoneIndex[0]);
+	//	ret += "\", \"";
+	//	ret += (data.AffectedBoneIndex[1]);
+	//	ret += "\", \"";
+	//	ret += (data.AffectedBoneIndex[2]);
+	//	ret += "\", \"";
+	//	ret += (data.AffectedBoneIndex[3]);
+	//	ret += "\"}";
+	//	ret += ",";
+
+	//	ret += "{\"";
+	//	ret += (data.Weight[0]);
+	//	ret += "\", \"";
+	//	ret += (data.Weight[1]);
+	//	ret += "\", \"";
+	//	ret += (data.Weight[2]);
+	//	ret += "\", \"";
+	//	ret += (data.Weight[3]);
+	//	ret += "\"}";
+
+	//	ret += "}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(Vertex_PCNTs_Skinning data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{";
+
+	//	ret += SerializeBinary(data.Position);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.Color);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.Normal);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.TextureUV);
+	//	ret += ",";
+
+	//	ret += "{\"";
+	//	ret += (data.MaterialIndex);
+	//	ret += "\"}";
+	//	ret += ",";
+
+	//	ret += "{\"";
+	//	ret += (data.AffectedBoneIndex[0]);
+	//	ret += "\", \"";
+	//	ret += (data.AffectedBoneIndex[1]);
+	//	ret += "\", \"";
+	//	ret += (data.AffectedBoneIndex[2]);
+	//	ret += "\", \"";
+	//	ret += (data.AffectedBoneIndex[3]);
+	//	ret += "\"}";
+	//	ret += ",";
+
+	//	ret += "{\"";
+	//	ret += (data.Weight[0]);
+	//	ret += "\", \"";
+	//	ret += (data.Weight[1]);
+	//	ret += "\", \"";
+	//	ret += (data.Weight[2]);
+	//	ret += "\", \"";
+	//	ret += (data.Weight[3]);
+	//	ret += "\"}";
+
+	//	ret += "}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(MeshData data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{\"";
+	//	ret += (data.MeshIndex);
+	//	ret += "\"}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(MeshToBoneSpaceTransformData& data, int maxBoneCount)
+	//{
+	//	std::string ret;
+
+	//	ret += "{";
+
+	//	for (int i = 0; i < maxBoneCount; ++i)
+	//	{
+	//		ret += SerializeBinary((Float44)data.BoneSpaceTransformBuffer[i]);
+	//		if (i + 1 < maxBoneCount)
+	//		{
+	//			ret += ",";
+	//		}
+	//		else
+	//		{
+	//			ret += "";
+	//		}
+	//	}
+
+	//	ret += "}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(AnimationUnitInfo data)
+	//{
+	//	std::string ret;
+
+	//	ret += "{";
+
+	//	ret += SerializeBinary((Float44)data.Matrix);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.Translate);
+	//	ret += ",";
+
+	//	ret += SerializeBinary(data.Scale);
+	//	ret += ",";
+
+	//	ret += SerializeBinary((Float4)data.Rotate);
+	//	ret += "";
+
+	//	ret += "}";
+
+	//	return ret;
+	//}
+	//std::string SerializeableBinary::SerializeBinary(AnimationFrameInfo& data, int maxBoneCount, int maxMeshCount)
+	//{
+	//	std::string ret;
+
+	//	ret += "{";
+
+	//	for (int i = 0; i < maxBoneCount; ++i)
+	//	{
+	//		ret += SerializeBinary(data.BoneAnimationUnit[i]);
+
+	//		if (i + 1 < maxBoneCount)
+	//		{
+	//			ret += ",";
+	//		}
+	//		else
+	//		{
+	//			ret += "";
+	//		}
+	//	}
+	//	ret += ",";
+
+	//	for (int i = 0; i < maxMeshCount; ++i)
+	//	{
+	//		ret += SerializeBinary(data.MeshAnimationUnit[i]);
+
+	//		if (i + 1 < maxMeshCount)
+	//		{
+	//			ret += ",";
+	//		}
+	//		else
+	//		{
+	//			ret += "";
+	//		}
+	//	}
+
+	//	ret += "}";
+
+	//	return ret;
+	//}
+	//SerializeableBinary::ExtractedData SerializeableBinary::GetUnitAtomicBinary(std::string& str, int offset)
+	//{
+	//	int startIndex = 0;
+	//	int endIndex = str.size();
+
+	//	int index = offset;
+	//	while (str[index] != '\"')
+	//	{
+	//		++index;
+	//	}
+	//	++index;
+
+	//	startIndex = index;
+
+	//	while (str[index] != '\"')
+	//	{
+	//		++index;
+	//	}
+	//	endIndex = index;
+
+	//	return { std::string(str.begin() + startIndex, str.begin() + endIndex), index + 1 };
+	//}
+	//SerializeableBinary::ExtractedData SerializeableBinary::GetUnitElementBinary(std::string& str, int offset)
+	//{
+	//	int startIndex = 0;
+	//	int endIndex = str.size();
+	//	int count = 0;
+	//	bool begin = false;
+	//	for (int i = offset; i < str.size(); ++i)
+	//	{
+	//		if (!begin && str[i] == '{')
+	//		{
+	//			startIndex = i;
+	//			begin = true;
+	//		}
+
+	//		if (str[i] == '{')
+	//		{
+	//			++count;
+	//		}
+	//		if (str[i] == '}')
+	//		{
+	//			--count;
+	//		}
+
+	//		if (begin && count == 0)
+	//		{
+	//			endIndex = i;
+	//			break;
+	//		}
+	//	}
+
+	//	//if (endIndex == str.size())
+	//	//{
+	//	//	return std::string(str.begin() + startIndex, str.begin() + endIndex);
+	//	//}
+	//	//else
+	//	//{
+	//	return { std::string(str.begin() + startIndex, str.begin() + endIndex + 1), endIndex + 1 };
+	//	//}
+	//}
+	//SerializeableBinary::ExtractedData SerializeableBinary::GetUnitObjectBinary(std::string& str, int offset)
+	//{
+	//	int startIndex = 0;
+	//	int endIndex = str.size();
+	//	int count = 0;
+	//	bool begin = false;
+	//	for (int i = offset; i < str.size(); ++i)
+	//	{
+	//		if (!begin && str[i] == '[')
+	//		{
+	//			startIndex = i;
+	//			begin = true;
+	//		}
+
+	//		if (str[i] == '[')
+	//		{
+	//			++count;
+	//		}
+	//		if (str[i] == ']')
+	//		{
+	//			--count;
+	//		}
+
+	//		if (begin && count == 0)
+	//		{
+	//			endIndex = i;
+	//			break;
+	//		}
+	//	}
+
+	//	//if (endIndex == str.size())
+	//	//{
+	//	//	return std::string(str.begin() + startIndex, str.begin() + endIndex);
+	//	//}
+	//	//else
+	//	//{
+	//	return { std::string(str.begin() + startIndex, str.begin() + endIndex + 1), endIndex + 1 };
+	//	//}
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, int& ret)
+	//{
+	//	str = GetUnitElementBinary(str, 0).str;
+	//	auto val = GetUnitAtomicBinary(str, 0);
+	//	ret = (int)val.str[0];
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, unsigned int& ret)
+	//{
+	//	str = GetUnitElementBinary(str, 0).str;
+	//	auto val = GetUnitAtomicBinary(str, 0);
+	//	ret = (unsigned int)val.str[0];
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, float& ret)
+	//{
+	//	str = GetUnitElementBinary(str, 0).str;
+	//	auto val = GetUnitAtomicBinary(str, 0);
+	//	ret = (float)val.str[0];
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, Float2& ret)
+	//{
+	//	str = GetUnitElementBinary(str, 0).str;
+	//	int offset = 0;
+	//	for (int i = 0; i < 2; ++i)
+	//	{
+	//		auto data = GetUnitAtomicBinary(str, offset);
+	//		std::string val = data.str;
+	//		offset = data.offset;
+	//		ret.e[i] = (float)val[0];
+	//	}
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, Float3& ret)
+	//{
+	//	str = GetUnitElementBinary(str, 0).str;
+	//	int offset = 0;
+	//	for (int i = 0; i < 3; ++i)
+	//	{
+	//		auto data = GetUnitAtomicBinary(str, offset);
+	//		std::string val = data.str;
+	//		offset = data.offset;
+	//		ret.e[i] = (float)val[0];
+	//	}
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, Float4& ret)
+	//{
+	//	str = GetUnitElementBinary(str, 0).str;
+	//	int offset = 0;
+	//	for (int i = 0; i < 4; ++i)
+	//	{
+	//		auto data = GetUnitAtomicBinary(str, offset);
+	//		std::string val = data.str;
+	//		offset = data.offset;
+	//		ret.e[i] = (float)val[0];
+	//	}
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, Float33& ret)
+	//{
+	//	float val[9];
+
+	//	str = GetUnitElementBinary(str, 0).str;
+	//	int offset = 0;
+	//	for (int i = 0; i < 3; ++i)
+	//	{
+	//		for (int j = 0; j < 3; ++j)
+	//		{
+	//			auto data = GetUnitAtomicBinary(str, offset);
+	//			std::string valStr = data.str;
+	//			offset = data.offset;
+	//			val[i * 3 + j] = (float)valStr[0];
+	//		}
+	//	}
+
+	//	ret = {
+	//		val[0], val[1], val[2],
+	//		val[3], val[4], val[5],
+	//		val[6], val[7], val[8]
+	//	};
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, Float44& ret)
+	//{
+	//	float val[16] = { 0, };
+
+	//	str = GetUnitElementBinary(str, 0).str;
+	//	int offset = 0;
+	//	for (int i = 0; i < 4; ++i)
+	//	{
+	//		for (int j = 0; j < 4; ++j)
+	//		{
+	//			auto data = GetUnitAtomicBinary(str, offset);
+	//			std::string valStr = data.str;
+	//			offset = data.offset;
+	//			val[i * 4 + j] = (float)valStr[0];
+	//		}
+	//	}
+
+	//	ret = {
+	//		val[0], val[1], val[2], val[3],
+	//		val[4], val[5], val[6], val[7],
+	//		val[8], val[9], val[10], val[11],
+	//		val[12], val[13], val[14], val[15]
+	//	};
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, Vertex_PC& ret)
+	//{
+	//	int offset = 1;
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.Position);
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.Color);
+	//	}
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, Vertex_PCNT& ret)
+	//{
+	//	int offset = 1;
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset += data.offset;
+	//		DeserializeBinary(elem, ret.Position);
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.Color);
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.Normal);
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.TextureUV);
+	//	}
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, Vertex_PCNTs& ret)
+	//{
+	//	int offset = 1;
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.Position);
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.Color);
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.Normal);
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.TextureUV);
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.MaterialIndex);
+	//	}
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, Vertex_PCNT_Skinning& ret)
+	//{
+	//	int offset = 1;
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.Position);
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.Color);
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.Normal);
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.TextureUV);
+	//	}
+
+	//	{
+	//		{
+	//			auto data = GetUnitElementBinary(str, offset);
+	//			std::string elem = data.str;
+	//			offset = data.offset;
+
+	//			Float4 tmp;
+	//			DeserializeBinary(elem, tmp);
+	//			ret.AffectedBoneIndex[0] = tmp.x;
+	//			ret.AffectedBoneIndex[1] = tmp.y;
+	//			ret.AffectedBoneIndex[2] = tmp.z;
+	//			ret.AffectedBoneIndex[3] = tmp.w;
+	//		}
+	//	}
+
+	//	{
+	//		{
+	//			auto data = GetUnitElementBinary(str, offset);
+	//			std::string elem = data.str;
+	//			offset = data.offset;
+
+	//			Float4 tmp;
+	//			DeserializeBinary(elem, tmp);
+	//			ret.Weight[0] = tmp.x;
+	//			ret.Weight[1] = tmp.y;
+	//			ret.Weight[2] = tmp.z;
+	//			ret.Weight[3] = tmp.w;
+	//		}
+	//	}
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, Vertex_PCNTs_Skinning& ret)
+	//{
+	//	int offset = 1;
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		DeserializeBinary(elem, ret.Position);
+	//		offset = data.offset;
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		DeserializeBinary(elem, ret.Color);
+	//		offset = data.offset;
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		DeserializeBinary(elem, ret.Normal);
+	//		offset = data.offset;
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		DeserializeBinary(elem, ret.TextureUV);
+	//		offset = data.offset;
+	//	}
+
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string elem = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(elem, ret.MaterialIndex);
+	//	}
+
+	//	{
+	//		{
+	//			auto data = GetUnitElementBinary(str, offset);
+	//			std::string elem = data.str;
+	//			offset = data.offset;
+
+	//			Float4 tmp;
+	//			DeserializeBinary(elem, tmp);
+	//			ret.AffectedBoneIndex[0] = tmp.x;
+	//			ret.AffectedBoneIndex[1] = tmp.y;
+	//			ret.AffectedBoneIndex[2] = tmp.z;
+	//			ret.AffectedBoneIndex[3] = tmp.w;
+	//		}
+	//	}
+
+	//	{
+	//		{
+	//			auto data = GetUnitElementBinary(str, offset);
+	//			std::string elem = data.str;
+	//			offset = data.offset;
+
+	//			Float4 tmp;
+	//			DeserializeBinary(elem, tmp);
+	//			ret.Weight[0] = tmp.x;
+	//			ret.Weight[1] = tmp.y;
+	//			ret.Weight[2] = tmp.z;
+	//			ret.Weight[3] = tmp.w;
+	//		}
+	//	}
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, MeshData& ret)
+	//{
+	//	auto data = GetUnitElementBinary(str, 0);
+	//	std::string elem = data.str;
+	//	DeserializeBinary(elem, ret.MeshIndex);
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, MeshToBoneSpaceTransformData& ret, int maxBoneCount)
+	//{
+	//	auto data = GetUnitElementBinary(str, 0);
+	//	std::string elem = data.str;
+	//	int offset = 1;
+	//	for (int i = 0; i < maxBoneCount; ++i)
+	//	{
+	//		auto valData = GetUnitElementBinary(elem, offset);
+	//		std::string val = valData.str;
+	//		offset = valData.offset;
+
+	//		Float44 tmp;
+	//		DeserializeBinary(val, tmp);
+	//		ret.BoneSpaceTransformBuffer[i] = {
+	//			tmp.e11, tmp.e12, tmp.e13, tmp.e14,
+	//			tmp.e21, tmp.e22, tmp.e23, tmp.e24,
+	//			tmp.e31, tmp.e32, tmp.e33, tmp.e34,
+	//			tmp.e41, tmp.e42, tmp.e43, tmp.e44,
+	//		};
+	//	}
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, AnimationUnitInfo& ret)
+	//{
+	//	auto data = GetUnitElementBinary(str, 0);
+	//	std::string elem = data.str;
+
+	//	int offset = 1;
+	//	{
+	//		auto localElemData = GetUnitElementBinary(elem, offset);
+	//		std::string localElem = localElemData.str;
+	//		offset = localElemData.offset;
+	//		Float44 val;
+	//		DeserializeBinary(localElem, val);
+	//		ret.Matrix = {
+	//			val.e11, val.e12, val.e13, val.e14,
+	//			val.e21, val.e22, val.e23, val.e24,
+	//			val.e31, val.e32, val.e33, val.e34,
+	//			val.e41, val.e42, val.e43, val.e44,
+	//		};
+	//	}
+
+	//	{
+	//		auto localElemData = GetUnitElementBinary(elem, offset);
+	//		std::string localElem = localElemData.str;
+	//		offset = localElemData.offset;
+	//		Float3 val;
+	//		DeserializeBinary(localElem, val);
+	//		ret.Translate = { val.x, val.y, val.z };
+	//	}
+
+	//	{
+	//		auto localElemData = GetUnitElementBinary(elem, offset);
+	//		std::string localElem = localElemData.str;
+	//		offset = localElemData.offset;
+	//		Float3 val;
+	//		DeserializeBinary(localElem, val);
+	//		ret.Scale = { val.x, val.y, val.z };
+	//	}
+
+	//	{
+	//		auto localElemData = GetUnitElementBinary(elem, offset);
+	//		std::string localElem = localElemData.str;
+	//		offset = localElemData.offset;
+	//		Float4 val;
+	//		DeserializeBinary(localElem, val);
+	//		ret.Rotate = { val.x, val.y, val.z, val.w };
+	//	}
+	//}
+	//void SerializeableBinary::DeserializeBinary(std::string& str, AnimationFrameInfo& ret, int maxBoneCount, int maxMeshCount)
+	//{
+	//	str = GetUnitElementBinary(str, 0).str;
+
+	//	int offset = 1;
+	//	for (int i = 0; i < maxBoneCount; ++i)
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string val = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(val, ret.BoneAnimationUnit[i]);
+	//	}
+
+	//	for (int i = 0; i < maxMeshCount; ++i)
+	//	{
+	//		auto data = GetUnitElementBinary(str, offset);
+	//		std::string val = data.str;
+	//		offset = data.offset;
+	//		DeserializeBinary(val, ret.MeshAnimationUnit[i]);
+	//	}
+	//}
 }

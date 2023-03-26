@@ -163,76 +163,6 @@ namespace SSB
 	{
 		return _endFrame - _startFrame;
 	}
-	std::string Animation::Serialize(int tabCount)
-	{
-		std::string ret;
-
-		ret += Serializeable::GetTabbedString(tabCount);
-		ret += "[\n";
-
-		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += _isLoopStr;
-		ret += "{\"";
-		ret += std::to_string(_isLoop);
-		ret += "\"},\n";
-
-		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += _framePerSecondStr;
-		ret += "{\"";
-		ret += std::to_string(_framePerSecond);
-		ret += "\"},\n";
-
-		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += _boneAnimationUnitMaxCountStr;
-		ret += "{\"";
-		ret += std::to_string(_boneAnimationUnitMaxCount);
-		ret += "\"},\n";
-
-		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += _meshAnimationUnitMaxCountStr;
-		ret += "{\"";
-		ret += std::to_string(_meshAnimationUnitMaxCount);
-		ret += "\"},\n";
-
-		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += _startFrameStr;
-		ret += "{\"";
-		ret += std::to_string(_startFrame);
-		ret += "\"},\n";
-
-		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += _endFrameStr;
-		ret += "{\"";
-		ret += std::to_string(_endFrame);
-		ret += "\"},\n";
-
-		ret += Serializeable::GetTabbedString(tabCount + 1);
-		ret += _frameInfoPerSecondStr;
-
-		ret += Serializeable::GetTabbedString(tabCount + 2);
-		ret += _maxFrameCountStr;
-		ret += "{\"";
-		ret += std::to_string(_data.size());
-		ret += "\"}\n";
-		for(int i = 0; i < _data.size(); ++i)
-		{
-			ret += Serializeable::GetTabbedString(tabCount + 2);
-			ret += _frameStr;
-			ret += "{\"";
-			ret += std::to_string(i);
-			ret += "\"}\n";
-
-			ret += Serializeable::Serialize(tabCount + 2, *_data[i], _boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
-
-			ret += Serializeable::GetTabbedString(tabCount + 2);
-			ret += ",\n";
-		}
-
-		ret += Serializeable::GetTabbedString(tabCount);
-		ret += "]\n";
-
-		return ret;
-	}
 	EditableObject<Animation>* Animation::GetEditableObject()
 	{
 		std::vector<AnimationFrameInfo*> frameData;
@@ -260,7 +190,7 @@ namespace SSB
 			return HMatrix44();
 		}
 
-		return _frameMatrixInfo.BoneMatrix[index];
+		return _frameMatrixInfo.BoneMatrix[index].Transpose();
 	}
 	Animation* Animation::Clone()
 	{
@@ -281,19 +211,89 @@ namespace SSB
 
 		return ret;
 	}
-	void Animation::Deserialize(std::string& serialedString)
+	std::string Animation::SerializeText(int tabCount)
 	{
-		auto data = GetUnitObject(serialedString, 0);
+		std::string ret;
+
+		ret += SerializeableText::GetTabbedStringText(tabCount);
+		ret += "[\n";
+
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
+		ret += _isLoopStr;
+		ret += "{\"";
+		ret += std::to_string(_isLoop);
+		ret += "\"},\n";
+
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
+		ret += _framePerSecondStr;
+		ret += "{\"";
+		ret += std::to_string(_framePerSecond);
+		ret += "\"},\n";
+
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
+		ret += _boneAnimationUnitMaxCountStr;
+		ret += "{\"";
+		ret += std::to_string(_boneAnimationUnitMaxCount);
+		ret += "\"},\n";
+
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
+		ret += _meshAnimationUnitMaxCountStr;
+		ret += "{\"";
+		ret += std::to_string(_meshAnimationUnitMaxCount);
+		ret += "\"},\n";
+
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
+		ret += _startFrameStr;
+		ret += "{\"";
+		ret += std::to_string(_startFrame);
+		ret += "\"},\n";
+
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
+		ret += _endFrameStr;
+		ret += "{\"";
+		ret += std::to_string(_endFrame);
+		ret += "\"},\n";
+
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
+		ret += _frameInfoPerSecondStr;
+
+		ret += SerializeableText::GetTabbedStringText(tabCount + 2);
+		ret += _maxFrameCountStr;
+		ret += "{\"";
+		ret += std::to_string(_data.size());
+		ret += "\"}\n";
+		for(int i = 0; i < _data.size(); ++i)
+		{
+			ret += SerializeableText::GetTabbedStringText(tabCount + 2);
+			ret += _frameStr;
+			ret += "{\"";
+			ret += std::to_string(i);
+			ret += "\"}\n";
+
+			ret += SerializeableText::SerializeText(tabCount + 2, *_data[i], _boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
+
+			ret += SerializeableText::GetTabbedStringText(tabCount + 2);
+			ret += ",\n";
+		}
+
+		ret += SerializeableText::GetTabbedStringText(tabCount);
+		ret += "]\n";
+
+		return ret;
+	}
+	void Animation::DeserializeText(std::string& serialedString)
+	{
+		auto data = GetUnitObjectText(serialedString, 0);
 		serialedString = data.str;
 
 		int offset = 0;
 		{
 			offset = serialedString.find(_isLoopStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string elem = data.str;
 			offset = data.offset;
 
-			auto atomic = GetUnitAtomic(elem, 0);
+			auto atomic = GetUnitAtomicText(elem, 0);
 			if (atomic.str == "1")
 			{
 				_isLoop = true;
@@ -306,52 +306,52 @@ namespace SSB
 
 		{
 			offset = serialedString.find(_framePerSecondStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(atomic, _framePerSecond);
+			SerializeableText::DeserializeText(atomic, _framePerSecond);
 		}
 
 		{
 			offset = serialedString.find(_boneAnimationUnitMaxCountStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(atomic, _boneAnimationUnitMaxCount);
+			SerializeableText::DeserializeText(atomic, _boneAnimationUnitMaxCount);
 		}
 
 		{
 			offset = serialedString.find(_meshAnimationUnitMaxCountStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(atomic, _meshAnimationUnitMaxCount);
+			SerializeableText::DeserializeText(atomic, _meshAnimationUnitMaxCount);
 		}
 
 		{
 			offset = serialedString.find(_startFrameStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(atomic, _startFrame);
+			SerializeableText::DeserializeText(atomic, _startFrame);
 		}
 
 		{
 			offset = serialedString.find(_endFrameStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(atomic, _endFrame);
+			SerializeableText::DeserializeText(atomic, _endFrame);
 		}
 
 		int maxFrameCount;
 		offset = serialedString.find(_frameInfoPerSecondStr, offset);
 		{
 			offset = serialedString.find(_maxFrameCountStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(atomic, maxFrameCount);
+			SerializeableText::DeserializeText(atomic, maxFrameCount);
 		}
 
 		_data.resize(maxFrameCount);
@@ -361,17 +361,150 @@ namespace SSB
 			{
 				{
 					offset = serialedString.find(_frameStr, offset);
-					auto elemData = GetUnitElement(serialedString, offset);
+					auto elemData = GetUnitElementText(serialedString, offset);
 					std::string elem = elemData.str;
 					offset = elemData.offset;
 				}
 
-				auto data = GetUnitElement(serialedString, offset);
+				auto data = GetUnitElementText(serialedString, offset);
 				offset = data.offset;
 				AnimationFrameInfo* frameInfo = new AnimationFrameInfo;
-				Serializeable::Deserialize(data.str, *frameInfo, _boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
+				SerializeableText::DeserializeText(data.str, *frameInfo, _boneAnimationUnitMaxCount, _meshAnimationUnitMaxCount);
 				_data[i] = frameInfo;
 			}
+		}
+	}
+	std::string Animation::SerializeBinary()
+	{
+		std::string ret;
+
+		// FramePerSecond
+		ret += _framePerSecond;
+
+		// BoneAnimationUnitMaxCount
+		ret += _boneAnimationUnitMaxCount;
+
+		// MeshAnimationUnitMaxCount;
+		ret += _meshAnimationUnitMaxCount;
+
+		// Frame Data
+		ret += (int)_data.size();
+		for (auto data : _data)
+		{
+			char* tmpBuffer = new char[sizeof(Float44) * 255];
+			{
+				int offset = 0;
+				for (int i = 0; i < _boneAnimationUnitMaxCount; ++i)
+				{
+					memcpy(tmpBuffer + offset, &data->BoneAnimationUnit[i], sizeof(Float44));
+					offset += sizeof(Float44);
+				}
+				std::string tmp(tmpBuffer, sizeof(Float44) * _boneAnimationUnitMaxCount);
+				ret += tmp;
+			}
+
+			{
+				int offset = 0;
+				for (int i = 0; i < _meshAnimationUnitMaxCount; ++i)
+				{
+					memcpy(tmpBuffer + offset, &data->MeshAnimationUnit[i], sizeof(Float44));
+					offset += sizeof(Float44);
+				}
+				std::string tmp(tmpBuffer, sizeof(Float44) * _meshAnimationUnitMaxCount);
+				ret += tmp;
+			}
+			delete[] tmpBuffer;
+		}
+
+		// Start Frame
+		ret += _startFrame;
+
+		// End Frame
+		ret += _endFrame;
+
+		// Loop
+		ret += (int)_isLoop;
+
+		return ret;
+	}
+	void Animation::DeserializeBinary(const char* buffer, int size, int& offset)
+	{
+		// FramePerSecond
+		{
+			memcpy(&_framePerSecond, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		// BoneAnimationUnitMaxCount
+		{
+			memcpy(&_boneAnimationUnitMaxCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		// MeshAnimationUnitMaxCount;
+		{
+			memcpy(&_meshAnimationUnitMaxCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		// Frame Data
+		{
+			int frameDataCount;
+			memcpy(&frameDataCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			_data.resize(frameDataCount);
+			for (int i = 0; i < frameDataCount; ++i)
+			{
+				for (int j = 0; j < _boneAnimationUnitMaxCount; ++j)
+				{
+					Float44 matrix;
+					memcpy(&matrix, buffer + offset, sizeof(Float44));
+					offset += sizeof(Float44);
+
+					_data[i]->BoneAnimationUnit[j].Matrix = {
+						matrix.e11, matrix.e12, matrix.e13, matrix.e14,
+						matrix.e21, matrix.e22, matrix.e23, matrix.e24,
+						matrix.e31, matrix.e32, matrix.e33, matrix.e34,
+						matrix.e41, matrix.e42, matrix.e43, matrix.e44,
+					};
+				}
+
+				for (int j = 0; j < _meshAnimationUnitMaxCount; ++j)
+				{
+					Float44 matrix;
+					memcpy(&matrix, buffer + offset, sizeof(Float44));
+					offset += sizeof(Float44);
+
+					_data[i]->MeshAnimationUnit[j].Matrix = {
+						matrix.e11, matrix.e12, matrix.e13, matrix.e14,
+						matrix.e21, matrix.e22, matrix.e23, matrix.e24,
+						matrix.e31, matrix.e32, matrix.e33, matrix.e34,
+						matrix.e41, matrix.e42, matrix.e43, matrix.e44,
+					};
+				}
+			}
+		}
+
+		// Start Frame
+		{
+			memcpy(&_startFrame, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		// End Frame
+		{
+			memcpy(&_endFrame, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		// Loop
+		{
+			int tmpLoop;
+			memcpy(&tmpLoop, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+
+			_isLoop = tmpLoop;
 		}
 	}
 	DefaultAnimation::DefaultAnimation()

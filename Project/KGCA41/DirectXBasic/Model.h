@@ -15,7 +15,7 @@ namespace SSB
 {
 	typedef std::string AnimationName;
 
-	class Model : public Common, public Serializeable, public EditableInterface<Model>
+	class Model : public Common, public SerializeableText, public SerializeableBinary, public EditableInterface<Model>
 	{
 	private:
 		static Animation DefaultAnimation;
@@ -71,8 +71,10 @@ namespace SSB
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
-		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string& serialedString) override;
+		std::string SerializeText(int tabCount) override;
+		void DeserializeText(std::string& serialedString) override;
+		std::string SerializeBinary() override;
+		void DeserializeBinary(const char* buffer, int size, int& offset) override;
 		EditableObject<Model>* GetEditableObject() override;
 	};
 

@@ -22,10 +22,10 @@ namespace SSB
 		HMatrix44 LocalMatrix;
 	};
 
-	class Skeleton : public Common, public Serializeable, public EditableInterface<Skeleton>
+	class Skeleton : public Common, public SerializeableText, public SerializeableBinary, public EditableInterface<Skeleton>
 	{
 	private:
-		class Bone : public Serializeable
+		class Bone : public SerializeableText, public SerializeableBinary
 		{
 		private:
 			Bone* _parentBone = nullptr;
@@ -46,8 +46,10 @@ namespace SSB
 			HMatrix44 GetWorldMatrix();
 
 		public:
-			std::string Serialize(int tabCount) override;
-			void Deserialize(std::string& serialedString) override;
+			std::string SerializeText(int tabCount) override;
+			void DeserializeText(std::string& serialedString) override;
+			std::string SerializeBinary() override;
+			void DeserializeBinary(const char* buffer, int size, int& offset) override;
 		};
 
 	private:
@@ -79,8 +81,12 @@ namespace SSB
 		bool Render() override;	//Replace Animation setting
 		bool Release() override;
 		EditableObject<Skeleton>* GetEditableObject() override;
-		std::string Serialize(int tabCount) override;
-		void Deserialize(std::string& serialedString) override;
+
+	public:
+		std::string SerializeText(int tabCount) override;
+		void DeserializeText(std::string& serialedString) override;
+		std::string SerializeBinary() override;
+		void DeserializeBinary(const char* buffer, int size, int& offset) override;
 	};
 
 	struct EditableSkeletonData

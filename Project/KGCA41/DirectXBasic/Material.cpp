@@ -60,13 +60,13 @@ namespace SSB
 
 		return true;
 	}
-	std::string Material::Serialize(int tabCount)
+	std::string Material::SerializeText(int tabCount)
 	{
 		std::string ret;
-		ret += Serializeable::GetTabbedString(tabCount);
+		ret += SerializeableText::GetTabbedStringText(tabCount);
 		ret += "[\n";
 
-		ret += Serializeable::GetTabbedString(tabCount + 1);
+		ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 		ret += _materialIndexStr;
 		ret += "{\"";
 		ret += std::to_string(_materialIndex);
@@ -74,7 +74,7 @@ namespace SSB
 
 		for(int i = 0; i < kTextureTypeCount; ++i)
 		{
-			ret += Serializeable::GetTabbedString(tabCount + 1);
+			ret += SerializeableText::GetTabbedStringText(tabCount + 1);
 			ret += "{\"";
 			if (_textureArray[i] != nullptr)
 			{
@@ -87,30 +87,77 @@ namespace SSB
 			ret += "\"},\n";
 		}
 
-		ret += Serializeable::GetTabbedString(tabCount);
+		ret += SerializeableText::GetTabbedStringText(tabCount);
 		ret += "]\n";
 
 		return ret;
 	}
-	void Material::Deserialize(std::string& serialedString)
+	void Material::DeserializeText(std::string& serialedString)
 	{
-		serialedString = GetUnitObject(serialedString, 0).str;
+		serialedString = GetUnitObjectText(serialedString, 0).str;
 
 		int offset = 0;
 		{
 			offset = serialedString.find(_materialIndexStr, offset);
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
-			Serializeable::Deserialize(atomic, _materialIndex);
+			SerializeableText::DeserializeText(atomic, _materialIndex);
 		}
 
 		for (int i = 0; i < kTextureTypeCount; ++i)
 		{
-			auto data = GetUnitElement(serialedString, offset);
+			auto data = GetUnitElementText(serialedString, offset);
 			std::string atomic = data.str;
 			offset = data.offset;
-			_textureArray[i] = TextureLoader::GetInstance().Load(mtw(GetUnitAtomic(data.str, 0).str), DXStateManager::kDefaultWrapSample);
+			_textureArray[i] = TextureLoader::GetInstance().Load(mtw(GetUnitAtomicText(data.str, 0).str), DXStateManager::kDefaultWrapSample);
+		}
+	}
+	std::string Material::SerializeBinary()
+	{
+		std::string ret;
+
+		ret += _materialIndex;
+
+		for(int i = 0; i < kTextureTypeCount; ++i)
+		{
+			if (_textureArray[i] != nullptr)
+			{
+				std::string fileName = _textureArray[i]->GetResource()->GetFileName();
+				ret += (int)fileName.size();
+				ret += fileName;
+			}
+			else
+			{
+				ret += 5;
+				ret += "Empty";
+			}
+		}
+
+		return ret;
+	}
+	void Material::DeserializeBinary(const char* buffer, int size, int& offset)
+	{
+		{
+			memcpy(&_materialIndex, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		{
+			for (int i = 0; i < kTextureTypeCount; ++i)
+			{
+				int fileNameSize;
+				memcpy(&fileNameSize, buffer + offset, sizeof(int));
+
+				char* fileNameBuffer = new char[fileNameSize];
+				memcpy(fileNameBuffer, buffer + offset, fileNameSize);
+				std::string fileName(fileNameBuffer, fileNameSize);
+				if (fileName != "Empty")
+				{
+					_textureArray[i] = TextureLoader::GetInstance().Load(mtw(fileName), DXStateManager::kDefaultWrapSample);
+				}
+				delete[] fileNameBuffer;
+			}
 		}
 	}
 	EditableObject<Material>* Material::GetEditableObject()

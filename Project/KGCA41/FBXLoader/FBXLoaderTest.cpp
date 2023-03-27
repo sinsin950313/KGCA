@@ -218,61 +218,61 @@ bool SSB::FBXLoaderTest::Init()
 	//	}
 	//}
 
-	//Multi Layer Testing
-	//Skinning Animation Testing
-	{
-		_loader->Init();
-		_loader->SetFileName("Man.FBX");
+	////Multi Layer Testing
+	////Skinning Animation Testing
+	//{
+	//	_loader->Init();
+	//	_loader->SetFileName("Man.FBX");
 
-		//Model* model = _loader->LoadModel();
-		//model->Init();
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
 
-		//std::map<std::string, Animation*> animations = _loader->LoadAnimation();
-		//for (auto animation : animations)
-		//{
-		//	model->Initialize_RegisterAnimation(animation.first, animation.second);
-		//}
-		//model->SetCurrentAnimation("Take 001");
+	//	std::map<std::string, Animation*> animations = _loader->LoadAnimation();
+	//	for (auto animation : animations)
+	//	{
+	//		model->Initialize_RegisterAnimation(animation.first, animation.second);
+	//	}
+	//	model->SetCurrentAnimation("Take 001");
 
-		DXObject* object = new DXObject;
-		object->Init();
-		//object->SetModel(model);
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
 
-		_objectList.push_back(object);
+	//	_objectList.push_back(object);
 
-		//{
-		//	ObjectScriptIO io;
-		//	std::string str = model->SerializeText(0);
-		//	io.Write("ModelWriteTest_Man", str);
-		//	str = model->SerializeBinary();
-		//	io.WriteBinary("ModelWriteTest_Man", str);
-		//}
+	//	{
+	//		ObjectScriptIO io;
+	//		std::string str = model->SerializeText(0);
+	//		io.Write("ModelWriteTest_Man", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_Man", str);
+	//	}
 
-		//{
-		//	ObjectScriptIO io;
-		//	auto data = io.Read("ModelWriteTest_Man");
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.Read("ModelWriteTest_Man");
 
-		//	std::string str(data.Pointer, data.BufferSize);
-		//	model = new Model;
-		//	model->DeserializeText(str);
-		//	model->Init();
-		//	model->SetCurrentAnimation("Take 001");
-		//	object->SetModel(model);
-		//}
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		model->SetCurrentAnimation("Take 001");
+	//		object->SetModel(model);
+	//	}
 
-		{
-			ObjectScriptIO io;
-			auto data = io.ReadBinary("ModelWriteTest_Man");
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_Man");
 
-			std::string str(data.Pointer, data.BufferSize);
-			Model* readedModel = new Model;
-			int offset = 0;
-			readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
-			readedModel->Init();
-			readedModel->SetCurrentAnimation("Take 001");
-			object->SetModel(readedModel);
-		}
-	}
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		Model* readedModel = new Model;
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+	//		readedModel->Init();
+	//		readedModel->SetCurrentAnimation("Take 001");
+	//		object->SetModel(readedModel);
+	//	}
+	//}
 
 	////Script Animation with Single FBX Testing
 	//{
@@ -299,20 +299,78 @@ bool SSB::FBXLoaderTest::Init()
 
 	//	{
 	//		ObjectScriptIO io;
-	//		std::string str = model->Serialize(0);
+	//		std::string str = model->SerializeText(0);
 	//		io.Write("ModelWriteTest_Swat", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_Swat", str);
 	//	}
 
 	//	{
 	//		ObjectScriptIO io;
-	//		std::string str = io.Read("ModelWriteTest_Swat");
+	//		auto data = io.Read("ModelWriteTest_Swat");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		model->SetCurrentAnimation("mixamo.com");
+	//		object->SetModel(model);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_Swat");
+
+	//		std::string str(data.Pointer, data.BufferSize);
 	//		Model* readedModel = new Model;
-	//		readedModel->Deserialize(str);
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
 	//		readedModel->Init();
 	//		readedModel->SetCurrentAnimation("mixamo.com");
 	//		object->SetModel(readedModel);
 	//	}
 	//}
+
+	// Convert Text to Binary
+	{
+		DXObject* object = new DXObject;
+		object->Init();
+
+		_objectList.push_back(object);
+		Model* model = nullptr;
+
+		{
+			ObjectScriptIO io;
+			auto data = io.Read("PlayerGaren.Script");
+
+			std::string str(data.Pointer, data.BufferSize);
+			model = new Model;
+			int offset = 0;
+			model->DeserializeText(str);
+			model->Init();
+			model->SetCurrentAnimation("Attack1");
+			object->SetModel(model);
+		}
+
+		{
+			ObjectScriptIO io;
+			auto str = model->SerializeBinary();
+			io.WriteBinary("TextToBinaryConvetingTest", str);
+		}
+
+		{
+			ObjectScriptIO io;
+			auto data = io.ReadBinary("TextToBinaryConvetingTest");
+
+			std::string str(data.Pointer, data.BufferSize);
+			Model* readedModel = new Model;
+			int offset = 0;
+			readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+			readedModel->Init();
+			readedModel->SetCurrentAnimation("Attack1");
+			object->SetModel(readedModel);
+		}
+	}
 
 	//_camera = new ModelViewCamera();
 	//_camera->SetTarget(_loader->_rootObject);

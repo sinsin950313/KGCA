@@ -711,10 +711,10 @@ namespace SSB
 					delete tmpBuffer;
 				}
 				{
-					int tmpSize = vertex.Weight[i];
-					char* tmpBuffer = new char[sizeof(int)];
-				memcpy(tmpBuffer, &tmpSize, sizeof(int));
-					std::string tmpStr(tmpBuffer, sizeof(int));
+					float tmpSize = vertex.Weight[i];
+					char* tmpBuffer = new char[sizeof(float)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(float));
+					std::string tmpStr(tmpBuffer, sizeof(float));
 					ret += tmpStr;
 					delete tmpBuffer;
 				}

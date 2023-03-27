@@ -623,9 +623,23 @@ namespace SSB
 			}
 			for (auto socket : _sockets)
 			{
-				ret += (int)socket.first.size();
+				{
+					int tmpSize = (int)socket.first.size();
+					char* tmpBuffer = new char[sizeof(int)];
+					memcpy(tmpBuffer, &tmpSize, sizeof(int));
+					std::string tmpStr(tmpBuffer, sizeof(int));
+					ret += tmpStr;
+					delete tmpBuffer;
+				}
 				ret += socket.first;
-				ret += socket.second;
+				{
+					int tmpSize = (int)socket.second;
+					char* tmpBuffer = new char[sizeof(int)];
+					memcpy(tmpBuffer, &tmpSize, sizeof(int));
+					std::string tmpStr(tmpBuffer, sizeof(int));
+					ret += tmpStr;
+					delete tmpBuffer;
+				}
 			}
 		}
 
@@ -833,7 +847,7 @@ namespace SSB
 				offset += sizeof(int);
 
 				char* socketNameBuffer = new char[socketNameCount];
-				memcpy(&socketNameBuffer, buffer + offset, sizeof(socketNameCount));
+				memcpy(socketNameBuffer, buffer + offset, socketNameCount);
 				std::string socketName(socketNameBuffer, socketNameCount);
 				offset += socketNameCount;
 

@@ -372,6 +372,7 @@ namespace SSB
 			subMesh->Initialize_SetBoneData(_fbxBoneKeyToFbxBoneDataMap);
 			subMesh->Initialize_SetFBXMesh(_fbxMesh);
 			subMesh->Initialize_SetLayerIndex(i);
+			subMesh->Initialize_SetMaxBoneCount(_fbxBoneKeyToFbxBoneDataMap.size());
 
 			Initialize_AddSubMesh(subMesh);
 		}
@@ -449,6 +450,7 @@ namespace SSB
 			subMesh->Initialize_SetFBXMesh(_fbxMesh);
 			subMesh->Initialize_SetLayerIndex(i);
 			subMesh->Initialize_SetMaterialData(_fbxMaterialKeyToFbxMaterialMap);
+			subMesh->Initialize_SetMaxBoneCount(_fbxBoneKeyToFbxBoneDataMap.size());
 
 			Initialize_AddSubMesh(subMesh);
 		}

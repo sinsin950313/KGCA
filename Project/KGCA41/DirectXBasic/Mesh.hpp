@@ -299,7 +299,8 @@ namespace SSB
 		ret += "\"},\n";
 		for (auto subMesh : _subMeshes)
 		{
-			ret += subMesh->SerializeText(tabCount + 2);
+			auto str = subMesh->SerializeText(tabCount + 2);
+			ret += str;
 			ret += ",\n";
 		}
 
@@ -427,6 +428,7 @@ namespace SSB
 				}
 
 				mesh->DeserializeText(objectData.str);
+				_subMeshes.push_back(mesh);
 			}
 		}
 	}

@@ -17,58 +17,59 @@ bool SSB::FBXLoaderTest::Init()
 
 	_loader = new FBXLoader();
 
-	//Mesh Loading Test
-	{
-		_loader->Init();
-		_loader->SetFileName("box.FBX");
+	////Mesh Loading Test
+	//{
+	//	_loader->Init();
+	//	_loader->SetFileName("box.FBX");
 
-		Model* model = _loader->LoadModel();
-		OBBData data;
-		data.Position = {10, 0, 0};
-		data.Rotation = HMatrix44::RotateFromXAxis(5);
-		data.Scale = {2, 3, 4};
-		data.Width = 10;
-		data.Height = 20;
-		data.Depth = 30;
-		model->Initialize_SetBoundingVolume(data);
-		model->Init();
+	//	Model* model = _loader->LoadModel();
+	//	OBBData data;
+	//	data.Position = {10, 0, 0};
+	//	data.Rotation = HMatrix44::RotateFromXAxis(5);
+	//	data.Scale = {2, 3, 4};
+	//	data.Width = 10;
+	//	data.Height = 20;
+	//	data.Depth = 30;
+	//	model->Initialize_SetBoundingVolume(data);
+	//	model->Init();
 
-		DXObject* object = new DXObject;
-		object->Init();
-		object->SetModel(model);
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
 
-		_objectList.push_back(object);
+	//	_objectList.push_back(object);
 
-		{
-			ObjectScriptIO io;
-			std::string str = model->SerializeText(0);
-			io.Write("ModelWriteTest_Box", str);
-			io.WriteBinary("ModelWriteTest_Box", str);
-		}
+	//	{
+	//		ObjectScriptIO io;
+	//		std::string str = model->SerializeText(0);
+	//		io.Write("ModelWriteTest_Box", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_Box", str);
+	//	}
 
-		{
-			ObjectScriptIO io;
-			auto data = io.Read("ModelWriteTest_Box");
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.Read("ModelWriteTest_Box");
 
-			std::string str(data.Pointer, data.BufferSize);
-			model = new Model;
-			model->DeserializeText(str);
-			model->Init();
-			object->SetModel(model);
-		}
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		object->SetModel(model);
+	//	}
 
-		{
-			ObjectScriptIO io;
-			auto data = io.ReadBinary("ModelWriteTest_Box");
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_Box");
 
-			std::string str(data.Pointer, data.BufferSize);
-			Model* readedModel = new Model;
-			int offset = 0;
-			readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
-			readedModel->Init();
-			object->SetModel(readedModel);
-		}
-	}
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		Model* readedModel = new Model;
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+	//		readedModel->Init();
+	//		object->SetModel(readedModel);
+	//	}
+	//}
 
 	////Multi Material = Multi Texture Test
 	//{
@@ -86,15 +87,31 @@ bool SSB::FBXLoaderTest::Init()
 
 	//	{
 	//		ObjectScriptIO io;
-	//		std::string str = model->Serialize(0);
+	//		std::string str = model->SerializeText(0);
 	//		io.Write("ModelWriteTest_MultiCameras", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_MultiCameras", str);
 	//	}
 
 	//	{
 	//		ObjectScriptIO io;
-	//		std::string str = io.Read("ModelWriteTest_MultiCameras");
+	//		auto data = io.Read("ModelWriteTest_MultiCameras");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		object->SetModel(model);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_MultiCameras");
+
+	//		std::string str(data.Pointer, data.BufferSize);
 	//		Model* readedModel = new Model;
-	//		readedModel->Deserialize(str);
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
 	//		readedModel->Init();
 	//		object->SetModel(readedModel);
 	//	}
@@ -116,15 +133,31 @@ bool SSB::FBXLoaderTest::Init()
 
 	//	{
 	//		ObjectScriptIO io;
-	//		std::string str = model->Serialize(0);
+	//		std::string str = model->SerializeText(0);
 	//		io.Write("ModelWriteTest_Ship", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_Ship", str);
 	//	}
 
 	//	{
 	//		ObjectScriptIO io;
-	//		std::string str = io.Read("ModelWriteTest_Ship");
+	//		auto data = io.Read("ModelWriteTest_Ship");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		object->SetModel(model);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_Ship");
+
+	//		std::string str(data.Pointer, data.BufferSize);
 	//		Model* readedModel = new Model;
-	//		readedModel->Deserialize(str);
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
 	//		readedModel->Init();
 	//		object->SetModel(readedModel);
 	//	}
@@ -153,59 +186,93 @@ bool SSB::FBXLoaderTest::Init()
 
 	//	{
 	//		ObjectScriptIO io;
-	//		std::string str = model->Serialize(0);
+	//		std::string str = model->SerializeText(0);
 	//		io.Write("ModelWriteTest_Turret", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_Turret", str);
 	//	}
 
 	//	{
 	//		ObjectScriptIO io;
-	//		std::string str = io.Read("ModelWriteTest_Turret");
+	//		auto data = io.Read("ModelWriteTest_Turret");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		model->SetCurrentAnimation("Take 001");
+	//		object->SetModel(model);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_Turret");
+
+	//		std::string str(data.Pointer, data.BufferSize);
 	//		Model* readedModel = new Model;
-	//		readedModel->Deserialize(str);
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
 	//		readedModel->Init();
 	//		readedModel->SetCurrentAnimation("Take 001");
 	//		object->SetModel(readedModel);
 	//	}
 	//}
 
-	////Multi Layer Testing
-	////Skinning Animation Testing
-	//{
-	//	_loader->Init();
-	//	_loader->SetFileName("Man.FBX");
+	//Multi Layer Testing
+	//Skinning Animation Testing
+	{
+		_loader->Init();
+		_loader->SetFileName("Man.FBX");
 
-	//	Model* model = _loader->LoadModel();
-	//	model->Init();
+		//Model* model = _loader->LoadModel();
+		//model->Init();
 
-	//	std::map<std::string, Animation*> animations = _loader->LoadAnimation();
-	//	for (auto animation : animations)
-	//	{
-	//		model->Initialize_RegisterAnimation(animation.first, animation.second);
-	//	}
-	//	model->SetCurrentAnimation("Take 001");
+		//std::map<std::string, Animation*> animations = _loader->LoadAnimation();
+		//for (auto animation : animations)
+		//{
+		//	model->Initialize_RegisterAnimation(animation.first, animation.second);
+		//}
+		//model->SetCurrentAnimation("Take 001");
 
-	//	DXObject* object = new DXObject;
-	//	object->Init();
-	//	object->SetModel(model);
+		DXObject* object = new DXObject;
+		object->Init();
+		//object->SetModel(model);
 
-	//	_objectList.push_back(object);
+		_objectList.push_back(object);
 
-	//	{
-	//		ObjectScriptIO io;
-	//		std::string str = model->Serialize(0);
-	//		io.Write("ModelWriteTest_Man", str);
-	//	}
+		//{
+		//	ObjectScriptIO io;
+		//	std::string str = model->SerializeText(0);
+		//	io.Write("ModelWriteTest_Man", str);
+		//	str = model->SerializeBinary();
+		//	io.WriteBinary("ModelWriteTest_Man", str);
+		//}
 
-	//	{
-	//		ObjectScriptIO io;
-	//		std::string str = io.Read("ModelWriteTest_Man");
-	//		Model* readedModel = new Model;
-	//		readedModel->Deserialize(str);
-	//		readedModel->Init();
-	//		readedModel->SetCurrentAnimation("Take 001");
-	//		object->SetModel(readedModel);
-	//	}
-	//}
+		//{
+		//	ObjectScriptIO io;
+		//	auto data = io.Read("ModelWriteTest_Man");
+
+		//	std::string str(data.Pointer, data.BufferSize);
+		//	model = new Model;
+		//	model->DeserializeText(str);
+		//	model->Init();
+		//	model->SetCurrentAnimation("Take 001");
+		//	object->SetModel(model);
+		//}
+
+		{
+			ObjectScriptIO io;
+			auto data = io.ReadBinary("ModelWriteTest_Man");
+
+			std::string str(data.Pointer, data.BufferSize);
+			Model* readedModel = new Model;
+			int offset = 0;
+			readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+			readedModel->Init();
+			readedModel->SetCurrentAnimation("Take 001");
+			object->SetModel(readedModel);
+		}
+	}
 
 	////Script Animation with Single FBX Testing
 	//{
@@ -243,35 +310,6 @@ bool SSB::FBXLoaderTest::Init()
 	//		readedModel->Deserialize(str);
 	//		readedModel->Init();
 	//		readedModel->SetCurrentAnimation("mixamo.com");
-	//		object->SetModel(readedModel);
-	//	}
-	//}
-
-	//{
-	//	_loader->Init();
-	//	_loader->SetFileName("Cs_Avatar_Girl_Bow_Ambor #1 (merge).fbx");
-
-	//	Model* model = _loader->LoadModel();
-	//	model->Init();
-
-	//	DXObject* object = new DXObject;
-	//	object->Init();
-	//	object->SetModel(model);
-
-	//	_objectList.push_back(object);
-
-	//	{
-	//		ObjectScriptIO io;
-	//		std::string str = model->Serialize(0);
-	//		io.Write("ModelWriteTest_Amber", str);
-	//	}
-
-	//	{
-	//		ObjectScriptIO io;
-	//		std::string str = io.Read("ModelWriteTest_Amber");
-	//		Model* readedModel = new Model;
-	//		readedModel->Deserialize(str);
-	//		readedModel->Init();
 	//		object->SetModel(readedModel);
 	//	}
 	//}

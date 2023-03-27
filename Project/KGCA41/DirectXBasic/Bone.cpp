@@ -190,11 +190,23 @@ namespace SSB
 		std::string ret;
 
 		{
-			ret += _parentIndex;
+			int tmpSize = _parentIndex;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
 		}
 
 		{
-			ret += (int)_name.size();
+			{
+				int tmpSize = _name.size();
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 			ret += _name;
 		}
 
@@ -304,10 +316,24 @@ namespace SSB
 	{
 		std::string ret;
 
-		ret += (int)_bones.size();
+		{
+			int tmpSize = _bones.size();
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
 		for (auto bone : _bones)
 		{
-			ret += bone.first;
+			{
+				int tmpSize = bone.first;
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 			ret += bone.second->SerializeBinary();
 		}
 

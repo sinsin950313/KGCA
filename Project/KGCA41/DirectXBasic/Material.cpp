@@ -117,19 +117,40 @@ namespace SSB
 	{
 		std::string ret;
 
-		ret += _materialIndex;
+		{
+			int tmpSize = _materialIndex;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
 
 		for(int i = 0; i < kTextureTypeCount; ++i)
 		{
 			if (_textureArray[i] != nullptr)
 			{
 				std::string fileName = _textureArray[i]->GetResource()->GetFileName();
-				ret += (int)fileName.size();
+				{
+					int tmpSize = fileName.size();
+					char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+					std::string tmpStr(tmpBuffer, sizeof(int));
+					ret += tmpStr;
+					delete tmpBuffer;
+				}
 				ret += fileName;
 			}
 			else
 			{
-				ret += 5;
+				{
+					int tmpSize = 5;
+					char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+					std::string tmpStr(tmpBuffer, sizeof(int));
+					ret += tmpStr;
+					delete tmpBuffer;
+				}
 				ret += "Empty";
 			}
 		}
@@ -148,9 +169,11 @@ namespace SSB
 			{
 				int fileNameSize;
 				memcpy(&fileNameSize, buffer + offset, sizeof(int));
+				offset += sizeof(int);
 
 				char* fileNameBuffer = new char[fileNameSize];
 				memcpy(fileNameBuffer, buffer + offset, fileNameSize);
+				offset += fileNameSize;
 				std::string fileName(fileNameBuffer, fileNameSize);
 				if (fileName != "Empty")
 				{

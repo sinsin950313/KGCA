@@ -436,7 +436,14 @@ namespace SSB
 		std::string ret;
 
 		{
-			ret += (int)_vertexList.size();
+			{
+				int tmpSize = _vertexList.size();
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 			for (auto vertex : _vertexList)
 			{
 				ret += GetSerializedBinaryVertexData(vertex);
@@ -444,10 +451,24 @@ namespace SSB
 		}
 
 		{
-			ret += (int)_indexList.size();
+			{
+				int tmpSize = _indexList.size();
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 			for (auto index : _indexList)
 			{
-				ret += index;
+				{
+					int tmpSize = index;
+					char* tmpBuffer = new char[sizeof(int)];
+					memcpy(tmpBuffer, &tmpSize, sizeof(int));
+					std::string tmpStr(tmpBuffer, sizeof(int));
+					ret += tmpStr;
+					delete tmpBuffer;
+				}
 			}
 		}
 
@@ -469,7 +490,14 @@ namespace SSB
 		}
 
 		{
-			ret += (int)_subMeshes.size();
+			{
+				int tmpSize = _subMeshes.size();
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 			for (auto mesh : _subMeshes)
 			{
 				ret += mesh->SerializeBinary();
@@ -478,7 +506,14 @@ namespace SSB
 
 		{
 			std::string vertexshaderFileName = _vs->GetFileName();
-			ret += (int)vertexshaderFileName.size();
+			{
+				int tmpSize = vertexshaderFileName.size();
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 			ret += vertexshaderFileName;
 		}
 
@@ -549,6 +584,7 @@ namespace SSB
 
 			char* fileName = new char[vertexShaderFileNameSize];
 			memcpy(fileName, buffer + offset, vertexShaderFileNameSize);
+			offset += vertexShaderFileNameSize;
 			std::string tmpFileName(fileName, vertexShaderFileNameSize);
 			delete fileName;
 			_vs = ShaderManager::GetInstance().LoadVertexShader(mtw(tmpFileName), "VS", "vs_5_0");

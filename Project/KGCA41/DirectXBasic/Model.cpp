@@ -517,21 +517,56 @@ namespace SSB
 
 		// Material
 		{
-			ret += (int)_materials.size();
+			{
+				int tmpSize = _materials.size();
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 			for(auto material : _materials)
 			{
-				ret += material.first;
+			{
+				int tmpSize = material.first;
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 				ret += material.second->SerializeBinary();
 			}
 		}
 
 		// Mesh
 		{
-			ret += (int)_meshes.size();
+			{
+				int tmpSize = _meshes.size();
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 			for (auto mesh : _meshes)
 			{
-				ret += mesh.first;
-				ret += (int)mesh.second->GetVertexType().size();
+				{
+					int tmpSize = mesh.first;
+					char* tmpBuffer = new char[sizeof(int)];
+					memcpy(tmpBuffer, &tmpSize, sizeof(int));
+					std::string tmpStr(tmpBuffer, sizeof(int));
+					ret += tmpStr;
+					delete tmpBuffer;
+				}
+				{
+					int tmpSize = mesh.second->GetVertexType().size();
+					char* tmpBuffer = new char[sizeof(int)];
+					memcpy(tmpBuffer, &tmpSize, sizeof(int));
+					std::string tmpStr(tmpBuffer, sizeof(int));
+					ret += tmpStr;
+					delete tmpBuffer;
+				}
 				ret += mesh.second->GetVertexType();
 				ret += mesh.second->SerializeBinary();
 			}
@@ -539,23 +574,53 @@ namespace SSB
 
 		// Animation
 		{
-			ret += (int)_animations.size();
+			{
+				int tmpSize = _animations.size();
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 			for (auto animation : _animations)
 			{
-				ret += animation.first;
+				{
+					int tmpSize = animation.first.size();
+					char* tmpBuffer = new char[sizeof(int)];
+					memcpy(tmpBuffer, &tmpSize, sizeof(int));
+					std::string tmpStr(tmpBuffer, sizeof(int));
+					ret += tmpStr;
+					delete tmpBuffer;
+
+					ret += animation.first;
+				}
 				ret += animation.second->SerializeBinary();
 			}
 		}
 
 		// Pixel Shader
 		{
-			ret += (int)_ps->GetFileName().size();
+			{
+				int tmpSize = _ps->GetFileName().size();
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 			ret += _ps->GetFileName();
 		}
 
 		// Socket
 		{
-			ret += (int)_sockets.size();
+			{
+				int tmpSize = (int)_sockets.size();
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 			for (auto socket : _sockets)
 			{
 				ret += (int)socket.first.size();
@@ -643,6 +708,7 @@ namespace SSB
 
 				Material* tmp = new Material;
 				tmp->DeserializeBinary(buffer, size, offset);
+				tmp->Init();
 				_materials.insert(std::make_pair(materialIndex, tmp));
 			}
 		}
@@ -669,7 +735,7 @@ namespace SSB
 				{
 					char* meshTypeStr = new char[vertexTypeSize];
 					memcpy(meshTypeStr, buffer + offset, vertexTypeSize);
-					offset += sizeof(int);
+					offset += vertexTypeSize;
 
 					vertexType = std::string(meshTypeStr, vertexTypeSize);
 					delete meshTypeStr;
@@ -707,6 +773,7 @@ namespace SSB
 				}
 
 				tmp->DeserializeBinary(buffer, size, offset);
+				tmp->Init();
 				_meshes.insert(std::make_pair(meshIndex, tmp));
 			}
 		}
@@ -720,7 +787,21 @@ namespace SSB
 			for (int i = 0; i < animationCount; ++i)
 			{
 				Animation* tmp = new Animation;
+				std::string animationName;
+				{
+					int animationNameSize;
+					memcpy(&animationNameSize, buffer + offset, sizeof(int));
+					offset += sizeof(int);
+
+					char* animationNameBuffer = new char[animationNameSize];
+					memcpy(animationNameBuffer, buffer + offset, animationNameSize);
+					offset += animationNameSize;
+					animationName = std::string(animationNameBuffer, animationNameSize);
+					delete animationNameBuffer;
+				}
 				tmp->DeserializeBinary(buffer, size, offset);
+				tmp->Init();
+				_animations.insert(std::make_pair(animationName, tmp));
 			}
 		}
 

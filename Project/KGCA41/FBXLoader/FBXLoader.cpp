@@ -81,7 +81,8 @@ namespace SSB
 			std::string name = node->GetName();
 			BoneInfo info;
 			//if (_fbxBoneKeyToFbxBoneMap.size() != 0)
-			if (_rootNodeSet.find(node->GetParent()) == _rootNodeSet.end())
+			//if (_rootNodeSet.find(node->GetParent()) == _rootNodeSet.end())
+			if(_boneNodeToBoneIndexMap.find(node->GetParent()) != _boneNodeToBoneIndexMap.end())
 			{
 				info.Name = name;
 				info.ParentIndex = _boneNodeToBoneIndexMap.find(node->GetParent())->second;

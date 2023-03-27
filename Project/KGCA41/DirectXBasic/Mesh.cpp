@@ -156,8 +156,8 @@ namespace SSB
 
 		{
 			Float2 tmp;
-			memcpy(&tmp, buffer + offset, sizeof(Float4));
-			offset += sizeof(Float4);
+			memcpy(&tmp, buffer + offset, sizeof(Float2));
+			offset += sizeof(Float2);
 			ret.TextureUV = tmp;
 		}
 
@@ -284,8 +284,8 @@ namespace SSB
 
 		{
 			Float2 tmp;
-			memcpy(&tmp, buffer + offset, sizeof(Float4));
-			offset += sizeof(Float4);
+			memcpy(&tmp, buffer + offset, sizeof(Float2));
+			offset += sizeof(Float2);
 			ret.TextureUV = tmp;
 		}
 
@@ -375,6 +375,30 @@ namespace SSB
 
 		serialedString = GetUnitObjectText(serialedString, offset).str;
 		Mesh<Vertex_PCNT>::DeserializeText(serialedString);
+	}
+
+	std::string Mesh_Vertex_PCNT_Animatable::SerializeBinary()
+	{
+		std::string ret = Mesh<Vertex_PCNT>::SerializeBinary();
+
+		{
+			int tmpSize = _meshData.MeshIndex;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
+
+		return ret;
+	}
+
+	void Mesh_Vertex_PCNT_Animatable::DeserializeBinary(const char* buffer, int size, int& offset)
+	{
+		Mesh<Vertex_PCNT>::DeserializeBinary(buffer, size, offset);
+
+		memcpy(&_meshData.MeshIndex, buffer + offset, sizeof(int));
+		offset += sizeof(int);
 	}
 
 
@@ -556,6 +580,75 @@ namespace SSB
 		serialedString = std::string(serialedString.begin() + offset, serialedString.end());
 		Mesh<Vertex_PCNT_Skinning>::DeserializeText(serialedString);
 	}
+	std::string Mesh_Vertex_PCNT_Skinning::SerializeBinary()
+	{
+		std::string ret = Mesh<Vertex_PCNT_Skinning>::SerializeBinary();
+
+		{
+			int tmpSize = _maxBoneCount;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
+
+		{
+			for (int i = 0; i < _maxBoneCount; ++i)
+			{
+				Float44 tmpBuffer = _boneSpaceTransformData.BoneSpaceTransformBuffer[i];
+				std::string tmpStr((char*)&tmpBuffer, sizeof(Float44));
+				ret += tmpStr;
+			}
+
+			{
+				int tmpSize = _boneSpaceTransformData.MeshIndex;
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
+			{
+				float tmpSize = _boneSpaceTransformData.MeshWeight;
+				char* tmpBuffer = new char[sizeof(float)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(float));
+				std::string tmpStr(tmpBuffer, sizeof(float));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
+		}
+
+		return ret;
+	}
+	void Mesh_Vertex_PCNT_Skinning::DeserializeBinary(const char* buffer, int size, int& offset)
+	{
+		Mesh<Vertex_PCNT_Skinning>::DeserializeBinary(buffer, size, offset);
+
+		{
+			memcpy(&_maxBoneCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		for (int i = 0; i < _maxBoneCount; ++i)
+		{
+			Float44 tmpBuffer;
+			memcpy(&tmpBuffer, buffer + offset, sizeof(Float44));
+			offset += sizeof(Float44);
+			_boneSpaceTransformData.BoneSpaceTransformBuffer[i] = {
+				tmpBuffer.e11, tmpBuffer.e12, tmpBuffer.e13, tmpBuffer.e14,
+				tmpBuffer.e21, tmpBuffer.e22, tmpBuffer.e23, tmpBuffer.e24,
+				tmpBuffer.e31, tmpBuffer.e32, tmpBuffer.e33, tmpBuffer.e34,
+				tmpBuffer.e41, tmpBuffer.e42, tmpBuffer.e43, tmpBuffer.e44,
+			};
+		}
+
+		memcpy(&_boneSpaceTransformData.MeshIndex, buffer + offset, sizeof(int));
+		offset += sizeof(int);
+
+		memcpy(&_boneSpaceTransformData.MeshWeight, buffer + offset, sizeof(float));
+		offset += sizeof(float);
+	}
 	MeshInterface* Mesh_Vertex_PCNT_Skinning::Clone()
 	{
 		Mesh_Vertex_PCNT_Skinning* newMesh = static_cast<Mesh_Vertex_PCNT_Skinning*>(Mesh<Vertex_PCNT_Skinning>::Clone());
@@ -609,8 +702,22 @@ namespace SSB
 		{
 			for (int i = 0; i < 4; ++i)
 			{
-				ret += vertex.AffectedBoneIndex[i];
-				ret += vertex.Weight[i];
+				{
+					int tmpSize = vertex.AffectedBoneIndex[i];
+					char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+					std::string tmpStr(tmpBuffer, sizeof(int));
+					ret += tmpStr;
+					delete tmpBuffer;
+				}
+				{
+					int tmpSize = vertex.Weight[i];
+					char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+					std::string tmpStr(tmpBuffer, sizeof(int));
+					ret += tmpStr;
+					delete tmpBuffer;
+				}
 			}
 		}
 
@@ -643,8 +750,8 @@ namespace SSB
 
 		{
 			Float2 tmp;
-			memcpy(&tmp, buffer + offset, sizeof(Float4));
-			offset += sizeof(Float4);
+			memcpy(&tmp, buffer + offset, sizeof(Float2));
+			offset += sizeof(Float2);
 			ret.TextureUV = tmp;
 		}
 
@@ -751,7 +858,12 @@ namespace SSB
 		}
 
 		{
-			ret += vertex.MaterialIndex;
+			int tmpSize = vertex.MaterialIndex;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
 		}
 
 		return ret;
@@ -784,8 +896,8 @@ namespace SSB
 
 		{
 			Float2 tmp;
-			memcpy(&tmp, buffer + offset, sizeof(Float4));
-			offset += sizeof(Float4);
+			memcpy(&tmp, buffer + offset, sizeof(Float2));
+			offset += sizeof(Float2);
 			ret.TextureUV = tmp;
 		}
 
@@ -920,6 +1032,30 @@ namespace SSB
 		Mesh<Vertex_PCNTs>::DeserializeText(serialedString);
 	}
 
+	std::string Mesh_Vertex_PCNTs_Animatable::SerializeBinary()
+	{
+		std::string ret = Mesh<Vertex_PCNTs>::SerializeBinary();
+
+		{
+			int tmpSize = _meshData.MeshIndex;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
+
+		return ret;
+	}
+
+	void Mesh_Vertex_PCNTs_Animatable::DeserializeBinary(const char* buffer, int size, int& offset)
+	{
+		Mesh<Vertex_PCNTs>::DeserializeBinary(buffer, size, offset);
+
+		memcpy(&_meshData.MeshIndex, buffer + offset, sizeof(int));
+		offset += sizeof(int);
+	}
+
 	MeshInterface* Mesh_Vertex_PCNTs_Animatable::Clone()
 	{
 		Mesh_Vertex_PCNTs_Animatable* newMesh = static_cast<Mesh_Vertex_PCNTs_Animatable*>(Mesh<Vertex_PCNTs>::Clone());
@@ -972,7 +1108,12 @@ namespace SSB
 		}
 
 		{
-			ret += vertex.MaterialIndex;
+			int tmpSize = vertex.MaterialIndex;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
 		}
 
 		return ret;
@@ -1005,8 +1146,8 @@ namespace SSB
 
 		{
 			Float2 tmp;
-			memcpy(&tmp, buffer + offset, sizeof(Float4));
-			offset += sizeof(Float4);
+			memcpy(&tmp, buffer + offset, sizeof(Float2));
+			offset += sizeof(Float2);
 			ret.TextureUV = tmp;
 		}
 
@@ -1205,6 +1346,77 @@ namespace SSB
 		Mesh<Vertex_PCNTs_Skinning>::DeserializeText(serialedString);
 	}
 
+	std::string Mesh_Vertex_PCNTs_Skinning::SerializeBinary()
+	{
+		std::string ret = Mesh<Vertex_PCNTs_Skinning>::SerializeBinary();
+
+		{
+			int tmpSize = _maxBoneCount;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
+
+		{
+			for (int i = 0; i < _maxBoneCount; ++i)
+			{
+				Float44 tmpBuffer = _boneSpaceTransformData.BoneSpaceTransformBuffer[i];
+				std::string tmpStr((char*)&tmpBuffer, sizeof(Float44));
+				ret += tmpStr;
+			}
+
+			{
+				int tmpSize = _boneSpaceTransformData.MeshIndex;
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
+			{
+				float tmpSize = _boneSpaceTransformData.MeshWeight;
+				char* tmpBuffer = new char[sizeof(float)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(float));
+				std::string tmpStr(tmpBuffer, sizeof(float));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
+		}
+
+		return ret;
+	}
+
+	void Mesh_Vertex_PCNTs_Skinning::DeserializeBinary(const char* buffer, int size, int& offset)
+	{
+		Mesh<Vertex_PCNTs_Skinning>::DeserializeBinary(buffer, size, offset);
+
+		{
+			memcpy(&_maxBoneCount, buffer + offset, sizeof(int));
+			offset += sizeof(int);
+		}
+
+		for (int i = 0; i < _maxBoneCount; ++i)
+		{
+			Float44 tmpBuffer;
+			memcpy(&tmpBuffer, buffer + offset, sizeof(Float44));
+			offset += sizeof(Float44);
+			_boneSpaceTransformData.BoneSpaceTransformBuffer[i] = {
+				tmpBuffer.e11, tmpBuffer.e12, tmpBuffer.e13, tmpBuffer.e14,
+				tmpBuffer.e21, tmpBuffer.e22, tmpBuffer.e23, tmpBuffer.e24,
+				tmpBuffer.e31, tmpBuffer.e32, tmpBuffer.e33, tmpBuffer.e34,
+				tmpBuffer.e41, tmpBuffer.e42, tmpBuffer.e43, tmpBuffer.e44,
+			};
+		}
+
+		memcpy(&_boneSpaceTransformData.MeshIndex, buffer + offset, sizeof(int));
+		offset += sizeof(int);
+
+		memcpy(&_boneSpaceTransformData.MeshWeight, buffer + offset, sizeof(float));
+		offset += sizeof(float);
+	}
+
 	MeshInterface* Mesh_Vertex_PCNTs_Skinning::Clone()
 	{
 		Mesh_Vertex_PCNTs_Skinning* newMesh = static_cast<Mesh_Vertex_PCNTs_Skinning*>(Mesh<Vertex_PCNTs_Skinning>::Clone());
@@ -1258,14 +1470,35 @@ namespace SSB
 		}
 
 		{
-			ret += vertex.MaterialIndex;
+			{
+				int tmpSize = vertex.MaterialIndex;
+				char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+				std::string tmpStr(tmpBuffer, sizeof(int));
+				ret += tmpStr;
+				delete tmpBuffer;
+			}
 		}
 
 		{
 			for (int i = 0; i < 4; ++i)
 			{
-				ret += vertex.AffectedBoneIndex[i];
-				ret += vertex.Weight[i];
+				{
+					int tmpSize = vertex.AffectedBoneIndex[i];
+					char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+					std::string tmpStr(tmpBuffer, sizeof(int));
+					ret += tmpStr;
+					delete tmpBuffer;
+				}
+				{
+					float tmpSize = vertex.Weight[i];
+					char* tmpBuffer = new char[sizeof(float)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(float));
+					std::string tmpStr(tmpBuffer, sizeof(float));
+					ret += tmpStr;
+					delete tmpBuffer;
+				}
 			}
 		}
 
@@ -1299,8 +1532,8 @@ namespace SSB
 
 		{
 			Float2 tmp;
-			memcpy(&tmp, buffer + offset, sizeof(Float4));
-			offset += sizeof(Float4);
+			memcpy(&tmp, buffer + offset, sizeof(Float2));
+			offset += sizeof(Float2);
 			ret.TextureUV = tmp;
 		}
 

@@ -379,51 +379,140 @@ namespace SSB
 		std::string ret;
 
 		// FramePerSecond
-		ret += _framePerSecond;
+		{
+			float tmpSize = _framePerSecond;
+			char* tmpBuffer = new char[sizeof(float)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(float));
+			std::string tmpStr(tmpBuffer, sizeof(float));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
 
 		// BoneAnimationUnitMaxCount
-		ret += _boneAnimationUnitMaxCount;
+		{
+			int tmpSize = _boneAnimationUnitMaxCount;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
 
 		// MeshAnimationUnitMaxCount;
-		ret += _meshAnimationUnitMaxCount;
+		{
+			int tmpSize = _meshAnimationUnitMaxCount;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
 
 		// Frame Data
-		ret += (int)_data.size();
-		for (auto data : _data)
 		{
-			char* tmpBuffer = new char[sizeof(Float44) * 255];
-			{
-				int offset = 0;
-				for (int i = 0; i < _boneAnimationUnitMaxCount; ++i)
-				{
-					memcpy(tmpBuffer + offset, &data->BoneAnimationUnit[i], sizeof(Float44));
-					offset += sizeof(Float44);
-				}
-				std::string tmp(tmpBuffer, sizeof(Float44) * _boneAnimationUnitMaxCount);
-				ret += tmp;
-			}
+			int tmpSize = _data.size();
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
 
+		{
+			int size = sizeof(Float44) + sizeof(Float3) + sizeof(Float3) + sizeof(Float4);
+			char* tmpBuffer = new char[size * 255];
+			for (auto data : _data)
 			{
-				int offset = 0;
-				for (int i = 0; i < _meshAnimationUnitMaxCount; ++i)
 				{
-					memcpy(tmpBuffer + offset, &data->MeshAnimationUnit[i], sizeof(Float44));
-					offset += sizeof(Float44);
+					int offset = 0;
+					for (int i = 0; i < _boneAnimationUnitMaxCount; ++i)
+					{
+						{
+							Float44 tmp = data->BoneAnimationUnit[i].Matrix;
+							memcpy(tmpBuffer + offset, &tmp, sizeof(Float44));
+							offset += sizeof(Float44);
+						}
+						{
+							Float3 tmp = data->BoneAnimationUnit[i].Translate;
+							memcpy(tmpBuffer + offset, &tmp, sizeof(Float3));
+							offset += sizeof(Float3);
+						}
+						{
+							Float3 tmp = data->BoneAnimationUnit[i].Scale;
+							memcpy(tmpBuffer + offset, &tmp, sizeof(Float3));
+							offset += sizeof(Float3);
+						}
+						{
+							Float4 tmp = data->BoneAnimationUnit[i].Rotate;
+							memcpy(tmpBuffer + offset, &tmp, sizeof(Float4));
+							offset += sizeof(Float4);
+						}
+					}
+					std::string tmp(tmpBuffer, size * _boneAnimationUnitMaxCount);
+					ret += tmp;
 				}
-				std::string tmp(tmpBuffer, sizeof(Float44) * _meshAnimationUnitMaxCount);
-				ret += tmp;
+
+				{
+					int offset = 0;
+					for (int i = 0; i < _meshAnimationUnitMaxCount; ++i)
+					{
+						{
+							Float44 tmp = data->MeshAnimationUnit[i].Matrix;
+							memcpy(tmpBuffer + offset, &tmp, sizeof(Float44));
+							offset += sizeof(Float44);
+						}
+						{
+							Float3 tmp = data->MeshAnimationUnit[i].Translate;
+							memcpy(tmpBuffer + offset, &tmp, sizeof(Float3));
+							offset += sizeof(Float3);
+						}
+						{
+							Float3 tmp = data->MeshAnimationUnit[i].Scale;
+							memcpy(tmpBuffer + offset, &tmp, sizeof(Float3));
+							offset += sizeof(Float3);
+						}
+						{
+							Float4 tmp = data->MeshAnimationUnit[i].Rotate;
+							memcpy(tmpBuffer + offset, &tmp, sizeof(Float4));
+							offset += sizeof(Float4);
+						}
+					}
+					std::string tmp(tmpBuffer, size * _meshAnimationUnitMaxCount);
+					ret += tmp;
+				}
 			}
-			delete[] tmpBuffer;
+			delete tmpBuffer;
 		}
 
 		// Start Frame
-		ret += _startFrame;
+		{
+			int tmpSize = _startFrame;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
 
 		// End Frame
-		ret += _endFrame;
+		{
+			int tmpSize = _endFrame;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
 
 		// Loop
-		ret += (int)_isLoop;
+		{
+			int tmpSize = _isLoop;
+			char* tmpBuffer = new char[sizeof(int)];
+				memcpy(tmpBuffer, &tmpSize, sizeof(int));
+			std::string tmpStr(tmpBuffer, sizeof(int));
+			ret += tmpStr;
+			delete tmpBuffer;
+		}
 
 		return ret;
 	}
@@ -431,8 +520,8 @@ namespace SSB
 	{
 		// FramePerSecond
 		{
-			memcpy(&_framePerSecond, buffer + offset, sizeof(int));
-			offset += sizeof(int);
+			memcpy(&_framePerSecond, buffer + offset, sizeof(float));
+			offset += sizeof(float);
 		}
 
 		// BoneAnimationUnitMaxCount
@@ -456,32 +545,77 @@ namespace SSB
 			_data.resize(frameDataCount);
 			for (int i = 0; i < frameDataCount; ++i)
 			{
+				_data[i] = new AnimationFrameInfo;
 				for (int j = 0; j < _boneAnimationUnitMaxCount; ++j)
 				{
-					Float44 matrix;
-					memcpy(&matrix, buffer + offset, sizeof(Float44));
-					offset += sizeof(Float44);
+					{
+						Float44 matrix;
+						memcpy(&matrix, buffer + offset, sizeof(Float44));
+						offset += sizeof(Float44);
 
-					_data[i]->BoneAnimationUnit[j].Matrix = {
-						matrix.e11, matrix.e12, matrix.e13, matrix.e14,
-						matrix.e21, matrix.e22, matrix.e23, matrix.e24,
-						matrix.e31, matrix.e32, matrix.e33, matrix.e34,
-						matrix.e41, matrix.e42, matrix.e43, matrix.e44,
-					};
+						_data[i]->BoneAnimationUnit[j].Matrix = {
+							matrix.e11, matrix.e12, matrix.e13, matrix.e14,
+							matrix.e21, matrix.e22, matrix.e23, matrix.e24,
+							matrix.e31, matrix.e32, matrix.e33, matrix.e34,
+							matrix.e41, matrix.e42, matrix.e43, matrix.e44,
+						};
+					}
+					{
+						Float3 translate;
+						memcpy(&translate, buffer + offset, sizeof(Float3));
+						offset += sizeof(Float3);
+						_data[i]->BoneAnimationUnit[j].Translate = translate;
+					}
+					{
+						Float3 scale;
+						memcpy(&scale, buffer + offset, sizeof(Float3));
+						offset += sizeof(Float3);
+						_data[i]->BoneAnimationUnit[j].Scale = scale;
+					}
+					{
+						Float4 rotate;
+						memcpy(&rotate, buffer + offset, sizeof(Float4));
+						offset += sizeof(Float4);
+						_data[i]->BoneAnimationUnit[j].Rotate = {
+							rotate.x, rotate.y, rotate.z, rotate.w
+						};
+					}
 				}
 
 				for (int j = 0; j < _meshAnimationUnitMaxCount; ++j)
 				{
-					Float44 matrix;
-					memcpy(&matrix, buffer + offset, sizeof(Float44));
-					offset += sizeof(Float44);
+					{
+						Float44 matrix;
+						memcpy(&matrix, buffer + offset, sizeof(Float44));
+						offset += sizeof(Float44);
 
-					_data[i]->MeshAnimationUnit[j].Matrix = {
-						matrix.e11, matrix.e12, matrix.e13, matrix.e14,
-						matrix.e21, matrix.e22, matrix.e23, matrix.e24,
-						matrix.e31, matrix.e32, matrix.e33, matrix.e34,
-						matrix.e41, matrix.e42, matrix.e43, matrix.e44,
-					};
+						_data[i]->MeshAnimationUnit[j].Matrix = {
+							matrix.e11, matrix.e12, matrix.e13, matrix.e14,
+							matrix.e21, matrix.e22, matrix.e23, matrix.e24,
+							matrix.e31, matrix.e32, matrix.e33, matrix.e34,
+							matrix.e41, matrix.e42, matrix.e43, matrix.e44,
+						};
+					}
+					{
+						Float3 translate;
+						memcpy(&translate, buffer + offset, sizeof(Float3));
+						offset += sizeof(Float3);
+						_data[i]->MeshAnimationUnit[j].Translate = translate;
+					}
+					{
+						Float3 scale;
+						memcpy(&scale, buffer + offset, sizeof(Float3));
+						offset += sizeof(Float3);
+						_data[i]->MeshAnimationUnit[j].Scale = scale;
+					}
+					{
+						Float4 rotate;
+						memcpy(&rotate, buffer + offset, sizeof(Float4));
+						offset += sizeof(Float4);
+						_data[i]->MeshAnimationUnit[j].Rotate = {
+							rotate.x, rotate.y, rotate.z, rotate.w
+						};
+					}
 				}
 			}
 		}

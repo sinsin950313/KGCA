@@ -65,9 +65,10 @@ namespace SSB
 		else if (!_scriptFileName.empty())
 		{
 			ObjectScriptIO io;
-			auto str = io.Read(_scriptFileName);
+			auto data = io.Read(_scriptFileName);
+			std::string str(data.Pointer, data.BufferSize);
 			Model model;
-			model.Deserialize(str);
+			model.DeserializeText(str);
 
 			EditableModelObject* editableObject = static_cast<EditableModelObject*>(model.GetEditableObject());
 			{
@@ -101,9 +102,10 @@ namespace SSB
 
 			{
 				ObjectScriptIO io;
-				auto str = io.ReadSkeleton(_scriptFileName);
+				auto data = io.ReadSkeleton(_scriptFileName);
+				std::string str(data.Pointer, data.BufferSize);
 				Skeleton skeleton;
-				skeleton.Deserialize(str);
+				skeleton.DeserializeText(str);
 
 				_skeleton = static_cast<EditableSkeletonObject*>(skeleton.GetEditableObject());
 			}
@@ -166,13 +168,13 @@ namespace SSB
 
 		tmp.Init();
 		tmp.SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(mtw(_pixelShaderFileName), "PS", "ps_5_0"));
-		auto serialedStr = tmp.Serialize(0);
+		auto serialedStr = tmp.SerializeText(0);
 
 		ObjectScriptIO ioObject;
 		ioObject.Write(_scriptFileName, serialedStr);
 
 		{
-			auto str = _skeleton->GetResult()->Serialize(0);
+			auto str = _skeleton->GetResult()->SerializeText(0);
 			ioObject.WriteSkeleton(_scriptFileName, str);
 		}
 	}

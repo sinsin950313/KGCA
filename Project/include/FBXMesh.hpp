@@ -167,24 +167,28 @@ namespace SSB
 
 		int vertexCount = 0;
 		auto normals = fbxMesh->GetLayer(layerCount)->GetNormals();
+		int indexByPolygonVertex = 0;
 		for (int iPoly = 0; iPoly < polygonCount; ++iPoly)
 		{
 			int polygonSize = fbxMesh->GetPolygonSize(iPoly);
 			int faceCount = polygonSize - 2;
 			for (int iFace = 0; iFace < faceCount; ++iFace)
 			{
-				int polygonVertexIndex[3];
-				polygonVertexIndex[0] = fbxMesh->GetPolygonVertex(iPoly, 0);
-				polygonVertexIndex[1] = fbxMesh->GetPolygonVertex(iPoly, iFace + 2);
-				polygonVertexIndex[2] = fbxMesh->GetPolygonVertex(iPoly, iFace + 1); 
+				int controlPointIndex[3];
+
+				int tmp[]{ 0, iFace + 2, iFace + 1 };
+				controlPointIndex[0] = fbxMesh->GetPolygonVertex(iPoly, 0);
+				controlPointIndex[1] = fbxMesh->GetPolygonVertex(iPoly, iFace + 2);
+				controlPointIndex[2] = fbxMesh->GetPolygonVertex(iPoly, iFace + 1);
 
 				for (int iIndex = 0; iIndex < 3; ++iIndex)
 				{
-					int vertexIndex = polygonVertexIndex[iIndex];
+					int vertexIndex = controlPointIndex[iIndex];
 					FbxVector4 n{ 0, 0, 0, 0 };
 					if (normals)
 					{
-						n = Read<FbxVector4>(normals, vertexIndex, iPoly);
+						//n = Read<FbxVector4>(normals, vertexIndex, indexByPolygonVertex);
+						fbxMesh->GetPolygonVertexNormal(iPoly, tmp[iIndex], n);
 						n = transformData.NormalLocal.MultT(n);
 					}
 
@@ -194,6 +198,7 @@ namespace SSB
 					++vertexCount;
 				}
 			}
+			indexByPolygonVertex += polygonSize;
 		}
 	}
 

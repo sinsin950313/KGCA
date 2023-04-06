@@ -341,33 +341,33 @@ bool SSB::FBXLoaderTest::Init()
 
 		{
 			ObjectScriptIO io;
-			auto data = io.Read("PlayerGaren.Script");
+			auto data = io.Read("Yasuo.Script");
 
 			std::string str(data.Pointer, data.BufferSize);
 			model = new Model;
 			int offset = 0;
 			model->DeserializeText(str);
 			model->Init();
-			model->SetCurrentAnimation("Attack1");
+			model->SetCurrentAnimation("Idle");
 			object->SetModel(model);
 		}
 
 		{
 			ObjectScriptIO io;
 			auto str = model->SerializeBinary();
-			io.WriteBinary("TextToBinaryConvetingTest", str);
+			io.WriteBinary("Yasuo", str);
 		}
 
 		{
 			ObjectScriptIO io;
-			auto data = io.ReadBinary("TextToBinaryConvetingTest");
+			auto data = io.ReadBinary("Yasuo");
 
 			std::string str(data.Pointer, data.BufferSize);
 			Model* readedModel = new Model;
 			int offset = 0;
 			readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
 			readedModel->Init();
-			readedModel->SetCurrentAnimation("Attack1");
+			readedModel->SetCurrentAnimation("Idle");
 			object->SetModel(readedModel);
 		}
 	}

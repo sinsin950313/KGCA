@@ -193,7 +193,7 @@ namespace SSB
 					}
 
 					VertexType vertex;
-					vertex.Normal = { (float)n.mData[0], (float)n.mData[1], (float)n.mData[2], 1 };
+					vertex.Normal = { (float)n.mData[0], (float)n.mData[2], (float)n.mData[1], 1 };
 					vertexList[vertexCount].Normal = vertex.Normal;
 					++vertexCount;
 				}

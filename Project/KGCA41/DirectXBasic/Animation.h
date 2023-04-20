@@ -129,6 +129,7 @@ namespace SSB
 	public:
 		void AddSocketAnimation(BoneIndex index, BoneIndex parentIndex, HMatrix44 localMatrix);
 		void EditFrame(FrameIndex start, FrameIndex end);
+		void Reverse();
 		FrameIndex GetStartFrame();
 		FrameIndex GetEndFrame();
 

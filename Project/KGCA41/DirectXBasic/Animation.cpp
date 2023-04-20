@@ -695,6 +695,18 @@ namespace SSB
 		_startFrame = start;
 		_endFrame = end;
 	}
+	void EditableAnimationObject::Reverse()
+	{
+		std::vector<AnimationFrameInfo*>::reverse_iterator iter = _data.rbegin();
+
+		std::vector<AnimationFrameInfo*> tmp;
+		while (iter != _data.rend())
+		{
+			tmp.push_back(*iter);
+		}
+
+		_data = tmp;
+	}
 	FrameIndex EditableAnimationObject::GetStartFrame()
 	{
 		return _startFrame;

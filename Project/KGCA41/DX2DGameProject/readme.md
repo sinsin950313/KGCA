@@ -23,6 +23,7 @@ Layer를 통한 고도감을 줄 수 있도록 높은 Layer에 위치할 경우 
 짧고 빠르게 지나가는 바다 Tile의 Memory를 관리하고 새로 생성하는데 필요한 시간을 줄일 수 있도록 하기위해 Memory Pool을 사용했습니다.
 
 ![image](https://user-images.githubusercontent.com/40855235/234496037-ce894960-182d-4a72-b34b-a5c0219990c8.png)
+
 제한시간 등 User에게 보여야하는 Text의 Font를 적용하기 위해 DirectWrite가 아닌 Texture를 동적으로 배치할 수 있는 기술을 구현했습니다.
 
 ## 조작법

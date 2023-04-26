@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -22,8 +22,9 @@
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Box1.cpp" />
     <ClCompile Include="Circle.cpp" />
-    <ClCompile Include="Frustum1.cpp" />
+    <ClCompile Include="CollisionCalculator.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Line1.cpp" />
     <ClCompile Include="Plane1.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="Sphere1.cpp" />
@@ -34,13 +35,15 @@
     <ClInclude Include="Box.h" />
     <ClInclude Include="Box1.h" />
     <ClInclude Include="Circle.h" />
-    <ClInclude Include="Frustum1.h" />
+    <ClInclude Include="CollisionCalculator.h" />
+    <ClInclude Include="Line1.h" />
     <ClInclude Include="Plane1.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Sphere1.h" />
     <ClInclude Include="Volume.h" />
     <ClInclude Include="Volume1.h" />
     <ClInclude Include="VolumeInterface.h" />
+    <ClInclude Include="VolumeType.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

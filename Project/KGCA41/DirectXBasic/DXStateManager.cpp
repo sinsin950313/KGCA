@@ -8,6 +8,7 @@ namespace SSB
 	const std::string DXStateManager::kDefaultWireFrameRasterizer = "DefaultWireFrameRasterizer";
 	const std::string DXStateManager::kDefaultBlend = "DefaultBlendState";
 	const std::string DXStateManager::kDefaultDepthStencil = "DefaultDepthStencilState";
+	const std::string DXStateManager::kDepthStencilPainter = "DepthStencilPainterState";
 
 	DXStateManager DXStateManager::_instance;
 
@@ -89,6 +90,7 @@ namespace SSB
 		AddRasterizerState(kDefaultWireFrameRasterizer, new DefaultWireFrameRasterizerFactory);
 		AddBlendState(kDefaultBlend, new DefaultBlendFactory);
 		AddDepthStencilState(kDefaultDepthStencil, new DefaultDepthStencilStateFactory);
+		AddDepthStencilState(kDepthStencilPainter, new DepthStencilPainterStateFactory);
 
 		return true;
 	}

@@ -15,12 +15,13 @@
     </Lib>
     <Link>
       <AdditionalLibraryDirectories>$(ProjectDir)\..\..\lib\Debug;$(ProjectDir)\..\..\lib\Debug\FBX;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>PhysicsMath.lib;Volume.lib;BasicWindow.lib;fmod_vc.lib;WindowUtility.lib;DirectXBasic.lib;DirectXTK.lib;d3dcompiler.lib;DXGameElements.lib;DXCore.lib;libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>PhysicsMath.lib;Volume.lib;BasicWindow.lib;fmod_vc.lib;WindowUtility.lib;DirectXBasic.lib;DirectXTK.lib;d3dcompiler.lib;;DXCore.lib;libfbxsdk-md.lib;libxml2-md.lib;zlib-md.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>if not exist "$(ProjectDir)\..\..\include\" mkdir "$(ProjectDir)\..\..\include\"
 
 copy "$(ProjectDir)\*.h" "$(ProjectDir)\..\..\include\"
+copy "$(ProjectDir)\*.hpp" "$(ProjectDir)\..\..\include\"
 
 if not exist "$(ProjectDir)\..\..\lib\Debug\" mkdir "$(ProjectDir)\..\..\lib\Debug"
 

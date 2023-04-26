@@ -9,3 +9,4 @@ const static std::wstring kSpriteActionPath = L"../../Resource/Texture/Data/Spri
 const static std::wstring kHeightMapPath = L"../../Resource/Texture/TextureResource/";
 const static std::wstring kFBXPath = L"../../Resource/FBX/FBX/";
 const static std::wstring kFBXScriptPath = L"../../Resource/FBX/Script/";
+const static std::wstring kObjectScriptPath = L"../../Resource/Script/";

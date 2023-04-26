@@ -89,7 +89,9 @@ namespace SSB
 		axis.Normalize();
 		float sinVal = sin(radian);
 		float cosVal = cos(radian);
-		return Quaternion{ axis.GetX() * sinVal, axis.GetY() * sinVal, axis.GetZ() * sinVal, cosVal };
+		Quaternion quat{ axis.GetX() * sinVal, axis.GetY() * sinVal, axis.GetZ() * sinVal, cosVal };
+		//quat.Normalize();
+		return quat;
 	}
 	Quaternion Quaternion::GetRotateQuaternion(Vector3 from, Vector3 to)
 	{

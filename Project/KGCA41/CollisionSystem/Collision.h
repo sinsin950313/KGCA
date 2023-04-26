@@ -42,5 +42,5 @@ namespace SSB
 	//	return true;
 	//}
 
-	bool IsCollide(Volume1* volume1, Volume1* volume2);
+	//bool IsCollide(Volume1* volume1, Volume1* volume2);
 }

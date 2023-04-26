@@ -5,9 +5,12 @@
 #include <Unknwnbase.h>
 #include <math.h>
 #include <cstdlib>
+#include <string>
 
 namespace SSB
 {
+	typedef char Byte;
+
 	class Common
 	{
 	public:
@@ -43,4 +46,29 @@ namespace SSB
 	}
 
 	inline bool IsZero(float val) { return abs(val) < 0.001f; }
+
+	static std::wstring mtw(std::string str)
+	{
+		//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+		//return conv.from_bytes(str);
+		std::wstring ret;
+		ret.assign(str.begin(), str.end());
+		return ret;
+	}
+
+	static std::string wtm(std::wstring str)
+	{
+		//std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> conv;
+		//return conv.to_bytes(str);
+		std::string ret;
+		ret.assign(str.begin(), str.end());
+		return ret;
+	}
+
+	static const float FDelta = 0.01f;
+
+	static bool ZeroFloat(float val)
+	{
+		return abs(val) < FDelta;
+	}
 };

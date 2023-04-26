@@ -20,22 +20,27 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="CollisionDetector.cpp" />
+    <ClCompile Include="CollisionSystemVolume.cpp" />
     <ClCompile Include="CollisionTree1.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="CollisionTree.cpp" />
-    <ClCompile Include="Object1.cpp" />
     <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Rigidbody.cpp" />
+    <ClCompile Include="VolumeFactory.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="CollisionDetector.h" />
+    <ClInclude Include="CollisionSystemVolume.h" />
+    <ClInclude Include="CollisionSystemVolumeType.h" />
     <ClInclude Include="CollisionTree1.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="CollisionTree.h" />
-    <ClInclude Include="Object1.h" />
     <ClInclude Include="ObjectFactory.h" />
     <ClInclude Include="Rigidbody.h" />
+    <ClInclude Include="VolumeFactory.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

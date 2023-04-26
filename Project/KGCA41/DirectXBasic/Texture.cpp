@@ -3,13 +3,18 @@
 
 namespace SSB
 {
-    TextureResource::TextureResource(ID3D11Resource* textureResource, ID3D11ShaderResourceView* textureResourceView)
-        : _textureResource(textureResource), _textureResourceView(textureResourceView)
+    TextureResource::TextureResource(std::string fileName, ID3D11Resource* textureResource, ID3D11ShaderResourceView* textureResourceView)
+        : _fileName(fileName), _textureResource(textureResource), _textureResourceView(textureResourceView)
     {
         if (_textureResource != nullptr)
         {
             static_cast<ID3D11Texture2D*>(_textureResource)->GetDesc(&_desc);
         }
+    }
+
+    std::string TextureResource::GetFileName()
+    {
+        return _fileName;
     }
 
     bool TextureResource::Init()
@@ -201,4 +206,29 @@ namespace SSB
         Sprite::Release();
 		return true;
 	}
+    Texture::Texture(TextureResource* resource, ID3D11SamplerState* samplerState) : _resource(resource), _samplerState(samplerState)
+    {
+    }
+    Texture::~Texture()
+    {
+        Release();
+    }
+    bool Texture::Init()
+    {
+        return false;
+    }
+    bool Texture::Frame()
+    {
+        return false;
+    }
+    bool Texture::Render()
+    {
+        return false;
+    }
+    bool Texture::Release()
+    {
+        _resource = nullptr;
+        _samplerState = nullptr;
+        return true;
+    }
 }

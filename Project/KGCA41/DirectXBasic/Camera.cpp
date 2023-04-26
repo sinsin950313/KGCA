@@ -2,13 +2,40 @@
 #include "BasicWindow.h"
 #include "InputManager.h"
 #include "HCCalculator.h"
+#include "Sphere1.h"
+#include "DXWindow.h"
 
 namespace SSB
 {
-	extern BasicWindow* g_Window;
+	extern DXWindow* g_dxWindow;
 
 	Camera::Camera()
 	{
+	}
+	void Camera::CreateCameraBuffer()
+	{
+		D3D11_BUFFER_DESC desc;
+		ZeroMemory(&desc, sizeof(D3D11_BUFFER_DESC));
+		desc.ByteWidth = sizeof(ToViewSpaceTransformData);
+		desc.Usage = D3D11_USAGE_DEFAULT;
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA sd;
+		ZeroMemory(&sd, sizeof(D3D11_SUBRESOURCE_DATA));
+		sd.pSysMem = &_toViewSpaceTransformData;
+		HRESULT hr = g_dxWindow->GetDevice()->CreateBuffer(&desc, &sd, &_toViewSpaceTransformBuffer);
+		if (FAILED(hr))
+		{
+			assert(SUCCEEDED(hr));
+		}
+	}
+	void Camera::UpdateCameraBuffer()
+	{
+		_toViewSpaceTransformData.Position = g_dxWindow->GetMainCamera()->GetMatrix().Transpose();
+		_toViewSpaceTransformData.View = g_dxWindow->GetMainCamera()->GetViewMatrix().Transpose();
+		_toViewSpaceTransformData.Projection = g_dxWindow->GetMainCamera()->GetProjectionMatrix().Transpose();
+
+		g_dxWindow->GetDeviceContext()->UpdateSubresource(_toViewSpaceTransformBuffer, 0, nullptr, &_toViewSpaceTransformData, 0, 0);
 	}
 	void Camera::GetPlane(Float4 ret[6])
 	{
@@ -54,7 +81,7 @@ namespace SSB
 			ret[5] = makePlane(frustum[4], frustum[0], frustum[6]);
 		}
 	}
-	ECollideState Camera::GetCollideState(OBB data)
+	ECollideState Camera::GetCollideState(OBBData data)
 	{
 		Float4 planes[6];
 		GetPlane(planes);
@@ -63,19 +90,19 @@ namespace SSB
 		for (int i = 0; i < 6; ++i)
 		{
 			float distance = 0.0f;
-			Vector3 tmp = data.Matrix.GetRow(0);
+			Vector3 tmp = data.Rotation.GetRow(0);
 			Vector3 dir = tmp * data.Width / 2.0f;
 			distance += abs(dir.GetX() * planes[i].x + dir.GetY() * planes[i].y + dir.GetZ() * planes[i].z);
 
-			tmp = data.Matrix.GetRow(1);
+			tmp = data.Rotation.GetRow(1);
 			dir = tmp * data.Height / 2.0f;
 			distance += abs(dir.GetX() * planes[i].x + dir.GetY() * planes[i].y + dir.GetZ() * planes[i].z);
 
-			tmp = data.Matrix.GetRow(2);
+			tmp = data.Rotation.GetRow(2);
 			dir = tmp * data.Depth / 2.0f;
 			distance += abs(dir.GetX() * planes[i].x + dir.GetY() * planes[i].y + dir.GetZ() * planes[i].z);
 
-			Vector3 center = data.Matrix.GetRow(3);
+			Vector3 center = data.Position;
 			float cDistance = center.GetX() * planes[i].x + center.GetY() * planes[i].y + center.GetZ() * planes[i].z + planes[i].w;
 
 			if (cDistance < 0)
@@ -111,9 +138,9 @@ namespace SSB
 	{
 		float    h, w, Q;
 		float fNearPlane = 1.0f;
-		float fFarPlane = 1000.0f;
+		float fFarPlane = 1000000000.0f;
 		float fovy = 3.141592f * 0.25;
-		float Aspect = ((float)g_Window->GetClientWidth()) / g_Window->GetClientHeight();
+		float Aspect = ((float)g_dxWindow->GetClientWidth()) / g_dxWindow->GetClientHeight();
 
 		h = 1 / tan(fovy * 0.5f);  // 1/tans(x) = cot(x)
 		w = h / Aspect;
@@ -140,23 +167,37 @@ namespace SSB
 	}
 	bool Camera::Init()
 	{
+		if (_toViewSpaceTransformBuffer == nullptr)
+		{
+			CreateCameraBuffer();
+		}
+		SetVolume(new Sphere1Volume(1000));
 		return true;
 	}
 	bool Camera::Frame()
 	{
+		UpdateCameraBuffer();
+
 		return true;
 	}
 	bool Camera::Render()
 	{
-		return false;
+		g_dxWindow->GetDeviceContext()->VSSetConstantBuffers(0, 1, &_toViewSpaceTransformBuffer);
+
+		return true;
 	}
 	bool Camera::Release()
 	{
 		return false;
 	}
+	void Camera::SetPosition(Vector3 position)
+	{
+		Matrix33 rot = _matrix;
+		_matrix = HMatrix44(rot, position);
+	}
 	bool Camera::IsRender(DXObject* object)
 	{
-		OBB obbData = object->GetOBB();
+		OBBData obbData = object->operator SSB::OBBData();
 		if (GetCollideState(obbData) == ECollideState::Out)
 		{
 			return false;
@@ -274,21 +315,22 @@ namespace SSB
 	//	auto dir = (xVector * deltaX) + (zVector * deltaZ);
 	//	Camera::Move(dir);
 	//}
-	void ModelViewCamera::Rotate(float yaw, float pitch)
-	{
-		static float sYaw = 0.0f;
+	//void ModelViewCamera::Rotate(float yaw, float pitch)
+	//{
+	//	static float sYaw = 0.0f;
 
-		_matrix = _matrix * HMatrix44::RotateFromYAxis(-sYaw) * HMatrix44::RotateFromXAxis(pitch) * HMatrix44::RotateFromYAxis(sYaw) * HMatrix44::RotateFromYAxis(yaw);
+	//	_matrix = _matrix * HMatrix44::RotateFromYAxis(-sYaw) * HMatrix44::RotateFromXAxis(pitch) * HMatrix44::RotateFromYAxis(sYaw) * HMatrix44::RotateFromYAxis(yaw);
 
-		sYaw += yaw;
-	}
+	//	sYaw += yaw;
+	//}
 	void ModelViewCamera::SetTarget(DXObject* target)
 	{
 		_target = target;
 	}
 	HMatrix44 ModelViewCamera::GetViewMatrix()
 	{
-		return _target->GetMatrix().Inverse() * _matrix.Inverse();
+		HMatrix44 targetMatrix(Matrix33(), _target->GetPosition());
+		return targetMatrix.Inverse() * _matrix.Inverse();
 	}
 	bool ModelViewCamera::Init()
 	{
@@ -320,16 +362,51 @@ namespace SSB
 		if (InputManager::GetInstance().GetKeyState(VK_LBUTTON) == EKeyState::KEY_HOLD)
 		{
 			rotY += InputManager::GetInstance().GetDeltaPosition().x * coeff * 10;
-			//rotX += InputManager::GetInstance().GetDeltaPosition().y * coeff * 10;
+			rotX += InputManager::GetInstance().GetDeltaPosition().y * coeff * 10;
 		}
 		if (rotX != 0 || rotY != 0)
 		{
-			Vector3 rotVector = HVector4{ 0, 0, -1 } * HMatrix44::RotateFromYAxis(rotY) * HMatrix44::RotateFromXAxis(rotX);
-			Quaternion quat = Quaternion::GetRotateQuaternion({ 0, 0, -1 }, rotVector);
-			Matrix33 mat = quat.GetRotateMatrix();
-			_matrix = _matrix * HMatrix44{ mat, Vector3{0, 0, 0} };
+			Vector3 pos = _matrix.GetRow(3);
+			float distance = sqrt(pos.GetX() * pos.GetX() + pos.GetY() * pos.GetY() + pos.GetZ() * pos.GetZ());
+			Vector3 direction = pos.Normal();
+
+			Quaternion yQuat = Quaternion::GetRotateQuaternion(Vector3(0, 1, 0), rotY);
+			Matrix33 rot = yQuat.GetRotateMatrix();
+			{
+				HMatrix44 hRot(rot, Vector3());
+				_matrix = _matrix * hRot;
+			}
+
+			Vector3 right = _matrix.GetRow(0);
+			Vector3 newRight = right * rot;
+			Quaternion xQuat = Quaternion::GetRotateQuaternion(newRight, rotX);
+			{
+				Matrix33 rot = xQuat.GetRotateMatrix();
+				HMatrix44 hRot(rot, Vector3());
+				_matrix = _matrix * hRot;
+			}
+
+			{
+				Vector3 xVec = _matrix.GetRow(0);
+				xVec = Vector3(xVec.GetX(), 0, xVec.GetZ());
+				xVec.Normalize();
+
+				Vector3 yVec = _matrix.GetRow(1);
+				Vector3 zVec = _matrix.GetRow(2);
+
+				zVec = xVec.Cross(yVec);
+				zVec.Normalize();
+				yVec = zVec.Cross(xVec);
+				yVec.Normalize();
+
+				_matrix = HMatrix44(
+					xVec.GetX(), xVec.GetY(), xVec.GetZ(), 0,
+					yVec.GetX(), yVec.GetY(), yVec.GetZ(), 0,
+					zVec.GetX(), zVec.GetY(), zVec.GetZ(), 0,
+					-zVec.GetX() * distance, -zVec.GetY() * distance, -zVec.GetZ() * distance, 1
+				);
+			}
 		}
-		//Rotate(rotY, rotX);
 		return false;
 	}
 	bool ModelViewCamera::Render()

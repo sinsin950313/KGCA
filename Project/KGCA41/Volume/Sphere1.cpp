@@ -3,111 +3,106 @@
 
 namespace SSB
 {
-	Sphere1Volume::SphereCollideDelegate::SphereCollideDelegate(Sphere1Volume* owner) : CollideCheckDelegate(owner)
-	{
-	}
-	//bool Sphere1Volume::SphereCollideDelegate::IsCollide(PlaneData data)
-	//{
-	//	Sphere1Volume* owner = (Sphere1Volume*)GetOwner();
-	//	Vector3 center = owner->GetPosition();
-	//	Vector3 planeCenter = data.Position;
-	//	Vector3 vec = center - planeCenter;
+	const int Sphere1Volume::PI = 3;
 
-	//	float radius = ((SphereData)*owner).Radius;
-	//	if (vec.Length() < radius)
-	//	{
-	//		return true;
-	//	}
-	//	else
-	//	{
-	//		float distance = data.A * center.GetX() + data.B * center.GetY() + data.C * center.GetZ() + data.D;
-	//		if (distance < radius)
-	//		{
-	//			// make Sphere1Volume to circle at plane space
-	//			// make it checking collision with rectangle and circle problem
-	//			// check projection length at each rectangle axis with circle center position
-	//			implement;
-	//		}
-	//	}
-	//	return false;
-	//}
-	bool Sphere1Volume::SphereCollideDelegate::IsCollide(BoxData boxData)
-	{
-		Sphere1Volume* owner = (Sphere1Volume*)GetOwner();
-		auto center = owner->GetPosition();
-
-		for (int i = 0; i < 6; ++i)
-		{
-			FaceData data = boxData.Plane[i];
-			float distance = data.A * center.GetX() + data.B * center.GetY() + data.C * center.GetZ() + data.D;
-			if (distance - owner->GetRadius() > 0)
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	bool Sphere1Volume::SphereCollideDelegate::IsCollide(SphereData sphereData)
-	{
-		Sphere1Volume* owner = (Sphere1Volume*)GetOwner();
-		Vector3 ownerPosition = owner->GetPosition();
-		Vector3 targetPosition = sphereData.Position;
-		float length = (ownerPosition - targetPosition).Length();
-		return length <= (owner->GetRadius() + sphereData.Radius);
-	}
-	bool Sphere1Volume::SphereCollideDelegate::IsIn(BoxData data)
-	{
-		for(int i = 0; i < sizeof(data.Vertices) / sizeof(data.Vertices[0]); ++i)
-		{
-			Vector3 vertex = data.Vertices[i];
-			Vector3 center = ((Sphere1Volume*)GetOwner())->GetPosition();
-			Vector3 distance = vertex - center;
-			if (((Sphere1Volume*)GetOwner())->GetRadius() < distance.Length())
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-	bool Sphere1Volume::SphereCollideDelegate::IsIn(SphereData data)
-	{
-		Sphere1Volume* owner = (Sphere1Volume*)GetOwner();
-		Vector3 ownerPosition = owner->GetPosition();
-		Vector3 targetPosition = data.Position;
-		float length = (ownerPosition - targetPosition).Length();
-
-		return length < owner->GetRadius();
-	}
-	//bool Sphere1Volume::SphereCollideDelegate::IsCollide(FrustumData frustumData)
-	//{
-	//	Sphere1Volume* owner = (Sphere1Volume*)GetOwner();
-	//	auto center = owner->GetPosition();
-	//	for (int i = 0; i < 6; ++i)
-	//	{
-	//		PlaneData data = frustumData.Plane[i];
-	//		float distance = data.A * center.GetX() + data.B * center.GetY() + data.C * center.GetZ() + data.D;
-	//		if (distance - owner->_radius > 0)
-	//		{
-	//			return false;
-	//		}
-	//	}
-	//	return true;
-	//}
-	Sphere1Volume::Sphere1Volume(float radius) : Volume1(new SphereCollideDelegate(this))
+	Sphere1Volume::Sphere1Volume(float radius)
 	{
 		SetScale(radius, 0, 0);
 	}
-	float Sphere1Volume::GetRadius()
+	float Sphere1Volume::GetRadius(Vector3 scale)
 	{
-		auto scale = GetScale();
 		return sqrt(scale.GetX() * scale.GetX() + scale.GetY() * scale.GetY() + scale.GetZ() * scale.GetZ());
 	}
-	//void Sphere1Volume::Resize(float width, float height, float depth)
-	//{
-	//	_radius = sqrt(width * width + height * height + depth * depth);
-	//}
+	float Sphere1Volume::GetWorldRadius()
+	{
+		return GetRadius(GetWorldScale());
+	}
+	float Sphere1Volume::GetLocalRadius()
+	{
+		return GetRadius(GetLocalScale());
+	}
+	std::vector<Vector3> Sphere1Volume::GetWorldBaseVertices()
+	{
+		std::vector<Vector3> ret;
+
+		float radius = GetWorldRadius();
+		int stack = PI * radius;
+		int sector = 2 * PI * radius;
+		ret.resize((stack + 1) * (sector + 1));
+
+		float sectorAngleUnit = 2.0f * ((float)PI) / sector;
+		float stackAngleUnit = ((float)PI) / stack;
+		for (int i = 0; i <= stack; ++i)
+		{
+			float stackAngle = (((float)PI) / 2) - (i * stackAngleUnit);
+			float xz = radius * cosf(stackAngle);
+			float y = radius * sinf(stackAngle);
+			for (int j = 0; j <= sector; ++j)
+			{
+				float sectorAngle = sectorAngleUnit * j;
+				float x = xz * cosf(sectorAngle);
+				float z = xz * sinf(sectorAngle);
+				ret[(i * (sector + 1)) + j] = { x, y, z };
+			}
+		}
+
+		return ret;
+	}
+	std::vector<TriangleData> Sphere1Volume::GetWorldBaseTriangles()
+	{
+		std::vector<TriangleData> ret;
+		auto vertice = GetWorldBaseVertices();
+
+		float radius = GetWorldRadius();
+		int stack = PI * radius;
+		int sector = 2 * PI * radius;
+		//ret.resize();
+
+		for (int i = 0; i < stack; ++i)
+		{
+			int k1 = i * (sector + 1);
+			int k2 = k1 + sector + 1;
+			for (int j = 0; j < sector; ++j)
+			{
+				if (i != 0)
+				{
+					ret.push_back({ vertice[k2], vertice[k1], vertice[k1 + 1] });
+				}
+				if (i != (stack - 1))
+				{
+					ret.push_back({ vertice[k2], vertice[k1 + 1], vertice[k2 + 1] });
+				}
+			}
+		}
+
+		return ret;
+	}
 	Sphere1Volume::operator SphereData()
 	{
-		return SphereData{GetPosition(), GetRotation(), GetScale(), GetRadius()};
+		return SphereData{
+			GetWorldPosition(), GetWorldRotation(), GetWorldScale(), 
+			GetWorldRadius()
+		};
+	}
+	Sphere1Volume::operator AABBData()
+	{
+		auto center = GetWorldPosition();
+		auto radius = GetWorldRadius();
+		Vector3 minVector{ -radius, -radius, -radius };
+		Vector3 maxVector{ radius, radius, radius };
+
+		return AABBData{
+			center, GetWorldRotation(), GetWorldScale(),
+			center + minVector,
+			center + maxVector
+		};
+	}
+	Sphere1Volume::operator OBBData()
+	{
+		float radius = GetWorldRadius();
+		return OBBData{ 
+			GetWorldPosition(), GetWorldRotation(), GetWorldScale(), 
+			radius * 2, radius * 2, radius * 2 
+		};
 	}
 }

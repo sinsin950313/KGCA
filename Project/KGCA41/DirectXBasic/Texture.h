@@ -12,18 +12,41 @@ namespace SSB
 	class TextureResource : public Common
 	{
 	private:
+		std::string _fileName;
 		ID3D11Resource* _textureResource;
 		D3D11_TEXTURE2D_DESC _desc;
 		ID3D11ShaderResourceView* _textureResourceView;
 
 	public:
-		TextureResource(ID3D11Resource* textureResource, ID3D11ShaderResourceView* textureResourceView);
+		TextureResource(std::string fileName, ID3D11Resource* textureResource, ID3D11ShaderResourceView* textureResourceView);
 
 	public:
 		ID3D11Resource* GetResource() const { return _textureResource; }
-		ID3D11ShaderResourceView** GetShaderResourceView() { return &_textureResourceView; }
+		ID3D11ShaderResourceView* GetShaderResourceView() { return _textureResourceView; }
+		std::string GetFileName();
 		UINT GetWidth() { return _desc.Width; }
 		UINT GetHeight() { return _desc.Height; }
+
+	public:
+		bool Init() override;
+		bool Frame() override;
+		bool Render() override;
+		bool Release() override;
+	};
+
+	class Texture : public Common
+	{
+	private:
+		TextureResource* _resource;
+		ID3D11SamplerState* _samplerState;
+
+	public:
+		Texture(TextureResource* resource, ID3D11SamplerState* samplerState);
+		~Texture();
+
+	public:
+		TextureResource* GetResource() { return _resource; }
+		ID3D11SamplerState* GetSamplerState() { return _samplerState; }
 
 	public:
 		bool Init() override;

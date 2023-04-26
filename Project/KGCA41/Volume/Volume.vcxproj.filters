@@ -33,16 +33,19 @@
     <ClCompile Include="Volume1.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Plane1.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Box1.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="Sphere1.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Frustum1.cpp">
+    <ClCompile Include="Line1.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="CollisionCalculator.cpp">
+      <Filter>소스 파일</Filter>
+    </ClCompile>
+    <ClCompile Include="Plane1.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
   </ItemGroup>
@@ -65,16 +68,22 @@
     <ClInclude Include="Volume1.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Plane1.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Box1.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="Sphere1.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Frustum1.h">
+    <ClInclude Include="Line1.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="VolumeType.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="CollisionCalculator.h">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
+    <ClInclude Include="Plane1.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
   </ItemGroup>

@@ -3,6 +3,8 @@
 #include "DXStateManager.h"
 #include "TextureManager.h"
 #include "ShaderManager.h"
+#include "FileIOObject.h"
+#include <iostream>
 
 SSB::FBXLoaderTest::~FBXLoaderTest()
 {
@@ -15,56 +17,367 @@ bool SSB::FBXLoaderTest::Init()
 
 	_loader = new FBXLoader();
 
-	_loader->Init();
-	DXObject* box = _loader->Load("box.FBX");
-	box->Init();
-	_objectList.push_back(box);
+	////Mesh Loading Test
+	//{
+	//	_loader->Init();
+	//	_loader->SetFileName("box.FBX");
 
-	_loader->Init();
-	DXObject* multiCameras = _loader->Load("MultiCameras.FBX");
-	multiCameras->Init();
-	_objectList.push_back(multiCameras);
+	//	Model* model = _loader->LoadModel();
+	//	OBBData data;
+	//	data.Position = {10, 0, 0};
+	//	data.Rotation = HMatrix44::RotateFromXAxis(5);
+	//	data.Scale = {2, 3, 4};
+	//	data.Width = 10;
+	//	data.Height = 20;
+	//	data.Depth = 30;
+	//	model->Initialize_SetBoundingVolume(data);
+	//	model->Init();
 
-	_loader->Init();
-	DXObject* ship = _loader->Load("ship.FBX");
-	ship->Init();
-	_objectList.push_back(ship);
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
 
-	_loader->Init();
-	DXObject* man1 = _loader->Load("Man.FBX");
-	man1->Init();
-	man1->UpdateCurrentAnimation("Take 001");
-	_objectList.push_back(man1);
+	//	_objectList.push_back(object);
 
-	_loader->Init();
-	DXObject* man = _loader->Load("Man.FBX", "Man.FBXScript");
-	man->Init();
-	man->UpdateCurrentAnimation("Walk");
-	_objectList.push_back(man);
+	//	{
+	//		ObjectScriptIO io;
+	//		std::string str = model->SerializeText(0);
+	//		io.Write("ModelWriteTest_Box", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_Box", str);
+	//	}
 
-	_loader->Init();
-	DXObject* turret = _loader->Load("Turret_Deploy1.FBX");
-	turret->Init();
-	turret->UpdateCurrentAnimation("Take 001");
-	_objectList.push_back(turret);
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.Read("ModelWriteTest_Box");
 
-	_loader->Init();
-	DXObject* swat1 = _loader->Load("Swat.FBX", std::vector<std::string>{ "Swat@walking_backwards.fbx", "Swat@strafe_2.fbx", "Swat@strafe.fbx" });
-	swat1->Init();
-	swat1->UpdateCurrentAnimation("mixamo.com");
-	_objectList.push_back(swat1);
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		object->SetModel(model);
+	//	}
 
-	_loader->Init();
-	DXObject* swat = _loader->Load("Swat.FBX", std::vector<std::string>{ "Swat@walking_backwards.fbx", "Swat@strafe_2.fbx", "Swat@strafe.fbx"}, "Swat.FBXScript");
-	swat->Init();
-	swat->UpdateCurrentAnimation("strafe_2");
-	_objectList.push_back(swat);
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_Box");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		Model* readedModel = new Model;
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+	//		readedModel->Init();
+	//		object->SetModel(readedModel);
+	//	}
+	//}
+
+	////Multi Material = Multi Texture Test
+	//{
+	//	_loader->Init();
+	//	_loader->SetFileName("MultiCameras.FBX");
+
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
+
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
+
+	//	_objectList.push_back(object);
+
+	//	{
+	//		ObjectScriptIO io;
+	//		std::string str = model->SerializeText(0);
+	//		io.Write("ModelWriteTest_MultiCameras", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_MultiCameras", str);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.Read("ModelWriteTest_MultiCameras");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		object->SetModel(model);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_MultiCameras");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		Model* readedModel = new Model;
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+	//		readedModel->Init();
+	//		object->SetModel(readedModel);
+	//	}
+	//}
+
+	////Multi Material = Multi Texture Test
+	//{
+	//	_loader->Init();
+	//	_loader->SetFileName("Ship.FBX");
+
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
+
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
+
+	//	_objectList.push_back(object);
+
+	//	{
+	//		ObjectScriptIO io;
+	//		std::string str = model->SerializeText(0);
+	//		io.Write("ModelWriteTest_Ship", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_Ship", str);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.Read("ModelWriteTest_Ship");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		object->SetModel(model);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_Ship");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		Model* readedModel = new Model;
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+	//		readedModel->Init();
+	//		object->SetModel(readedModel);
+	//	}
+	//}
+
+	////Object Animation Testing
+	//{
+	//	_loader->Init();
+	//	_loader->SetFileName("Turret_Deploy1.FBX");
+
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
+
+	//	std::map<std::string, Animation*> animations = _loader->LoadAnimation();
+	//	for (auto animation : animations)
+	//	{
+	//		model->Initialize_RegisterAnimation(animation.first, animation.second);
+	//	}
+	//	model->SetCurrentAnimation("Take 001");
+
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
+
+	//	_objectList.push_back(object);
+
+	//	{
+	//		ObjectScriptIO io;
+	//		std::string str = model->SerializeText(0);
+	//		io.Write("ModelWriteTest_Turret", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_Turret", str);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.Read("ModelWriteTest_Turret");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		model->SetCurrentAnimation("Take 001");
+	//		object->SetModel(model);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_Turret");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		Model* readedModel = new Model;
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+	//		readedModel->Init();
+	//		readedModel->SetCurrentAnimation("Take 001");
+	//		object->SetModel(readedModel);
+	//	}
+	//}
+
+	////Multi Layer Testing
+	////Skinning Animation Testing
+	//{
+	//	_loader->Init();
+	//	_loader->SetFileName("Man.FBX");
+
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
+
+	//	std::map<std::string, Animation*> animations = _loader->LoadAnimation();
+	//	for (auto animation : animations)
+	//	{
+	//		model->Initialize_RegisterAnimation(animation.first, animation.second);
+	//	}
+	//	model->SetCurrentAnimation("Take 001");
+
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
+
+	//	_objectList.push_back(object);
+
+	//	{
+	//		ObjectScriptIO io;
+	//		std::string str = model->SerializeText(0);
+	//		io.Write("ModelWriteTest_Man", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_Man", str);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.Read("ModelWriteTest_Man");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		model->SetCurrentAnimation("Take 001");
+	//		object->SetModel(model);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_Man");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		Model* readedModel = new Model;
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+	//		readedModel->Init();
+	//		readedModel->SetCurrentAnimation("Take 001");
+	//		object->SetModel(readedModel);
+	//	}
+	//}
+
+	////Script Animation with Single FBX Testing
+	//{
+	//	_loader->Init();
+	//	_loader->SetFileName("Swat.fbx");
+
+	//	Model* model = _loader->LoadModel();
+	//	model->Init();
+
+	//	_loader->Init();
+	//	_loader->SetFileName("Swat@strafe.fbx");
+	//	std::map<std::string, Animation*> animations = _loader->LoadAnimation();
+	//	for (auto animation : animations)
+	//	{
+	//		model->Initialize_RegisterAnimation(animation.first, animation.second);
+	//	}
+	//	model->SetCurrentAnimation("mixamo.com");
+
+	//	DXObject* object = new DXObject;
+	//	object->Init();
+	//	object->SetModel(model);
+
+	//	_objectList.push_back(object);
+
+	//	{
+	//		ObjectScriptIO io;
+	//		std::string str = model->SerializeText(0);
+	//		io.Write("ModelWriteTest_Swat", str);
+	//		str = model->SerializeBinary();
+	//		io.WriteBinary("ModelWriteTest_Swat", str);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.Read("ModelWriteTest_Swat");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		model = new Model;
+	//		model->DeserializeText(str);
+	//		model->Init();
+	//		model->SetCurrentAnimation("mixamo.com");
+	//		object->SetModel(model);
+	//	}
+
+	//	{
+	//		ObjectScriptIO io;
+	//		auto data = io.ReadBinary("ModelWriteTest_Swat");
+
+	//		std::string str(data.Pointer, data.BufferSize);
+	//		Model* readedModel = new Model;
+	//		int offset = 0;
+	//		readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+	//		readedModel->Init();
+	//		readedModel->SetCurrentAnimation("mixamo.com");
+	//		object->SetModel(readedModel);
+	//	}
+	//}
+
+	// Convert Text to Binary
+	{
+		DXObject* object = new DXObject;
+		object->Init();
+
+		_objectList.push_back(object);
+		Model* model = nullptr;
+
+		{
+			ObjectScriptIO io;
+			auto data = io.Read("Yasuo.Script");
+
+			std::string str(data.Pointer, data.BufferSize);
+			model = new Model;
+			int offset = 0;
+			model->DeserializeText(str);
+			model->Init();
+			model->SetCurrentAnimation("Idle");
+			object->SetModel(model);
+		}
+
+		{
+			ObjectScriptIO io;
+			auto str = model->SerializeBinary();
+			io.WriteBinary("Yasuo", str);
+		}
+
+		{
+			ObjectScriptIO io;
+			auto data = io.ReadBinary("Yasuo");
+
+			std::string str(data.Pointer, data.BufferSize);
+			Model* readedModel = new Model;
+			int offset = 0;
+			readedModel->DeserializeBinary(str.c_str(), str.size(), offset);
+			readedModel->Init();
+			readedModel->SetCurrentAnimation("Idle");
+			object->SetModel(readedModel);
+		}
+	}
 
 	//_camera = new ModelViewCamera();
 	//_camera->SetTarget(_loader->_rootObject);
 	_camera = new DebugCamera();
 	ChangeMainCamera(_camera);
-	GetMainCamera()->Move({0, 0, -10});
+	GetMainCamera()->Move({ 0, 0, -10 });
+	_camera->Init();
 
 	return false;
 }
@@ -77,6 +390,7 @@ bool SSB::FBXLoaderTest::Frame()
 
 	for (auto object : _objectList)
 	{
+		//object->Rotate(0, 0.001f);
 		object->Frame();
 	}
 

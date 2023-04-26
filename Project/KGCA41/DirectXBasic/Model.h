@@ -1,101 +1,121 @@
 #pragma once
 
 #include "Common.h"
-#include <vector>
-#include "Vector.h"
-#include "Texture.h"
-#include "TextureManager.h"
+#include "Mesh.h"
+#include "Animation.h"
+#include "Material.h"
+#include <map>
+#include "Shader.h"
+#include "VolumeType.h"
+#include "Serializeable.h"
+#include "Animation.h"
+#include "EditableInterface.h"
 
 namespace SSB
 {
-	struct Vertex_PCT
-	{
-		Float4 position;
-		Float4 color;
-		Float2 texture;
-	};
+	typedef std::string AnimationName;
 
-	struct Vertex_PNCT
+	class Model : public Common, public SerializeableText, public SerializeableBinary, public EditableInterface<Model>
 	{
-		Float4 position;
-		Float4 normal;
-		Float4 color;
-		Float2 texture;
-	};
+	private:
+		static Animation DefaultAnimation;
 
-	class Model : public Common
-	{
-	protected:
-		std::vector<Vertex_PNCT> _vertexList;
-		std::vector<DWORD> _indexList;
-		Sprite* _sprite;
+	private:
+		std::vector<Vector3> _meshElementMinMaxVertexList;
+		Vector3 _minVertex;
+		Vector3 _maxVertex;
+
+		std::map<MaterialIndex, Material*> _materials;
+		std::map<MeshIndex, MeshInterface*> _meshes;
+
+		std::map<AnimationName, Animation*> _animations;
+		Animation* _currentAnimation;
+
+		PixelShader* _ps;
+
+		// Serialize
+		std::map<SocketName, BoneIndex> _sockets;
+
+		// Temp for Team Project
+		OBBData _boundingVolume;
+
+		Skeleton* _skeleton = nullptr;
 
 	public:
-		Model() : _sprite(SpriteLoader::GetInstance().GetDefaultSprite()) { }
-		virtual ~Model() { Release(); }
+		Model();
+		virtual ~Model();
+
+	private:
+		void SizeCheck();
 
 	public:
-		virtual void Build() = 0;
+		void Initialize_RegisterMaterial(MaterialIndex index, Material* material);
+		void Initialize_RegisterMesh(MeshIndex index, MeshInterface* mesh);
+		void Initialize_RegisterAnimation(AnimationName name, Animation* animation);
+		void Initialize_RegisterSocket(SocketName name, BoneIndex index);
+		void Initialize_SetBoundingVolume(OBBData data);
+		void Initialize_SetSkeleton(Skeleton* skeleton);
 
 	public:
-		std::vector<Vertex_PNCT>& GetVertexList() { return _vertexList; }
-		std::vector<DWORD>& GetIndexList() { return _indexList; }
-		void SetSprite(Sprite* sprite) { _sprite = sprite; }
-		Sprite* GetSprite() { return _sprite; }
+		void SetCurrentAnimation(AnimationName name);
+		void SetVertexShader(VertexShader* shader);
+		void SetPixelShader(PixelShader* shader);
+		HMatrix44 GetSocketCurrentMatrix(SocketName name);
+		OBBData GetBoundingVolume();
+
+	public:
+		operator OBBData();
 
 	public:
 		bool Init() override;
 		bool Frame() override;
 		bool Render() override;
 		bool Release() override;
+		std::string SerializeText(int tabCount) override;
+		void DeserializeText(std::string& serialedString) override;
+		std::string SerializeBinary() override;
+		void DeserializeBinary(const char* buffer, int size, int& offset) override;
+		EditableObject<Model>* GetEditableObject() override;
 	};
 
-	class Direction : public Model
+	struct EditableModelData
 	{
-	public:
-		void Build() override;
-	};
+		std::map<MeshIndex, MeshInterface*> Meshes;
+		std::map<SocketName, BoneIndex> Sockets;
+		std::string PixelShaderFileName;
+		OBBData BoundingVolume;
 
-	class Triangle : public Model
+		std::map<MaterialIndex, Material*> Materials;
+		std::map<AnimationName, Animation*> Animations;
+	};
+	class EditableModelObject : public EditableObject<Model>
 	{
 	private:
+		std::map<MeshIndex, MeshInterface*> _meshes;
+		std::map<SocketName, BoneIndex> _sockets;
+		std::string _pixelShaderFileName;
+		OBBData _boundingVolume;
+
+		std::map<MaterialIndex, Material*> _materials;
+		std::map<AnimationName, Animation*> _animations;
 
 	public:
-		void Build() override;
+		EditableModelObject(EditableModelData data);
+
+	public:
+		std::map<SocketName, BoneIndex> GetSockets();
+		std::string GetPixelShaderFileName();
+		OBBData GetBoundingVolumeData();
+		std::map<MeshIndex, MeshInterface*> GetMeshes();
+
+		std::map<MaterialIndex, Material*> GetMaterials();
+		std::map<AnimationName, Animation*> GetAnimations();
+
+	public:
+		void ResizeBoundingVolume(OBBData data);
+		void ChangePixelShaderFile(std::string fileName);
+
+	public:
+		Model* GetResult() override;
 	};
-
-	class Box : public Model
-	{
-	private:
-		float _width;
-		float _height;
-		float _depth;
-
-	public:
-		Box(float width = 1.0f, float height = 1.0f, float depth = 1.0f);
-
-	public:
-		void Build() override;
-	};
-
-	//class Terrain : public Model
-	//{
-	//private:
-	//	float _cellDistance = 1.0f;
-	//	//float tileX = 10.0f;
-	//	//float tileY = 10.0f;
-	//	float tileX = 1.0f;
-	//	float tileY = 1.0f;
-	//	unsigned int _widthVertexCount = 16;
-	//	unsigned int _heightVertexCount = 16;
-
-	//private:
-	//	void Make(unsigned int widthVertexCount, unsigned int heightVertexCount);
-
-	//public:
-	//	void SetSize(unsigned int widthVertexCount, unsigned int heightVertexCount) { _widthVertexCount = widthVertexCount; _heightVertexCount = heightVertexCount; }
-	//	
-	//public:
-	//	void Build() override { Make(_widthVertexCount + 1, _heightVertexCount + 1); }
-	//};
 }

@@ -136,7 +136,10 @@ namespace SSB
 		_screen.SetDepthStencilTexture(_renderTarget->GetDepthStencilTexture());
 		_screen.Init();
 
-		_mainCamera = &_defaultCamera;
+		if (_mainCamera == nullptr)
+		{
+			_mainCamera = &_defaultCamera;
+		}
 
 		UpdateResize();
 
@@ -264,6 +267,8 @@ namespace SSB
 
 	bool DXWindow::MainRender()
 	{
+		_mainCamera->Render();
+
 		DrawObjects();
 
 		_renderTarget2D->BeginDraw();
@@ -576,7 +581,7 @@ namespace SSB
 	}
 	void RenderTarget::Clear()
 	{
-		float color[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
+		float color[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		g_dxWindow->GetDeviceContext()->ClearRenderTargetView(_renderTargetView, color);
 		g_dxWindow->GetDeviceContext()->ClearDepthStencilView(_depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	}
@@ -893,6 +898,8 @@ namespace SSB
 	{
 		UINT stride = sizeof(Vertex);
 		UINT offset = 0;
+
+		g_dxWindow->GetDeviceContext()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		g_dxWindow->GetDeviceContext()->IASetVertexBuffers(0, 1, &_vertexBuffer, &stride, &offset);
 		g_dxWindow->GetDeviceContext()->IASetIndexBuffer(_indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		g_dxWindow->GetDeviceContext()->IASetInputLayout(_inputLayout);

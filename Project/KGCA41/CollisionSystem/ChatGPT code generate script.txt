@@ -1,0 +1,147 @@
+	class Vector3/*, public VectorInterface<Vector3>*/
+	{
+	private:
+		Float3 _f;
+
+	public:
+		Vector3(float x = 0.0f, float y = 0.0f, float z = 0.0f) : _f{ x, y, z }{ }
+		Vector3(Float3 data) : _f{ data.x, data.y, data.z } { }
+		Vector3(DirectX::XMFLOAT3 data);
+
+	public:
+		float LengthSquare() const;
+		float Length() const;
+		float Dot(const Vector3 vec);
+		Vector3 Cross(const Vector3 vec);
+		void Normalize();
+		Vector3 Normal();
+		void Clear();
+
+	public:
+		Vector3 operator+(const Vector3 vec) const;
+		void operator+=(const Vector3 vec);
+		Vector3 operator-(const Vector3 vec) const;
+		void operator-=(const Vector3 vec);
+		Vector3 operator*(float scalar) const;
+		Vector3 operator/(float scalar) const;
+
+	public:
+		float GetX() const { return _f.x; }
+		float GetY() const { return _f.y; }
+		float GetZ() const { return _f.z; }
+		operator Float3() const { return _f; }
+		operator DirectX::XMFLOAT3();
+	};
+	class Matrix33/*, public MatrixInterface<Matrix33, Vector3>*/
+	{
+	private:
+		Float33 _f;
+
+	public:
+		Matrix33();
+		Matrix33(
+			float e11, float e12, float e13,
+			float e21, float e22, float e23,
+			float e31, float e32, float e33);
+		Matrix33(Float33 data);
+
+	public:
+		void Identity();
+		Matrix33 Transpose();
+		//Matrix33 Inverse();
+		Vector3 GetRow(int i) const;
+		Vector3 GetColumn(int i) const;
+
+	public:
+		Matrix33 operator+(const Matrix33 matrix) const;
+		void operator+=(const Matrix33 matrix);
+		Matrix33 operator-(const Matrix33 matrix) const;
+		void operator-=(const Matrix33 matrix);
+		Matrix33 operator*(float scalar) const;
+		Matrix33 operator*(Matrix33 matrix) const;
+
+	public:
+		operator Float33();
+	};
+
+		struct VolumeData
+	{
+		Vector3 Position;
+		Matrix33 Rotation;
+		Vector3 Scale;
+	};
+
+	struct LineData : public VolumeData
+	{
+		Vector3 Vertex;
+		Vector3 Direction;
+	};
+
+	struct RayData : public VolumeData
+	{
+		Vector3 Origin;
+		Vector3 Direction;
+	};
+
+	struct SegmentData : public VolumeData
+	{
+		Vector3 A;
+		Vector3 B;
+	};
+
+	struct PlaneData
+	{
+		union
+		{
+			Float4 NormalVector;
+
+			struct
+			{
+				float A;
+				float B;
+				float C;
+				float D;
+			};
+		};
+	};
+
+	struct TriangleData : public PlaneData
+	{
+		Vector3 Vertice[3];
+	};
+
+	struct AABBData : public VolumeData
+	{
+		Vector3 Min;
+		Vector3 Max;
+	};
+
+	struct OBBData : public VolumeData
+	{
+		float Width;
+		float Height;
+		float Depth;
+	};
+
+	struct BoxData : public VolumeData
+	{
+		Vector3 Vertices[8];
+		PlaneData Plane[6];
+	};
+
+	// Same as Box
+	//struct FrustumData : public VolumeData
+	//{
+	//	Vector3 Vertices[6];
+	//	PlaneData Plane[6];
+	//};
+
+	struct SphereData : public VolumeData
+	{
+		float Radius;
+	};
+
+Data types are world Coordinate. So doesn't need to transform it.
+Write this c++ code
+bool IsIn(SphereData lData, SphereData rData);
+

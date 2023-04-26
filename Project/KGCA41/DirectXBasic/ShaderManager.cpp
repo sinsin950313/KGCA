@@ -26,8 +26,8 @@ namespace SSB
         return _instance;
     }
 
-    template<typename func>
-    Shader* ShaderManager::LoadShader(std::wstring fileName, std::string entryPoint, std::string target, std::map<std::wstring, Shader*>& data, func CreateShader)
+	template<typename ShaderCreater>
+    Shader* ShaderManager::LoadShader(std::wstring fileName, std::string entryPoint, std::string target, std::map<std::wstring, Shader*>& data, ShaderCreater createrFunction, ShaderFactory* factory)
     {
         std::wstring key = GetKey(fileName, entryPoint);
         if (data.find(key) == data.end())
@@ -42,7 +42,7 @@ namespace SSB
             auto path = GetPath(fileName);
             ID3DBlob* code = nullptr;
             ID3DBlob* errorCode = nullptr;
-            hr = D3DCompileFromFile(path.c_str(), NULL, NULL, entryPoint.c_str(), target.c_str(), shaderFlag, 0, &code, &errorCode);
+            hr = D3DCompileFromFile(path.c_str(), NULL, D3D_COMPILE_STANDARD_FILE_INCLUDE, entryPoint.c_str(), target.c_str(), shaderFlag, 0, &code, &errorCode);
             if (FAILED(hr))
             {
                 if (errorCode != nullptr)
@@ -55,14 +55,17 @@ namespace SSB
             }
 
             ID3D11DeviceChild* shader;
-            hr = CreateShader(code, &shader);
+            hr = createrFunction(code, &shader);
             if (FAILED(hr))
             {
                 assert(SUCCEEDED(hr));
                 return nullptr;
             }
 
-            Shader* shaderComp = new Shader(shader, code);
+            factory->SetFileName(wtm(fileName));
+            factory->SetShader(shader);
+            factory->SetCode(code);
+            Shader* shaderComp = factory->New();
             shaderComp->Init();
             data.insert(std::make_pair(key, shaderComp));
         }
@@ -77,22 +80,40 @@ namespace SSB
         return fileName + wEntryPoint;
     }
 
-    Shader* ShaderManager::LoadVertexShader(std::wstring fileName, std::string entryPoint, std::string target)
+    VertexShader* ShaderManager::LoadVertexShader(std::wstring fileName, std::string entryPoint, std::string target)
     {
         auto createShader = [](ID3DBlob* code, ID3D11DeviceChild** shader)->HRESULT
         {
             return g_dxWindow->GetDevice()->CreateVertexShader(code->GetBufferPointer(), code->GetBufferSize(), NULL, (ID3D11VertexShader**)shader);
         };
-        return LoadShader(fileName, entryPoint, target, _vertexShaderData, createShader);
+        class VertexShaderFactory : public ShaderFactory
+        {
+            Shader* New() override
+            {
+                return new VertexShader(_shader, _code, _fileName);
+            }
+        };
+        VertexShaderFactory factory;
+
+        return (VertexShader*)LoadShader(fileName, entryPoint, target, _vertexShaderData, createShader, &factory);
     }
 
-    Shader* ShaderManager::LoadPixelShader(std::wstring fileName, std::string entryPoint, std::string target)
+    PixelShader* ShaderManager::LoadPixelShader(std::wstring fileName, std::string entryPoint, std::string target)
     {
         auto createShader = [](ID3DBlob* code, ID3D11DeviceChild** shader)->HRESULT
         {
             return g_dxWindow->GetDevice()->CreatePixelShader(code->GetBufferPointer(), code->GetBufferSize(), NULL, (ID3D11PixelShader**)shader);
         };
-        return LoadShader(fileName, entryPoint, target, _pixelShaderData, createShader);
+        class PixelShaderFactory : public ShaderFactory
+        {
+            Shader* New()
+            {
+                return new PixelShader(_shader, _code, _fileName);
+            }
+        };
+        PixelShaderFactory factory;
+
+        return (PixelShader*)LoadShader(fileName, entryPoint, target, _pixelShaderData, createShader, &factory);
     }
 
     bool ShaderManager::Init()
@@ -127,5 +148,17 @@ namespace SSB
         _pixelShaderData.clear();
 
         return true;
+    }
+    void ShaderManager::ShaderFactory::SetShader(ID3D11DeviceChild* shader)
+    {
+        _shader = shader;
+    }
+    void ShaderManager::ShaderFactory::SetCode(ID3DBlob* code)
+    {
+        _code = code;
+    }
+    void SSB::ShaderManager::ShaderFactory::SetFileName(std::string fileName)
+    {
+        _fileName = fileName;
     }
 }

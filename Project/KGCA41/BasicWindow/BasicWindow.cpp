@@ -1,4 +1,5 @@
 #include "BasicWindow.h"
+#include <cassert>
 
 namespace SSB
 {
@@ -8,7 +9,10 @@ namespace SSB
 	{
 		return g_Window->WindowProcedureCallbackFunction(hWnd, message, wParam, lParam);
 	}
-
+	BasicWindow::BasicWindow(HWND hwnd) : _hWnd(hwnd)
+	{
+		g_Window = this;
+	}
 	BasicWindow::BasicWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : _name(name), _hInstance(hInstance), _nCmdShow(nCmdShow)
 	{
 		g_Window = this;
@@ -99,13 +103,38 @@ namespace SSB
 	{
 		switch (message)
 		{
+		case WM_SIZE:
+		{
+			if (wParam != SIZE_MINIMIZED)
+			{
+				HRESULT hr;
+				if (FAILED(hr = UpdateResize()))
+				{
+					assert(SUCCEEDED(hr));
+					PostQuitMessage(1);
+				}
+				break;
+			}
+		}
 		case WM_DESTROY:
+		{
 			PostQuitMessage(0);
 			break;
+		}
 		default:
+		{
 			return DefWindowProc(hWnd, message, wParam, lParam);
+		}
 		}
 
 		return 0;
+	}
+
+	HRESULT BasicWindow::UpdateResize()
+	{
+		GetWindowRect(_hWnd, &_windowRect);
+		GetClientRect(_hWnd, &_clientRect);
+
+		return S_OK;
 	}
 }

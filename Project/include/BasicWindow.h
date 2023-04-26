@@ -2,6 +2,7 @@
 
 #include <Windows.h>
 #include "Common.h"
+#include <vector>
 
 namespace SSB
 {
@@ -20,9 +21,15 @@ namespace SSB
 		RECT _clientRect;
 
 	public:
+		BasicWindow(HWND hwnd);
 		BasicWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow);
+
+	public:
 		void Run();
 		LRESULT CALLBACK WindowProcedureCallbackFunction(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
+	public:
+		virtual HRESULT UpdateResize();
 
 	public:
 		bool Init() override;

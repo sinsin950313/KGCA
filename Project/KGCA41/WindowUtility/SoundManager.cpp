@@ -6,7 +6,7 @@
 
 namespace SSB
 {
-	SoundManager* SoundManager::_instance = nullptr;
+	SoundManager SoundManager::_instance;
 
 	SoundManager::SoundManager()
 	{
@@ -15,16 +15,7 @@ namespace SSB
 
 	SoundManager& SoundManager::GetInstance()
 	{
-		if (_instance == nullptr)
-		{
-			_instance = new SoundManager();
-		}
-		return *_instance;
-	}
-
-	SoundManager::~SoundManager()
-	{
-		Release();
+		return _instance;
 	}
 
 	bool SoundManager::LoadSound(std::wstring fileName)

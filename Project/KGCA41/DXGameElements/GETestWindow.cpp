@@ -1,3 +1,5 @@
+#pragma comment (lib, "PhysicsMath.lib")
+
 #include "GETestWindow.h"
 #include "TextManager.h"
 #include "TextureManager.h"
@@ -15,16 +17,15 @@ namespace SSB
     {
         DXWindow::Init();
 
-        DXStateManager::GetInstance().Init();
 		InputManager::GetInstance().Set(GetWindowHandle());
-        InputManager::GetInstance().Init();
 
         _text = new Text(L"Text Test", { 0, 0, 100, 30 });
         _text->SetTextFormat(TextManager::GetInstance().LoadTextFormat(L"°íµñ", L"ko-kr", 30));
         _text->SetBrush(TextManager::GetInstance().LoadBrush(L"Black", { 0, 0, 0, 1 }));
         _text->Init();
 
-        _background = new DX2DObject({ (float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) }, g_Window->GetClientWidth(), g_Window->GetClientHeight());
+        //_background = new DX2DObject({ (float)(g_Window->GetClientWidth() / 2), (float)(g_Window->GetClientHeight() / 2) }, g_Window->GetClientWidth(), g_Window->GetClientHeight());
+        _background = new DX2DObject({ 0, 0 }, g_Window->GetClientWidth() / 4, g_Window->GetClientHeight() / 4);
         SpriteLoader::GetInstance().RegisterSpriteWithCoordinateValue(L"KGCABK.bmp", L"Background", {0, 0, 1024, 768});
         _background->SetSprite(SpriteLoader::GetInstance().Load(L"KGCABK.bmp", L"Background", DXStateManager::kDefaultWrapSample));
         _background->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default2DVertexShader.hlsl", "Main", "vs_5_0"));
@@ -150,6 +151,14 @@ namespace SSB
         _dialog->AddChild(_textUI);
         _dialog->Init();
 
+        //_terrain = new DXObject();
+        //_terrain->SetModel(new Box);
+        //_terrain->SetAdditionalModel(new Terrain);
+        //_terrain->SetModel(new Triangle);
+        //_terrain->SetVertexShader(ShaderManager::GetInstance().LoadVertexShader(L"Default3DVertexShader.hlsl", "Main", "vs_5_0"));
+        //_terrain->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"DefaultPixelShader.hlsl", "Main", "ps_5_0"));
+        //_terrain->Init();
+
         return true;
     }
 
@@ -170,6 +179,7 @@ namespace SSB
         _dialog->Move({ _dialog->GetCenter().x + 0.01f, _dialog->GetCenter().y + 0.01f });
         _dialog->RotateDegree(0.1f);
         _dialog->Frame();
+        //_terrain->Frame();
 
         return true;
     }
@@ -177,7 +187,6 @@ namespace SSB
     bool GETestWindow::Release()
     {
         DXWindow::Release();
-        InputManager::GetInstance().Release();
 
         _background->Release();
         _object->Release();
@@ -189,11 +198,9 @@ namespace SSB
         _textUI->Release();
         _text->Release();
         _dialog->Release();
+        //_terrain->Release();
 
         TextManager::GetInstance().Release();
-        ShaderManager::GetInstance().Release();
-        TextureResourceManager::GetInstance().Release();
-        DXStateManager::GetInstance().Release();
 
         return true;
     }
@@ -212,6 +219,7 @@ namespace SSB
         DXWindow::AddDrawable(_textUI);
         DXWindow::AddTextable(_text);
         _dialog->Render();
+        //DXWindow::AddDrawable(_terrain);
 
         return true;
     }
@@ -219,13 +227,13 @@ namespace SSB
     bool GETestWindow::MainRender()
     {
         GetDeviceContext()->RSSetState(DXStateManager::GetInstance().GetRasterizerState(DXStateManager::kDefaultSolidRasterizer));
-        _object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
-        _objectWithFile->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
-        DXWindow::MainRender();
+        //_object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
+        //_objectWithFile->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WithMask", "ps_5_0"));
+        //DXWindow::MainRender();
 
-        GetDeviceContext()->RSSetState(DXStateManager::GetInstance().GetRasterizerState(DXStateManager::kDefaultWireFrameRasterizer));
-        _object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WireFrame", "ps_5_0"));
-        _objectWithFile->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WireFrame", "ps_5_0"));
+        //GetDeviceContext()->RSSetState(DXStateManager::GetInstance().GetRasterizerState(DXStateManager::kDefaultWireFrameRasterizer));
+        //_object->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WireFrame", "ps_5_0"));
+        //_objectWithFile->SetPixelShader(ShaderManager::GetInstance().LoadPixelShader(L"Default2DPixelShader.hlsl", "WireFrame", "ps_5_0"));
         DXWindow::MainRender();
 
         return true;

@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iostream>
 
-SSB::Rectangle::Rectangle(float centerX, float centerY, float width, float height)
+SSB::RectangleVolume::RectangleVolume(float centerX, float centerY, float width, float height)
 	: Volume(Vector2D(2, centerX, centerY), sqrt(width* width + height * height) / 2, RectangleVertexFactory(-width / 2, -height / 2, width / 2, height / 2))
 	, _width(width), _height(height)
 {
@@ -12,7 +12,7 @@ SSB::Rectangle::Rectangle(float centerX, float centerY, float width, float heigh
 	Reposition(tmp);
 }
 
-bool SSB::Rectangle::operator==(const Rectangle& rect) const
+bool SSB::RectangleVolume::operator==(const RectangleVolume& rect) const
 {
 	auto IsSame = [](float a, float b)->bool { return fabs(a - b) < 0.001f; };
 	if (IsSame(GetLeft(), rect.GetLeft()))
@@ -31,22 +31,22 @@ bool SSB::Rectangle::operator==(const Rectangle& rect) const
 	return false;
 }
 
-//Rectangle Rectangle::operator&(const Rectangle& rect) const
+//RectangleVolume RectangleVolume::operator&(const RectangleVolume& rect) const
 //{
 //	float left = std::max(GetLeft(), rect.GetLeft());
 //	float right = std::min(GetRight(), rect.GetRight());
 //	float top = std::max(GetTop(), rect.GetTop());
 //	float bottom = std::min(GetBottom(), rect.GetBottom());
 //
-//	return Rectangle(left, top, right - left, bottom - top);
+//	return RectangleVolume(left, top, right - left, bottom - top);
 //}
 
-bool SSB::Rectangle::operator&&(const Rectangle& rect) const
+bool SSB::RectangleVolume::operator&&(const RectangleVolume& rect) const
 {
 	return IsCollide(rect);
 }
 
-void SSB::Rectangle::Resize(float width, float height)
+void SSB::RectangleVolume::Resize(float width, float height)
 {
 	Volume::Resize(sqrt(width * width + height * height) / 2);
 
@@ -57,7 +57,7 @@ void SSB::Rectangle::Resize(float width, float height)
 	_rb = Vector2D(2, GetWidth() / 2, -GetHeight() / 2);
 }
 
-bool SSB::Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) const
+bool SSB::RectangleVolume::IsIn(const Vector2D& coordinate, const Vector2D& v) const
 {
 	if (Volume::IsIn(coordinate, v))
 	{
@@ -71,7 +71,7 @@ bool SSB::Rectangle::IsIn(const Vector2D& coordinate, const Vector2D& v) const
 	return false;
 }
 
-void SSB::Rectangle::Print() const
+void SSB::RectangleVolume::Print() const
 {
 	std::cout << "Left-Top " << "(" << GetLeft() << ", " << GetTop() << ")" 
 		<< ", " << "Right-Bottom " << "(" << GetRight() << ", " << GetBottom() << ")" 

@@ -13,25 +13,10 @@
     <ClCompile Include="DX2DObject.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
-    <ClCompile Include="Shader.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="ShaderManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
     <ClCompile Include="Text.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="TextManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureManager.cpp">
-      <Filter>소스 파일</Filter>
-    </ClCompile>
-    <ClCompile Include="DXStateManager.cpp">
       <Filter>소스 파일</Filter>
     </ClCompile>
     <ClCompile Include="UI.cpp">
@@ -48,25 +33,10 @@
     <ClInclude Include="DX2DObject.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
-    <ClInclude Include="Shader.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="ShaderManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
     <ClInclude Include="Text.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="TextManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureManager.h">
-      <Filter>헤더 파일</Filter>
-    </ClInclude>
-    <ClInclude Include="DXStateManager.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
     <ClInclude Include="UI.h">

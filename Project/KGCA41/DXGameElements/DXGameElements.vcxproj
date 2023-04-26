@@ -120,6 +120,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)\..\..\include;$(ProjectDir)\..\..\include\DXTK;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -158,30 +159,20 @@ if exist "$(OutDir)\$(ProjectName).pdb" copy "$(OutDir)\$(ProjectName).pdb" "$(P
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="UI.cpp" />
-    <ClCompile Include="DXStateManager.cpp" />
     <ClCompile Include="GETestWindow.cpp" />
     <ClCompile Include="Sample.cpp" />
     <ClCompile Include="DX2DAnimation.cpp" />
     <ClCompile Include="DX2DObject.cpp" />
-    <ClCompile Include="Shader.cpp" />
-    <ClCompile Include="ShaderManager.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TextManager.cpp" />
-    <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UI.h" />
-    <ClInclude Include="DXStateManager.h" />
     <ClInclude Include="GETestWindow.h" />
     <ClInclude Include="DX2DAnimation.h" />
     <ClInclude Include="DX2DObject.h" />
-    <ClInclude Include="Shader.h" />
-    <ClInclude Include="ShaderManager.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="TextManager.h" />
-    <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureManager.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

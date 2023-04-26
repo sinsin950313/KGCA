@@ -21,6 +21,17 @@ namespace SSB
 		Button* _button;
 		TextUI* _textUI;
 		DX2DObject* _dialog;
+		//DXObject* _terrain;
+
+	ID3D11InputLayout* _inputLayout;
+	ID3DBlob* _vsCode;
+	ID3DBlob* _psCode;
+	ID3D11VertexShader* _vs;
+	ID3D11PixelShader* _ps;
+	ID3D11Buffer* _vertexBuffer;
+	std::vector<Vertex_PNCT> _vertexList;
+	std::vector<int> _indexList;
+	ID3D11Buffer* _indexBuffer;
 
 	public:
 		GETestWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : DXWindow(name, hInstance, nCmdShow) { }

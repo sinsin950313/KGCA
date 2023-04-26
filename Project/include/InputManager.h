@@ -16,13 +16,15 @@ namespace SSB
 	class InputManager : public Common
 	{
 	private:
-		static InputManager* _instance;
+		static InputManager _instance;
 		EKeyState _keyState[256];
 		POINT _mousePosition;
+		POINT _mousePrePosition;
+		POINT _delta;
 		HWND _hWnd;
 
 	private:
-		InputManager() { }
+		InputManager() { Init(); }
 		~InputManager();
 
 	public:
@@ -30,11 +32,14 @@ namespace SSB
 		static InputManager& GetInstance();
 		EKeyState GetKeyState(DWORD key);
 		POINT GetMousePosition() { return _mousePosition; }
+		POINT GetDeltaPosition() { return _delta; }
+
+	private:
+		bool Init() override;
+		bool Release() override;
 
 	public:
-		bool Init() override;
 		bool Frame() override;
 		bool Render() override;
-		bool Release() override;
 	};
 }

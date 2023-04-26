@@ -4,6 +4,8 @@
 #include "DXDrawableInterface.h"
 #include <vector>
 #include "Texture.h"
+#include "Model.h"
+#include "Matrix.h"
 
 namespace SSB
 {

@@ -15,7 +15,7 @@ namespace SSB
 		virtual std::vector<Vector2D*> operator()() override;
 	};
 
-	class Rectangle : public Volume<2>
+	class RectangleVolume : public Volume<2>
 	{
 		Vector2D _lt;
 		Vector2D _rb;
@@ -23,8 +23,8 @@ namespace SSB
 		float _height;
 
 	public:
-		Rectangle() = default;
-		Rectangle(float centerX, float centerY, float _width, float _height);
+		RectangleVolume() = default;
+		RectangleVolume(float centerX, float centerY, float _width, float _height);
 
 	public:
 		float GetLeft() const { return _lt.Get(0) + GetCenter().Get(0); }
@@ -35,9 +35,9 @@ namespace SSB
 		float GetHeight() const { return _height; }
 
 	public:
-		bool operator==(const Rectangle& rect) const;
+		bool operator==(const RectangleVolume& rect) const;
 		//Rectangle operator&(const Rectangle& rect) const;
-		bool operator&&(const Rectangle& rect) const;
+		bool operator&&(const RectangleVolume& rect) const;
 
 	public:
 		void Resize(float width, float height);

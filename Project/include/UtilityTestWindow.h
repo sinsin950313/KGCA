@@ -2,15 +2,15 @@
 
 #include "BasicWindow.h"
 #include "Timer.h"
-#include "Sound.h"
-
 namespace SSB
 {
+	class Sound;
+
 	class UtilityTestWindow : public BasicWindow
 	{
 	private:
 		Timer _timer;
-		Sound* _sound;
+		SSB::Sound* _sound;
 
 	public:
 		UtilityTestWindow(LPCWSTR name, HINSTANCE hInstance, int nCmdShow) : BasicWindow(name, hInstance, nCmdShow) { }

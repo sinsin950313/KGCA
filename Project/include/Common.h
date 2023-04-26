@@ -4,6 +4,7 @@
 
 #include <Unknwnbase.h>
 #include <math.h>
+#include <cstdlib>
 
 namespace SSB
 {
@@ -40,4 +41,6 @@ namespace SSB
 	{
 		return (degree / 180.0f) * M_PI;
 	}
+
+	inline bool IsZero(float val) { return abs(val) < 0.001f; }
 };

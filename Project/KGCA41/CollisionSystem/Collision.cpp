@@ -23,3 +23,8 @@
 //{
 //	return cir1 && cir2;
 //}
+
+bool SSB::IsCollide(Volume1* volume1, Volume1* volume2)
+{
+	return volume1->IsCollide(volume2) || volume2->IsCollide(volume1);
+}

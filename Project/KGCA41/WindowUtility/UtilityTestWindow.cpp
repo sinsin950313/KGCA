@@ -11,8 +11,6 @@ namespace SSB
         BasicWindow::Init();
 
         _timer.Init();
-        InputManager::GetInstance().Init();
-        SoundManager::GetInstance().Init();
         _sound = SoundManager::GetInstance().Load(L"MyLove.mp3");
         _sound->Init();
 
@@ -30,7 +28,6 @@ namespace SSB
         SoundManager::GetInstance().Frame();
         if (InputManager::GetInstance().GetKeyState(VK_F1) == EKeyState::KEY_HOLD)
         {
-            //_sound1->PlayInstance();
             if (!check)
             {
                 SoundManager::GetInstance().PlayInstanceSound(L"GunShot.mp3");
@@ -101,13 +98,11 @@ namespace SSB
 
         _timer.Release();
 
-        InputManager::GetInstance().Release();
-
         if (_sound != nullptr)
         {
             _sound->Release();
+            delete _sound;
         }
-        SoundManager::GetInstance().Release();
 
         return true;
     }

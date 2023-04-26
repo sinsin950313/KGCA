@@ -72,6 +72,8 @@ bool TriangleDrawer::Init()
         return false;
     }
 
+    GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
     return true;
 }
 

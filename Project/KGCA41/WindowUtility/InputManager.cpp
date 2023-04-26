@@ -1,8 +1,9 @@
 #include "InputManager.h"
+#include <string>
 
 namespace SSB
 {
-	InputManager* InputManager::_instance = nullptr;
+	InputManager InputManager::_instance;
 
 	InputManager::~InputManager()
 	{
@@ -16,11 +17,7 @@ namespace SSB
 
 	InputManager& InputManager::GetInstance()
 	{
-		if (_instance == nullptr)
-		{
-			_instance = new InputManager();
-		}
-		return *_instance;
+		return _instance;
 	}
 
 	EKeyState InputManager::GetKeyState(DWORD key)
@@ -31,6 +28,11 @@ namespace SSB
 	bool InputManager::Init()
 	{
 		ZeroMemory(_keyState, sizeof(_keyState));
+
+		GetCursorPos(&_mousePosition);
+		ScreenToClient(_hWnd, &_mousePosition);
+		_mousePrePosition = _mousePosition;
+
 		return true;
 	}
 
@@ -38,6 +40,10 @@ namespace SSB
 	{
 		GetCursorPos(&_mousePosition);
 		ScreenToClient(_hWnd, &_mousePosition);
+		_delta.x = _mousePosition.x - _mousePrePosition.x;
+		_delta.y = _mousePosition.y - _mousePrePosition.y;
+		//if(_delta.x != 0 || _delta.y != 0)
+		//OutputDebugString((std::to_wstring(_delta.x) + L", " + std::to_wstring(_delta.y) + L"\n").c_str());
 
 		// I think PRESS and RELEASE need time check, so just HOLD and FREE
 		int keyCount = sizeof(_keyState) / sizeof(_keyState[0]);
@@ -67,6 +73,7 @@ namespace SSB
 				}
 			}
 		}
+		_mousePrePosition = _mousePosition;
 
 		return true;
 	}

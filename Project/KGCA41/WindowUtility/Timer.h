@@ -2,6 +2,7 @@
 #pragma comment (lib, "winmm.lib")
 
 #include "Common.h"
+#include <timeapi.h>
 
 namespace SSB
 {

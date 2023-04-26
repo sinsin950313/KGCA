@@ -434,3 +434,11 @@ FodyWeavers.xsd
 *.idb
 
 Resource/
+Naver MYBOX/
+
+#!Unreal/*
+Unreal/*/*/*
+!Unreal/*/Config/*
+!Unreal/*/Content/Blueprint/
+!Unreal/*/Source/*
+!Unreal/*/*.uproject

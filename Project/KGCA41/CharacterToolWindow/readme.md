@@ -33,9 +33,17 @@ Camera배치에 대한 이해
 
 ## 사용설명서
 
+![캡처](https://user-images.githubusercontent.com/40855235/234503814-1ed8e4d1-d1e0-4024-b414-afbcf7682726.PNG)
+
+Character Editor\Debug\CharacterToolWindow에 있는 CharacterToolWindow.exe 실행
+
 ![제목 없음](https://user-images.githubusercontent.com/40855235/234488872-1ac2f2f4-27f7-4987-84fb-6dbca71bd305.png)
 
 FBX 및 Text파일인 Script 파일 IO
+
+![캡처](https://user-images.githubusercontent.com/40855235/234504209-582b8dfe-9efc-4ca9-9a07-dc8adb172b6a.PNG)
+
+상대 경로를 유지하면서 FBX또는 Script 디렉토리에 파일 배치 및 실행
 
 ![image](https://user-images.githubusercontent.com/40855235/234488617-1f22864f-3cb9-485d-b712-9b619b588f13.png)
 
@@ -48,3 +56,6 @@ FBX 및 Text파일인 Script 파일 IO
 1번 : Bone 계층 구조 확인
 
 2번 : 1번에서 선택된 위치에 상대좌표로 Socket 추가
+
+## 다운로드
+http://naver.me/5oizaMNG

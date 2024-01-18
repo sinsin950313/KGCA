@@ -3,6 +3,20 @@
 
 DirectX를 이용한 2D Project
 
+## 개요
+- 장르 : 벨트스크롤 슈팅 게임
+- 제작 인원 : 1인
+- 제작 기간 : 1달
+- 개발 환경
+  - C++
+  - DirectX
+  - FMod
+- 주요 기술
+  - Sprite Animation
+  - Mask Texture
+  - Memery Pool
+  - 2D Collision Check
+
 ## 시놉시스
 ![image](https://user-images.githubusercontent.com/40855235/234496274-058bbf45-3058-468c-9271-ddcf770c8b33.png)
 

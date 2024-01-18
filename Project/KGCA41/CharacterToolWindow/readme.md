@@ -30,21 +30,6 @@ Animation 추가 및 삭제 가능
 
 Text파일 IO 가능
 
-## 주요 기술
-https://help.autodesk.com/view/FBX/2020/ENU/?guid=FBX_Developer_Help_cpp_ref_index_html
-
-FBX SDK를 이용하여 FBX File의 IO 및 수정
-
-Bone의 상속 구조에 대한 이해
-
-Animation 계산 방식의 이해
-
-Skinning Mesh에 대한 이해
-
-Diffuse, Normal, MultiTexture에 대한 이해
-
-Camera배치에 대한 이해
-
 ## 사용설명서
 
 ![캡처](https://user-images.githubusercontent.com/40855235/234503814-1ed8e4d1-d1e0-4024-b414-afbcf7682726.PNG)

@@ -3,6 +3,20 @@
 
 FBX를 읽고 수정할 수 있는 툴 입니다.
 
+## 개요
+- 제작 기간 : 1달
+- 개발 인원 : 1인
+- 개발 환경
+  - C++
+  - DirectX
+  - MFC
+- 주요 기술
+  - FBX SDK
+  - Bone Hierarchy - Socket
+  - Skinning Mesh
+  - Multi Texture
+  - 3D Camera
+
 ## 주요 기능
 ![image](https://user-images.githubusercontent.com/40855235/234487650-7102ac4f-6e39-436a-9f21-5b6991a86887.png)
 
